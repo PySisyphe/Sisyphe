@@ -1,0 +1,500 @@
+.. _page-segmentation:
+
+Segmentation menu
+=================
+
+- :ref:`menu-section-kmclustering`
+- :ref:`menu-section-kmsegmentation`
+- :ref:`menu-section-skull`
+- :ref:`menu-section-atropos`
+- :ref:`menu-section-thickness`
+- :ref:`menu-section-regsegmentation`
+- :ref:`menu-section-structs`
+- Deep learning segmentation >
+	- :ref:`menu-section-parcellation`
+	- :ref:`menu-section-fcd`
+	- :ref:`menu-section-hipp`
+	- :ref:`menu-section-lesion`
+	- :ref:`menu-section-temporal`
+	- :ref:`menu-section-meta`
+	- :ref:`menu-section-microbld`
+	- :ref:`menu-section-tissue`
+	- :ref:`menu-section-tumor`
+	- :ref:`menu-section-wmh`
+
+.. _menu-section-kmclustering:
+
+KMeans clustering
+-----------------
+
+This menu is used to classify the intensity values of a scalar volume using the K-Means algorithm. The result is a volume of labels with a label index for each class. PySisyphe uses the `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ScalarImageKmeansImageFilter.html>`_ module. Anisotropic diffusion filtering and bias field correction can be performed before the classification stage.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select PySisyphe **Volume(s)**.
+
+Check **Use mask(s)** to display a :ref:`widgets-section-multi-file` widget and select the mask(s) that will restrict clustering to mask voxels.
+
+Toggle **K means clustering...** button to show/hide clustering parameters:
+
+- Check **Anisotropic diffusion filter** to perform this prerprocessing.
+- Check **Bias filed correction** to perform this prerprocessing.
+- Use the **Number of classes** spinbox to define the number of classes (i.e. labels) used by the K-Means statistical classifier.
+- Label volume of clusters is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Labeled volume prefix** and **Labeled volume suffix** parameters.
+- Check **Save classes as ROI** to save each cluster in an ROI volume (.xroi)
+- ROI volumes are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Class ROI prefix** and **Class ROI suffix** parameters. The prefix and/or suffix must contain a wildcard character (*), which will be replaced by the cluster index in the ROI file name.
+
+Toggle **Anistropic diffusion image filter...** button to show/hide filtering settings (see :ref:`menu-section-filter-anisodiff`).
+
+Toggle **Bias field correction image filter...** button to show/hide bias field correction settings (see :ref:`menu-section-biasfield`).
+
+Left-click **Execute** button to perform K-Means clustering.
+
+Left-click **Cancel** button to close dialog box without clustering.
+
+.. _menu-section-kmsegmentation:
+
+KMeans segmentation
+-------------------
+
+This menu is used to compute tissue probability maps with a kmeans clustering. The result is a probability volume for each class. PySisyphe uses the `ANTs <https://antspy.readthedocs.io/en/latest/segmentation.html>`_ package. Anisotropic diffusion filtering and bias field correction can be performed before the classification stage.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select PySisyphe **Volume(s)**.
+
+Check **Use mask(s)** to display a :ref:`widgets-section-multi-file` widget and select the mask(s) that will restrict clustering to mask voxels.
+
+Toggle **K means segmentation...** button to show/hide segmentation parameters:
+
+- Check **Anisotropic diffusion filter** to perform this prerprocessing.
+- Check **Bias filed correction** to perform this prerprocessing.
+- Use the **Number of classes** spinbox to define the number of classes (i.e. labels) used by the K-Means statistical classifier.
+- Use the **Number of iterations** spinbox the define maximum number of iterations.
+- Use the **MRF smoothing factor** spinbox to define label smoothness, higher value is smoother (default 0.1).
+- Use the **MRF neighborhood radius** spinbox to define the MRF kernel extent in voxels used for label smoothing (default 1).
+- Class volumes are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Class volume prefix** and **Class volume suffix** parameters. The prefix and/or suffix must contain a wildcard character (*), which will be replaced by the class index in the file name.
+
+Toggle **Anistropic diffusion image filter...** button to show/hide filtering settings (see :ref:`menu-section-filter-anisodiff`).
+
+Toggle **Bias field correction image filter...** button to show/hide bias field correction settings (see :ref:`menu-section-biasfield`).
+
+Left-click **Execute** button to perform K-Means segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+.. _menu-section-skull:
+
+Skull stripping
+---------------
+
+This menu is used to perform MR skull stripping using deep-learning U-net pre-trained models.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select PySisyphe **Volume(s)**.
+
+The parameters are as follows:
+
+- Select the pre-trained model: *ANTs U-net*, *DeepBrain U-net* or *OpenMAP*. The latest model *OpenMAP* is the most effective, but it takes significantly longer to process.
+- Select the training modality: *T1*, *T1 FreeSurfer*, *T1 ANTs/FreeSurfer*, *T2*, *T2star*, *FLAIR*, *EPI*, *FA* or *TOF*. This menu is only available for the *ANT U-Net* model. The training modality for the other two models is always *T1*.
+- Check **Save brain mask** to save the binary mask of the brain (without skull).
+- Check **Save brain mask as ROI** to save the binary mask of the brain as a PySisyphe ROI (.xroi).
+- Mask ROI is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Brain mask prefix** and **Brain mask suffix** parameters.
+- Check **Save brain probability** to save the probability mask of the brain (without skull). This menu is only available for the *ANTs U-net*, *DeepBrain U-net* models.
+- Mask probability volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Brain probability prefix** and **Brain probability suffix** parameters.
+- Skull stripped volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Skull stripped prefix** and **Skull Stripped suffix** parameters.
+
+Left-click **Execute** button to perform skull stripping.
+
+Left-click **Close** button to exit dialog box without skull stripping.
+
+.. _menu-section-atropos:
+
+Mixture model tissue segmentation
+---------------------------------
+
+**We recommend replacing this algorithm with the deep learning version** :ref:`menu-section-tissue` **which is more efficient and faster**.
+
+This menu is used to compute tissue probability maps (gray matter, white matter and cerebro-spinal fluid) with a finite mixture modeling (FMM) segmentation approach with prior constraints. These prior constraints include the specification of prior probability images (one for each class), and MRF prior to enforce spatial smoothing of the labels. Similar algorithms include FAST and SPM. This prior based segmentation provides an Expectation-Maximization framework for statistical segmentation where the intensity profile of each class is modeled as a mixture model and spatial smoothness is enforced by MRF prior. Initial labeling can be performed by kmeans clustering, a set of user-specified prior probability volumes. If specified, the latter initialization option are also used as priors in the MRF update step. The assumed labeling is such that classes are assigned consecutive indices 1, 2, 3, etc. Label 0 is reserved for the background when a mask is specified. The result is a probability volume for each class and a tissue labeled volume. PySisyphe uses the `ANTs <https://antspy.readthedocs.io/en/latest/segmentation.html>`_ package.
+
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC3297199/>`_: An open source multivariate framework for n-tissue segmentation with evaluation on public data. BB Avants, NJ Tustison, J Wu, PA Cook, JC Gee. Neuroinformatics, 2011 Dec, 9(4):381-400.
+
+Anisotropic diffusion filtering and bias field correction can be performed before the segmentation stage.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select PySisyphe **Volume(s)**.
+
+Toggle **Prior based segmentation...** button to show/hide segmentation parameters:
+
+- Check **Anisotropic diffusion filter** to perform this prerprocessing.
+- Check **Bias filed correction** to perform this prerprocessing.
+- Use the **Number of iterations** spinbox the define maximum number of iterations.
+- Use the **MRF smoothing factor** spinbox to define label smoothness, higher value is smoother (default 0.1).
+- Use the **MRF neighborhood radius** spinbox to define the MRF kernel extent in voxels used for label smoothing (default 1).
+- Use the **Convergence threshold** combobox to define the stopping criterion as a threshold of the mean maximum posterior probability variation between two iterations.
+- Use the **Priors** combobox to select prior probability images (*ICBM152* or *ATROPOS* or *CUSTOM* tissue probability templates) or calculated prior images (*K-Means algorithm*). When the *CUSTOM* option is selected, file selection widgets are displayed to select custom prior images:
+
+	- Select a custom **T1 template** volume (.xvol).
+	- Select a custom **Mask template** volume (.xvol).
+	- Select a custom **Gray matter prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 3.
+	- Select a custom **Cortical gray matter prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 4 or 6.
+	- Select a custom **Sub-cortical gray matter prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 4 or 6.
+	- Select a custom **White matter matter prior** volume (.xvol).
+	- Select a custom **Cerebro-spinal fluid prior** volume (.xvol).
+	- Select a custom **Brainstem prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 6.
+	- Select a custom **Cerebellum prior** volume (.xvol). This option is displayed only for a **number of classes** equal to 6.
+	- All these images must be in the same space (i.e., same transform/space ID).
+
+- Use the **Number of classes** spinbox to specify the number of tissue classes: 3 (gray matter, white matter, cerebro-spinal fluid), 4 (cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid) or 6 (cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid, brainstem, cerebellum).
+- Use the **Prior weight** spinbox to define the prior probability image weight in the the intensity profile of each class modelization: 0 (priors used for initialization only), 0.25 or 0.5.
+- Use the **Prior FWHM smoothing** spinbox to define the full width at half maximum (FWHM) of the Gaussian kernel, which is used for prior probability image smoothing, in millimeters (mm). The default is zero, meaning that no smoothing is applied.
+- Use the **Priors registration** combobox to select the type of geometric transformation (*affine* or *diffeomorphic*) used for coregistration between the prior probability images and the volume to be segmented.
+- Select method used to initialize translations for prior probability images coregistration with the **Priors registration estimation** combobox: *FOV center alignment* (default), *center of mass alignment* or *no estimation* (translations and rotations to 0.0).
+- The segmentation is restricted within a prior mask, which can be enlarged using the dilatation morphology operator. Set the kernel radius, expressed in voxels, using the **Kernel radius dilatation of prior mask** spin box.
+- Morphology operators are used for skull stripping, set the kernel radius expressed in voxels with the **Kernel radius morphology for brain extraction** spinbox.
+- Check **Skull strip** to save skull stripped volume.
+- Check **Labeled volume excluding subcortical gray matter** to save labeled volume without subcortical gray matter label.
+- A tissue labeled volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Labeled volume prefix** and **Labeled volume suffix** parameters.
+
+Toggle **Anistropic diffusion image filter...** button to show/hide filtering settings (see :ref:`menu-section-filter-anisodiff`).
+
+Toggle **Bias field correction image filter...** button to show/hide bias field correction settings (see :ref:`menu-section-biasfield`).
+
+Toggle **Resample...** button to show/hide resampling settings:
+
+- Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
+- Resampled moving volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+- Spatial normalized volume is saved with its original file name, which is prefixed and/or suffixed by the strings edited in the **Normalization prefix** and **Normalization suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+.. _menu-section-thickness:
+
+Cortical thickness
+------------------
+
+This menu is designed to compute cortical thickness using the DiReCT algorithm (Diffeomorphic Registration-based Cortical Thickness measurement). DiReCT is a registration based estimate of cortical thickness. To guide the deformation, DiReCT constructs a gradient field from the segmented cortical surfaces (WM/GM and GM/CSF). This field acts as an external force that pushes the white matter surface toward the pial surface. PySisyphe uses the `ANTs <https://antspy.readthedocs.io/en/latest/segmentation.html>`_ package. **This is a computationally intensive process that may take longer than 30 minutes**.
+
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC2836782/>`_: Registration based cortical thickness measurement. SR Das, BB Avants, M Grossman, and JC Gee. Neuroimage 2009, 45:867-879.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select PySisyphe **Label map(s) - Three tissue labels**. These maps are calculated from the :ref:`menu-section-atropos` or :ref:`menu-section-tissue` menus. This is an image in which the csf, gray matter, and white matter voxels are all labeled with values of 1, 2, Ind 3, respectively.
+
+Use the :ref:`widgets-section-multi-file` widgets below to select **Gray matter map(s)** and **White matter map(s)**. These maps are also calculated from the :ref:`menu-section-atropos` or :ref:`menu-section-tissue` menus.
+
+Toggle **Settings...** button to show/hide cortical thickness parameters.
+
+- Select the **Number of iterations** with the spinbox (default 50).
+- Cortical thickness volume is saved with the label map file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+- Set the **Gradient step** (default 0.025), which is a parameter of the gradient descent optimization used in the coregistration processing. It is a factor required for gradient update at each iteration.
+- Set the **Gradient smoothing** (default 1.0), which is the gaussian kernel extent, expressed in voxels, used for gradient field smoothing to obtain a more regular and anatomically plausible field. In practice, this smoothing prevents noisy deformation trajectories and ensures that the measured thickness corresponds to an average cortical distance rather than a series of micro-irregularities from the segmentation. Values that are too high (> 3) can over-smooth and bias the thickness in thin regions.
+- Cortical thickness volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+
+Left-click **Execute** button to perform cortical thickness processing.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-regsegmentation:
+
+Registration based segmentation
+-------------------------------
+
+This menu is used to perform a registration based segmentation. Instead of trying to classify each voxel directly from scratch, as in clustering or deep learning, registration-based segmentation uses reference atlas images (templates) with known anatomical labels (structures). By coregistering an atlas image to a subject’s image, the structures from the atlas can be transferred to the subject, providing a segmentation. Structures can be binary images (mask) or probability images.
+
+The algorithm runs in two stages. First, it performs a global coregistration of the whole brain. Then, it makes fine local coregistration restricted to the structural area.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
+
+Use the :ref:`widgets-section-multi-file` widgets below to select PySisyphe **Gray matter map(s)**, **White matter map(s)** and **CSF map(s)** of the volume(s) to be segmented. These widgets will only be displayed if the item selected in the **Sequence used for registration** combobox is not "T1".
+
+Toggle **Registration based segmentation...** button to show/hide parameters.
+
+- Set the template modality used as reference atlas with the **Sequence used for registration** combobox. *MR T1*, *gray matter map* (GM), *white matter map* (WM), or *cerebrospinal fluid* (CSF) are all possible options.
+- Select the global coregistration algorithm using the **Global stage transform** combobox:
+
+	- *AntsAffine*: single step of affine coregistration (no diffeomorphic step), 4 multiresolution stages with last at full resolution.
+	- *AntsFastAffine*: single step of affine coregistration (no diffeomorphic step), fast scheme with only 3 multiresolution stages, and no iteration at full resolution. 
+	- *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+	- *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+	- *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+	- *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+
+- Check **Local stage** to perform a fine coregistration step, after the intial global registration step, which is restricted to the structure area.
+- Set the **Local margin**, define the local coregistration area as the volume of the structure to be segmented, enlarged by a margin expressed in voxels.
+- Select the local registration algorithm using the **Local stage transform** combobox:
+
+	- *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+	- *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+	- *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+	- *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+
+- Select the subsampling used to calculate similarity function using the **Sampling rate** spinbox. The range is between 1.0 (no subsampling, all voxels are used to process similarity function) and lower values greater than 0.0, which indicate the ratio of voxels used to process the similarity function under regular subsampling.
+- After the coregistration step, the structure can be corrected using either a *tissue map* or a *nearest neighbor transform*. Select this option from the **Tissue correction algorithm** combobox. The tissue map used for correction is chosen from the **Struture tissue** combobox. This can be *gray matter map* (GM), *white matter map* (WM), *cerebro-spinal map* (CSF), *gray matter/white matter mixture map* (GM+WM) or *gray matter/cerebro-spinal mixture map* (CFS+GM). If the structure is a binary image, the mask correction is simply a binary AND between the tissue mask and the structure. If the structure is a probability image, the mask correction is performed using a formula selected from the **Probability map correction** combobox.
+
+Left-click **Save struct settings** button to save **Structure** and **Template** fields (structure and template file names) with **Registration based segmentation...** parameters in an XML file. The default name is derived from the **Structure** file name with an XML extension. The default folder is the "segmentation" subfolder located in the PySisyphe user folder ($User/.PySisyphe). 
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+.. _menu-section-structs:
+
+Structs
+-------
+
+This menu displays a tree structure of submenus for loading a struct XML file from the PySisyphe template subfolders or the "segmentation" subfolder within the PySisyphe user folder ($User/.PySisyphe).
+
+Select a struct item to open it in the :ref:`menu-section-regsegmentation` dialog box.
+
+.. _menu-section-parcellation:
+
+Deep-learning Atlas parcellation
+--------------------------------
+
+This menu is designed to perform MR T1 parcellation into the 280 anatomical structures of the `JHU MNI atlas <https://github.com/OishiLab/JHU-MNI-Eve-atlas/blob/main/README.md>`_. The PySisyphe code is a fork of the `OpenMapT1 <https://github.com/OishiLab/OpenMAP-T1/tree/main>`_ package. The parcellation is saved as a label volume.
+
+`OpenMapT1 <https://github.com/OishiLab/OpenMAP-T1/tree/main>`_ integrates several convolutional neural network models across six stages: preprocessing, cropping (centers and crops image around the brain), skull stripping, parcellation, hemisphere segmentation, and final merging. This process involves standardizing MRI images, isolating the brain tissue, and parcellating it into 280 anatomical structures that cover the whole brain, including detailed gray and white matter structures, while simplifying the parcellation processes and incorporating robust training to handle various scan types and conditions.
+
+.. admonition:: Reference
+
+	`Article <https://onlinelibrary.wiley.com/doi/full/10.1002/hbm.70063>`_: OpenMAP-T1: A Rapid Deep-Learning Approach to Parcellate 280 Anatomical Regions to Cover the Whole Brain. Nishimaki K, Onda K, Ikuta K, Chotiyanonta J, Uchida Y, Mori S, Iyatomi H, Oishi K,Alzheimer's Disease Neuroimaging Initiative; Australian Imaging Biomarkers and Lifestyle Flagship Study of Ageing. Hum Brain Mapp. 2024 Nov;45(16):e70063.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be processed.
+
+Toggle **Atlas parcellation...** button to show/hide parameters.
+
+- Check **Bias field correction** to peform a bias field correction of the T1 before the parcellation processing.
+- Choose the type(s) of parcellation map(s) to save by checking **Save x labels volume** boxes. There are five increasing levels of parcellation available: 8, 20, 58, 144 and 280 labels.
+- Label volumes are saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters. The '*' char in the prefix/suffix is replaced by the number of labels of the current map.
+- The cropped volume is saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the **Cropped volume prefix** and **Cropped volume suffix** parameters.
+- The skull stripped volume is saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the **Stripped volume prefix** and **Stripped volume suffix** parameters.
+
+Left-click **Execute** button to perform parcellation.
+
+Left-click **Cancel** button to close dialog box without parcellation.
+
+.. _menu-section-fcd:
+
+Deep-learning Focal cortical dysplasia detection
+------------------------------------------------
+
+This menu is designed to perform focal cortical dysplasia (FCD) detection using deep-learning pre-trained model. Two MR sequences could be given: T1 and FLAIR. The brain mask, on the other hand, is optional. All of these volumes must be coregistered and resampled using the same space/transform ID. The FCD segmentation is saved as a probability map. **This is a computationally intensive process that may take longer than 30 minutes**.
+
+
+The PySisype code is a fork of the `deepFCD <https://github.com/NOEL-MNI/deepFCD>`_ package. This model is applied voxel by voxel, using image subregions (patches) consisting of 16 x 16 x 16 voxels centered on each voxel to be classified in the analysis mask.
+
+.. admonition:: Reference
+
+	`Article <https://europepmc.org/article/med/34521691>`_: Multicenter Validation of a Deep Learning Detection Algorithm for Focal Cortical Dysplasia. Ravnoor Singh Gill, H.-M. Lee, B. Caldairou, S.-J. Hong, C. Barba, F. Deleo, L. D'Incerti, V.C. Mendes Coelho, M. Lenge, M. Semmelroch, D.V. Schrader, F. Bartolomei, M. Guye, A. Schulze-Bonhage, H. Urbach, K.H. Cho, F. Cendes, R. Guerrini, G. Jackson, R. E. Hogan, N. Bernasconi, A. Bernasconi. Neurology, 2021 97(16), e1571–e1582.
+
+Use the first :ref:`widgets-section-multi-file` widget to select **T1** PySisyphe volume(s) to be analyzed.
+
+Use the second :ref:`widgets-section-multi-file` widget to select **FLAIR** PySisyphe volume(s) to be analyzed. This volume must be coregistered with the T1 volume (same space/transform ID).
+
+Use the third :ref:`widgets-section-multi-file` widget to select **Mask** PySisyphe volume(s). A brain mask of the T1 (OT modality, MASK sequence, same space/transform ID as T1) can be obtained from the :ref:`menu-section-skull` menu. The mask is optional, this widget can be left blank. In that case, a mask is automatically calculated based on the FLAIR.
+
+Toggle **FCD detection...** button to show/hide parameters.
+
+- Check **Bias field correction** to peform a bias field correction of the T1 and FLAIR before the detection processing.
+- Set the **Normalized FLAIR Threshold** value, which is used to calculate the analysis mask, should be set between 0.1 and 1.0. This parameter is not used if a mask is selected.
+- the **Batch size** is an internal parameter used to limit memory usage. It is not recommended to change the default value (8192); unless you encounter out-of-memory issues, use a lower batch size value.
+- Set the **FCD map smoothing** value, full width at hall maximum of the gaussian kernel in mm used to smooth the FCD probability map. Set it to 0.0 to disable smoothing.
+- The FCD probability map is saved with the original T1 file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+
+Left-click **Execute** button to perform FCD detection.
+
+Left-click **Cancel** button to close dialog box without dtection.
+
+Sample volumes (FCD) can be downloaded from the :ref:`menu-section-download` to test this processing.
+
+.. _menu-section-hipp:
+
+Deep-learning Hippocampus segmentation
+--------------------------------------
+
+This menu is designed to perform hippocampal segmentation using deep-learning U-net pre-trained model. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ package. The segmentation is saved as a label volume. A voxel is labeled 1 for the right hippocampus and 2 for the left.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
+
+Toggle **Unet hippocampus segmentation...** button to show/hide parameters.
+
+- Check **Save ROI** if you also want to save the result as a PySisyphe ROI (xroi).
+- The label volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Label segmentation prefix** and **Label segmentation suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.
+
+.. _menu-section-lesion:
+
+Deep-learning Hypo-intensity lesion segmentation
+------------------------------------------------
+
+This menu is designed to perform T1 hypo-intensity lesion segmentation, such as stroke sequelae, using deep-learning U-net pre-trained model. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ package. The lesion is saved as a probability map.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
+
+Toggle **Unet lesion segmentation...** button to show/hide parameters.
+
+- Check **Save ROI** if you also want to save the result as a PySisyphe ROI (xroi).
+- The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Probability map prefix** and **Probability map suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.
+
+.. _menu-section-temporal:
+
+Deep-learning Medial temporal segmentation
+------------------------------------------
+
+This menu is designed to perform medial temporal segmentation using deep-learning U-net pre-trained models. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ package. The segmentation is saved as a label volume.
+
+Two models are available:
+
+	- **yassa**, which segments the following structures: anterior-lateral entorhinal, posterior-medial entorhinal, perirhinal, parahippocampal, DG-CA2-CA3-CA4, CA1 and subiculum.
+	- **wip**, wich segments the following structures: parasubiculum, subiculum, CA1, CA2-CA3, CA4, granule cell layer of dentate gyrus, molecular layer, fissure, tail, amygdala lateral nucleus, amygdala basal nucleus, amygdala accessory basal nucleus, amygdala cortico-amygdaloid transition, amygdala anterior amygdaloid area.
+
+.. admonition:: Reference
+
+	`Hippocampal subfields <https://pmc.ncbi.nlm.nih.gov/articles/PMC4461537/>`_: A computational atlas of the hippocampal formation using ex vivo, ultra-high resolution MRI: Application to adaptive segmentation of in vivo MRI. Iglesias J.E., Augustinack J.C., Nguyen K., Player C.M., Player A., Wright M., Roy N., Frosch M.P., McKee A.C., Wald L.L., Fischl B., Van Leemput K. Neuroimage. 2015 Apr 29;115:117–137.
+
+	`Amygdala nuclei <https://pmc.ncbi.nlm.nih.gov/articles/PMC5557007/>`_: High-resolution magnetic resonance imaging reveals nuclei of the human amygdala: manual segmentation to automatic atlas. Saygin Z.M., Kliemann D., Iglesias J.E., van der Kouwe A.J.W., Boyd E., Reuter M., Stevens A., Van Leemput K., McKee A., Frosch M.P., Fischl B., Augustinack J.C. Neuroimage. 2017 May 4;155:370–382.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
+
+Use the :ref:`widgets-section-multi-file` widget below to select **T2** PySisyphe volume(s) to be segmented. This widget will only be displayed if the **Use T2** parameter is checked. T1 and T2 volumes must be coregistered and resampled using the same space/transform ID.
+
+Toggle **Unet lesion segmentation...** button to show/hide parameters.
+
+- Check **Use T2** to perform segmentation using two sequences T1 and T2, rather than just T1.
+- Select the pre-trained model *yassa* or *wip*.
+- Check **Save probability maps** if you want to save each label as a probability map.
+- Check **Save ROI** if you also want to save the result as a PySisyphe ROI (xroi).
+- The label volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Label segmentation prefix** and **Label segmentation suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+Sample volume can be downloaded from the :ref:`menu-section-download` to test this processing.
+
+.. _menu-section-meta:
+
+Deep-learning Metastasis segmentation
+-------------------------------------
+
+This menu is designed to perform metastasis segmentation using deep-learning pre-trained model from post-contrast black blood T1 sequences. The segmentation is saved as a probability map.
+
+The code in PySisype is a fork of the `RLK Unet <https://github.com/nibabel/RLK-Unet>`_ package.
+
+.. admonition:: Reference
+
+	`Article <https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2023.1273013/full>`_: Development of RLK-Unet: A clinically favorable deep learning algorithm for brain metastasis detection and treatment response assessment. Son S., Joo B., Park M., Suh S.H., Oh H.S., Kim J.W., Lee S., Ahn S.J., Lee J.-M. Front Oncol. 2024 Jan 15:13:1273013.
+
+Toggle **Metastasis segmentation...** button to show/hide parameters.
+
+- Check **Bias field correction** to peform a bias field correction of the T1 before the segmentation processing.
+- Set the extent **Threshold** in voxels, which is used to remove small noise-related detections.
+- The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+Sample volume (CT1BB) can be downloaded from the :ref:`menu-section-download` to test this processing.
+
+.. _menu-section-microbld:
+
+Deep-learning Microbleeds segmentation
+--------------------------------------
+
+This menu is designed to perform microbleeds segmentation using deep-learning pre-trained model from SWI or T2* sequences. The segmentation is saved as a probability map.
+
+The code in PySisype is a fork of the `SHIVA_CMB <https://github.com/pboutinaud/SHIVA_CMB/tree/main>`_ package.
+
+.. admonition:: Reference
+
+	`Article <https://www.nature.com/articles/s41598-024-81870-5>`_: SHIVA-CMB: a deep-learning-based robust cerebral microbleed segmentation tool trained on multi-source T2*GRE- and susceptibility-weighted MRI. Tsuchida A., Goubet M., Boutinaud P., Astafeva I., Nozais V., Hervé P.Y., Tourdias T., Debette S., Joliot M. Sci Rep. 2024 Dec 28;14(1):30901.
+
+Toggle **Microbleeds segmentation...** button to show/hide parameters.
+
+- There are three models available, which can be selected individually using the first three checkboxes: **Use first model**, **Use second model**, and **Use third model**. If several models are selected (all models by default), the final map is a combination of the maps generated by each model.
+- Check **Save Mask** if you also want to save the result as a PySisyphe (xvol) mask.
+- Set the probability **Threshold**, between 0.0 and 1.0, which is used to process the mask. This option is only active if **Save Mask** is checked.
+- The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+Sample volume (SWI) can be downloaded from the :ref:`menu-section-download` to test this processing.
+
+.. _menu-section-tissue:
+
+Deep-learning Tissue segmentation
+---------------------------------
+
+This menu is used to compute tissue segmentation (gray matter, white matter and cerebro-spinal fluid) using deep-learning U-net pre-trained model. This function serves as an alternative to the mixture model approach (:ref:`menu-section-atropos`). The segmentation is saved as a label volume. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ package implemenentation.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
+
+Toggle **Unet tissue segmentation...** button to show/hide parameters.
+
+- Check **Save probability maps** if you also want to save the result as tissue probability maps.
+- Check **Save ROI** if you also want to save the result as a PySisyphe ROI (xroi).
+- The label volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Label segmentation prefix** and **Label segmentation suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+.. _menu-section-tumor:
+
+Deep-learning Tumor clustering
+------------------------------
+
+This menu is used to compute tumor clustering in three classes: peritumoral oedema (FLAIR/T2 hyper-intensity, T1 hypo-intensity), enhancing tumor core, and non-enhancing tumor core. Four MR sequences could be given: FLAIR, T1, contrast-enhanced T1 and T2. All of these volumes must be coregistered and resampled using the same space/transform ID. The segmentation is saved as a label volume and three mask volumes. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_  package implemenentation.
+
+Use the :ref:`widgets-section-multi-file` widget to select **FLAIR** PySisyhpe volume(s) to be segmented.
+Use the :ref:`widgets-section-multi-file` widget to select **T1** PySisyhpe volume(s) to be segmented.
+Use the :ref:`widgets-section-multi-file` widget to select **Contrast-enhanced T1** PySisyhpe volume(s) to be segmented.
+Use the :ref:`widgets-section-multi-file` widget to select **T2** PySisyhpe volume(s) to be segmented.
+
+Toggle **Unet tumor segmentation...** button to show/hide parameters.
+
+- Check **Save ROI** if you also want to save the result as a PySisyphe ROI (xroi).
+- The label volume is saved with the contrast-enhanced T1 file name, which is prefixed and/or suffixed by the strings edited in the **Label segmentation prefix** and **Label segmentation suffix** parameters. The masks are saved with the contrast-enhanced T1 file name, suffixed with "ed" for the peritumoral oedema label, "et" for the enhancing tumor core label and "net" for non-enhancing tumor core label.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.
+
+.. _menu-section-wmh:
+
+Deep-learning White matter hyper-intensities segmentation
+---------------------------------------------------------
+
+This menu is designed to perform white matter hyper-intensities segmentation, such as multiple sclerosis or vasculo-degenerative lesions. The segmentation is saved as a probability map. PySisyphe uses the `ANTsPyNet <https://github.com/ANTsX/ANTsPyNet>`_ package implemenentation.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **FLAIR** PySisyphe volume(s) to be segmented.
+
+Use the :ref:`widgets-section-multi-file` widget below to select **T1** PySisyphe volume(s) to be segmented. This widget will only be displayed if the **Use T1** parameter is checked. FLAIR and T1 volumes must be coregistered and resampled using the same space/transform ID.
+
+Toggle **Unet whm segmentation...** button to show/hide parameters.
+
+- Check **Use T1** to perform segmentation using two sequences FLAIR and T1, rather than just FLAIR.
+- Select the pre-trained model *sysu*, *hypermapp3r* or *antsxnet*.
+- Check **Save ROI** if you also want to save the result as a PySisyphe ROI (xroi).
+- The probability map is saved with the original FLAIR file name, which is prefixed and/or suffixed by the strings edited in the **Label segmentation prefix** and **Label segmentation suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
+Sample volumes can be downloaded from the :ref:`menu-section-download` to test this processing.

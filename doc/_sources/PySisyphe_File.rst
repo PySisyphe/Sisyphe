@@ -1,0 +1,709 @@
+.. _page-file:
+
+File menu
+=========
+
+- :ref:`menu-section-open`
+- :ref:`menu-section-opentemplate`
+- :ref:`menu-section-openformat`
+- :ref:`menu-section-recent`
+- :ref:`menu-section-openuser`
+- :ref:`menu-section-opentemplate2`
+- :ref:`menu-section-save`
+- :ref:`menu-section-saveall`
+- :ref:`menu-section-saveas`
+- :ref:`menu-section-saveformat`
+- :ref:`menu-section-close`
+- :ref:`menu-section-closeall`
+- :ref:`menu-section-preferences`
+- :ref:`menu-section-download`
+- :ref:`menu-section-update`
+- :ref:`menu-section-attributes`
+- :ref:`menu-section-id`
+- :ref:`menu-section-anonymize`
+- :ref:`menu-section-editlabels`
+- :ref:`menu-section-roitolabels`
+- :ref:`menu-section-volumetolabels`
+- :ref:`menu-section-labelstoroi`
+- :ref:`menu-section-labelstomask`
+- :ref:`menu-section-labelsremap`
+- :ref:`menu-section-import`
+- :ref:`menu-section-export`
+- DICOM >
+	- :ref:`menu-section-dcmimport`
+	- :ref:`menu-section-dcmrtimport`
+	- :ref:`menu-section-dcmexport`
+	- :ref:`menu-section-dcmquery`
+	- :ref:`menu-section-dcmdataset`
+	- :ref:`menu-section-xmldcm`
+- :ref:`menu-section-editlut`
+- :ref:`menu-section-quit`
+
+.. _menu-section-open:
+
+Open
+----
+
+This menu displays a file selection dialog box to open a PySisyphe volume (.xvol) in the thumbnail bar.
+
+You can also:
+
+- double-click on an empty space in the thumbnail bar,
+- right-click on an empty space in the thumbnail bar to display a popup menu and then select **open volume** submenu,
+- Left-click |open| button in the toolbar.
+
+.. _menu-section-opentemplate:
+
+Open template
+-------------
+
+This menu displays a tree structure of submenus for the available template volumes (.xvol) in PySisyphe. 
+
+Left-click on a template volume menu item to open it in the thumbnail bar.
+
+Left-click the last sub-menu, **Open template folder**, to open the PySisyphe template folder in the File Manager (Windows) or Finder (MacOS).
+
+.. _menu-section-openformat:
+
+Open from format
+----------------
+
+Select a submenu to open an image in one of the following image formats: Nifti (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd (.nrrd, .nhdr), Minc (.mnc), FreeSurfer (.mgh, .mgz), Sisyphe (.vol), BrainVoyager (.vmr), VTK (.vti, .vtk).
+
+Each submenu displays a file selection dialog to open a volume in the thumbnail bar.
+
+You can also click |open-nii| |open-nrrd| |open-mnc| |open-mgh| |open-vol| |open-vmr| |open-vtk| buttons in the toolbar.
+
+Sample volumes of various formats (Brainvoyager, FreeSurfer, NRRD) can be downloaded from the :ref:`menu-section-download` for testing.
+
+.. _menu-section-recent:
+
+Open recent
+-----------
+
+This menu displays a list of the last ten volumes (.xvol) opened in PySisyphe. This list is stored in the recent.xml file located in the PySisyphe user folder ($User/.PySisyphe).
+Left-click on a volume menu item to open it in the thumbnail bar.
+
+Left-click the last submenu, **Clear**, to clear the list.
+
+.. _menu-section-openuser:
+
+Open user folder
+----------------
+
+Open the PySisyphe user folder (~/.PySisyphe) in the File Manager (Windows) or Finder (MacOS).
+
+This folder is used to store:
+
+- PySisyphe settings files (functions.xml, settings.xml)
+- list of the last ten volumes loaded into PySisyphe (recent.xml)
+- PySisyphe log file (PySisyphe.log)
+- "controls" subfolder, default folder for saving controls downloaded from :ref:`menu-section-download`.
+- "database" subfolder, default folder of the PySisyphe patient database (:ref:`Database manager <page-database>`).
+- "dicom" subfolder, default folder for saving dicom files downloaded from :ref:`menu-section-dcmquery`.
+- "models" subfolder, default folder for saving voxel-by-voxel statistical models (menu Mapping > Model). Shortcuts to the models in this folder are available in the menu **Mapping > Model > Models**. 
+- "samples" subfolder, default folder for saving samples downloaded from :ref:`menu-section-download`.
+- "segmentation" subfolder, default folder for saving registration based struct segmentation (menu Segmentation -> Registration based segmentation). Shortcuts to the structs in this folder are available in the menu **Segmentation > Structs > User**.
+- "workflow" subfolder, default folder for saving workflow processings (menu **Functions > Workflow processing**). Shortcuts to the workflows in this folder are available in the menu **Functions > Workflow**.
+
+.. _menu-section-opentemplate2:
+
+Open template folder
+--------------------
+
+Open the PySisyphe template folder in the File Manager (Windows) or Finder (MacOS).
+
+.. _menu-section-save:
+
+Save
+----
+
+Save the reference volume (thumbnail with blue border) in the thumbnail bar. No effect if no reference volume is available in the thumbnail bar.
+
+You can also click |save| button in the toolbar.
+
+.. _menu-section-saveall:
+
+Save all
+--------
+
+Save all the volumes opened in the thumbnail bar.
+
+You can also click |saveall| button in the toolbar.
+
+.. _menu-section-saveas:
+
+Save as
+-------
+
+Save the reference volume (thumbnail with blue border) in the thumbnail bar. Displays a file dialog box to edit a new file name and save the reference volume.
+
+.. _menu-section-saveformat:
+
+Save to format
+--------------
+
+Select a submenu to save the reference volume (thumbnail with blue border) in the thumbnail bar with one of the following image formats: Nifti (.nii), Numpy (.npy), Nrrd (.nrrd), Minc (.mnc), vtk (.vti). Each submenu displays a file dialog to save the reference volume.
+
+You can also click |save-nii| |save-npy| |save-nrrd| |save-mnc| |save-vtk| buttons in the toolbar.
+
+.. _menu-section-close:
+
+Close
+-----
+
+Close the reference volume (thumbnail with blue border) and remove it from the thumbnail bar. Viewing widgets in the central area are closed. No effect if no reference volume is available in the thumbnail bar.
+
+You can also click |close| button in the toolbar.
+
+.. _menu-section-closeall:
+
+Close all
+---------
+
+Close all the volumes opened in the thumbnail bar. Viewing widgets in the central area are closed.
+
+You can also click |closeall| button in the toolbar.
+
+.. _menu-section-preferences:
+
+Preferences
+-----------
+
+This menu displays the **Preferences** dialog box. You can also click |settings| button in the toolbar.
+
+This dialog box shows a tree structure of the settings sections on the left. Left-click on **>** button before the section name to display the subsections. Left-click to select a subsection and display its attributes in the right-hand side of the dialog box.
+
+The Settings sections are as follows:
+
+- **General**
+
+	- GUI: general GUI parameters (:ref:`page-toolbar` size and visibility, :ref:`page-thumbnailbar` size, icon size, font name and size).
+	- Tolbbar icons: :ref:`page-toolbar` icons visibility. Left-click on |view| icon to toggle visibility.
+	- Viewport: display parameters of the central area view widgets (icon size, line width and opacity, various visibility options).
+	- ROI: ROI Tools tab of the dock (:ref:`tools-section-brush-settings`).
+	- Mesh: Mesh tab of the dock (:ref:`mesh-section-mesh-settings`).
+	- Tools: Target/Trajectory tab of the dock (:ref:`page-dockroitools`).
+	- Bundles: Tracking tab of the dock (:ref:`page-docktracking`).
+	- Templates: default template volume for various modalities/sequences (MR T1/T2/PD/FLAIR, FDG PET; HMPAO SPECT; tissue probability maps i.e. GM, SCGM, WM, CSF, Brainstem, cerebellum; Brain mask).
+	- Database: patient database folders.
+	- Gemini: Google Gemini AI settings (API key: get your API key from Google AI Studio https://aistudio.google.com/api-keys, model name).
+	- Dicom host: Dicom SCP host parameters of the :ref:`menu-section-dcmquery`
+
+- **Filters**
+
+	Edit default parameters of some processings in the **Functions** menu (:ref:`menu-section-neck`, :ref:`menu-section-filter-mean`, :ref:`menu-section-filter-median`, :ref:`menu-section-filter-gaussian`, :ref:`menu-section-filter-gradient`, :ref:`menu-section-filter-laplacian`, :ref:`menu-section-filter-anisodiff`, :ref:`menu-section-matching-hist`, :ref:`menu-section-matching-reg`, :ref:`menu-section-norm`, :ref:`menu-section-biasfield`).
+
+- **Segmentation**
+
+	Edit default parameters of some processings in the **Segmentation** menu (:ref:`menu-section-skull`, :ref:`menu-section-kmclustering`, :ref:`menu-section-kmsegmentation`, :ref:`menu-section-atropos`, :ref:`menu-section-thickness`, :ref:`menu-section-regsegmentation`, :ref:`menu-section-hipp`, :ref:`menu-section-temporal`, :ref:`menu-section-lesion`, :ref:`menu-section-tissue`, :ref:`menu-section-tumor`, :ref:`menu-section-wmh`).
+
+- **Registration**
+
+	Edit default parameters of some processings in the **Registration** menu (:ref:`menu-section-rigid`, :ref:`menu-section-affine`, :ref:`menu-section-field`; :ref:`menu-section-icbm` i.e. T1 normalization, T2 normalization, PD normalization, PET normalization, SPECT normalization, GM normalization, WM normalization, CSF normalization subsections; Eddy current correction; :ref:`menu-section-align` i.e. Realignment subsection; :ref:`menu-section-eddy`; :ref:`menu-section-resample`; :ref:`menu-section-jacob`).
+
+- **Mapping**
+
+	Edit default parameters of some processings in the **Mapping** menu (:ref:`menu-section-conjunction`, :ref:`menu-section-seriespreproc` i.e. Clean time series section, :ref:`menu-section-seriesica`, :ref:`menu-section-seriesseed`, :ref:`menu-section-seriescorr`, :ref:`menu-section-dsc`).
+
+- **Diffusion**
+	Edit default parameters of some processings in the **Diffusion** menu (:ref:`menu-section-preprocessing` i.e. PCA denoise, NLMeans denoise, Self supervised denoise subsections; :ref:`menu-section-diffmodel` i.e. DTI model, DKI model, SHCSA model, SHCSD model subsections; :ref:`menu-section-tractogram` i.e. Tracking subsection; :ref:`menu-section-roisel` i.e. Bundle ROI selection subsection; :ref:`menu-section-filtersel` i.e. Bundle filtering and Bundle clustering subsections; :ref:`menu-section-templatesel` i.e. Bundle atlas selection subsection), or the **Tracking** dock tab (:ref:`page-docktracking`, Bundle to ROI subsection).
+
+Left-click **Default** button to reset settings to their default values.
+
+Left-click **Apply** button to apply settings, in particular to see the result of changing the general GUI, Toolbar icons and viewport settings.
+
+Left-click **Cancel** button to close dialog without saving.
+
+Left-click **OK** button to save settings and close dialog.
+
+.. _menu-section-download:
+
+Download manager
+----------------
+
+This menu displays the **Download manager** dialog box to download various contents from the PySisyphe cloud server. The content titles are displayed in a list on the left side of the dialog box. Left-click to select a content title and display items available for download in the right-hand side of the dialog box. Each item has a checkbox. Check all the items you want to download. Content that has already been downloaded is disabled.
+
+Left-click **Uncheck all** button to uncheck all items.
+
+Left-click **Download** button to download all checked items. No effect if nothing is checked.
+
+Left-click **Close** button to exit dialog box.
+
+Contents:
+
+- **Templates**, various template volumes
+
+	- Allen, https://community.brain-map.org/t/allen-human-reference-atlas-3d-2020-new/405
+	- Atropos, https://mindboggle.info/data.html
+	- Arterial, https://www.nitrc.org/projects/arterialatlas/
+	- Atag, https://www.nitrc.org/projects/atag
+	- Brainnav, https://www.nitrc.org/projects/brainstemnavig
+	- Bundles HCP, https://brain.labsolver.org/hcp_template.html
+	- Bundles IIT, https://www.nitrc.org/projects/iit/
+	- Bundles LC2TEC, https://www.nitrc.org/projects/brainstem_atlas/
+	- Colin27, https://meca-brain.org/software/marsatlas-colin27/
+	- Desikan, https://www.sciencedirect.com/science/article/abs/pii/S1053811906000437?via%3Dihub
+	- Destrieux, https://www.sciencedirect.com/science/article/abs/pii/S1053811910008542?via%3Dihub
+	- Distal, https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/
+	- HoliAtlas, https://arxiv.org/html/2501.16879v1
+	- HR, https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009
+	- LPBA40, https://www.loni.usc.edu/research/atlas_downloads
+	- PD25, https://nist.mni.mcgill.ca/multi-contrast-pd25-atlas/
+	- ICBM152 Subcortical 
+	- ICBM452, https://www.loni.usc.edu/research/atlas_downloads
+	- NAC, https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html
+	- SPL, https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html
+	- SRI24, https://www.nitrc.org/projects/sri24
+
+- **Controls** 
+
+	Control populations for 3D T1 MR, FDG PET (118 subjects), and HMPAO SPECT (33 subjects). These files are saved in the "controls" sub-folder of the PySisyphe user folder (~/.PySisyphe).
+
+- **Plugins**
+
+	PySisyphe plugins. Each plugin is downloaded as a ZIP archive that can be installed from the menu **Functions > Install plugin**. Once the plugin is installed, it can be run from the **Functions > Plugins** submenu.
+
+- **Samples**
+
+	Various volumes for testing PySisyphe. These files are saved in the "samples" subfolder of the PySisyphe user folder (~/.PySisyphe).
+
+	- **B0MAP** to test B0 map processing
+	- **BRAINVOYAGER** to test Brainvoyager volume conversion
+	- **COREGISTRATION** to test MR-PET coregistration
+	- **DTI** to test diffusion/tracking processing
+	- **FCD** to deep learning focal cortical dysplasia detection
+	- **FREESURFER** to test Freesurfer volume conversion
+	- **CT1BB** to test deep learning metastasis segmentation
+	- **NRRD** to test NRRD volume conversion
+	- **PERFUSION** to dynamic suceptibility contrast MR perfusion processing
+	- **QSM** to test QSM map processing
+	- **SEEG** to test SEEG plugins (electrode/contact detection, trajectory accuracy)
+	- **STEREO** to test Leksell stereotactic frame detection
+	- **SWI** to test deep learning microbleeds segmentation
+	- **T1MAP** to test T1 map processing
+ 	- **T2MAP** to test T2 map processing
+	- **UNET_HIPPOCAMPUS** to test deep learning hippocampus segmentation
+	- **UNET_T1_LESION** to test deep learning porencephalic T1 lesion segmentation
+	- **UNET_TUMOR** to test deep learning glial tumor segmentation
+	- **UNET_WMH** to test deep learning white matter hypersignal segmentatrion
+
+.. _menu-section-update:
+
+Check for update
+----------------
+
+Check if a new version of PySisyphe is available on the PySisyphe cloud server. If a more recent version is available, you will be prompted to install an update.
+
+.. _menu-section-attributes:
+
+Edit attributes
+---------------
+
+This menu displays a dialog box to edit attributes of the reference volume (thumbnail with blue border) in the thumbnail bar.
+
+Volumes attributes are as follows:
+
+- identity (*lastname*, *firstname*, *birth date*),
+- acquisition (*modality*, *sequence*, *scalar values unit*, *frame*, *date of scan*),
+- image (*array ID*, *transform/space ID*, *size*, *spacing*, *origin*, *datatype*, *slope*, *intercept*, *direction vectors*, *memory size*).
+
+Left-click **Reset** button to restore original attributes.
+
+Left-click **Cancel** button to close dialog box without applying attribute changes.
+
+Left-click **OK** button to close dialog box with attribute changes.
+
+You can also click |list| button in the toolbar.
+
+.. _menu-section-id:
+
+ID replacement
+--------------
+
+This menu displays the **ID replacement** dialog box to copy a reference volume ID (Transform/space ID) to a list of volume(s), ROI(s), meshs(es) or streamlines. Volume(s) and ROI(s) must have the same matrix size, spacing and field of view as the reference volume.
+
+Open a reference volume in the :ref:`widgets-section-single-file` widget located at the top of the dialog box.
+
+Open the volume(s)/ROI(s)/meshs(es)/streamlines whose ID needs to be updated in the :ref:`widgets-section-multi-file` widget below the previous one.
+
+Left-click **Execute** button to copy reference volume ID to volume(s) added in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Close** button to exit dialog box.
+
+You can also click |id| button in the toolbar.
+
+.. _menu-section-anonymize:
+
+Anonymize
+---------
+
+This menu displays the **Anomymize volume(s)** dialog box.
+
+Open the volume(s) to anonymize (i.e. erase identity attributes) in the :ref:`widgets-section-multi-file` widget of the dialog box.
+
+Left-click **Cancel** button to close dialog box without performing any processing.
+
+Left-click **OK** button to anonymize volume(s) added in the :ref:`widgets-section-multi-file` widget.
+
+You can also click |anonymize| button in the toolbar.
+
+.. _menu-section-editlabels:
+
+Edit volume labels
+------------------
+
+This menu is assigned to a label volume (LB modality). In this volume, each scalar value in the image array is associated with a label. These labels are written to a xml file with the same name as the volume and .xlabels extension.
+
+Displays a file selection dialog to get the label volume to edit. This volume is then displayed in the **Edit label** dialog box. The left part shows the label volume in a slice view widget. The right part shows a table with two columns, the first for label indexes and the second for label names. Label names can be edited. Left-click on a row to select a label. The view widget displays this label in red. Double-click on a label index in the first column to move the display to its position in the view widget. 
+
+Left-click **Import/ Export** button shows a popup menu. The first three elements define the *separator character* used to split items in the imported/exported text file, the *position of the label index item* in a line of the imported text file, and finally the *position of the label name item* in a line of the imported text file. The last two menus are used to either load or save labels to a text file.
+
+Left-click **Clear labels** button to clear the table of labels.
+
+Left-click **Cancel** button to cancel the edit and close dialog box.
+
+Left-click **OK** button to apply the edit and close dialog box.
+
+You can also click |labels| button in the toolbar.
+
+.. _menu-section-roitolabels:
+
+ROIs to label volume
+--------------------
+
+This menu displays the **ROIs to label volume** dialog box to create a label volume (modality LB) from one or more ROI(s). In label volume, each scalar value in the image array is associated with a label. These labels are written to an XML file with the same name as the volume and .xlabels extension.
+
+Add PySisyphe ROI(s) in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to create the label volume. The label indexes are incremented according to the ROI(s) order in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-volumetolabels:
+
+Volumes to label volume
+-----------------------
+
+This menu displays the **Volumes to label volume** dialog box to create a label volume (modality LB) from a list of tissue probability volumes. In label volume, each scalar value in the image array is associated with a label. These labels are written to an XML file with the same name as the volume and .xlabels extension.
+
+Add PySisyphe tissue probability volumes in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to create the label volume. The label value chosen in each voxel is the index of the volume, according to the volume order in the :ref:`widgets-section-multi-file` widget, with the highest scalar probability value.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-labelstoroi:
+
+Label volume to ROIs
+--------------------
+
+This menu displays the **Label volume to ROIs** dialog box to create ROI(s) from a label volume (modality LB). In label volume, each scalar value in the image array is associated with a label. These labels are written to an XML file with the same name as the volume and .xlabels extension.
+
+Add PySisyphe label volumes in the :ref:`widgets-section-multi-file` widget.
+
+Left-click **OK** button to create ROI(s). A ROI is generated for each label and saved under its respective label name.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-labelstomask:
+
+Label volume to mask
+--------------------
+
+This menu displays the **Label volume to mask** dialog box, which is used to create a PySisyphe binary mask (.xvol) from one or more labels of a label volume (modality LB).
+
+Add a PySisyphe label volume in the :ref:`widgets-section-single-file` widget. This populates the list below with label names in the label volume. Each label name is prefixed with a checkbox. Check the labels you want to add to the mask.
+
+Left-click **OK** button to create the mask volume. A file dialog box is shown to save the PySisyphe mask (.xvol). A PySisyphe ROI (.xroi) with the same file name is saved if the **Save ROI** option is checked.
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-labelsremap:
+
+Remap label volume
+-------------------
+
+This menu displays the **Remap label volume** dialog box, which is used to change the label indexes and names of a PySisyphe label volume (.xvol).
+
+Add a PySisyphe label volume in the :ref:`widgets-section-single-file` widget. The table below is populated with original label indexes in the first column, new label indexes in the second column, and label names in the last column. The new label indexes and names can be edited.
+
+Left-click **OK** button to remap the label volume. A file dialog box is shown to save the new PySisyphe label volume (.xvol).
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-import:
+
+Import
+------
+
+Select a submenu to import an image in one of the following image formats: Nifti (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd (.nrrd, .nhdr), Minc (.mnc), Sisyphe (.vol), VTK (.vti, .vtk). This displays an **Import** dialog box that converts volumes to the PySisyphe format (.xvol).
+
+Add volumes to convert in the :ref:`widgets-section-multi-file` widget. You can set the backup directory for converted volumes in the **Import directory** :ref:`widgets-section-single-file` widget. If the backup directory is not defined (default), volumes will be saved in the same folder as the original files.
+
+Left-click **Import** button to perform volume conversion. Images are saved in axial orientation by default.
+
+Left-click **OK** button to close dialog box.
+
+You can also click |importnii| |importnrrd| |importmnc| |importvol| |importvtk| buttons in the toolbar.
+
+.. _menu-section-export:
+
+Export
+------
+
+Select a submenu to export an image in one of the following image formats: Nifti (.nii), Nrrd (.nrrd, .nhdr), Minc (.mnc), Numpy (.npy), VTK (.vti). This displays an **Export** dialog box that converts PySisyphe (xvol) volumes to the export format.
+
+Add volumes to convert in the :ref:`widgets-section-multi-file` widget. You can set the backup directory for converted volumes in the **Export directory** :ref:`widgets-section-single-file` widget. If the backup directory is not defined (default), volumes will be saved in the same folder as the original files.
+
+Left-click **Export** button to perform volume conversion.
+
+Left-click **OK** button to close dialog box.
+
+.. _menu-section-dcmimport:
+
+Dicom import
+------------
+
+This menu displays the **Dicom Import** dialog box for converting Dicom files to the PySisyphe image format (.xvol).
+
+Select filter extension with the combobox at the top. There is no filter by default (".*", All extensions are allowed), other filters include "dcm", "dicom", "ima", "nema".
+
+Left-click **Directory** button shows a popup menu to select the first directory (**new menu**), or add a directory (**add**) in which the Dicom files will be searched recursively. After directory selection, Dicom files found are added to the list box. Files are grouped and sorted by *Series UID* and possibly subseries (time series, perfusion series, diffusion series). Left-click **>** icon to expand series/subseries and show its Dicom files. Each series/subseries/file is headed by a checkbox and checked by default. The check state of an item is copied to its children in the tree structure. Series/subseries/file can be selected with a left-click.
+
+Left-click **Check all** button to check all series/subseries/files displayed in the list box.
+
+Left-click **Uncheck all** button to uncheck all series/subseries/files displayed in the list box.
+
+Left-click **Uncheck selected** button to uncheck selected series/subseries/files displayed in the list box.
+
+Left-click **Clear** button to clear the list box.
+
+You can set the backup directory for converted volumes in the **Import directory** :ref:`widgets-section-single-file` widget. If the backup directory is not defined (default), volumes will be saved in the same folder as the original dicom files.
+
+Select the format of conversion in the **Format** combobox. The following formats are allowed: PySisiphe (.xvol, default), Minc (.mnc), Nifti (.nii), Nrrd (.nrrd), Numpy (.npy), VTK (.vti).
+
+Select **Use acquisition number** checkbox to use this dicom field as a suffix for the converted file name (unchecked by default).
+
+Select **Keep DICOM origin** checkbox to copy the DICOM field origin into the converted file (unchecked by default, i.e. origin sets to [0.0, 0.0, 0.0])
+
+Left-click **Import** button to convert the checked series/subseries/files. Each converted PySisyphe volume (.xvol) is associated with a PySisyphe XML dicom file (.xdcm), which stores DICOM fields as key/value XML nodes. Converted images are saved in axial orientation by default.
+
+Left-click **Close** button to exit dialog box.
+
+You can also click |importdcm| button in the toolbar.
+
+.. _menu-section-dcmrtimport:
+
+Dicom RT import
+---------------
+
+This menu displays the **Dicom RT import** dialog box, which is used to convert Dicom RT files to PySisyphe image (reference series and RTDose, .xvol) and ROI formats (RTStruct, .xroi).
+
+Select filter extension with the combobox at the top, there is no filter by default (".*", All extensions are allowed), other filters include "dcm", "dicom", "ima", "nema".
+
+Select the Dicom RT directory with the :ref:`widgets-section-single-file` widget located at the top of the dialog box. Dicom files found are added to the list box. Files are grouped and sorted by *Frame of reference UID* with there are three possible subseries (reference Series UID, RTDose series, and RTStruct). Left-click **>** icon to expand series/subseries and show its Dicom files. Each series/subseries/file is headed by a checkbox and checked by default. The check state of an item is copied to its children in the tree structure. Series/subseries/file can be selected with a left-click.
+
+Left-click **Check all** button to check all series/subseries/files displayed in the list box.
+
+Left-click **Uncheck all** button to uncheck all series/subseries/files displayed in the list box.
+
+Left-click **Uncheck selected** button to uncheck selected series/subseries/files displayed in the list box.
+
+Left-click **Clear** button to clear the list box.
+
+You can set the backup directory for converted volumes in the **Import directory** :ref:`widgets-section-single-file` widget. If the backup directory is not defined (default), the volumes and ROIs will be saved in the same folder as the original dicom files.
+
+Left-click **Import** button to convert the checked series/subseries/files.
+
+Left-click **Close** button to exit dialog box.
+
+.. _menu-section-dcmexport:
+
+Dicom export
+------------
+
+This menu displays the **Dicom Export** dialog box, which is used to convert PySisyphe image to Dicom format.
+
+Add PySisyphe volumes to convert in the :ref:`widgets-section-multi-file` widget.
+
+You can set the backup directory for converted volumes in the **Export directory** :ref:`widgets-section-single-file` widget. If the backup directory is not defined (default), the dicom files will be saved in the same folder as the original PySisyphe volumes.
+
+Left-click **Export** button to convert the volumes.
+
+Left-click **Close** button to exit dialog box.
+
+.. _menu-section-dcmquery:
+
+Dicom query/retrieve from Dicom SCP Server
+------------------------------------------
+
+This menu displays the **Dicom Query Retreive** dialog box, which is used to download dicom series from a PACS server (Dicom SCP host).
+
+Dicom study queries use the following items: *patient identity* (lastname, firstname, date of birth), *image modality* and *acquisition date*. You can edit these items at the top of the dialog box. Date items are used only if they are checked.
+
+Left-click **Search** to run a query with the current items. Series found were displayed in the first list box with the following dicom study fields: *accession number*, *lastname*, *firstname*, *date of birth*, *modality*, *study date* and *description*. Left-click on a study row to select it. The available series in this study will then be displayed in the second list box, below the first. This list will contain the following dicom series fields: *series number* and *description*. Each series is headed with a checkbox.
+
+You can choose the directory where downloaded DICOM files are saved with the **Dicom folder** :ref:`widgets-section-single-file` widget. These files are saved by default in the "dicom" sub-folder of the PySisyphe user folder (~/.PySisyphe).
+
+Left-click on **DICOM SCP Host Settings** button to toggle visibility of the PACS server parameters.
+
+PACS server parameters are as follows:
+
+- **DICOM SCP host AE title**
+- **DICOM SCP host URL/IP adress**
+- **DICOM SCP host port**
+- checkbox to define if user login is required
+- **Username** and **Password**
+
+The DICOM host (PACS server) is a Service Class Provider (SCP) and must support the storage of SOP Class instances (Storage Service Class), verification of DICOM connectivity (Verification Service Class) and querying/retrieval of managed SOP instances (Query/Retrieve Service Class).
+
+This DICOM SCP server is identified by an AE Title (AET), URL (or IP address) and a port. The connection can be secured by a user login and password. **These parameters must be obtained from your PACS administrator**.
+
+Left-click **Import** button to download checked series from PACS server.
+
+Left-click **Close** button to exit dialog box.
+
+.. _menu-section-dcmdataset:
+
+Dicom dataset
+-------------
+
+This menu displays the **Dicom Dataset** dialog box, which is used to explore the fields of a dicom file in a tree structure.
+
+Add dicom file(s) to explore with the :ref:`widgets-section-multi-file` widget at the top of the dialog box. Left-click on a dicom file to select it in the list box, its dicom fields (i.e. dataset), are displayed as a table with the following dicom field items as columns: *tag*, *name*, *VR* (Value Representation i.e. value type), *VM* (Value Multiplicity, single scalar value if 1 or vector with VM values) and the proper *value*. Dicom fields are headed with a checkbox. Left-click (+/- CTRL key) to select one or more dicom field rows.
+
+The **Search DataElement** comboboxis filled with the names of all dicom fields from the current dicom file, which are sorted in alphabetical order. Select a field name to move the view on that field.
+
+You can remove private fields from the displayed dataset by checking this option.
+
+Double-click on a Dicom *value* in the list box to edit it.
+
+Left-click **Check selected** button to check dicom fields selected in the table.
+
+Left-click **Uncheck selected** button to uncheck dicom fields selected in the table.
+
+Left-click **Save to CSV** button to save checked fields in a CSV file.
+
+Left-click **Save to text** button to save checked fields in a text file.
+
+Left-click **Save to dicom** button to save the dicom file.
+
+Left-click **Close** button to exit dialog box.
+
+.. _menu-section-xmldcm:
+
+XML Dicom attributes
+--------------------
+
+This menu displays a file selection dialog for viewing a PySisyphe XML Dicom file (.xdcm). This file is created automatically when DICOM files are imported (see :ref:`menu-section-dcmimport`).
+
+This file is displayed as a table in a dialog box with the following dicom field items as columns: *tag*, *name*, *VR* (Value Representation i.e. value type), *VM* (Value Multiplicity, single scalar value if 1 or vector with VM values) and the proper *value*. Dicom fields are headed with a checkbox. Fields cannot be edited.
+
+Left-click **Check all** button to check all dicom fields.
+
+Left-click **Uncheck all** button to uncheck all dicom fields.
+
+Left-click **Check selected** button to check dicom fields selected in the table.
+
+Left-click **Uncheck selected** button to uncheck dicom fields selected in the table.
+
+Left-click **Save** button to save the checked fields with the format chosen from the popup menu (XML, text, CSV, Excel, Matfile, Latex, or copy to clipboard).
+
+Left-click **Close** button to exit dialog box.
+
+.. _menu-section-editlut:
+
+Edit LUT
+--------
+
+This menu displays the **Edit Lut** dialog box. This dialog box contains a widget that is used for editing colormaps. 
+
+The background of the widget shows the colormap. Only two color points are initially defined and displayed as triangles on the left and right edges, these points cannot be dragged.
+
+Double-click in the free widget area add a new color point. Press left mouse button and drag to move a color point.
+
+Right-click on a color point to show a popup menu:
+
+- **Remove point**, remove the current color point.
+- **Change point color**, change the color of the current point (displays a dialog box for color selection).
+- **Swap color with next point**, swap the color between the current point and the next.
+- **Swap color with previous point**, swap the color between the current point and the previous.
+- **Clear all**, to clear all the points except ends.
+- **Save...**, to save the current colormap. The following formats are allowed: PySiSyphe LUT (.xlut), binary LUT (.lut, `MRIcron <https://people.cas.sc.edu/rorden/mricron/index.HTML>`_) or text (.txt).
+
+Left-click **Save** button displays a file selection dialog box to save the colormap.
+
+Left-click **Close** button to exit dialog box.
+
+You can also click |rgb| button in the toolbar.
+
+.. _menu-section-quit:
+
+Quit
+----
+
+Close PySisyphe. You can also click |exit| button in the toolbar.
+
+.. |open| image:: /GUI/toolbar/open.png
+   :scale: 15 %
+.. |open-mgh| image:: /GUI/toolbar/open-mgh.png
+   :scale: 15 %
+.. |open-mnc| image:: /GUI/toolbar/open-mnc.png
+   :scale: 15 %
+.. |open-nii| image:: /GUI/toolbar/open-nii.png
+   :scale: 15 %
+.. |open-nrrd| image:: /GUI/toolbar/open-nrrd.png
+   :scale: 15 %
+.. |open-vmr| image:: /GUI/toolbar/open-vmr.png
+   :scale: 15 %
+.. |open-vol| image:: /GUI/toolbar/open-vol.png
+   :scale: 15 %
+.. |open-vtk| image:: /GUI/toolbar/open-vtk.png
+   :scale: 15 %
+.. |save| image:: /GUI/toolbar/save.png
+   :scale: 15 %
+.. |saveall| image:: /GUI/toolbar/saveall.png
+   :scale: 15 %
+.. |save-mnc| image:: /GUI/toolbar/save-mnc.png
+   :scale: 15 %
+.. |save-nii| image:: /GUI/toolbar/save-nii.png
+   :scale: 15 %
+.. |save-npy| image:: /GUI/toolbar/save-npy.png
+   :scale: 15 %
+.. |save-nrrd| image:: /GUI/toolbar/save-nrrd.png
+   :scale: 15 %
+.. |save-vtk| image:: /GUI/toolbar/save-vtk.png
+   :scale: 15 %
+.. |close| image:: /GUI/toolbar/close.png
+   :scale: 15 %
+.. |closeall| image:: /GUI/toolbar/closeall.png
+   :scale: 15 %
+.. |list| image:: /GUI/toolbar/list.png
+   :scale: 15 %
+.. |id| image:: /GUI/toolbar/id.png
+   :scale: 15 %
+.. |anonymize| image:: /GUI/toolbar/anonymize.png
+   :scale: 15 %
+.. |labels| image:: /GUI/toolbar/labels.png
+   :scale: 15 %
+.. |importmnc| image:: /GUI/toolbar/importmnc.png
+   :scale: 15 %
+.. |importnii| image:: /GUI/toolbar/importnii.png
+   :scale: 15 %
+.. |importnrrd| image:: /GUI/toolbar/importnrrd.png
+   :scale: 15 %
+.. |importvol| image:: /GUI/toolbar/importvol.png
+   :scale: 15 %
+.. |importvtk| image:: /GUI/toolbar/importvtk.png
+   :scale: 15 %
+.. |importdcm| image:: /GUI/toolbar/importdcm.png
+   :scale: 15 %
+.. |exit| image:: /GUI/toolbar/exit.png
+   :scale: 15 %
+.. |settings| image:: /GUI/toolbar/settings.png
+   :scale: 15 %
+.. |rgb| image:: /GUI/toolbar/rgb.png
+   :scale: 15 %
+.. |view| image:: /GUI/dock/view.png
+   :scale: 50 %

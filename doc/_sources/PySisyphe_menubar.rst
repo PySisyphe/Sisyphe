@@ -1,0 +1,307 @@
+.. _page-menubar:
+
+Menubar
+=======
+
+- :ref:`menu-section-file` (:ref:`page-file`)
+- :ref:`menu-section-functions` (:ref:`page-functions`)
+- :ref:`menu-section-registration` (:ref:`page-registration`)
+- :ref:`menu-section-segmentation` (:ref:`page-segmentation`)
+- :ref:`menu-section-mapping` (:ref:`page-mapping`)
+- :ref:`menu-section-diffusion` (:ref:`page-diffusion`)
+- :ref:`menu-section-views`
+- :ref:`menu-section-window` (:ref:`page-window`)
+- :ref:`menu-section-shortcuts`
+
+.. _menu-section-file:
+
+File
+----
+
+	- :ref:`Open... <menu-section-open>`
+	- :ref:`Open template <menu-section-opentemplate>`
+	- :ref:`Open from format <menu-section-openformat>` >
+
+		- Open Nifti...
+		- Open Nrrd...
+		- Open Minc...
+		- Open FreeSurfer MGH...
+		- Open Sisyphe...
+		- Open BrainVoyager VMR...
+		- Open VTK...
+
+	- :ref:`Recent files <menu-section-recent>`
+	- :ref:`Open user folder <menu-section-openuser>`
+	- :ref:`Save <menu-section-save>`
+	- :ref:`Save all <menu-section-saveall>`
+	- :ref:`Save as... <menu-section-saveas>`
+	- :ref:`Save to format <menu-section-saveformat>` >
+
+		- Save Nifti...
+		- Save Numpy...
+		- Save Nrrd...
+		- Save Minc...
+		- Save VTK...
+
+	- :ref:`Close <menu-section-close>`
+	- :ref:`Close all <menu-section-closeall>`
+	- :ref:`Preferences... <menu-section-preferences>`
+	- :ref:`Download manager... <menu-section-download>`
+	- :ref:`Check for update... <menu-section-update>`
+	- :ref:`Edit attributes... <menu-section-attributes>`
+	- :ref:`ID replacement... <menu-section-id>`
+	- :ref:`Anomynize... <menu-section-anonymize>`
+	- :ref:`Edit volume labels... <menu-section-editlabels>`
+	- :ref:`ROIs to label volume... <menu-section-roitolabels>`
+	- :ref:`Volumes to label volume... <menu-section-volumetolabels>`
+	- :ref:`Label volume to ROIs... <menu-section-labelstoroi>`
+	- :ref:`Label volume to mask... <menu-section-labelstomask>`
+	- :ref:`Remap label volume... <menu-section-labelsremap>`
+	- :ref:`Import <menu-section-import>` >
+
+		- Import Nifti...
+		- Import Minc...
+		- Import Nrrd...
+		- Import Vtk...
+		- Import Sisyphe (*.vol)...
+
+	- :ref:`Export <menu-section-export>` >
+
+		- Export Nifti...
+		- Export Minc...
+		- Export Nrrd..
+		- Export Vtk...
+		- Export Numpy...
+
+	- DICOM >
+
+		- :ref:`DICOM import... <menu-section-dcmimport>`
+		- :ref:`DICOM RT import... <menu-section-dcmrtimport>`
+		- :ref:`DICOM export... <menu-section-dcmexport>`
+		- :ref:`DICOM Query/Retrieve from DICOM SCP Server... <menu-section-dcmquery>`
+		- :ref:`DICOM Dataset... <menu-section-dcmdataset>`
+		- :ref:`Xml DICOM attributes... <menu-section-xmldcm>`
+		
+	- :ref:`Edit LUT... <menu-section-editlut>`
+	- :ref:`Quit... <menu-section-quit>`
+
+.. _menu-section-functions:
+
+Functions
+---------
+
+	- :ref:`Join single component volume(s) <menu-section-join>`
+	- :ref:`Split multi component volume(s) <menu-section-split>`
+	- :ref:`Flip axis... <menu-section-flip>`
+	- :ref:`Permute axis... <menu-section-permute>`
+	- :ref:`Remove neck slilces... <menu-section-neck>`
+	- :ref:`Datatype conversion... <menu-section-datatype>`
+	- :ref:`Attributes conversion... <menu-section-attributes>`
+	- Filters > 
+
+		- :ref:`Mean... <menu-section-filter-mean>`
+		- :ref:`Median... <menu-section-filter-median>`
+		- :ref:`Gaussian... <menu-section-filter-gaussian>`
+		- :ref:`Gradient magnitude... <menu-section-filter-gradient>`
+		- :ref:`Laplacian... <menu-section-filter-laplacian>`
+		- :ref:`Anistropic diffusion... <menu-section-filter-anisodiff>`
+
+	- Intensity processing >
+
+		- :ref:`Histogram intensity matching... <menu-section-matching-hist>`
+		- :ref:`Regression intensity matching... <menu-section-matching-reg>`
+		- :ref:`Intensity normalization... <menu-section-norm>`
+
+	- :ref:`Texture feature maps... <menu-section-texture>`
+	- :ref:`ROI texture features... <menu-section-roitexture>`
+	- :ref:`Bias field correction... <menu-section-biasfield>`
+	- Atlas labeling >
+
+		- :ref:`ROI(s) atlas labeling... <menu-section-roi-labeling>`
+		- :ref:`Mesh(es) atlas labeling... <menu-section-mesh-labeling>`
+		- :ref:`Tool(s) atlas labeling... <menu-section-tools-labeling>`
+
+	- Voxel-by-voxel processing >
+ 
+		- :ref:`Mean volume... <menu-section-voxel-mean>`
+		- :ref:`Median volume... <menu-section-voxel-median>`
+		- :ref:`Standard deviation volume... <menu-section-voxel-std>`
+		- :ref:`Minimum volume... <menu-section-voxel-min>`
+		- :ref:`Maximum volume... <menu-section-voxel-max>`
+		- :ref:`Algebra... <menu-section-algebra>`
+
+	- :ref:`Processing workflow... <menu-section-workflow>`
+	- :ref:`Workflows <menu-section-workflows>`
+	- :ref:`Install plugin... <menu-section-installplugin>`
+	- :ref:`Remove plugin... <menu-section-removeplugin>`
+	- :ref:`Plugins <menu-section-plugins>`
+ 
+.. _menu-section-registration:
+
+Registration
+------------
+
+	- :ref:`Stereotactic frame detection... <menu-section-stereo>`
+	- :ref:`AC-PC selection... <menu-section-acpc>`
+	- :ref:`Volume reorientation... <menu-section-reorient>`
+	- :ref:`Manual registration... <menu-section-manual>`
+	- :ref:`Rigid registration... <menu-section-rigid>`
+	- :ref:`Affine registration... <menu-section-affine>`
+	- :ref:`Displacement field registration... <menu-section-field>`
+	- :ref:`ICBM normalization... <menu-section-icbm>`
+	- :ref:`Batch registration... <menu-section-batch>`
+	- :ref:`Time series realignment... <menu-section-align>`
+	- :ref:`Eddy current correction... <menu-section-eddy>`
+	- :ref:`Resample... <menu-section-resample>`
+	- :ref:`Asymmetry displacement field... <menu-section-asym>`
+	- :ref:`Displacement field jacobian determinant... <menu-section-jacob>`
+
+.. _menu-section-segmentation:
+
+Segmentation
+------------
+
+	- :ref:`KMeans clustering... <menu-section-kmclustering>`
+	- :ref:`KMeans segmentation... <menu-section-kmsegmentation>`
+	- :ref:`Skull striping... <menu-section-skull>`
+	- :ref:`Tissue segmentation... <menu-section-atropos>`
+	- :ref:`Cortical thickness... <menu-section-thickness>`
+	- :ref:`Registration based segmentation... <menu-section-regsegmentation>`
+	- :ref:`Structs <menu-section-structs>`
+	- Deep learning segmentation >
+
+		- :ref:`Atlas parcellation... <menu-section-parcellation>`
+		- :ref:`Focal cortical dysplasia detection... <menu-section-fcd>`
+		- :ref:`Hippocampus segmentation... <menu-section-hipp>`
+		- :ref:`Hypo-intensity lesion segmentation... <menu-section-lesion>`
+		- :ref:`Medial temporal clustering... <menu-section-temporal>`
+		- :ref:`Metastasis segmentation... <menu-section-meta>`
+		- :ref:`Microbleeds segmentation... <menu-section-microbld>`
+		- :ref:`Tissue segmentation... <menu-section-tissue>`
+		- :ref:`Tumor clustering... <menu-section-tumor>`
+		- :ref:`White matter hyper-intensities segmentation... <menu-section-wmh>`
+
+.. _menu-section-mapping:
+
+Mapping
+-------
+
+	- Model >
+
+		- :ref:`fMRI conditions... <menu-section-fmri-model>`
+		- :ref:`fMRI subjects/conditions... <menu-section-fmri-model>`
+		- :ref:`fMRI groups/subjects/conditions... <menu-section-fmri-model>`
+		- :ref:`One sample t-test... <menu-section-glm-model>`
+		- :ref:`Two sample t-test... <menu-section-glm-model>`
+		- :ref:`Paired t-test... <menu-section-glm-model>`
+		- :ref:`ANCOVA... <menu-section-glm-model>`
+		- :ref:`GLM subjects/conditions... <menu-section-glm-model>`
+		- :ref:`GLM groups/subjects/conditions... <menu-section-glm-model>`
+		- :ref:`GLM groups... <menu-section-glm-model>`
+		- :ref:`GLM groups/subjects... <menu-section-glm-model>`
+		- :ref:`Models <menu-section-models>` >
+
+	- :ref:`Contrast... <menu-section-contrast>`
+	- :ref:`Result... <menu-section-result>`
+	- :ref:`Laterality index... <menu-section-latindex>`
+	- :ref:`Conjunction... <menu-section-conjunction>`
+	- :ref:`t to z-map conversion... <menu-section-t2zmap>`
+	- :ref:`Time series preprocessing... <menu-section-seriespreproc>`
+	- :ref:`Seed-to-voxel time series correlation... <menu-section-seriesseed>`
+	- :ref:`Single-subject time series ICA... <menu-section-seriesseed>`
+	- :ref:`Time series correlation matrix... <menu-section-seriescorr>`
+	- Quantitative MR maps >
+
+		- :ref:`B0 map... <menu-section-b0map>`
+		- :ref:`B1 map... <menu-section-b1map>`
+		- :ref:`T1 map... <menu-section-t1map>`
+		- :ref:`T2 map... <menu-section-t2map>`
+		- :ref:`T2' map... <menu-section-t2pmap>`
+		- :ref:`MTR map... <menu-section-mtrmap>`
+		- :ref:`QSM map... <menu-section-qsmmap>`
+
+	- :ref:`ASL perfusion... <menu-section-asl>`
+	- :ref:`Dynamic suceptibility contrast... <menu-section-dsc>`
+
+.. _menu-section-diffusion:
+
+Diffusion
+---------
+
+	- :ref:`Gradients... <menu-section-gradients>`
+	- :ref:`Preprocessing... <menu-section-preprocessing>`
+	- :ref:`Diffusion model... <menu-section-diffmodel>`
+	- :ref:`Diffusion analysis along perivascular space... <menu-section-diffalps>`
+	- :ref:`Tractogram generation... <menu-section-tractogram>`
+	- Bundle >
+ 
+		- :ref:`ROI based streamlines selection... <menu-section-roisel>`
+		- :ref:`Filter based streamlines selection... <menu-section-filtersel>`
+		- :ref:`Template based streamlines selection... <menu-section-templatesel>`
+		- :ref:`Density map... <menu-section-density>`
+		- :ref:`Path length map... <menu-section-path>`
+		- :ref:`Connectivity matrix... <menu-section-connectivity>`
+
+.. _menu-section-views:
+
+Views
+-----
+
+	- :ref:`Slice view <slice-section-popup>` >
+	- :ref:`Orthogonal view <ortho-section-popup>` >
+	- :ref:`Synchronize view <synchro-section-popup>` >
+	- :ref:`Projection view <proj-section-popup>` >
+	- :ref:`Multi-component view <multi-section-popup>` >
+	- :ref:`Database <page-database>` >
+	- :ref:`Screenshots <page-screenshots>` >
+	- :ref:`IPython <page-ipython>` >
+
+.. _menu-section-window:
+
+Window
+------
+
+	- :ref:`About... <menu-section-about>`
+	- :ref:`Minimize <menu-section-minimize>`
+	- :ref:`Maximize <menu-section-maximize>`
+	- :ref:`Full screen <menu-section-fullscreen>`
+	- :ref:`Show/Hide Toolbar <menu-section-showtoolbar>`
+	- :ref:`Show/Hide Thumbnail <menu-section-showthumbnail>`
+	- :ref:`Show/Hide Dock <menu-section-showdock>`
+	- :ref:`Show/Hide Status bar <menu-section-showstatusbar>`
+	- :ref:`Next tab <menu-section-nexttab>`
+	- :ref:`Previous tab <menu-section-previoustab>`
+	- :ref:`Slice view <menu-section-sliceview>`
+	- :ref:`Orthogonal view <menu-section-orthogonalview>`
+	- :ref:`Synchornized view <menu-section-synchronizedview>`
+	- :ref:`Projection view <menu-section-projectionview>`
+	- :ref:`Multi-component view <menu-section-multiview>`
+	- :ref:`Database <menu-section-database>`
+	- :ref:`File browser <menu-section-browser>`
+	- :ref:`Screenshots <menu-section-screenshots>`
+	- :ref:`IPython <menu-section-ipython>`
+
+.. _menu-section-shortcuts:
+
+Keyboard Shortcuts
+------------------
+
+- CTRL O 		:ref:`Open... <menu-section-open>`
+- CTRL S 		:ref:`Save <menu-section-save>`
+- Del 			:ref:`Close <menu-section-close>`
+- CTRL ? 		:ref:`Edit attributes... <menu-section-attributes>`
+- CTRL -		:ref:`Minimize <menu-section-minimize>`
+- CTRL +		:ref:`Maximize <menu-section-maximize>`
+- CTRL Right	:ref:`Next tab <menu-section-nexttab>`
+- CTRL Left		:ref:`Previous tab <menu-section-previoustab>`
+- Tab 			:ref:`Show/Hide Dock <menu-section-showdock>`
+- F1 			:ref:`Slice view <menu-section-sliceview>`
+- F2			:ref:`Orthogonal view <menu-section-orthogonalview>`
+- F3			:ref:`Synchornized view <menu-section-synchronizedview>`
+- F4			:ref:`Projection view <menu-section-projectionview>`
+- F5			:ref:`Multi-component view <menu-section-multiview>`
+- F6			:ref:`Database <menu-section-database>`
+- F7			:ref:`File browser <menu-section-browser>`
+- F8			:ref:`Screenshots <menu-section-screenshots>`			
+- F9			:ref:`IPython <menu-section-ipython>`
+- F11			:ref:`Full screen <menu-section-fullscreen>`

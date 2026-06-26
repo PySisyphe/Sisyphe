@@ -1,0 +1,420 @@
+.. _page-diffusion:
+
+Diffusion menu
+==============
+
+- :ref:`menu-section-gradients`
+- :ref:`menu-section-preprocessing`
+- :ref:`menu-section-diffmodel`
+- :ref:`menu-section-diffalps`
+- :ref:`menu-section-tractogram`
+- Bundle >
+	- :ref:`menu-section-roisel`
+	- :ref:`menu-section-filtersel`
+	- :ref:`menu-section-templatesel`
+	- :ref:`menu-section-density`
+	- :ref:`menu-section-path`
+	- :ref:`menu-section-connectivity`
+
+.. _menu-section-gradients:
+
+Gradients
+---------
+
+This menu is used to create PySisyphe XML files for b-values (.xbval) and gradient vectors (.xbvec) from a list of diffusion-weighted Volumes and text files for b-values and gradient directions (.bval, .bvec).
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **Diffusion weighted Volumes**.
+
+Use the :ref:`widgets-section-single-file` widget to select **Associated B-values**, text file (.bval) with b-values for each diffusion-weighted volume.
+
+Use the :ref:`widgets-section-single-file` widget to select **Associated gradient directions**, text file (.bvec) with gradient vectors for each diffusion-weighted volume.
+
+Left-click **Save** button to store the PySisyphe XML files for b-values (.xbval) and gradient vectors (.xbvec).
+
+Left-click **Close** button to exit dialog box.
+
+.. _menu-section-preprocessing:
+
+Preprocessing
+-------------
+
+This menu is used to perform preprocessings of the diffusion-weighted Volumes: *Gibbs artifact correction* and *denoising*.
+
+Gibbs artifacts (also known as truncation, ringing, or spectral leakage artifacts) typically appear as multiple fine parallel lines immediately adjacent to high-contrast interfaces. Gibbs artifacts occur as a consequence of using Fourier transforms to reconstruct MR signals into images. In theory, any signal can be represented as an infinite summation of sine waves of different amplitudes, phases, and frequencies. In MR imaging, however, we are restricted to sampling a finite number of frequencies and must therefore approximate the image by using only a relatively few harmonics in its Fourier representation.  The Fourier series, then, is cut short or truncated, hence the name for this artifact. PySisyphe used the `dipy <https://docs.dipy.org/1.8.0/examples_built/preprocessing/denoise_gibbs.html>`_ implementation.
+
+.. admonition:: Reference
+
+	`Article <https://onlinelibrary.wiley.com/doi/10.1002/mrm.26054>`_: Gibbs‐ringing artifact removal based on local subvoxel‐shifts. Kellner E, Dhital B, Kiselev VG, Reisert M Magn Reson Med 2016;76:1574–1581.
+
+Four denoising algortihms are proposed from the dipy library: `local PCA <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_localpca.html#sphx-glr-examples-built-preprocessing-denoise-localpca-py>`_, general function PCA, `Marcenko Pastur PCA <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_mppca.html#sphx-glr-examples-built-preprocessing-denoise-mppca-py>`_, `non local means <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_nlmeans.html#sphx-glr-examples-built-preprocessing-denoise-nlmeans-py>`_, `self supervised denoising <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_patch2self.html>`_, `adaptive soft coefficient matching <https://docs.dipy.org/stable/examples_built/preprocessing/denoise_ascm.html#sphx-glr-examples-built-preprocessing-denoise-ascm-py>`_.
+
+.. admonition:: References
+
+	`Article 1 <https://pmc.ncbi.nlm.nih.gov/articles/PMC3760829/>`_: Diffusion weighted image denoising using overcomplete local PCA. JV Manjón, P Coupé, L Concha, A Buades, DL Collins, M Robles. Diffusion weighted image denoising using overcomplete. PLOS ONE, 8(9):e73021, 2013.
+
+	`Article 2 <https://pmc.ncbi.nlm.nih.gov/articles/PMC2881565/>`_: An optimized blockwise nonlocal means denoising filter for 3-D magnetic resonance images. P Coupé, P Yger, S Prima, P Hellier, C Kervrann, C Barillot. IEEE Transactions on Medical Imaging, 27(4):425–441, 2008.
+
+	`Article 3 <https://www.computer.org/csdl/proceedings-article/cvpr/2024/530000ac631/20hPHHggy0o>`_: Self-supervised Denoising on Coresets via Matrix Sketchin. S Fadnavis, A Chowdhury, J Batson, P Drineas, E Garyfallidis. Patch2Self2: In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, volume, 27641–27651. 2024.
+
+	`Article 4 <https://digital-library.theiet.org/doi/abs/10.1049/iet-ipr.2011.0161>`_: Adaptive multiresolution Non-Local Means Filter for 3D MR image denoising. P Coupé, JV Manjón, M Robles, LD Collins. IET Image Processing, 6(5):558–568, July 2012.
+
+Use the :ref:`widgets-section-single-file` widget to select a **B-values** PySisyphe XML file (.xbval).
+
+Use the :ref:`widgets-section-single-file` widget to select a **Gradient directions** PySisyphe XML file (.xbvec).
+
+PySisyphe automatically generates XML files for b-values (.xbval) and gradient vectors (.xbvec) at the :ref:`menu-section-dcmimport` stage. These files can also be generated from the :ref:`menu-section-gradients` menu.
+
+Toggle **Diffusion preprocessing...** button to show/hide preprocessing parameters:
+
+- Check **Mask** option to create a mask that excludes background voxels from preprocessing.
+
+	- Select the thresholding algorithm used for mask processing from the **Background thresholding algorithm** combobox. PySisyphe provides the following algorithms from the SimpleITK library: `Huang <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html>`_, Mean, `Otsu <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html>`_, `Renyi <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html>`_, `Yen <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html>`_, `Li <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html>`_, `Shanbhag <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html>`_, `Triangle <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html>`_, `Intermodes <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html>`_, `Maximumentropy <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html>`_, `Kittler <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html>`_, `Isodata <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html>`_, `Moments <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsT>`_  (default Huang).
+	- Select the structuring element size, expressed in voxels, of the morphological operator used for mask processing from the **Morphological operator size** combobox (default 1).
+	- Set The number of times the morphological operator is applied for mask processing from the **Number of morphological operator iterations** spinbox (default 2).
+
+- Check **Gibbs artifact correction** to add this stage to the preprocessing.
+- The **Gibbs neighbor** spinedit widget defines the number of neighboring voxels used by the Gibbs artifact correction algorithm (default 3).
+- Select a **Denoising algorithm** to add this stage to the preprocessing.
+- Select the **Noise estimation algorithm** from the combobox. Two methods are available, `Local patches <https://docs.dipy.org/stable/examples_built/preprocessing/snr_in_cc.html#sphx-glr-examples-built-preprocessing-snr-in-cc-py>`_ or `Piesno <https://docs.dipy.org/stable/examples_built/preprocessing/piesno.html#sphx-glr-examples-built-preprocessing-piesno-py>`_. These methods are used to detect the standard deviation of the noise from Diffusion-Weighted Imaging (DWI). A noise estimation is required by non-local means and adaptive soft coefficient matching denoising algorithms.
+- Select the parallel MR reconstruction method of multi-channel coils used to acquire diffusion-weighted images from the **MR reconstruction** combbox. Two methods are available, *SENSE* (Philips) or *GRAPPA* (General Electric, Siemens). This parameter is required for noise estimation.
+- Define the **Number of receiver array head coils** used to acquire diffusion-weighted images. This parameter is required for noise estimation.
+- Define the **Number of phase array head coils**  used to acquire diffusion-weighted  images. if scanner does a SENSE reconstruction, always use 1, as the noise profile is always Rician. If scanner does a GRAPPA reconstruction, set N as the number of phase array coils. This parameter is required for noise estimation.
+- Preprocessed diffusion-weighted volumes are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC2732005/>`_: Probabilistic Identification and Estimation of Noise (PIESNO): A self-consistent approach and its applications in MRI. CG Koay, E Özarslan, and C Pierpaoli. Journal of Magnetic Resonance, 199(1):94–103, July 2009.
+
+Toogle **PCA denoising** button to show/hide parameters:
+
+- Set the **Smooth kernel radius** using spinbox (default 2). This parameter is the radius of a Gaussian smoothing kernel (in voxels) applied to the noise estimate before it is returned.
+- Set the **Patch radius** using spinbox (default 2). This parameter specifies the radius (in voxels) of the local patch to be taken around each voxel. Patch size = patch radius x 2 + 1 (2 gives 5x5x5 patches).
+- Select the **PCA method** using combobox. The algorithms provided for principal component analysis (PCA) are as follows: *eigenvalue decomposition* (EIG) or *singular value decomposition* (SVD). The default method is "EIG" which is faster. However, occasionally "SVD" might be more accurate.
+
+Toogle **Non-local means denoising** button to show/hide parameters:
+
+- Set the **Patch radius** using spinbox (default 1). This parameter specifies the radius (in voxels) of the local patch to be taken around each voxel. Patch size = patch radius x 2 + 1 (1 gives 3x3x3 patches).
+- Set the **Block radius** using spinbox (default 2). This parameter is the radius (in voxels) of the local block to be taken around each voxel. Block size = block radius x 2 + 1 (2 gives 5x5x5 patches).
+
+Toogle **Self supervised denoising** button to show/hide parameters:
+
+- Set the **Patch radius** using spinbox (default 0). This parameter specifies the radius (in voxels) of the local patch to be taken around each voxel. Patch size = patch radius x 2 + 1 (0 gives 1x1x1 patches).
+- Select the **Solver algorithm** using combobox. The default algorithm used to solve the set of linear equations is *ordinary least squares* regression (OLS). Depending on the size of the data, this can be slightly slower. If so, please consider switching to *ridge* regression (RIDGE).
+
+Left-click **Execute** button to perform preprocessing.
+
+Left-click **Close** button to exit dialog box.
+
+.. _menu-section-diffmodel:
+
+Diffusion model
+---------------
+
+This menu is used to define and fit a diffusion model. The diffusion models available in Pysisyphe are as follows: *Diffusion Tensor model* (`DTI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dti.html>`_), *Free Water Diffusion Tensor model* (`FWDTI <https://docs.dipy.org/1.9.0/examples_built/reconstruction/reconst_fwdti.html>`_), *Diffusional Kurtosis model* (`DKI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dki.html>`_), *RUMBA Robust and Unbiased Model-BAsed Spherical Deconvolution model* (`RUMBA <https://docs.dipy.org/1.10.0/examples_built/reconstruction/reconst_rumba.html>`_), *Constant Solid Angle ODF model* Q-Ball (`SHCSA <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csa.html>`_), *Constrained Spherical Deconvolution model* (`SHCSD <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csd.html>`_), *Diffusion Spectrum model* (`DSI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsi.html>`_) and *Diffusion Spectrum Deconvolution model* (`DSID <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsid.html>`_). PySisyphe uses the `Dipy <https://dipy.org/>`_ library implemenentation.
+
+Each model has its own acquisition constraints:
+
+- DTI requires up to 6 directions, b-value 1000 s/mm^2, at least 1 B0.
+- FWDTI requires at least 32 directions evenly distributed, b-value less than or equal to 1000 s/mm^2, multiple B0.
+- DKI requires b-values of 0, 500, 1000, 1500, 2000, +/- 2500 s/mm^2, at least 15 directions.
+- RUMBA requires HARDI data with at least 64 directions, b-value 2500 s/mm^2, at least 3 B0 images.
+- SHCSA requires HARDI data with at least 200 directions, b-value 3000 s/mm^2, or multi-shell.
+- SHCSD requires 20 directions, b-value 1000 s/mm^2; benefits additionally from HARDI data 60 direction, b-value 3000 s/mm^2 or multi-shell.
+- DSI requires at least 100 directions with b-values = 1000, 2000, 3000 s/mm^2.
+- DSID  requires at least 200 directions with b-values = 1000, 2000, 3000 s/mm^2 +/- 4000 s/mm^2.
+
+Use the :ref:`widgets-section-single-file` widget to select **B-values** PySisyphe XML file (.xbval).
+
+Use the :ref:`widgets-section-single-file` widget to select **Gradient directions** PySisyphe XML file (.xbvec).
+
+Toggle **Diffusion model...** button to show/hide model parameters:
+
+- Select the **Diffusion model** from the combobox. Specific settings for this model are then displayed below.
+- A mask is calculated that excludes background voxels from the processing.
+	- Select the thresholding algorithm used for mask processing from the **Background thresholding algorithm** combobox. PySisyphe provides the following algorithms from the SimpleITK library: `Huang <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html>`_, Mean, `Otsu <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html>`_, `Renyi <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html>`_, `Yen <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html>`_, `Li <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html>`_, `Shanbhag <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html>`_, `Triangle <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html>`_, `Intermodes <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html>`_, `Maximumentropy <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html>`_, `Kittler <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html>`_, `Isodata <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html>`_, `Moments <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html>`_ (default Huang)
+	- Select the structuring element size, expressed in voxels, of the morphological operator used for mask processing from the **Morphological operator size** combobox (default 1).
+	- Set The number of times the morphological operator is applied for mask processing from the **Number of morphological operator iterations** spinbox (default 2).
+- Check the **Gradient orientation conversion** option to take into account orientation convention discrepancies between PySisyphe (RAS+) and Dicom (LPS+).
+- Check the **Save model** option to save the fitted model to a PySisyphe diffusion model XML file (.xmodel).
+
+Toggle **DTI model...** button to show/hide DTI parameters:
+
+- Select the **Fitting algorithm** from the combobox. The fitting methods available in Pysisyphe are as follows: *weighted least squares* (WLS), *ordinary least squares* (LS or OLS), *non-linear least-squares* (NLLS) or *RESTORE robust tensor* (RT or RESTORE).
+- Check the map(s) to be calculated: *Fractional anisotropy* (FA), *Geodesic anisotropy* (GA), *Mean diffusivity* (MD), *Trace* of the tensor, *Axial diffusivity* (AD), *Radial diffusivity* (RD), *Linearity*, *planarity*, *sphericity*, *tensor*, *tensor components*, *major tensor direction*, *tensor eigen values* and *tensor eigen vectors*. These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
+
+Toggle **FWDTI model...** button to show/hide DKI parameters:
+
+- Select the **Fitting algorithm** from the combobox. The fitting methods available in Pysisyphe are as follows: *weighted least squares* (WLS), *non-linear least-squares* (NLS).
+- Check the map(s) to be calculated: *Fractional anisotropy* (FA), *Geodesic anisotropy* (GA), *Mean diffusivity* (MD), *Trace* of the tensor, *Axial diffusivity* (AD), *Radial diffusivity* (RD), *Linearity*, *planarity*, *sphericity*, and *free water* (FW). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
+
+Toggle **DKI model...** button to show/hide DKI parameters:
+
+- Select the **Fitting algorithm** from the combobox. The fitting methods available in Pysisyphe are as follows: *ordinary least squares* (OLS or ULLS), *weighted ordinary least squares* (WLS, WLLS or UWLLS), *constrained ordinary least squares* (CLS or LMI), *constrained weighted least squares* (CWLS).
+- Check the map(s) to be calculated: *Fractional anisotropy* (FA), *Geodesic anisotropy* (GA), *Mean diffusivity* (MD), *Trace* of the tensor, *Axial diffusivity* (AD), *Radial diffusivity* (RD). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
+
+Toggle **RUMBA model...** button to show/hide DKI parameters:
+
+- Select the **Fitting algorithm** from the combobox. The fitting methods available in Pysisyphe are as follows: *spatial matched filter* (SMF), *sum-of-squares* (SOS).
+- Check the map(s) to be calculated: *Cerebro-spinal fluid fraction* (FCSF), *Gray matter fraction* (FGM), *White matter fraction* (WMF), *Isotropic fraction* (FISO). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
+
+Toggle **SHCSA model...** button to show/hide SHCSA parameters:
+
+- Edit the spherical harmonic order from the **Order** spinbox (default 6).
+- Check the map to be calculated: *Generalized Fractional Anisotropy* (GFA). This map is saved using the file name of the first diffusion-weighted volume suffixed by "GFA".
+
+Toggle **SHCSD model...** button to show/hide SHSCD parameters:
+
+- Edit the spherical harmonic order from the **Order** spinbox (default 6).
+- Check the map to be calculated: *Generalized Fractional Anisotropy* (GFA). This map is saved using the file name of the first diffusion-weighted volume suffixed by "GFA".
+
+Toggle **DSI model...** button to show/hide DSI parameters:
+
+- Check the map to be calculated: *Generalized Fractional Anisotropy* (GFA). This map is saved using the file name of the first diffusion-weighted volume suffixed by "GFA".
+
+Toggle **DSID model...** button to show/hide DSIF parameters:
+
+- Check the map to be calculated: *Generalized Fractional Anisotropy* (GFA). This map is saved using the file name of the first diffusion-weighted volume suffixed by "GFA".
+
+Left-click **Execute** button to fit the model and calculate the map(s).
+
+Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` to test DTI processsing.
+
+.. _menu-section-diffalps:
+
+Diffusion analysis along perivascular space
+-------------------------------------------
+
+This menu is used to process the **ALPS diffusion index**. ALPS-index express the influence of the water diffusion along the perivascular space which will reflect activity of the glymphatic system in the individual cases. The glymphatic system is a recently discovered waste drainage system in the brain that involves movement of the cerebrospinal fluid (CSF) along the perivascular space. This system promotes elimination of soluble proteins including amyloid-β (Aβ) and metabolites.
+
+The motion of water molecules toward the perivascular space is estimated by measuring diffusivity using the diffusion tensor method. At the level of the lateral ventricle body, the medullary veins run perpendicular to the ventricular wall, and the perivascular space runs in the same direction as the medullary veins, which is the right-left direction (x-axis). On the plane of this area, projection fibers (projection area) run in the head-foot direction (z-axis), mainly adjacent to the lateral ventricle, and superior longitudinal fascicles, representing association fibers (association area), run in the anterior-posterior direction outside the projection fibers.
+
+ALPS-index = ((Dxx(PArea) + Dxx(AArea)) / 2) / ((Dyy(PArea) + Dzz(AArea)) / 2)
+
+Dxx(PArea): diffusion in x-axis direction (glymphatic system effect) of the projection area
+Dxx(AArea): diffusion in x-axis direction (glymphatic system effect) of the association area
+Dyy(PArea): diffusion in y-axis direction of the projection area
+Dzz(AArea): diffusion in z-axis direction of the association area
+
+When the ALPS-index is close to 1, it means that the influence of the water diffusion along the perivascular space is minimal (i.e. impaired glymphatic system), and a larger ratio will represent larger water diffusivity along the perivascular space.
+
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC7456821/>`_: Evaluation of glymphatic system activity with the diffusion MR technique: diffusion tensor image analysis along the perivascular space (DTI-ALPS) in Alzheimer's disease cases. T. Taoka, Y. Masutani, H. Kawai, T. Nakane, K. Matsuoka, F. Yasuno, T. Kishimoto, S. Naganawa. Jpn J Radiol 2017 Apr;35(4):172-178.
+
+Use the :ref:`widgets-section-multi-file` widget to select PySisyphe **Multicomponent tensor volume(s)** (.xvol, with *TENSOR* sequence attribute). These volumes are processed from the :ref:`menu-section-diffmodel` menu and saved with the 'TENSOR' suffix.
+
+Use the :ref:`widgets-section-single-file` widget to select PySisyphe **Multicomponent tensor volume reference** (.xvol, with sequence attribute 'TENSOR'). This volume will be used as a reference to define the ROI of the projection and association areas required for ALPS-index processing. We recommend installing the IIT atlas from the :ref:`menu-section-download` and using the icbm152_IIT_TENSOR.xvol (search this volume in ./ICBM152/BUNDLES IIT/MEAN or ./ICBM152/BUNDLES IIT/MEDIAN subdirectories from the :ref:`menu-section-opentemplate` menu) tensor volume as reference. Each tensor volume used to calculate the ALPS-index is registered with this reference volume.
+
+Use the :ref:`widgets-section-single-file` widget to select PySisyphe **Label volume of reference proj./assoc. areas** (.xvol with *LABEL LB* modality). This volume must be in the same space (space/transform ID) as the reference volume. This is a label volume that stores the ROI of the projection and association areas. Label values must be as follows: label 1=left association area, label 2= right association area, label 3=left projection area and label 4=right projection area. This volume is provided by the IIT Atlas under the icbm152_IIT_ALPS_LABELS.xvol name (search this volume in ./ICBM152/BUNDLES IIT/MEAN or ./ICBM152/BUNDLES IIT/MEDIAN subdirectories from the :ref:`menu-section-opentemplate` menu).
+
+Toggle **Diffusion ALPS...** button to show/hide parameters:
+
+- Set the structuring element radius (in pixels) using **Dilatation of areas** spinbox. This parameter is provided to extend the ROI of the association and projection areas using morphological dilation. Choose 0 to ignore this setting and preserve the original dimensions of the projection and association areas in the reference label volume. The default size is a 3-voxel cube in the icbm152_IIT_ALPS_LABELS.xvol label volume of the IIT Atlas.
+- Select the registration algorithm using the **Transform** comb.box: 
+
+	- *AntsAffine*: 4 multiresolution stages with last at full resolution.
+	- *AntsFastAffine*: fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+	- *AntsSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, 4 multiresolution stages with last at full resolution.
+	- *AntsDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, 4 multiresolution stages with last at full resolution.
+	- *AntsFastSplineDiffeomorphic*: affine step followed by diffeomorphic step, displacement field modelled using B-spline basis functions, fast scheme with only 3 multiresolution stages, and no iteration at full resolution.
+	- *AntsFastDiffeomorphic*: affine step followed by diffeomorphic step, displacement field optimized at voxel level, fast scheme with only 3 multiresolution stages, and no iteration at full resolution. 
+
+Left-click **Execute** button to calculate Diffusion ALPS. The result is displayed in a dialog box with a table. The observations (i.e. tensor volumes) are arranged in rows and the ALPS indices in columns in the table. There are three ALPS indices calculated based on the mean, median, or maximum diffusivity in the reference proj./assoc. areas. Press the **Save Dataset** button, to save the table in one of the following formats: CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).
+
+Left-click **Close** button to exit dialog box.
+
+.. _menu-section-tractogram:
+
+tractogram generation
+---------------------
+
+This menu is used to generate tractogram. This set of streamlines is generated from seeds distributed over the whole brain. This usually represents more than 200,000 lines for typical diffusion-weighted images. PySisyphe uses the `Dipy <https://dipy.org/>`_ library implemenentation.
+
+Use the :ref:`widgets-section-single-file` widget at the top to select a PySisyphe XML **Diffusion model** file (.xmodel). This file is calculated from the :ref:`menu-section-diffmodel` menu.
+
+This is a computationally intensive process that may take longer than 10 minutes.
+
+Toggle **Tracking...** button to show/hide tractography parameters:
+
+- Edit the **Bundle name** widget to set the tractogram name. This name is used to save the generated streamlines in a PySisyphe tractogram file (.xtracts).
+- Select the **Tracking algorithm** from the combbox:
+
+	- `deterministic <https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_deterministic.html>`_:  These tractography algorithms perform tracking of streamlines in a step-wise fashion by following a predictable path, such as following the primary diffusion direction. This is so called deterministic because if you repeat the fiber tracking with same inputs you will get exactly the same set of streamlines. 
+	- `probabilistic <https://docs.dipy.org/stable/examples_built/fiber_tracking/ tracking_probabilistic.html>`_: These approaches follow the trajectory of a possible pathway in a step-wise fashion,  propagating streamlines based on the local orientations reconstructed at each voxel. In probabilistic tracking, however, the tracking direction at each point along the path is chosen at random from a distribution of possible directions. If you repeat the fiber tracking with same inputs you will not get exactly the same set of streamlines.
+
+- Select the **Deterministic algorithm** from the combobox:
+
+	- `Euler EuDX tracking <https://docs.dipy.org/stable/examples_built/quick_start/tracking_introduction_eudx.html>`_: EuDX makes use of the primary direction of the diffusion tensor to propagate streamlines.
+	- `Determintistic Fiber orientation distribution tracking <https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_deterministic.html>`_: Deterministic tractography is an alternative to EuDX deterministic tractography and does not follow the peaks of the local models but uses the entire orientation distributions.
+	- `Parallel transport tracking <https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_ptt.html>`_
+	- `Closest peak direction tracking <https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_bootstrap_peaks.html>`_
+
+- Select the **Probabilistic algorithm** from the combobox:
+
+	- `Bootstrap direction tracking <https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_bootstrap_peaks.html>`_
+	- `Probabilistic tracking <https://docs.dipy.org/stable/examples_built/fiber_tracking/tracking_probabilistic.html>`_
+
+- Select the **Seed method** from the combbox, mask voxels are used as start points (seeds) for generating streamlines.
+
+	- FA/GFA, mask calculated from FA/GFA map threshold. Value between 0.0 and 1.0, usually with white matter values typically above 0.6.
+	- ROI, mask is a PySisyphe ROI (.xroi) given by the user.
+
+- Set the **FA/GFA** threshold from the spinbox. This threshold is used to calculate the mask of seed voxels. This parameter is only displayed if the seed method is FA/GFA (see above).
+- Use the **Seed ROI** :ref:`widgets-section-single-file` widget to select a PySisyphe ROI (.xroi). This ROI is used as a mask of seed voxels. This parameter is only displayed if the seed method is ROI (see above).
+- Set the number of streamlines generated from a seed voxel (1 - 10, default 1) using the **Seed count** spinedit widget.
+- Set the streamline sampling in mm, i.e. distance between two contiguous points of the stremaline (default 0.5), using the **Step size** spinedit widget.
+- Set the maximum angle between two contiguous streamline points in degrees (default 20), using the **Maximum angle** spinedit widget.
+- Set the minimal lenght of streamlines in mm, using the **Minimum length** spinedit widget. Shorter streamlines will be removed from the tractogram.
+- Select the **Stopping criterion** from the combobox. A mask is used as stopping criterion. Tracking is interrupted when the mask is left.
+
+	- FA/GFA, mask calculated from FA/GFA map threshold.
+	- ROI, mask is a PySisyphe ROI (.xroi) given by the user.
+	- GM/WM/CSF, anatomically-constrained tractography, masks calculated from GM/WM/CSF maps. Anatomically-constrained tractography (ACT) uses information from anatomical images to determine when the tractography stops. The include map defines when the streamline reached a "valid" stopping region (i.e. gray matter map) and the exclude map defines when the streamline reached an "invalid" stopping region (i.e. corticospinal fluid map). The ACT stopping criterion uses a trilinear interpolation at the tracking position. Streamline reconstruction is stopped when the current point is in a voxel belonging to gray matter (> 0.5), cerebro-spinal fluid (> 0.5) or background which is defined as binary not(gray matter + white matter + corticospinal fluid maps).
+
+- Set the **FA/GFA Threshold stopping criterion** value from the spinbox. It is used to calculate the mask of voxels that stop streamline generation. This parameter is only displayed if the stopping crtiterion is FA/GFA (see above).
+- Use the **ROI stopping criterion** :ref:`widgets-section-single-file` widget to select a PySisyphe ROI (.xroi). It is used as a mask of voxels that stop streamline generation. This parameter is only displayed if the stopping criterion is ROI (see above).
+- Use the **Gray matter map stopping criterion**, **white matter map stopping criterion** and **CSF map stopping criterion** :ref:`widgets-section-single-file` widgets to select GM/WM/CSF maps (.xvol). This parameter is only displayed if the stopping criterion is GM/WM/CSF (see above).
+			
+Left-click **Execute** button to calculate the tractogram.
+
+Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
+
+.. _menu-section-roisel:
+
+ROI based streamlines selection
+-------------------------------
+
+This menu is used to perform virtual dissection (i.e. streamline selection) of a tractogram using inclusion ROI(s). PySisyphe uses the `Dipy <https://docs.dipy.org/dev/examples_built/streamline_analysis/streamline_tools.html>`_ library implemenentation.
+
+Use the :ref:`widgets-section-single-file` widget a the top to select a PySisyphe XML **Tractogram** file (.xtracts). This file is calculated from the :ref:`menu-section-tractogram` menu.
+
+Use the :ref:`widgets-section-multi-file` widget, under the previous, to select the PySisyphe ROI(s) (.xroi) used for virtual dissection.
+
+Toggle **Bundle ROI selection...** button to show/hide parameters:
+
+- Edit the **Bundle name** widget to set the tractogram name. This name is used to save selected streamlines in a PySisyphe tractogram file (.xtracts).
+- Set the minimal lenght of streamlines in mm, using the **Minimum length** spinedit widget. Shorter streamlines will be removed from the tractogram.
+- Select the **Selection mode** from the combobox:
+
+	- *Any*, a streamline is selected if any of its points are inside ROI.
+	- *End*, a streamline is selected if all its points are inside ROI.
+	- *All*, a streamline is selected if either of its end-points is inside ROI.
+
+Left-click **Execute** button to perform streamline selection.
+
+Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
+
+.. _menu-section-filtersel:
+
+Filter based streamlines selection
+----------------------------------
+
+This menu is used to perform streamline selection of a tractogram using filtering. Streamlines are selected by a clustering confidence algorithm. The cluster confidence index (cci) is an estimation of the support a set of streamlines gives to a particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many streamlines voting for them. These outliers can be removed by thresholding on the cci metric. PySisyphe uses the `Dipy Cluster_Confidence function <https://docs.dipy.org/stable/reference/dipy.tracking.html#cluster-confidence>`_ library implemenentation.
+
+Use the :ref:`widgets-section-single-file` widget a the top to select a PySisyphe XML **Tractogram** file (.xtracts). This file is calculated from the :ref:`menu-section-tractogram` menu.
+
+Toggle **Bundle filtering...** button to show/hide parameters:
+
+- Edit the **Bundle name** widget to set the tractogram name. This name is used to save selected streamlines in a PySisyphe tractogram file (.xtracts).
+- Set the minimal lenght of streamlines in mm, using the **Minimum length** spinedit widget. Shorter streamlines will be removed from the tractogram.
+- Set the **Maximum MDF distance** (Minimum average Direct-Flip in mm) that will be considered a "supporting" streamline and included in cci calculation (default 5 mm).
+- Set the cci threshold used to select streamlines using the **Cluster confidence threshold** spinedit widget.
+- Set the **Power** to which the MDF distance for each streamline will be raised to determine how much it contributes to the cci. High values of power make the contribution value degrade much faster. e.g., a streamline with 5 mm MDF similarity contributes 1/5 to the cci if power is 1, but only contributes 1/5^2 = 1/25 if power is 2 (default 1).
+- Set the **Streamline sampling** which is the number of points that are considered for each streamline in the calculation. To save on processing time, each streamline is subsampled (default 12 points).
+
+Left-click **Execute** button to perform streamline selection.
+
+Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
+
+.. _menu-section-templatesel:
+
+Template based streamlines selection
+------------------------------------
+
+This menu is used to perform virtual dissection (i.e. streamline selection) of a tractogram using an atlas. This function recognizes white matter bundles using local and global streamline-based registration to an atlas tractogram, and clustering method based on similarity of streamlines with bundles of this atlas (see `Dipy RecoBundles class <https://docs.dipy.org/dev/reference/dipy.segment.html#dipy.segment.bundles.RecoBundles>`_).
+
+Use the :ref:`widgets-section-single-file` widget a the top to select a PySisyphe XML **Tractogram** file (.xtracts). This file is calculated from the :ref:`menu-section-tractogram` menu.
+
+Select atlas bundles to extract from the list located below the previous widget.
+
+Toggle **Bundle atlas selection...** button to show/hide parameters:
+
+- Set the minimal lenght of streamlines in mm, using the **Minimum length** spinedit widget. Shorter streamlines will be removed from the tractogram.
+- Set the **Bundle clustering threshold** using spinedit widget. Get the centroids of the atlas bundle and work with centroids instead of all streamlines. This helps speed up processing. The larger the value of the threshold, the fewer centroids will be, and smaller the threshold value, the more centroids will be. If you prefer to use all the streamlines of the model bundle, you can set this threshold to 0.1 mm.
+- Define the **Reduction metric** using combobox. Two metrics are available: *Minimum average Direct-Flip* (mdf) or *Mean Average Minimum* (mam).
+- Set the **Reduction threshold** using spinedit widget. This threshold will be used to reduce the search space for finding the streamlines that match atlas bundle streamlines in shape. Instead of looking at the entire tractogram, now we will be looking at neighboring region of an atlas bundle in the tractogram. Increase the threshold to increase the search space. Range is 15 - 30 mm (default 25 mm).
+- Define the **Pruning metric** using combobox. Two metrics are available: *Minimum average Direct-Flip* (mdf) or *Mean Average Minimum* (mam).
+- Set the **Pruning threshold** using spinedit widget. This threshold will filter the streamlines for which the distance to the atlas bundle threshold in mm. This serves to filter the neighborhood area (search space) to get streamlines that are like the atlas bundle. Range is 6 - 12 mm (default 12 mm).
+- Check **Refine** option to perform a second stage to refine the clustering. It refines the first recognize output by applying second localstreamline-based Linear Registration (optional), and second pruning. This method is useful when we are dealing with noisy data or when we want to extract small tracks from tractograms. This time, search space is created using pruned bundle and not atlas bundle.
+- Set the **Refine reduction threshold** using spinedit widget. This threshold will be used to reduce the search space for finding the streamlines that match model bundle streamlines in shape. Instead of looking at the entire tractogram, now we will be looking at neighboring region of a model bundle in the tractogram. Increase the threshold to increase the search space (default 15 mm).
+- Set the **Refine pruning threshold** using spinedit widget. This threshold will filter the streamlines for which the distance to the atlas bundle threshold in mm. This serves to filter the neighborhood area (search space) to get streamlines that are likethe model bundle (default 6 mm).
+
+Left-click **Execute** button to perform streamline selection. Selected streamlines are saved to a PySisyphe XML tractogtram file (.xtracts).
+
+Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
+
+.. _menu-section-density:
+
+Density map
+-----------
+
+This menu is used to calculate the density map of a bundle. This map allows one to represent the spatial distribution of a bundle by counting the number of streamlines passing through the volume of each voxel. PySisyphe uses the `Dipy density map <https://docs.dipy.org/dev/examples_built/streamline_analysis/streamline_tools.html>`_ implementation.
+
+Use the **Streamlines** :ref:`widgets-section-single-file` widget a the top to select a PySisyphe XML tractogram file (.xtracts). This file is calculated from the :ref:`menu-section-tractogram` menu.
+
+Left-click **Execute** button for map processing. The density map volume is saved with the file name of the first diffusion-weighted volume, prefixed by "density".
+
+Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
+
+.. _menu-section-path:
+
+Path length map
+---------------
+
+This menu is used to calculate a path length map of a bundle. This map is a volume in which each voxel’s value is the shortest distance along a streamline to a reference ROI. PySisyphe uses the `Dipy path length map <https://docs.dipy.org/1.9.0/examples_built/streamline_analysis/path_length_map.html>`_ implemenentation.
+
+Use the **Streamlines** :ref:`widgets-section-single-file` widget a the top to select a PySisyphe XML tractogram file (.xtracts). This file is calculated from the :ref:`menu-section-tractogram` menu.
+
+Use the **Reference ROI** :ref:`widgets-section-multi-file` widget, under the previous, to select the PySisyphe ROI(s) (.xroi) that wil be used as reference.
+
+Left-click **Execute** button for map processing. The path length map volume is saved with the file name of the first diffusion-weighted volume, prefixed by "pathlength".
+
+Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.
+
+.. _menu-section-connectivity:
+
+Connectivity matrix
+-------------------
+
+This menu is used to calculate the connectivity matrix of a whole brain tractogram. This function takes a set of streamlines and a label volume as arguments. It returns the number of streamlines that start and end at each pair of labels and it can return the streamlines grouped by their endpoints. Notice that this function only considers the endpoints of each streamline. PySisyphe uses the `Dipy connectivity matrix <https://docs.dipy.org/dev/examples_built/streamline_analysis/streamline_tools.html>`_ implemenentation.
+
+Use the **Streamlines** :ref:`widgets-section-single-file` widget a the top to select a PySisyphe XML tractogram file (.xtracts). This file is calculated from the :ref:`menu-section-tractogram` menu.
+
+Use the **Label volume** :ref:`widgets-section-multi-file` widget, under the previous, to select a PySisyphe label volume (.xvol). The connectivity matrix will be calculated between the regions of the different labels in this volume.
+
+Toggle **Bundle connectivity matrix...** button to show/hide parameters:
+
+- Set the minimal lenght of streamlines in mm, using the **Bundle length threshold** spinedit widget. Shorter streamlines will be removed from the processing.
+- Define a **matrix values normalization** using combobox: *Absolute* (no normalization) or *Diagonal ratio* (normalization with principal diagonal elements of the connectivity matrix).
+
+Left-click **Execute** button to calculate the connectivity matrix. 
+
+The result is displayed in a dialog box with two tabs. The first tab, titled **Connectivity matrix**, shows the connectivity matrix as a chart. This tab includes three buttons at the bottom: a **Save bitamp** button, which shows a dialog box to save a bitmap of the chart (supported bitmap formats BMP, JPG, PNG, TIFF and SVG), a **Copy to clipboard** button to copy a bitmap capture of the chart to the clipboard, and a **Copy to screenshots** button to copy a bitmap capture of the chart to the :ref:`Screenshots manager <page-screenshots>`. The second tab, titled **Connectivity table**, shows the connectivity matrix values in table format. This tab includes the button **Save Dataset**, which shows a dialog box to save the table (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET).
+
+Left-click **Close** button to exit dialog box.
+
+Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for testing.

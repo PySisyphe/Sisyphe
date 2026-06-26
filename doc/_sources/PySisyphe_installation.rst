@@ -1,0 +1,80 @@
+.. _page-installation:
+
+Installation
+============
+
+- :ref:`install-section-from-binary`
+- :ref:`install-section-from-source`
+
+.. _install-section-from-binary:
+
+From binary archive
+-------------------
+
+Download the binary zip archive for MS Windows or MacOS Intel platforms from https://github.com/PySisyphe/Sisyphe.
+There is no version for the Linux platform, as some of the modules required to run PySisyphe are not yet available on this operating system.
+
+Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. We recommend copying it to the user directory. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
+
+**PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.**
+
+On the Windows 11 platform, the terminal (i.e. the console) remains visible in the taskbar. If you would prefer it to be hidden, simply change the default terminal application.
+
+	- click the **Start button**,
+	- open **Windows Terminal** application,
+	- click the dropdown arrow (▾) in the tab bar,
+	- select **Settings**,
+	- under **Startup**, locate **Default terminal application**,
+	- set it to **Windows Console Host**,
+	- **save** changes.
+
+The PySisyphe graphical user interface has been optimized for dark mode, so we recommend using this mode for the best user experience.
+
+Enabling dark mode on the Windows 11 platform:
+
+	- click the **Start button**,
+	- select **Settings** (or press Windows + I),
+	- click **Personalization** in the left menu,
+	- select **Colors**,
+	- in the **Choose your mode** line, select the **Dark** option to enable Windows 11 dark mode.
+
+Enabling dark mode on the MacOS platform:
+
+	- click the **Apple menu** in the top-left corner of your screen,
+	- select **System Settings**,
+	- click **Appearance** in the sidebar,
+	- choose **Dark**.
+
+Additional content, such as templates, atlases, samples, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
+
+.. _install-section-from-source:
+
+From source
+-----------
+
+If you plan to develop plugins, you will need to install PySisyphe from source.
+
+PySisyphe runs on Python version 3.12, download the last release with binary installer (3.12.10 release date: April 8, 2025) at https://www.python.org/downloads/release/python-31210/, and install it.
+
+We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at https://www.jetbrains.com/fr-fr/pycharm/, and install it. Run PyCharm IDE and create a new project (menu File -> New project) with venv interpreter type and previously installed Python 3.10.11 or 3.12.10 version.
+
+1. Download `PySisyphe source <https://mega.nz/folder/G18X2IRQ#BRpA7_fcyHBIK66aZNyntA>`_.
+2. Unzip archive.
+3. Rename folder to "Sisyphe".
+4. Copy "Sisyphe" folder in the PyCharm project folder.
+5. Open the Pycharm terminal (ALT-F12), the current folder is by default the root of the project folder (a requirements.txt exists in this folder).
+6. To install the python modules needed to work with PySisyphe, type at the command line: pip install -r requirements.txt
+
+Reinstall numpy package, to force version 1.26.4: pip install numpy==1.26.4.
+
+At this stage, all external and PySisyphe modules are installed for your own development.
+PySisyphe core (Sisyphe.core.<module name>) and widget (Sisyphe.widgets.<module name>) modules can be imported with: 
+ 
+- from Sisyphe.core.<module name> import * (to import all functions/classes of the Sisyphe.core.<module name>)
+- from Sisyphe.core.<module name> import <function/class name> (to import the function/class <function/class name> of the Sisyphe.core.<module name>)
+
+To run PySisyphe in PyCharm IDE:
+
+1. Run PyCharm IDE, project will be opened by default.
+2. Load PySisyphe.py if not already open (menu File -> Open...)
+3. Run PySisyphe.py (menu Run -> Run 'PySisyphe', or ALT+F10)

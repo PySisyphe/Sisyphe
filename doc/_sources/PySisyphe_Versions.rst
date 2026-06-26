@@ -1,0 +1,6619 @@
+.. _page-versions:
+
+Version history
+===============
+
+- :ref:`version-increment-rules`
+- :ref:`build26-07-2025`
+- :ref:`build05-08-2025`
+- :ref:`build28-08-2025`
+- :ref:`build30-08-2025`
+- :ref:`build13-10-2025`
+- :ref:`build16-10-2025`
+- :ref:`build01-11-2025`
+- :ref:`build18-11-2025`
+- :ref:`build05-12-2025`
+- :ref:`build12-01-2026`
+- :ref:`build20-01-2026`
+- :ref:`build29-01-2026`
+- :ref:`build01-02-2026`
+- :ref:`build20-02-2026`
+- :ref:`build20-03-2026`
+- :ref:`build20-04-2026`
+- :ref:`build30-05-2026`
+- :ref:`build20-06-2026`
+- :ref:`build30-09-2026`
+
+.. _version-increment-rules:
+
+Version increment rules
+-----------------------
+
+- **major version increment**
+
+	- 100 minor version increments
+
+- **minor version increment**
+
+	- new python interpreter version (+50 minor version increments)
+	- new external package
+	- external package upgrade
+	- new module
+	- 25 patch version increments
+
+- **patch version increment**
+
+	- new html page
+	- update html documentation
+	- new file
+	- file update
+	- new function
+	- new class
+	- class update
+
+.. _build26-07-2025:
+
+version 0.9.1, build 26/07/2025
+-------------------------------
+
+- First distributed version
+- Github page deployment: https://github.com/PySisyphe/Sisyphe
+- NITRC page deployment: https://www.nitrc.org/projects/pysisyphe/
+- First PyInstaller stand alone frozen version for Windows and MacOS platforms (x64 CPU)
+- Shared link to Mega repository for downloading frozen versions: https://mega.nz/folder/Kt8hzbSa#AUkLH1WH0zoawYolT8Ep0w
+
+.. _build05-08-2025:
+
+version 0.12.9, build 05/08/2025
+--------------------------------
+
+- **new files**
+
+	- gui/darkroi/texture.png
+	- gui/lightroi/texture.png
+
+- **updated files**
+
+	- settings/settings.xml
+	
+		- add DicomHost section
+	
+	- settings/tooltips.xml
+	
+		- add DicomHost section
+
+- **new external package**
+
+	- pynetdicom 3.0.4
+
+- **upgraded external package**
+
+	- pydicom, upgrade 2.3.1 to 3.0.1
+	
+		- this resulted in a bug in core.sisypheDicom.ImportFromRTStruct.execute() method
+
+- **new module**
+
+	- gui.dialogDicomQuery
+	
+		- Dialog box for Dicom Query/retreive 
+
+- **updated modules**
+
+	- core.sisypheDicom
+	- gui.dialogSplash
+	- gui.dialogDicomRTImport
+	- core.sisypheImageIO
+	- gui.dialogGenericResults
+	- gui.windowSisyphe
+	- gui.attributesWidgets
+	- gui.dialogSplash
+
+- **new classes**
+
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve
+	
+		- Dialog box for Dicom Query/retreive 
+	
+	- gui.dialogTexture.Dialog.DialogROITexture
+	
+		- Dialog box for texture analysis in ROI
+
+- **new methods**
+
+	- gui.windowSisyphe.WindowSisyphe.queryDicom
+	- gui.windowSisyphe.WindowSisyphe.texture2
+
+- **new functions**
+
+	- gui.dialogDicomQuery.getDicomDirectory
+	- gui.dialogDicomQuery.handle_store
+
+- **updated classes**
+
+	- core.sisypheDicom.ImportFromRTStruct
+	
+		- update execute() method
+	
+	- gui.dialogDicomRTImport.DialogRTimport
+	
+		- update _convert() method
+	
+	- gui.dialogGenericResults.DialogGenericResults
+	
+		- update _getDataFrame() method
+	
+	- gui.windowSisyphe.WindowSisyphe
+	
+		- add queryDicom() method to exec gui.dialogDicomQuery.DialogDicomQueryRetrieve dialog
+		- add texture2() method to exec gui.dialogTexture.Dialog.DialogROITexture dialog
+	
+	- gui.attributesWidgets.ListROIAttributesWidget
+	
+		- add features() method to exec gui.dialogTexture.Dialog.DialogROITexture dialog
+		- update __init__() method
+	
+	- gui.dialogSplash.DialogSplash
+	
+		- update __init__() method
+
+- **updated methods**
+
+	- core.sisypheDicom.ImportFromRTStruct.execute()
+	
+		- bug fix, since version 3.0.1 of pydicom, the VM attribute of a sequence (SQ) is always 1, 
+		- to get the number of elements in a sequence (SQ), use len(DataElement.value)
+		- bug fix, set reference volume origin to default (0.0, 0.0, 0.0)
+		- bug fix, test if the dicom ROIContourSequence field exists
+		- bug fix, add multiple folders management
+	
+	- gui.dialogDicomRTImport.DialogRTimport._convert()
+	- gui.dialogGenericResults.DialogGenericResults._getDataFrame()
+	
+		- replace \n by space of the dataFrame header row
+	
+	- gui.attributesWidgets.ListROIAttributesWidget.__init__()
+	
+		- add features IconPushButton (_features)
+	
+	- gui.dialogSplash.DialogSplash.__init__()
+	
+		- display pynetdicom version in dialog splash
+
+- **updated function**
+
+	- core.sisypheImageIO.isDicom
+	
+		- bug fix, change returned value, from str to bool
+
+.. _build28-08-2025:
+
+version 0.12.11, build 28/08/2025
+---------------------------------
+
+- **updated modules**
+
+	- widgets.attributesWidget
+	- widgets.tabToolsWidgets
+
+- **updated classes**
+
+	- widgets.attributesWidget.ItemMeshAttributesWidget
+	- widgets.attributesWidget.ItemToolAttributesWidget
+	- widgets.attributesWidget.ItemBundleAttributesWidget
+	- widgets.attributesWidget.ListMeshAttributesWidget
+	- widgets.attributesWidget.ListToolAttributesWidget
+	- widgets.attributesWidget.ListBundleAttributesWidget
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+	- widgets.tabToolsWidgets.TabTrackingWidget
+
+- **updated methods**
+
+	- widgets.attributesWidget.ItemMeshAttributesWidget.settings()
+	- widgets.attributesWidget.ItemToolAttributesWidget.properties()
+	- widgets.attributesWidget.ItemToolAttributesWidget.target()
+	- widgets.attributesWidget.ItemToolAttributesWidget.length()
+	- widgets.attributesWidget.ItemBundleAttributesWidget._editColor()
+	- widgets.attributesWidget.ListMeshAttributesWidget.addIsosurface()
+	- widgets.attributesWidget.ListToolAttributesWidget.newHandle()
+	- widgets.attributesWidget.ListToolAttributesWidget.newLine()
+	- widgets.attributesWidget.ListToolAttributesWidget.duplicate()
+	- widgets.attributesWidget.ListToolAttributesWidget.features()
+	- widgets.attributesWidget.ListToolAttributesWidget.features2()
+	- widgets.attributesWidget.ListBundleAttributesWidget.dissection()
+	- widgets.attributesWidget.ListBundleAttributesWidget.filter()
+	- widgets.attributesWidget.ListBundleAttributesWidget.centroid()
+	- widgets.attributesWidget.ListBundleAttributesWidget.cluster()
+	- widgets.attributesWidget.ListBundleAttributesWidget.statistics()
+	- widgets.tabToolsWidgets.TabROIToolsWidget._dialogActiveContour()
+	- widgets.tabToolsWidgets.TabTrackingWidget.atlas()
+	- widgets.tabToolsWidgets.TabTrackingWidget.dissection()
+	
+		- update dialog title bar color for Win32 platform
+
+.. _build30-08-2025:
+
+version 0.12.16, build 30/08/2025
+---------------------------------
+
+- **updated modules**
+
+	- core.sisypheROI
+	
+		- update cython compilation
+	
+	- widgets.thresholdWidgets
+	- widgets.tabToolsWidgets
+	- gui.dialogFiducialBox
+	- gui.windowSisyphe
+
+- **updated classes**
+
+	- core.sisypheROI.SisypheROIDraw
+	
+		- update setMorphologyRadius() method
+		- update getMorphologyRadius() method
+	
+	- widgets.thresholdWidgets.ThresholdViewWidget
+	
+		- add _onButtonResetEvent() method
+		- add setResetButtonVisibility() method
+		- add getResetButtonVisibility() method
+		- update __init__() method
+	
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+	
+		- add _menuThresholdShow() method
+		- update _brushThresholdChanged() method
+	
+	- gui.dialogFiducialBox.DialogFiducialBox
+	
+		- update __init__() method
+	
+	- gui.windowSisyphe.WindowSisyphe
+	
+		- update frameDetection() method
+
+- **new methods**
+
+	- widgets.thresholdWidgets._onButtonResetEvent()
+	
+		- event method to reset widget thresholds
+	
+	- widgets.thresholdWidgets.setResetButtonVisibility()
+	
+		- set reset button visibility
+	
+	- widgets.thresholdWidgets.setResetButtonVisibility()
+	
+		- get reset button visibility
+	
+	- widgets.tabToolsWidgets.TabROIToolsWidget._menuThresholdShow()
+	
+		- bug fix, loss of volume display in darwin platform when popup menu is shown
+
+- **updated methods**
+
+	- core.sisypheROI.SisypheROIDraw.setMorphologyRadius()
+	
+		- bug fix, add int parameter type
+	
+	- core.sisypheROI.SisypheROIDraw.getMorphologyRadius()
+	
+		- bug fix, change return type from float to int
+	
+	- widgets.thresholdWidgets.ThresholdViewWidget.__init__()
+	
+		- add reset button (self._resetbutton attribute), to reset widget thresholds
+	
+	- widgets.tabToolsWidgets.TabROIToolsWidget._brushThresholdChanged()
+	
+		- bug fix, loss of volume display in darwin platform when popup menu is shown
+	
+	- gui.dialogFiducialBox.DialogFiducialBox.__init__()
+	
+		- bug fix, remove setModal(True)
+		- Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected
+	
+	- gui.windowSisyphe.WindowSisyphe.frameDetection()
+	
+		- Qt5 bug of modal dialog on darwin platform, popup menu items cannot be selected, modal simulation to fix it
+
+.. _build13-10-2025:
+
+version 0.16.5, build 13/10/2025
+--------------------------------
+
+- **updated html documentation**
+
+	- add texture.png icon
+	- update PySisyphe_dockroi.rst
+	- add full menu documentation
+	
+		- menu Diffusion: PySisyphe_Diffusion.rst
+		- menu File PySisyphe:_File.rst
+		- menu Functions: PySisyphe_Functions.rst
+		- menu Mapping: PySisyphe_Mapping.rst
+		- menu Registration: PySisyphe_Registration.rst
+		- menu Segmentation: PySisyphe_Segmentation.rst
+		- menu Window PySisyphe:_Window.rst
+	
+	- add PySisyphe_Version.rst
+	- update API documentation, docstring corrections
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- settings/MR.xdcm
+	
+		- bug fix, line 79, in PixelSpacing value, from 1.0/1.L0 to 1.0/1.0
+	
+	- settings/dialogs.xml
+	- settings/tootips.xml
+	- settings/functions.xml
+
+- **updated modules**
+
+	- core.sisypheDicom
+	- core.sliceViewFiducialBoxWidget
+	- core.sisypheTools
+	- core.sisypheStatitics
+	- core.sisypheSettings
+	- processing.dipyFunctions
+	- gui.dialogEditLabels
+	- gui.dialogExport
+	- gui.dialogDicomExport
+	- gui.dialogDicomQuery
+	- gui.dialogLabel
+	- gui.windowSisyphe
+	- gui.dialogWorkflow
+	- gui.dialogReorient
+	- gui.dialogGenericResults
+	- gui.dialogRegistration
+	- gui.dialogSegmentation
+	- gui.dialogDeepSegmentation
+	- gui.dialogDiffusionPreprocessing
+	- gui.dialogDiffusionTracking
+	- gui.dialogStatConstrast
+	- gui.dialogStatModel
+	- gui.dialogStatResult
+	- gui.windowSisyphe
+	- widgets.imageWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.tabToolsWidgets
+
+- **updated functions**
+
+	- core.sisypheSettings.initPySisypheUserPath()
+	
+		- line 143, apply DPI scale factor to some settings
+	
+	- core.sisypheSettings.setUserSettingsToDefault()
+	
+		- line 196, apply DPI scale factor to some settings
+	
+	- processing.dipyFunctions.dwiPreprocessing()
+	
+		- line 435, change the default value of the blockradius parameter
+
+- **updated classes**
+
+	- core.sisypheDicom.ExportToDicom
+	
+		- update execute() method
+	
+	- core.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget
+	
+		- update __init__() method
+	
+	- core.sisypheTools.HandleWidget
+	
+		- update setFontSize() method
+		- update getFontSize() method
+	
+	- core.sisypheTools.LineWidget
+	
+		- update setFontSize() method
+		- update getFontSize() method
+	
+	- core.sisypheStatitics.SisypheDesign
+	
+		- update __str__() method
+		- update addGlobalCovariable() method
+	
+	- core.sisypheSettings.SisypheSettings
+	
+		- getUserSettings() method
+	
+	- gui.dialogEditLabels.DialogEditLabels
+	
+		- update __init__() method
+	
+	- gui.dialogExport.DialogExport
+	
+		- update __init__() meaddGlobalCovariable() method
+	
+	- gui.dialogDicomExport.DialogDicomExport
+	
+		- update __init__() method
+	
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve
+	
+		- update __init__() method
+	
+	- gui.dialogLabel.DialogVOLtoLabel
+	
+		- update __init__() method
+	
+	- gui.dialogLabel.DialogROItoLabel
+	
+		- update __init__() method
+	
+	- gui.dialogLabel.DialogLabeltoROI
+	
+		- update __init__() method
+	
+	- gui.windowSisyphe.WindowSisyphe
+	
+		- update _initRegistrationMenu() method
+	
+	- gui.dialogWorkflow.WorkflowItem
+	
+		- update __init__() method
+	
+	- gui.dialogReorient.DialogReorient
+	
+		- update __init__() method
+	
+	- gui.dialogGenericResults.DialogGenericResults
+	
+		- add showEvent() method
+	
+	- gui.dialogRegistration.DialogAsymmetry
+	
+		- update __init__() method
+		- update execute() method
+	
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation
+	
+		- update _updateAvailability() method
+	
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation
+	
+		- update execute() method
+	
+	- gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing
+	
+		- update __init__() method
+	
+	- gui.dialogDiffusionTracking.DialogDiffusionTracking
+	
+		- update _stoppingChanged() method
+	
+	- gui.dialogStatConstrast.DialogContrast
+	
+		- update __init__() method
+	
+	- gui.dialogStatConstrast.DialogConjunction
+	
+		- update __init__() method
+	
+	- gui.dialogStatConstrast.DialogTMapToZMap
+	
+		- update __init__() method
+	
+	- gui.dialogStatModel.DialogModel
+	
+		- update __init__() method
+	
+	- gui.dialogStatModel.DialogObs
+	
+		- update __init__() method
+	
+	- gui.dialogStatModel.DialogfMRIObs
+	
+		- update __init__() method
+	
+	- gui.dialogStatResult.DialogResult
+	
+		- update setMap() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- display documentation for each menu
+	
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+	
+		- update editAttributes() method
+		- update viewDicomAttributes() method
+		- update editLabels() method
+		- update statistics() method
+	
+	- widgets.functionsSettingsWidget.SettingsWidget
+	
+		- update formatLabel() method
+
+	- widgets.tabToolsWidgets.TabHelpWidget
+
+		- add setUrl() method
+		- add setPage() method
+
+- **updated methods**
+
+	- core.sisypheDicom.ExportToDicom.execute()
+	
+		- bug fix, value incrementation of ds['ImagePositionPatient'] and ds['SliceLocation']
+	
+	- core.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.__init__()
+	
+		- HandleWidget font size from GUI settings
+	
+	- core.sisypheTools.HandleWidget.setFontSize()
+	
+		- font size f(dpi), add usedpi parameter
+	
+	- core.sisypheTools.HandleWidget.getFontSize()
+	
+		- font size f(dpi), add usedpi parameter
+	
+	- core.sisypheTools.LineWidget.setFontSize()
+	
+		- font size f(dpi), add usedpi parameter
+	
+	- core.sisypheTools.LineWidget.getFontSize()
+	
+		- font size f(dpi), add usedpi parameter
+	
+	- core.sisypheStatitics.SisypheDesign.__str__()
+	
+		- line 2483, translation error, "covariable" to "covariate"
+	
+	- core.sisypheSettings.SisypheSettings.getUserSettings()
+	
+		- line 296, apply DPI scale factor to some settings
+	
+	- core.sisypheStatitics.SisypheDesign.addGlobalCovariable()
+	
+		- line 3681, add covariate always at the last column of the design matrix (not before global factor)
+	
+	- gui.dialogEditLabels.DialogEditLabels.__init__()
+	
+		- remove fixed size of 'Clear labels' and 'Import/export' buttons
+	
+	- gui.dialogExport.DialogExport.__init__()
+	
+		- change the name of the 'Convert' button to 'Export'
+	
+	- gui.dialogDicomExport.DialogDicomExport.__init__()
+	
+		- change the name of the 'Convert' button to 'Export' and remove icon
+	
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve.__init__()
+	
+		- change the name of the 'Modality date' to 'Acq. date'
+	
+	- gui.dialogLabel.DialogVOLtoLabel.__init__() method
+	
+		- change dialog width
+	
+	- gui.dialogLabel.DialogROItoLabel.__init__() method
+	
+		- change dialog width
+	
+	- gui.dialogLabel.DialogLabeltoROI.__init__() method
+	
+		- change dialog width
+	
+	- gui.windowSisyphe.WindowSisyphe._initRegistrationMenu()
+	
+		- change menu name 'ICBM normalization' to 'ICBM spatial normalization'
+	
+	- gui.dialogWorkflow.WorkflowItem.__init__()
+	
+		- replace fixed size of _input1 and _input2 QSpinBox attributes, from 60 to 100
+	
+	- gui.dialogReorient.DialogReorient.__init__()
+	
+		- remove fixedWidth for all buttons
+		- remove auto button
+	
+	- gui.dialogRegistration.DialogAsymmetry.__init__()
+	
+		- add jacobian determinant settings
+	
+	- gui.dialogRegistration.DialogAsymmetry.execute()
+	
+		- get prefix suffix from jacobian determinant settings
+	
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation._updateAvailability()
+	
+		- visibility of StructureTissue and PMAPCorrection setting parameters
+	
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation.execute()
+	
+		- bug fix, wrong label index and name in .xlabel file
+	
+	- gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing.__init__()
+	
+		- bug fix, line 134, self._supervised.setSettingsButtonText('Self Supervised Denoising')
+	
+	- gui.dialogDiffusionTracking.DialogDiffusionTracking._stoppingChanged()
+	
+		- bug fix, line 202, v = self._combo3.currentText() == 'GM/WM/CSF' (not 'MAP')
+	
+	- gui.dialogStatConstrast.DialogContrast.__init__()
+	
+		- cancel button, remove fixed size, set autodefault and default
+	
+	- gui.dialogStatConstrast.DialogConjunction.__init__()
+	
+		- cancel button, remove fixed size, set autodefault and default
+	
+	- gui.dialogStatConstrast.DialogTMapToZMap.__init__()
+	
+		- cancel button, remove fixed size, set autodefault and default
+	
+	- gui.dialogStatModel.DialogModel.__init__()
+	
+		- cancel button, remove fixed size
+	
+	- gui.dialogStatModel.DialogObs.__init__()
+	
+		- cancel button, remove fixed size
+	
+	- gui.dialogStatModel.DialogfMRIObs.__init__()
+	
+		- cancel button, remove fixed size
+	
+	- gui.dialogStatResult.DialogResult.setMap()
+	
+		- bug fix, line 1393, replace .setCursorOpacity(0.25) by .setLineOpacity(0.25)
+	
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.viewDicomAttributes()
+
+		- update dialog title bar color for Win32 platform
+	
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.editLabels()
+
+		- update dialog title bar color for Win32 platform
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.statistics()
+
+		- update dialog title bar color for Win32 platform
+		- update dialog title bar color for Win32 platform
+
+	- widgets.functionsSettingsWidget.SettingsWidget.formatLabel()
+
+		- buf fix, capitalized word management
+
+- **new function**
+
+	- core.sisypheSettings.getDPIScaleFactor()
+
+		- Calculate the scale factor that is used to define the size of icons and some widgets
+
+- **new methods**
+
+	- gui.dialogGenericResults.DialogGenericResults.showEvent()
+
+		- adjust the size of the dialog box to fit the content
+
+	- widgets.tabToolsWidgets.TabHelpWidget
+
+		- add setUrl() method
+
+			- Display an url
+
+		- add setPage() method
+
+			- Display a local page
+
+.. _build16-10-2025:
+
+version 0.18.3, build 16/10/2025
+--------------------------------
+
+- **updated html documentation**
+
+	- add "Label volume to mask" dialog box documentation in PySisyphe_File.rst & PySisyphe:_menubar.rst
+	- add "Remaps label volume" dialog box documentation in PySisyphe_File.rst & PySisyphe:_menubar.rst
+	- add "Laterality index" dialog box documentation in PySisyphe_Mapping.rst & PySisyphe:_menubar.rst
+	- PySisyphe_File.rst
+	- PySisyphe_Versions.rst
+	- API documentation
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- settings/functions.xml
+
+- **updated modules**
+
+	- core.sisypheImageAttributes
+	- core.sisypheDownload
+	- gui.dialogLabel
+	- gui.dialogContrast
+	- gui.windowSisyphe
+	- gui.dialogRegistration
+	- gui.dialogEditLabel
+	- gui.dialogFileSelection
+	- gui.dialogDataType
+	- gui.dialogFlipAxes
+	- gui.dialogSwapAxes
+	- gui.dialogFunction
+	- gui.dialogWorkflow
+	- gui.dialogStatContrast
+	- gui.dialogTimeSeries
+	- gui.dialogDiffusionGradients
+	
+- **updated classes**
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- add clearLabels() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- add labelToMask() method
+		- add relabel() method
+		- add lateralityIndex() method
+		- update __inti__() method
+		- update getUserDirectory() method
+
+	- gui.dialogRegistration.DialogRegistration
+
+		- update execute() method
+
+	- gui.dialogEditLabels.DialogEditLabels
+
+		- update __inti__() method
+		- add _moveTo() method
+		- add getFileSelectionWidget() method
+
+	- gui.dialogFileSelection.DialogFileSelection
+	- gui.dialogFileSelection.DialogFilesSelection
+	- gui.dialogDataType.DialogDataType
+	- gui.dialogFlipAxes.DialogFlipAxes
+	- gui.dialogSwapAxes.DialogSwapAxes
+	- gui.dialogFunction.DialogHistogramIntensityMatching
+	- gui.dialogFunction.DialogRegressionIntensityMatching
+	- gui.dialogWorkflow.DialogWorkflow
+	- gui.dialogStatContrast.DialogConjunction
+	- gui.dialogStatContrast.DialogTMapToZMap
+	- gui.dialogStatContrast.DialogLateralityIndex
+	- gui.dialogTimeSeries.DialogSeriesPreprocessing
+	- gui.dialogTimeSeries.DialogSeriesCanICA
+	- gui.dialogDiffusionGradients.DialogDiffusionGradients
+
+		- add getFileSelectionWidget() / getFilesSelectionWidget() / getReferenceSelectionWidget() methods
+
+- **updated methods**
+
+	- gui.dialogRegistration.DialogRegistration.execute()
+
+		- line 880, bug fix, interpolator setting
+
+	- gui.dialogEditLabels.DialogEditLabels.__init__()
+
+		- line 117, connect _tree double-click signal to _moveTo() method
+
+	- gui.windowSisyphe.WindowSisyphe.__inti__()
+
+		- line 244, call getUserDirectory method
+
+	- gui.windowSisyphe.WindowSisyphe.getUserDirectory()
+
+		- line 185, update PySisyphe user folder functions.xml and settings.xml files when running a new installation for the first time
+
+- **updated functions**
+
+	- core.sisypheDownload.installFromHost()
+
+		- new version installation: copy new functions.xml and settings.xml files to the PySisyphe user folder ($User/.PySisyphe)
+
+	- core.sisypheDownload.updatePySisyphe()
+
+		- new version url in section <host><updatepy> (host.xml file) if venv execution, <host><updatepyc> if frozen execution
+
+- **new classes**
+
+	- gui.dialogLabel.DialogLabeltoMask
+
+		- dialog box to create a mask as a combination of labels from a label volume
+
+	- gui.dialogLabel.DialogRelabel
+
+		- dialog box to remaps label indexes of a label volume
+
+	- gui.dialogContrast.DialogLateralityIndex
+
+		- dialog box to calculate laterality index of a statistical map
+
+- **new methods**
+
+	- core.sisypheImageAttributes.SisypheAcquisition.clearLabels()
+
+		- remove all labels from a label volume
+
+	- gui.windowSisyphe.WindowSisyphe.labelToMask()
+
+		- call gui.dialogLabel.DialogLabeltoMask dialog box
+
+	- gui.windowSisyphe.WindowSisyphe.relabel()
+
+		- call gui.dialogLabel.DialogRelabel dialog box
+
+	- gui.dialogEditLabels.DialogEditLabels._moveTo()
+
+		- center cursor on double-cliked label
+
+.. _build01-11-2025:
+
+version 0.20.16, build 01/11/2025
+---------------------------------
+
+- **new html documentation**
+
+	- /API2/api_dialog_generic_results.rst
+	- /API2/api_dialog_wait.rst
+	- /API2/api_understanding_views.rst
+	- /API2/api_widgets_iconbar.rst
+	- /API2/api_widgets_lut.rst
+	- /API2/api_widgets_multiple_view.rst
+	- /API2/api_widgets_select_file.rst
+	- /API2/api_widgets_settings.rst
+	- /API2/api_widgets_single_view.rst
+	- /API2/index.rst
+	- PySisyphe_Versions.rst
+	- rebuild sphinx documentation
+
+- **updated html documentation**
+
+	- PySisyphe_Mapping.rst update
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- settings/tooltips.xml
+	- settings/functions.xml
+
+- **updated docstrings & typing**
+
+	- Sisyphe.widgets.multiViewWidgets
+	- Sisyphe.widgets.volumeViewWidget
+	- Sisyphe.widgets.sliceViewWidgets
+	- Sisyphe.widgets.sliceTrajectoryViewWidget
+	- Sisyphe.widgets.selectFileWidgets
+	- Sisyphe.widgets.projectionViewWidget
+	- Sisyphe.widgets.multiComponentViewWidget
+	- Sisyphe.widgets.iconBarViewWidgets
+	- Sisyphe.widgets.LUTWidgets
+	- Sisyphe.widgets.functionsSettingsWidget
+	- Sisyphe.widgets.abstractViewWidget
+	- Sisyphe.widgets.dicomWidgets
+	- Sisyphe.widgets.sliceViewFiducialBoxWidget
+	- Sisyphe.widgets.thresholdWidgets
+	- Sisyphe.gui.dialogFileSelection
+	- Sisyphe.gui.dialogWait
+	- Sisyphe.gui.dialogGenericResults
+
+- **updated modules**
+
+	- core.sisypheDownload
+	- gui.windowSisyphe 
+	- gui.dialogSegmentation
+	- gui.dialogTexture
+	- widgets.sliceViewWidgets
+	- widgets.multiViewWidgets
+	- widgets.volumeViewWidget
+	- widgets.iconBarViewWidgets
+	- widgets.selectFileWidgets
+
+- **updated function**
+
+	- core.sisypheDownload.updatePySisyphe()
+
+		- line 238, Try/except block to protect the call to InstallFromHost() method
+
+- **updated classes**
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update checkUpdate() method
+	
+	- gui.dialogSegmentation.DialogPriorBasedSegmentation
+
+		- update _priorsChanged() method
+
+	- gui.dialogTexture.DialogROITexture
+
+		- update _validateROI() method
+
+	- widgets.sliceViewWidgets.SliceViewWidget
+
+		- update _getInfoValuesText() method
+
+	- widgets.multiViewWidgets.OrthogonalSliceViewWidget
+
+		- update getMeshCollection() method
+
+	- widgets.volumeViewWidget.VolumeViewWidget
+
+		- update getSlice0Visibility() method
+		- update getSlice1Visibility() method
+		- update getSlice2Visibility() method
+		- update getSurfaceVisibility() method
+		- update getTextureVisibility() method
+
+	- widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2
+
+		- update setMoveOverlayOff() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update getItemFromIndex() method
+
+- **updated methods**
+
+	- gui.windowSisyphe.WindowSisyphe.checkUpdate()
+
+		- message box to exit after installation
+
+	- gui.dialogSegmentation.DialogPriorBasedSegmentation._priorsChanged()
+
+		- bug fix, line 1027, from 'Custom' to 'CUSTOM' to display file selection widgets (T1, Mask, GMPrior, CGMPrior, WMPrior, CSFPrior, BrainstemPrior, CerebellumPrior)
+
+	- gui.dialogTexture.DialogROITexture._validateROI()
+
+		- bug fix, line 651/661, row index of a ROI filename
+
+	- widgets.sliceViewWidgets.SliceViewWidget._getInfoValuesText()
+
+		- bug fix, lines 690 and 696, PC and midACPC infos
+
+	- widgets.multiViewWidgets.OrthogonalSliceViewWidget.getMeshCollection()
+
+		- bug fix, line 830, no return value
+
+	- widgets.volumeViewWidget.VolumeViewWidget.getSlice0Visibility()
+	- widgets.volumeViewWidget.VolumeViewWidget.getSlice1Visibility()
+	- widgets.volumeViewWidget.VolumeViewWidget.getSlice2Visibility()
+	- widgets.volumeViewWidget.VolumeViewWidget.getSurfaceVisibility()
+	- widgets.volumeViewWidget.VolumeViewWidget.getTextureVisibility()
+
+		- bug fix, lines 1021, 1027, 1033, no return value
+
+	- widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2.setMoveOverlayOff()
+
+		- bug fix, line 2530, replace widget.setMoveOverlayOff() by widget.setMoveOverlayFlag(False)
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.getItemFromIndex()
+
+		- bug fix, return value type (QListWidgetItem, not str)
+
+.. _build18-11-2025:
+
+version 0.21.08, build 18/11/2025
+---------------------------------
+
+- **updated html documentation**
+
+	- PySisyphe_dockroi.rst
+	- PySisyphe_dockmesh.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_docktracking.rst
+	- /API/api_settings.rst
+	- /API/api_volume.rst
+	- /API2/api_widgets_select_file.rst
+	- /API2/api_widgets_settings.rst
+	- PySisyphe_Version.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- settings/settings.xml
+
+- **updated modules**
+
+	- core.sisypheSettings
+	- core.sisypheImage
+	- core.sisypheDownload
+	- core.sisypheTools
+	- widgets.selectFileWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.attributesWidgets
+	- widgets.abstractViewWidget
+	- widgets.multiViewWidgets
+	- widgets.sliceViewWidgets
+	- widgets.sliceTrajectoryViewWidget
+
+		- update import, add from Sisyphe.core.sisypheTools import HandleWidget
+		- update import, add from Sisyphe.core.sisypheTools import LineWidget
+		- remove these imports from TYPE_CHECKING
+
+	- widgets.abstractViewWidget
+	- widgets.attributesWidgets
+	- widgets.iconBarViewWidgets
+	- widgets.tabToolsWidgets
+	- gui.dialogSkullStripping
+
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+
+		- update getMin() method
+		- update getValueAtContiuousIndex() method
+		- new method getValueAtContiuousIndex()
+
+	- core.sisypheTools.HandleWidget
+	- core.sisypheTools.HLineWidget
+
+		- update setFontSize() & getFontSize() methods
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget
+
+		- update setSisypheVolumeFilters() method
+		- update setSequenceFilters() method
+		- update setModalityFilters() method
+		- update setSuffixFilters() method
+		- update setPrefixFilters() method
+		- update setContainsStringFilters() method
+
+	- widgets.selectFileWidgets.SettingsWidget
+
+		- update _initSettingsLayout() method
+
+	- widgets.attributesWidgets.ListAttributesWidget
+
+		- update __init__() method
+		- update _addItem() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+	 	- add wait.open() to all methods
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget
+
+		- update _updateCameraOrientation() method
+		- update _onLeftPressEvent() method
+		- update _onMouseMoveEvent() method
+		- new methods to get flag of ROI tools
+
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- update _updateToolMenu() method
+		- update synchroniseCursorPositionChanged() method
+
+	- widgets.multiViewWidgets.GridViewWidget
+
+		- update setNumberOfVisibleViews() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update __init__() method
+		- update open() method
+		- update setIconSize() method
+		- new visibility() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+	- widgets.attributesWidgets.ListMeshAttributesWidget
+	- widgets.attributesWidgets.ListBundleAttributesWidget
+
+		- update __init__() method
+		- update setIconSize() method
+		- new visibility() method
+
+	- widgets.iconBarViewWidgets.IconBarWidget
+
+		- update _onExpand method()
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection
+
+		- new methods to get flag of ROI tools
+
+	- widgets.tabToolsWidgets.SliceROIViewWidget
+
+		- update Slice ROI actions, slice blob actions, volume ROI actions, volume blob actions methods
+
+	- gui.dialogSkullStripping.DialogSkullStripping
+
+	 	- update function() method
+
+- **updated methods**
+
+		- core.sisypheImage.SisypheImage.getMin()
+
+			- bug fix, lines 4042 & 4055, returns std and not min, replace std(img) by img.min()
+
+		- core.sisypheImage.SisypheImage.getValueAtContiuousIndex()
+
+			- add ndarray type for p parameter
+
+		- core.sisypheTools.HandleWidget.getFontSize()
+		- core.sisypheTools.HandleWidget.setFontSize()
+		- core.sisypheTools.LineWidget.getFontSize()
+		- core.sisypheTools.LineWidget.setFontSize()
+
+			- exception handling for dpi
+
+		- core.sisypheTools.DistanceWidget.__init__()
+		- core.sisypheTools.OrthogonalDistanceWidget.__init__()
+		- core.sisypheTools.AngleWidget.__init__()
+		- core.sisypheTools.BoxWidget.__init__()
+		- core.sisypheTools.TextWidget.__init__()
+		- core.sisypheTools.HandleWidget.__init__()
+		- core.sisypheTools.LineWidget.__init__()
+
+			- add self.SetObjectName(), used in widgets.abstractViewWidget.AbstractViewWidget._updateToolMenu(), see below
+
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSisypheVolumeFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSequenceFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setModalityFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setSuffixFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setPrefixFilters() method
+		- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setContainsStringFilters() method
+			
+			- Typing correction
+
+		- widgets.selectFileWidgets.SettingsWidget._initSettingsLayout()
+
+			- bug fix, lines 768/785/803/820, vols/rois/dcms/dirs add filenames to FilesSelectionWidget
+
+		- widgets.iconBarViewWidgets.IconBarWidget._onExpand()
+
+			- line 713 & 723, disable synchronization when displaying a single (expanded) view to speed up rendering
+
+		- widgets.sliceViewWidgets.SliceROIViewWidget._updateCameraOrientation()
+
+			- line 7191, remove anisotropic testing to update ROI visibility
+
+		- widgets.sliceViewWidgets.SliceROIViewWidget._onLeftPressEvent()
+
+			- line 9883, no ROImodified synchronisation for 2D brush
+
+		- widgets.sliceViewWidgets.SliceROIViewWidget._onMouseMoveEvent()
+
+			- line 9653, no ROImodified signal for the 2D brush, which is responsible for considerable acceleration of the brush tool
+
+		- widgets.abstractViewWidget.AbstractViewWidget._updateToolMenu()
+
+			- bug fix, lines 1441, replace isinstance(tool, HandleWidget) by tool.GetObjectName() == 'HandleWidget'
+			- bug fix, lines 1448, replace isinstance(tool, LineWidget) by tool.GetObjectName() == 'LineWidget'
+
+		- widgets.abstractViewWidget.AbstractViewWidget.synchroniseCursorPositionChanged()
+
+			- line 1447, use synchronisation flag attribute (no cursor synchronization if flag is False), used to speed up display
+
+		- widgets.multiViewWidgets.GridViewWidget.setNumberOfVisibleViews()
+
+			- lines 2861 & 2868, no synchronization of hidden views, used to speed up display
+
+		- widgets.attributesWidgets.ListAttributesWidget.__init__()
+
+			- line 2365, change the background colour of the selected item
+
+		- widgets.attributesWidgets.ListAttributesWidget._addItem()
+
+			- line 2472, change the background colour of the selected item
+
+		- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+
+			- create lock and visibility buttons
+
+		- widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()
+
+			- set icon size of the lock and visibility buttons
+
+		- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
+		- widgets.attributesWidgets.ListMeshAttributesWidget.__init__()
+		- widgets.attributesWidgets.ListBundleAttributesWidget.__init__()
+
+			- create visibility buttons
+
+		- widgets.attributesWidgets.ListROIAttributesWidget.setIconSize()
+		- widgets.attributesWidgets.ListMeshAttributesWidget.setIconSize()
+		- widgets.attributesWidgets.ListBundleAttributesWidget.setIconSize()
+
+			- set icon size of the visibility button
+
+		- widgets.attributesWidgets.ListToolAttributesWidget.open()
+
+			- lines 5002, 5023, 5063, 5100, opened tools are locked by default
+			- lines 4984, 5014, 5038, 5043, wait progress when opening .xtools file
+
+		- gui.dialogSkullStripping.DialogSkullStripping.function()
+
+			- bug fix, line 202, replace copyFromNumpyArray(mask) by copyFromNumpyArray(mask, spacing=s, defaultshape=False)
+
+- **updated function**
+
+	- core.sisypheDownload.installFromHost()
+
+		- bug fix, line 194, new directory
+
+- **new classes**
+
+	- core.sisypheSettings.SisypheCustomSettings
+
+		- management of settings from a custom XML file
+
+	- widgets.functionsSettingsWidget.CustomSettingsWidget
+
+		- widget to manage settings from a custom XML file
+
+- **new methods**
+
+	- core.sisypheImage.SisypheImage.getValueAtContiuousIndex()
+
+		- get an interpolated scalar value from continuous coordinates
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.lock()
+
+		- method called by lock button
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.visibility()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.visibility()
+	- widgets.attributesWidgets.ListToolAttributesWidget.visibility()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.visibility()
+
+		- method called by visibility button
+
+.. _build05-12-2025:
+
+version 0.22.11, build 05/12/2025
+---------------------------------
+
+- **updated html documentation**
+
+	- PySisyphe_dockroi.rst
+	- PySisyphe_ipython.rst
+	- PySisyphe_dockroi.rst
+	- PySisyphe_dockmesh.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_docktracking.rst
+	- PySisyphe_thumbnailbar.rst
+	- PySisyphe_Versions.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- settings/settings.xml
+	- settings/dialogs.xml
+	- gui/doc/ipython.txt
+
+- **new files**
+
+	- gui/lightroi/console.png
+	- gui/darkroi/console.png
+
+- **updated modules**
+
+	- version
+	- core.sisypheImage
+	- core.sisypheROI
+	- core.sisypheSettings
+	- core.sisypheLUT
+	- core.sisypheTools
+	- cythonize updated core.sisypheROI module
+	- gui.dialogRegistration
+	- gui.dialogGenericResults
+	- gui.dialogRegistration
+	- gui.dialogSegmentation
+	- gui.dialogROIStatistics
+	- gui.windowSisyphe
+	- widgets.attributesWidgets
+	- widgets.iconBarViewWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.consoleWidget
+	- widgets.imageWidgets
+	- widgets.selectFileWidgets
+	- widgets.consoleWidget
+	- widgets.LUTWidgets
+	- widgets.tabToolsWidgets
+	- widgets.abstractViewWidget
+
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+
+		- refactor the method name from 'getValueAtContiuousIndex' to 'getValueAtContinuousIndex'
+		- update getHistogram() method
+
+	- core.sisypheTools.ToolWidgetCollection
+
+		- update __init__() method
+		- update createXML() method
+		- update parseXML() method
+		- add setPurpose() method
+		- add getPurpose() method
+		- add hasPurpose() method
+		- add hasSamePurpose() method
+
+	- core.sisypheTools.HandleWidget
+	- core.sisypheTools.LineWidget
+
+		- update copyAttributesTo() and copyAttributesFrom() methods
+		- update setTubeVisibility() method
+	
+	- core.sisypheTools.ToolWidgetCollection
+
+		- update parseXML() method
+
+	- core.sisypheROI.SisypheROI
+
+		- update getDistanceMap() method
+
+	- core.sisypheSettings.SisypheSettings
+
+		- update getFieldValue() method
+		- update setFieldValue() method
+
+	- core.sisypheLUT.SisypheLUT
+
+		- add getInternalColormapFromName() method
+
+	- gui.dialogRegistration.DialogRegistration
+
+		- add setFilesToApply() method
+		- add getFilesToApply() method
+
+	- gui.dialogGenericResults.DialogGenericResults
+
+		- update __init__() method
+		- update newTab() method
+		- add _onCopyConsole() method
+		- add setConsoleWidget() method
+		- add getConsoleWidget() method
+		- add hasConsoleWidget() method
+
+	- gui.dialogRegistration.DialogICBMNormalization
+
+		- update _updateTemplate() method
+
+	- gui.dialogSegmentation.DialogCorticalThickness
+
+		- update getFilenames() method
+
+	- gui.dialogROIStatistics.DialogROIStatistics
+
+		- update __init__()
+		- add setConsoleWidget() method
+		- add getConsoleWidget() method
+		- add hasConsoleWidget() method
+		- add  _copyStatsToConsole() method
+		- add _copyHistogramsToConsole() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update __init__() method
+
+	- widgets.attributesWidgets.ListAttributesWidget
+
+		- update __init__() method
+		- update setIconSize() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+		- update __init__() method
+		- update toDistance() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update __init__() method
+		- update setIconSize() method
+		- add properties() method
+		- update features() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget
+
+		- update features() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget
+
+		- update statistics() method
+		- add copyToConsole() method
+
+	- widgets.attributesWidgets.ItemMeshAttributesWidget
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+	- widgets.attributesWidgets.ItemBundleAttributesWidget
+
+		- update __init__() method
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+
+		- update setDefaultAttributesFromSettings() method
+
+	- widgets.iconBarViewWidgets.IconBarWidget
+
+		- update _onExpand() method
+		- add isTimerEnabled() method
+
+	- widgets.iconBarViewWidgets.conBarViewWidgetCollection
+
+		- update getSelectedSliceIndex() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- update __init__() method
+		- update toggleSettingsVisibility() method
+		- update settingsVisibilityOn() method
+		- update settingsVisibilityOff() method
+		- update resetSettings() method
+		- update _initSettingsLayout() method
+		- update getParameterValue() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- update __init__()
+		- add hasVariable() method
+		- add _popupGlobals() method
+		- add _plot() method
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+
+		- update __init__() method
+		- add copyToConsole() method
+
+	- widgets.selectFileWidgets.FileSelectionWidget
+
+		- update open() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget
+
+		- update getFilenames() method
+		- update setFilenames() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- update __init__() method
+
+	- widgets.LUTWidgets.ComboBoxLut
+
+		- add removeFilesLut() method
+
+	- widgets.tabToolsWidgets.TabWidget
+
+		- update __init__() method
+		- add setMainWindow() method
+		- add getMainWindow() method
+		- add hasMainWindow() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- update statistics() method
+
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- update copyToolAttributes() method
+		
+- **updated methods**
+
+	- core.sisypheImage.SisypheImage.getHistogram()
+
+		- add intervals to the returned value
+
+	- core.sisypheTools.ToolWidgetCollection.__init__()
+
+		- add the purpose attribute (_purpose)
+
+	- core.sisypheTools.ToolWidgetCollection.createXML()
+	- core.sisypheTools.ToolWidgetCollection.parseXML()
+
+		- add the purpose field in the .xtools file format
+
+	- core.sisypheTools.HandleWidget.copyAttributesTo()
+	- core.sisypheTools.LineWidget.copyAttributesTo()
+	- core.sisypheTools.HandleWidget.copyAttributesFrom()
+	- core.sisypheTools.LineWidget.copyAttributesFrom()
+
+		- copy legend, suffix, prefix, and name attributes rather than text
+
+	- core.sisypheTools.ToolWidgetCollection.parseXML()
+
+		- lines 7001 & 7007, set an empty legend parameter rather than using the default values (i.e. 'Target' for HandleWidget and ('Target', 'Entry') for LineWidget)
+
+	- core.sisypheTools.LineWidget.setTubeVisibility()
+
+		- bug fix, restore self._contourActor and self._tubeActor visibility management
+
+	- core.sisypheROI.SisypheROI.getDistanceMap()
+
+		- add outside parameter to calculate distance map with positive values outside (True) or positive values inside (False)
+
+	- core.sisypheSettings.SisypheSettings.getFieldValue()
+
+		- line 869, path xml attribute management for 'vol' vartype
+		- line 915, returns an empty list for 'dirs', 'vols', 'rois', 'dcms' vartype if data node is empty (returned '' previouly)
+
+	- core.sisypheSettings.SisypheSettings.setFieldValue()
+
+		- line 964, path xml attribute management for 'vol' vartype
+
+	- widgets.attributesWidgets.ListAttributesWidget.__init__()
+
+		- create 'Copy to console' button
+
+	- widgets.attributesWidgets.ListAttributesWidget.setIconSize()
+
+		- set size of the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
+
+		- add popup menu to _dist button ('outside positive' and 'inside positive')
+		- add tooltip for the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.toDistance()
+
+		- add outside parameter to calculate distance map with positive values outside (True) or positive values inside (False)
+	
+	- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+
+		- create properties button
+		- add tooltip for the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()
+
+		- set icon size of the properties button
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.features()
+	- widgets.attributesWidgets.ListToolAttributesWidget.features2()
+
+		- lines 5472 & 5691, add 'copy to console button' to DialogGenericResults
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget.__init__()
+
+		- add tooltip for the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget.features()
+
+		- line 4537, add 'copy to console' button to DialogGenericResults
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget.__init__()
+
+		- add tooltip for the 'Copy to console' button
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget.statistics()
+
+		- line 7239, add 'copy to console' button to DialogGenericResults
+
+	- widgets.attributesWidgets.ItemMeshAttributesWidget.__init__()
+	- widgets.attributesWidgets.ItemToolAttributesWidget.__init__()
+	- widgets.attributesWidgets.ItemBundleAttributesWidget.__init__()
+
+		- change the title bar color of the child dialogs (win32 platform)
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget.setDefaultAttributesFromSettings()
+
+		- bug fix, line 1525, add self._color.setFloatColor(v[0], v[1], v[2], signal=False) to update button color
+
+	- widgets.iconBarViewWidgets.IconBarWidget._onExpand()
+
+		- hide the grid icon when the view is expanded (expand icon selected)
+
+	- widgets.iconBarViewWidgets.conBarViewWidgetCollection.getSelectedSliceIndex()
+
+		- bug fix, line 3963, widget that is displayed
+		- bug fix, line 3971, select the first cell if no cell is selected
+
+	- widgets.functionsSettingsWidget.SettingsWidget.__init__()
+
+		- line 345, replace self._button.clicked.connect(self.toggleSettingsVisibility) by self._button.clicked.connect(lambda _: self.toggleSettingsVisibility(True))
+	
+	- widgets.functionsSettingsWidget.SettingsWidget.toggleSettingsVisibility()
+	- widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOn()
+	- widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOff()
+
+		- add a signal parameter that will indicate whether or not the VisibilityToggled Qt signal is emitted
+
+	- widgets.functionsSettingsWidget.SettingsWidget.resetSettings()
+
+		- line 1275, path xml attribute management for 'vol' vartype
+
+	- widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()
+
+		- line 723 path xml attribute management for 'vol' vartype
+
+	- widgets.functionsSettingsWidget.SettingsWidget.getParameterValue()
+
+		- line 1013, bug fix, isinstance(self._parameters[parameter], ComboBoxLut) before isinstance(self._parameters[parameter], ComboBox)
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()
+
+		- add 'Copy to console' QAction
+
+	- widgets.selectFileWidgets.FileSelectionWidget.open()
+
+		- lines 1478, 1492, 1515, 1730, 1817, 1881, 1995, 2050, 2099, change default folder of QFileDialog
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- change typing of the filenames parameter, from str to str | list[str]
+		- line 2988, management of list[str] filenames parameter
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.getFilenames()
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.setFilenames()
+
+		- typing corretion, from dict[str, dict[str, str]] to dict[str, dict[str, str | list[str]]]
+
+	- widgets.consoleWidget.ConsoleWidget.__init__()
+
+		- line 148, replace _console type from RichJupyterWidget to RichJupyterWidget2
+		- RichJupyterWidget2 is a subclass of RichJupyterWidget that adds key events 
+
+			- key . triggers the complete widget display
+			- key ( displays ()
+			- key [ displays []
+			- key { displays {}
+			- key quote displays ''
+			- key double-quote displays ""
+
+		- line 196, add _globals QTreeWidget popup menu management
+
+	- widgets.tabToolsWidgets.TabWidget.__init__()
+
+		- line 120, add _mainwindow attribute
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.statistics()
+
+		- line 2251, add self._statistics.setConsoleWidget(self._mainwindow.getConsole())
+
+	- gui.dialogGenericResults.DialogGenericResults.__init__()
+
+		- add _console ConsoleWidget attribute, used to create dataset variable in the console
+
+	- gui.dialogGenericResults.DialogGenericResults.newTab()
+
+		- add 'Copy to console' button
+		- add tooltips to buttons
+
+	- gui.dialogRegistration.DialogICBMNormalization._updateTemplate()
+
+		- line 1078, change abspath position
+
+	- gui.dialogSegmentation.DialogCorticalThickness.getFilenames()
+
+		- typing corretion, from list[str] to dict[str, str | list[str]]
+		- line 1811, change return value from return self._select.getFilenames() to return self._select.getFilenames()['multiple']
+
+	- gui.dialogROIStatistics.DialogROIStatistics.__init__()
+
+		- add 'Copy to console' button
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- line 456, add self._tabROITools.setMainWindow(self)
+
+- **new methods**
+
+	- core.sisypheTools.ToolWidgetCollection.setPurpose()
+	- core.sisypheTools.ToolWidgetCollection.getPurpose()
+	- core.sisypheTools.ToolWidgetCollection.hasPurpose()
+	- core.sisypheTools.ToolWidgetCollection.hasSamePurpose()
+
+		- methods to manage the new purpose attribute
+
+	- core.sisypheLUT.SisypheLUT.getInternalColormapFromName()
+
+		- returns internal name of a Look-Up table colormap (matplotlib name) from its public name
+
+	- gui.dialogRegistration.DialogRegistration.setFilesToApply()
+	- gui.dialogRegistration.DialogRegistration.getFilesToApply()
+
+		- set/get additionnal volume(s) to resample
+
+	- gui.dialogGenericResults.DialogGenericResults._onCopyConsole()
+
+		- method called by 'Copy to console' button to copy dataset as variable in the console widget.
+
+	- gui.dialogGenericResults.DialogGenericResults.setConsoleWidget()
+	- gui.dialogGenericResults.DialogGenericResults.getConsoleWidget()
+	- gui.dialogGenericResults.DialogGenericResults.hasConsoleWidget()
+
+		- set & get _console ConsoleWidget attribute
+
+	- gui.dialogROIStatistics.DialogROIStatistics.setConsoleWidget()
+	- gui.dialogROIStatistics.DialogROIStatistics.getConsoleWidget()
+	- gui.dialogROIStatistics.DialogROIStatistics.hasConsoleWidget()
+
+		- set & get _console ConsoleWidget attribute
+
+	- gui.dialogROIStatistics.DialogROIStatistics._copyStatsToConsole()
+
+		- called by 'Copy to console' button menu event. Copy ROI descriptive and shape statistics to the concole
+
+	- gui.dialogROIStatistics.DialogROIStatistics._copyHistogramsToConsole
+
+		- called by 'Copy to console' button menu event. Copy ROI histograms to the console
+
+	- widgets.attributesWidgets.ListAttributesWidget.copyToConsole()
+	- widgets.attributesWidgets.ListROIAttributesWidget.copyToConsole()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.copyToConsole()
+	- widgets.attributesWidgets.ListToolAttributesWidget.copyToConsole()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.copyToConsole()
+
+		- copy checked items to the console
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.properties()
+
+		- change properties of checked ItemToolAttributesWidget
+
+	- widgets.consoleWidget.ConsoleWidget.hasVariable()
+
+		- check if a variable already exists in the console
+
+	- widgets.consoleWidget.ConsoleWidget._popupGlobals()
+
+		- displays popup menu after right-click event on Globals QTreeWidgetItem (numpy, list and sitkImage variables)
+
+	- widgets.consoleWidget.ConsoleWidget._plot()
+
+		- called by Globals QTreeWidgetItem popup menu
+		- displays various matplotlib pyplot charts (line, bar, stairs, Box-and-Whisker, violin, histogram, scatter, matrix and image plots) in the console
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.copyToConsole()
+
+		- copy self._volume to PySisyphe console
+
+	- widgets.LUTWidgets.ComboBoxLut.removeFilesLut()
+
+		- remove files lut (keep only internal lut)
+
+	- widgets.tabToolsWidgets.TabWidget.setMainWindow()
+	- widgets.tabToolsWidgets.TabWidget.getMainWindow()
+	- widgets.tabToolsWidgets.TabWidget.hasMainWindow()
+
+		- methods to get/set _mainwindow attribute
+
+	- widgets.abstractViewWidget.AbstractViewWidget.copyToolAttributes()
+
+		- bug fix, line 4736, add self._renderwindow.Render() to update VolumeView display
+
+	- widgets.iconBarViewWidgets.IconBarWidget.isTimerEnabled()
+
+**updated function**
+
+	- version.isNewerThan()
+
+		- bug fix, line 100, replace < by > between current[2] and version[2]
+
+.. _build12-01-2026:
+
+version 0.24.14, build 12/01/2026
+---------------------------------
+
+- **updated html documentation**
+
+	- PySisyphe_ipython.rst
+	- PySisyphe_installation.rst
+	- PySisyphe_Registration.rst
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_dockroitools.rst
+	- PySisyphe_Mapping.rst
+	- PySisyphe_Versions.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- gui/doc/ipython.txt
+
+		- add %gemini command documentation
+
+	- settings/settings.xml
+
+		- add <Gemini> section, <APIKey> field
+
+	- templates/ICBM152/icbm152_sym_template_mask.xvol
+	- templates/ICBM152/icbm152_asym_template_mask.xvol
+
+		- datatype conversion, from float32 to uint8
+
+- **new external packages** 
+
+	- google-genai
+	- esayocr
+	- pymupdf
+
+		- rebuild frozen version (pyinstaller with upx=False) 
+
+- **new plugins**
+
+	- SEEG
+	- REPORT
+
+- **new modules**
+
+	- core.sisyphePDF
+
+		- new SisyphePDF class
+
+	- gui.dialogGemini
+
+		- new DialogGemini class
+
+- **updated modules**
+
+	- core.sisypheSettings
+	- core.sisypheDatabase
+	- core.sisypheImage
+	- core.sisypheVolume
+	- core.sisypheROI
+
+		- new cython compilation of the updated core.sisypheROI module
+
+	- core.sisypheTools
+	- core.sisypheFiducialBox
+	- processing.simpleItkFilters
+	- widgets.consoleWidget
+	- widgets.iconBarWidgets
+	- widgets.tabToolsWidgets
+	- widgets.sliceViewWidgets
+	- widgets.projectionViewWidget
+	- widgets.sliceViewFiducialBoxWidget
+	- widgets.multiComponentViewWidget
+	- widgets.attributesWidgets
+	- widgets.selectFileWidgets
+	- processing.dscFunctions
+	- gui.dialogDownload
+	- gui.dialogVolumeAttributes
+	- gui.dialogFunction
+	- gui.dialogDatatype
+	- gui.dialogSettings
+	- gui.dialogSplash
+	- gui.dialogManualRegistration
+	- gui.dialogRegistration
+	- gui.dialogPerfusion
+	- gui.windowSisyphe
+	- PySisyphe
+
+		- line 15, hide console in frozen mode
+
+- **new functions**
+
+	- processing.dscFunctions.gamma_variate()
+	- processing.dscFunctions.fit_gamma_variate()
+	- processing.dscFunctions.generate_ttp()
+	- processing.dscFunctions.generate_leakage()
+	- processing.dscFunctions.generate_perfusion_maps()
+	- processing.dscFunctions.oSVD()
+	- processing.dscFunctions.boxNLR()
+	- processing.dscFunctions.fit_boxNLR()
+	- processing.dscFunctions.dscMaps2()
+
+		- new MR perfusion processing using PyPeT implementation, dramatic improvement in processing time (less than 10s)
+
+- **updated functions**
+
+	- core.sisypheSettings.initPySisypheUserPath()
+	
+		- line 185, set current and default database paths (~/.PySisyphe/database) in the settings file
+		- line 136, add ~/.PySisyphe/prompts directory
+
+	- core.sisypheSettings.setUserSettingsToDefault()
+
+		- line 245, set current and default database paths (~/.PySisyphe/database) in the settings file
+
+	- processing.simpleItkFilters.regressionIntensityMatching()
+
+		- line 891, remove unnecessary flatten()
+		- line 910, cast result to original datatype
+
+- **new classes**
+
+	- core core.sisypheFiducialBox.LeksellProcessings
+
+		- arc & ring angles conversion between Leksell orientations
+		- calculate entry point from arc, ring, orientation, target point and trajectory length.
+
+	- gui.dialogGemini.DialogGemini
+
+		- GUI dialog window, gemini LLM prompt for segmentation
+
+	- gui.dialogRegistration.DialogFrameBasedRegistration
+
+		- GUI dialog window for frame-based registration
+
+	- gui.dialogPerfusion.DialogPerfusion2
+
+		- there is a dramatic improvement in processing time (less than 10s) with the new MR perfusion processing using PyPeT implementation
+
+- **updated classes**
+
+	- core.sisypheSettings.SisypheSettings
+
+		- update getUserSettings() method
+
+	- core.sisypheDatabase.SisypheDatabase
+
+		- update setDefaultDatabasePath() method
+
+	- core.sisypheImage.SisypheImage
+
+		- update getMaskROI() method
+		- add copyFromPillowImage() method
+		- add copyToPillowImage() method
+		- update getMask2() method
+		- update getMaskROI2() method
+		- update setOrigin() method
+		- update setDirections() method
+		- update getNumpy() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- add copyToPillowImage() method
+		- update getMask2() method
+		- update getMaskROI2() method
+
+	- core.sisypheROI.SisypheROI
+
+		- update drawRectangle() method
+
+	- core.sisypheTools.DistanceWidget
+	- core.sisypheTools.OrthogonalDistanceWidget
+	- core.sisypheTools.AngleWidget
+	- core.sisypheTools.BoxWidget
+	- core.sisypheTools.TextWidget
+
+		- update getVisibility() method
+
+	- core.sisypheFiducialBox.SisypheFiducialBox
+
+		- update _markersSearch() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- update _popupGlobals() method
+		- update __init__() method
+
+	- widgets.consoleWidget.RichJupyterWidget2
+
+		- update __init__() method
+		- update execute() method
+
+	- widgets.iconBarWidgets.IconBarWidget
+
+		- update _onExpand() method
+		- update setViewWidget() method
+
+	- widgets.widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- update __init__() method
+		- add _popupGeminiMenu() method
+		- add _geminiClicked() method
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget
+
+		- update _addToMenuVoxelOverlayValue() method
+		- update _getInfoValuesText() method
+
+	- widgets.projectionViewWidget.ProjectionViewWidget
+
+		- update __init__() method
+		- update _updateProjection() method
+		- update setVolume() method
+		- update removeVolume() method
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget
+
+		- update __init__() method
+		- update setVolume() method
+		- update removeVolume() method
+
+	- widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget
+
+		- update __init__() method
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+
+		- update __init__() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update open() method
+		- update saveall() method
+		- update removeall() method
+		- update remove() method
+		- update removeItem() method
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+
+		- update setLock() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
+
+	- widgets.selectFileWidgets.SelectionFilter
+
+		- update init() method
+		- add filterTransform() method
+		- add getTransformFilter() method
+		- update clearFilters() method
+
+	- widgets.selectFileWidgets.FileSelectionWidget
+
+		- update open() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
+
+	- gui.dialogDownload.DialogDownload
+
+		- update download() method
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes
+
+		- update __init__() method
+		- add _unlockSpacing() method
+		- add _unlockOrigin() method
+
+	- gui.dialogFunction.DialogRegressionIntensityMatching
+
+		- update __init__() method
+		- update function() method
+
+	- gui.dialogDatatype.DialogEditID
+
+		- update execute() method
+		- add getreferenceSelectionWidget() method
+		- add setreferenceSelectionWidget() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update apply() method
+
+	- gui.dialogSplash.DialogSplash
+
+		- update __init__() method
+
+	- gui.dialogManualRegistration.DialogManualRegistration
+
+		- update __init__() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update __init__() method
+		- update editID() method
+		- add frameRegistration() method
+		- update checkUpdate() method
+
+- **updated methods**
+
+	- core.sisypheSettings.SisypheSettings.getUserSettings()
+
+		- line 376, set current and default database paths (~/.PySisyphe/database) if the user file settings do not exist
+
+	- core.sisypheDatabase.SisypheDatabase.setDefaultDatabasePath()
+
+		- line 381, set default database path from 'DefaultPath' field of the settings file. If this field is empty, set the PySisyphe patient database folder to ~/.PySisyphe/Database (in user folder)
+
+	- core.sisypheImage.SisypheImage.getMaskROI()
+
+		- line 2613, bug fix, avoid exception if morpho = ''
+
+	- core.sisypheImage.SisypheImage.getMask2()
+	- core.sisypheImage.SisypheImage.getMaskROI2()
+
+		- add objstep parameter
+		- replace morphological operator iteration by the size of the structuring element
+
+	- core.sisypheImage.SisypheVolume.getMask2()
+	- core.sisypheImage.SisypheVolume.getMaskROI2()
+
+		- add objstep parameter
+
+	- core.sisypheImage.SisypheImage.setOrigin()
+
+		- bug fix, line 2357, replace self._sitk_image.GetDepth() with self._sitk_image.GetDimension()
+	
+	- core.sisypheImage.SisypheImage.setDirections()
+
+		- bug fix, line 2304, 2D image management
+
+	- core.sisypheImage.SisypheImage.getnumpy()
+
+		- bug fix, line 1552, replace self._numpy_array.ndim == 3 with self._numpy_array.ndim in (2, 3)
+
+	- core.sisypheROI.drawRectangle()
+
+		- bug fix, line 1922, replace extent[:,:,-1] with extent[::-1]
+
+	- core.sisypheTools.DistanceWidget.getVisibility()
+	- core.sisypheTools.OrthogonalDistanceWidget.getVisibility()
+	- core.sisypheTools.AngleWidget.getVisibility()
+	- core.sisypheTools.BoxWidget.getVisibility()
+	- core.sisypheTools.TextWidget.getVisibility()
+
+		- converting the return value from int to a bool
+
+	- core.sisypheFiducialBox.SisypheFiducialBox._markersSearch()
+
+		- bug fix, line 670, expand the search for the first slice with the accurate number (6 or 9) of fiducial markers
+
+	- widgets.consoleWidget.ConsoleWidget.__init__()
+
+		- line 418, to avoid displaying "chcp 65001" on the console
+
+	- widgets.consoleWidget.ConsoleWidget._popupGlobals()
+
+		- lines 483 & 494, test data type, no popup for non-numeric types
+
+	- widgets.consoleWidget.RichJupyterWidget2.__init__()
+
+		- add self._aikey attribute: str, google gemini api key
+		- add self._aimodel attribute: str, google gemini model
+		- add self._client attribute: genai.Client, google gemini client class
+
+	- widgets.consoleWidget.RichJupyterWidget2.execute()
+
+		- '%gemini' magic command management
+
+	- widgets.iconBarWidgets.IconBarWidget._onExpand()
+
+		- line 710, if no view is selected, select the first one and expand it
+
+	- widgets.iconBarWidgets.IconBarWidget.setViewWidget()
+
+		- lines 1166, 1235 & 1286, change iconbar button order
+
+	- widgets.widgets.tabToolsWidgets.TabROIToolsWidget.__init__()
+
+		- add gemini button (self._btn['gemini'])
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget._addToMenuVoxelOverlayValue()
+
+		- line 3801, remove self._ovlvalue = volume
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget._getInfoValuesText()
+
+		- line 3759, display overlay value if overlay size match with reference
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.__init__()
+
+		- add self._mask attribute
+
+	- widgets.projectionViewWidget.ProjectionViewWidget._updateProjection()
+
+		- add self._mask processing
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.setVolume()
+
+		- add self._mask processing
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.removeVolume()
+
+		- add self._mask = None
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget.__init__()
+
+		- add self._mask attribute
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget.setVolume()
+
+		- add self._mask processing
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget.removeVolume()
+
+		- add self._mask = None
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.open()
+	- widgets.attributesWidgets.ListToolAttributesWidget.saveall()
+	- widgets.attributesWidgets.ListToolAttributesWidget.removeall()
+	- widgets.attributesWidgets.ListToolAttributesWidget.remove()
+	- widgets.attributesWidgets.ListToolAttributesWidget.removeItem()
+
+		- self._collection purpose attribute management
+
+	- widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.__init__()
+
+		- line 92, add tool.setHandleSize(5.0)
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.__init__()
+
+		- line 143, increases the relative chart area
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget.setLock()
+
+		- bug fix, line 1589, unlock tool
+
+	- widgets.selectFileWidgets.SelectionFilter.__init__()
+	- widgets.selectFileWidgets.SelectionFilter.clearFilters()
+		
+		- add transform filter attribute (self._reftrf) 
+
+	- widgets.selectFileWidgets.FileSelectionWidget.open()
+
+		- line 1743, add transform filter management
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- line 3448, add transform filter management
+		
+	- gui.dialogDownload.DialogDownload.download()
+
+		- line 261, add information dialog boxes after the download is complete
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes.__init__()
+
+		- add QCheckBox self._unlocksp and self._unlocko before spacing/origin
+
+	- gui.dialogFunction.DialogRegressionIntensityMatching.__init__()
+
+		- add self._mask attribute
+
+	- gui.dialogFunction.DialogRegressionIntensityMatching.function()
+	
+		- line 870, use self._mask attribute to store mask to avoid recalculating it
+
+	- gui.dialogDatatype.DialogEditID.execute()
+
+		- line 446, replace self._files.clear() by self._files.clearall()
+
+	- gui.dialogSettings.DialogSettings.apply()
+
+		- line 553, gemini button visibility in WindowSisyphe._tabROIList
+
+	- gui.dialogSplash.DialogSplash.__init__()
+
+		- line 180, add device context info (context = renderer.ReportCapabilities())
+
+	- gui.dialogManualRegistration.DialogManualRegistration.__init__()
+
+		- reverse the order of the 'OK' and 'Cancel' buttons.
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- line 459, gemini button visibility in self._tabROIList
+
+	- gui.windowSisyphe.WindowSisyphe.editID()
+
+		- line 3375, setToolbarThumbnail to dialog file selection widgets
+
+	- gui.windowSisyphe.WindowSisyphe.checkUpdate()
+
+		- line 3761, message for new modules 
+
+- **new methods**
+
+	- core.sisypheImage.SisypheImage.copyFromPillowImage()
+	- core.sisypheImage.SisypheImage.copyToPillowImage()
+
+		- copy to Pillow image
+
+	- core.sisypheVolume.SisypheImage.copyToPillowImage()
+
+		- copy to Pillow image
+
+	- widgets.widgets.tabToolsWidgets.TabROIToolsWidget._popupGeminiMenu()
+	- widgets.widgets.tabToolsWidgets.TabROIToolsWidget._geminiClicked()
+
+		- gemini button menu management
+
+	- widgets.selectFileWidgets.SelectionFilter.filterTransform()
+	- widgets.selectFileWidgets.SelectionFilter.getTransformFilter()
+
+		- set and get transform filter methods
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockSpacing()
+
+		- called by QCheckBox self._unlocksp toggled event
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes._unlockOrigin()
+
+		- called by QCheckBox self._unlocko toggled event
+
+	- gui.dialogDatatype.DialogEditID.getreferenceSelectionWidget()
+	- gui.dialogDatatype.DialogEditID.setreferenceSelectionWidget()
+
+	- gui.windowSisyphe.WindowSisyphe.frameRegistration()
+
+		- call the frame-based registration dialog box
+
+.. _build20-01-2026:
+
+version 0.25.04, build 20/01/2026
+---------------------------------
+
+- **updated html documentation**
+
+	- API/api_tools.rst
+	- API/api_fiducial.rst
+	- PySisyphe_Versions.rst
+	- rebuild sphinx documentation
+
+- **updated file**
+
+	- settings/functions.xml
+
+		- fix xml error, line 386, remove "'s" in Block-circulant SVD with Simpson's rule
+
+- **updated modules**
+
+	- core.sisypheTools
+	- core.sisypheFiducialBox
+	- core.sisypheTools
+	- core.sisyphePDF
+	- core.sisypheImage
+	- core.sisypheDownload
+	- widgets.sliceViewWidgets
+	- widgets.attributesWidgets
+	- gui.dialogPerfusion
+	- gui.dialogSettings
+	- gui.dialogReorient
+	- gui.windowSisyphe
+
+- **updated classes**
+
+	- core.sisypheTools.LineWidget
+
+		- update getVector() method
+		- new method getAngleToLineWidget()
+		- new alias method setEntryPosition()
+		- new alias method getEntryPosition()
+		- new alias method setTargetPosition()
+		- new alias method getTargetPosition()
+		- new alias method extendEntryPosition()
+    	- new alias method extendTargetPosition()
+    	- new alias method extendEntryPositionToPlane()
+    	- new alias method extendTargetPositionToPlane()
+    	- new alias method extendEntryPositionToMeshSurface()
+    	- new alias method extendTargetPositionToMeshSurface()
+		- new alias method extendEntryPositionToMeshCenterOfMass()
+    	- new alias method extendTargetPositionToMeshCenterOfMass()
+		- new alias method extendEntryPositionToMeshCenter()
+		- new alias method extendTargetPositionToMeshCenter()
+
+	- core.sisypheFiducialBox.LeksellProcessings
+
+		- update computeEntryPoint() method
+		- update convertAngles() method
+
+	- core.sisypheTools.ToolWidgetCollection
+
+		- new verifyName() method
+
+	- core.sisyphePDF.SisypheParsePdf
+
+		- update loadFieldNames() method
+		- update parse() method
+		- new parseRenishawReport() method
+
+	- core.sisypheImage.SisypheImage
+
+		- new fillSlicesWith() method
+		- new getReorient() method
+
+	- core.sisypheDownload
+
+		- update installFromHost() method
+
+	- widgets.sliceViewWidgets.SliceViewWidget
+
+		- update displayOn() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update open() method
+
+	- gui.dialogPerfusion.DialogPerfusion2
+
+		- update function() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update apply() method
+		- update default() method
+
+	- gui.dialogReorient.DialogReorient
+
+		- update __init__() method
+		- update autoTransform() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update __init__() method
+		- update getUserDirectory() method
+
+- **new methods**
+
+	- core.sisypheTools.LineWidget.getAngleToLineWidget()
+
+		- get angle between a LineWidget and the current LineWidget instance
+
+	- core.sisypheTools.LineWidget.setEntryPosition()
+	- core.sisypheTools.LineWidget.getEntryPosition()
+	- core.sisypheTools.LineWidget.setTargetPosition()
+	- core.sisypheTools.LineWidget.getTargetPosition()
+	- core.sisypheTools.LineWidget.extendEntryPosition()
+    - core.sisypheTools.LineWidget.extendTargetPosition()
+    - core.sisypheTools.LineWidget.extendEntryPositionToPlane()
+    - core.sisypheTools.LineWidget.extendTargetPositionToPlane()
+    - core.sisypheTools.LineWidget.extendEntryPositionToMeshSurface()
+    - core.sisypheTools.LineWidget.extendTargetPositionToMeshSurface()
+	- core.sisypheTools.LineWidget.extendEntryPositionToMeshCenterOfMass()
+    - core.sisypheTools.LineWidget.extendTargetPositionToMeshCenterOfMass()
+	- core.sisypheTools.LineWidget.extendEntryPositionToMeshCenter()
+	- core.sisypheTools.LineWidget.extendTargetPositionToMeshCenter()
+
+		- method aliases
+
+	- core.sisypheTools.ToolWidgetCollection.verifyName()
+
+		- check if a tool name is already in the current ToolWidgetCollection instance. If so, a new name is returned with a numeric suffix (e.g. #1 ...), the same name is returned otherwise
+
+    - core.sisyphePDF.SisypheParsePdf.parseRenishawReport()
+
+    	- Renishaw robotic neurosurgery system report parsing
+
+    - core.sisypheImage.SisypheImage.fillSlicesWith()
+
+    	- fill slices with a given value
+
+    - core.sisypheImage.SisypheImage.getReorient()
+
+    	- Get the rotations (y-axis and z-axis) to automatically reorient the volume
+
+- **updated methods**
+
+	- core.sisypheTools.LineWidget.getVector()
+
+		- bug fix, line 4519
+
+	- core.sisypheTools.LineWidget.extendPosition1ToMeshSurface()
+
+		- search direction management (both, target to entry direction or entry to target direction)
+
+	- core.sisypheTools.LineWidget.extendPosition2ToMeshSurface()
+
+		- search direction management (both, target to entry direction or entry to target direction)
+
+	- core.sisypheFiducialBox.LeksellProcessings.computeEntryPoint()
+	
+		- bug fix, changing the sign of the z-value of vectors
+
+	- core.sisypheFiducialBox.LeksellProcessings.convertAngles()
+
+		- removal of vector normalization and matrix inversion, which are unnecessary
+
+	- core.sisyphePDF.SisypheParsePdf.loadFieldNames()
+
+		- bug fix, line 437, add line node = node.nextSibling
+
+	- core.sisyphePDF.SisypheParsePdf.parse()
+
+		- line 264, modifiy relative threshold to detect line increments (from 0.95 to 0.98)
+
+	- core.sisypheDownload.installFromHost()
+
+		- lines 181 & 211, call setUserSettingsToDefault()
+		- add exception management
+		- add logger information
+
+	- widgets.sliceViewWidgets.SliceViewWidget.displayOn()
+
+		- bug fix, line 994, self._action['showicbm'] & self._action['showframe'] visibility condition
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.open()
+
+		- bug fix, lines 5313, 5390 & 5429, rename tool if its name is already in the ListToolAttributesWidget
+
+	- gui.dialogPerfusion.DialogPerfusion2.function()
+
+		- line 389, remove "'s" from "Block-circulant SVD with Simpson's rule"
+
+	- gui.dialogSettings.DialogSettings.apply()
+
+		- line 563, DockWidgets setMaxCount()
+
+	- gui.dialogSettings.DialogSettings.default()
+
+		- bug fix, line 453, add line if c < 0: c = 0
+
+	- gui.dialogReorient.DialogReorient.__init__()
+
+		- line 178, add self._auto button
+
+	- gui.dialogReorient.DialogReorient.autoTransform()
+
+		- replace autoTransform method, automatic reorientation processing
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- line 584, add chdir(self.getUserDirectory())
+
+	- gui.windowSisyphe.WindowSisyphe.getUserDirectory()
+
+		- line 188, call setUserSettingsToDefault()
+
+.. _build29-01-2026:
+
+version 0.76.22, build 29/01/2026
+---------------------------------
+
+- **Python interpreter upgrade**
+
+	- from 3.10 to 3.12
+	- rebuild frozen version (pyinstaller)
+
+- **upgraded packages**
+
+	- itk, from 5.4.3 to 5.4.5
+	- vtk, from 9.4.2 to 9.5.2
+	- pyradiomics to pyradiomics-bhklab, from 3.0.1 to 3.1.4
+	- scikit-image, from 0.25.2 to 0.26.0
+	- scikit-learn, from 1.6.1 to 1.8.0
+
+- **updated files**
+
+	- update requirements.txt file for upgraded modules
+	- settings/functions.xml
+	- settings/settings.xml
+	- templates/ICBM152/icbm152_asym_template_gm.xvol
+	- templates/ICBM152/icbm152_sym_template_cortical_gm.xvol
+	- templates/ICBM152/icbm152_sym_template_subcortical_gm.xvol
+	- templates/ICBM152/icbm152_sym_template_gm.xvol
+	- templates/ATROPOS/atropos_template_prior_brainstem.xvol
+	- templates/ATROPOS/atropos_template_prior_cerebellum.xvol
+	- templates/ATROPOS/atropos_template_prior_cortical_gm.xvol
+	- templates/ATROPOS/atropos_template_prior_csf.xvol
+	- templates/ATROPOS/atropos_template_prior_gm.xvol
+	- templates/ATROPOS/atropos_template_prior_subcortical_gm.xvol
+	- templates/ATROPOS/atropos_template_prior_wm.xvol
+
+- **updated html documentation**
+
+	- PySisyphe_overview.rst
+	- version-histrory.rst update
+	- rebuild sphinx documentation
+
+- **updated plugins**
+
+	- SEEG
+	- REPORT
+
+- **updated modules**
+
+	- version
+	- core.sisypheDownload
+	- core.sisypheMesh
+	- core.sisypheROI
+	- core.sisypheDicom
+	- core.sisypheFiducialBox
+	- core.sisypheImageAttributes
+	- core.sisypheImage
+	- widgets.dicomWidgets
+	- widgets.sliceViewWidgets
+	- widgets.attributesWidgets
+	- widgets.abstractViewWidget
+	- widgets.tabToolsWidgets
+	- dialog.dialogDicomImport
+	- dialog.dialogXmlDicom
+	- dialog.dialogRegistration
+	- dialog.dialogManualRegistration
+	- dialog.dialogSplash
+	- dialog.dialogSegmentation
+
+- **new functions**
+
+	- version.getBuildDate()
+	- version.getBuildDateAsStr()
+
+- **updated function**
+
+	- core.sisypheDownload.installFromHost()
+
+		- lines 157 & 179, python version management
+
+- **updated classes**
+
+	- core.sisypheMesh.SisypheMesh
+
+		- update setName() method
+
+	- core.sisypheROI.SisypheROI
+
+		- update the class constant to a raw string _REGEXP = r'^[_A-Za-z0-9#\-\_\s+,]+$'
+		- update setName() method
+
+	- core.sisypheDicom.XmlDicom
+
+		- update loadXmlDicomFilename() method
+
+	- core.sisypheFiducialBox.SisypheFiducialBox
+
+		- update markersSearch() method
+		- update _firstSliceSearch() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- new setSequenceToFilledMask() method
+
+	- core.sisypheImage.SisypheImage
+
+		- update getPercentile() method
+
+	- widgets.dicomWidgets.DicomVRLineEdit
+
+		- update _initPN() method
+		- update _initUI() method
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget
+
+		- update _pathToDict() method
+		- update _updateWidget() method
+
+	- widgets.sliceViewWidgets.SliceRegistrationViewWidget
+
+		- update getRegistrationBoxMaskArea() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update duplicate() method
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+
+		- update _nameChanged() method
+
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- update synchroniseToolRenamed() method
+		- update renameTool() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- update voiObject() method
+		- update voiBack() method
+		- update slcObject() method
+		- update slcBack() method
+
+	- dialog.dialogDicomImport.DialogDicomImport
+
+		- update convert() method
+
+	- dialog.dialogXmlDicom.DialogXmlDicom
+
+		- update __init__() method
+
+	- dialog.dialogRegistration.DialogRegistration
+
+		- update execute() method
+
+	- dialog.dialogManualRegistration.DialogManualRegistration
+
+		- update _resample() method
+		- update _estimate() method
+		- update calcMask() method
+
+	- dialog.dialogSplash.DialogSplash
+
+		- update __init__() method
+
+	- dialog.dialogSegmentation.DialogPriorBasedSegmentation
+
+		- update execute() method
+
+- **new methods**
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToFilledMask()
+
+		- filled hole mask sequence
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToBoneWindowCT()
+    - core.sisypheImageAttributes.SisypheAcquisition.isGreyMatterMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isSubCorticalGreyMatterMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isWhiteMatterMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCerebroSpinalFluidMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isBrainstemMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCerebellumMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCorticalThicknessMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCerebralBloodFlowMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isCerebralBloodVolumeMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMeanTransitTimeMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isTimeToPicMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDoseMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFractionalAnisotropyMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isApparentDiffusionMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDensityMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isBiasFieldMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDistanceMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMeanMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMedianMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMinimumMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMaximumMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isStandardDeviationMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isAlgebraMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isMask()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFilledMask()
+    - core.sisypheImageAttributes.SisypheAcquisition.isStructMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isLabelMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDisplacementFieldMap()
+    - core.sisypheImageAttributes.SisypheAcquisition.isT1Weighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isT2Weighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isT2Star()
+    - core.sisypheImageAttributes.SisypheAcquisition.isProtonDensityWeighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFLAIR()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedT1()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedT2()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedFLAIR()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedTOF(s)
+    - core.sisypheImageAttributes.SisypheAcquisition.isEchoPlanar()
+    - core.sisypheImageAttributes.SisypheAcquisition.isB0()
+    - core.sisypheImageAttributes.SisypheAcquisition.isDiffusionWeighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isPerfusionWeighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isSusceptibilityWeighted()
+    - core.sisypheImageAttributes.SisypheAcquisition.isTimeOfFlight()
+    - core.sisypheImageAttributes.SisypheAcquisition.isContrastEnhancedCT()
+    - core.sisypheImageAttributes.SisypheAcquisition.isBoneWindowCT()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFDG()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFDOPA()
+    - core.sisypheImageAttributes.SisypheAcquisition.isHMPAO()
+    - core.sisypheImageAttributes.SisypheAcquisition.isECD()
+    - core.sisypheImageAttributes.SisypheAcquisition.isFPCIT()
+
+- **updated methods**
+
+	- core.sisypheMesh.SisypheMesh.setName()
+
+		- line 471, change r to a raw string r = r'[^A-Za-z0-9#\-\_\s,]'
+
+	- core.sisypheROI.SisypheROI.setName()
+
+		- line 761, change r to a raw string r = r'[^A-Za-z0-9#\-\_\s,]'
+
+	- core.sisypheDicom.XmlDicom.loadXmlDicomFilename()
+
+		- bug fix, line 1345, UTF-8 non-English character management
+
+	- core.sisypheFiducialBox.SisypheFiducialBox.markersSearch()
+
+		- lines 792 & 798, save self._volume
+
+	- core.sisypheFiducialBox.SisypheFiducialBox._firstSliceSearch()
+
+		- bug fix, line 562, replace minf < buff[i] or buff[i] > msup by buff[i] < minf or buff[i] > msup
+
+	- core.sisypheImage.SisypheImage.getPercentile()
+
+		- perc parameter includes the additional type float
+
+	- widgets.dicomWidgets.DicomVRLineEdit._initPN()
+	- widgets.dicomWidgets.DicomVRLineEdit._initUI()
+
+		- line 376, change regex constant to a raw string r'[A-Za-z\-\s]+\^[A-Za-z\-\s]+'
+		- line 406, change regex constant to a raw string r'^[0-9][0-9\.]+[0-9]$'
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()
+
+		- line 944, update dicom tag list
+		- line 1048, manage the absence of the DICOM "slice location" field
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._updateWidget()
+
+		- line 1164, close wait dialog before displaying messageBox
+
+	- widgets.sliceViewWidgets.SliceRegistrationViewWidget.getRegistrationBoxMaskArea()
+
+		- bug fix, line 6311, replace 'unit8' by 'uint8'
+		- bug fix, line 6322, add v.setFilename(self._volume.getFilename())
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.duplicate()
+
+		- bug fix, lines 5529,5569 & 5599, replace addTrajectory(p1, p2, name) by addTrajectory(p1, p2, name=name)
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget._nameChanged()
+
+		- bug fix, line 1444, replace self._item.setName(self._name.getEditText()) by self._item.setName(name)
+
+	- widgets.abstractViewWidget.AbstractViewWidget.synchroniseToolRenamed()
+	- widgets.abstractViewWidget.AbstractViewWidget.renameTool()
+
+		- bug fix, call self._updateToolMenu() after tool renaming
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiObject()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBack()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcObject()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBack()
+
+		- lines 2231 & 2250, change parameters values of maskSegment2() and notMaskSegment2()
+
+	- dialog.dialogDicomImport.DialogDicomImport.convert()
+
+		- lines 242, 279 & 292, hide/show wait box
+
+	- dialog.dialogXmlDicom.DialogXmlDicom.__init__()
+
+		- line 122, remove the fixed width of the OK button
+
+	- dialog.dialogRegistration.DialogRegistration.execute()
+
+		- lines 475 & 499, hide/show wait box
+		- line 444, adaptative mask dilatation
+		- bug fix, line 467, add parent parameter to DialogManualRegistration
+		- bug fix, line 483, add deg=True to trf.setRotations()
+
+	- dialog.dialogRegistration.DialogRegistration.calcMask()
+
+		- lines 118 & 125, dilate parameter includes the additional types tuple and list
+
+	- dialog.dialogManualRegistration.DialogManualRegistration._resample()
+
+		- line 300, close dialog after resampling
+
+	- dialog.dialogManualRegistration.DialogManualRegistration._resample()
+
+		- bug fix, lines 312 & 323, cast images to float32
+
+	- dialog.dialogSplash.DialogSplash.__init__()
+
+		- line 222, add build date
+
+	- dialog.dialogSegmentation.DialogPriorBasedSegmentation.execute()
+
+		- line 1425, replace grey by gray
+
+.. _build01-02-2026:
+
+version 0.78.08, build 01/02/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Version.rst
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_sliceview.rst
+	- PySisyphe_orthogonalview.rst
+	- PySisyphe_synchronizedview.rst
+	- PySisyphe_multicomponentview.rst
+	- PySisyphe_Registration.rst
+	- PySisyphe_File.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_accumbens area left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_accumbens area right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_amygdala left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_amygdala right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_caudate left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_caudate right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_hippocampus left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_hippocampus right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_pallidum left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_pallidum right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_putamen left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_putamen right.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_thalamus proper left.xml
+	- /templates/ICBM152/DESIKAN/icbm152_IIT_thalamus proper right.xml
+	- /settings/functions.xml
+
+- **update plugins**
+
+	- SEEG Report, version 1.1
+	- SEEG Trajectories, version 1.2
+
+- **updated modules**
+
+	- core.sisypheTransform
+	- core.sisypheDicom
+	- core.sisypheVolume
+	- processing.simpleItkFilters
+	- gui.windowSisyphe
+	- gui.dialogSegmentation
+	- gui.dialogDeepSegmentation
+	- gui.dialogWait
+	- gui.dialogManualRegistration
+	- gui.dialogReorient
+	- widgets.attributesWidgets
+	- widgets.toolBarThumnail
+	- widgets.sliceViewWidgets
+
+- **updated function**
+
+	- processing.simpleItkFilters.biasFieldCorrection()
+
+		- line 172, change number of iteration parameter 
+
+- **updated classes**
+
+	- core.sisypheTransform.Sisyphe.SisypheApplyTransform
+
+		- update resampleMoving() method
+
+	- core.sisypheDicom.XmlDicom
+
+		- update getDataElement() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- update getICBMfromWorld() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update _updatePluginsMenu() method
+		- update _openPluginsMenu() method
+		- update _addPlugin() method
+		- update _removePlugin() method
+
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation
+
+		- update load() method
+		- update save() method
+		- update showEvent() method
+		- update _structChange() method
+		- update _updateTemplateFilter() method
+
+	- gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation
+
+		- update execute() method
+
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation
+
+		- update execute() method
+
+	- gui.dialogWait.DialogWaitRegistration
+
+		- update setStages() method
+		- update setProgressByLevel() method
+		- update setConvergenceThreshold() method
+		- update setMultiResolutionIterations() method
+
+	- gui.dialogManualRegistration.DialogManualRegistration
+
+		- update __init__() method
+
+	- gui.dialogReorient.DialogReorient
+
+		- update __init__() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+		- update saveSisyphe() method
+		- update saveNifti() method
+		- update saveNRRD() method
+		- update saveMinc() method
+		- update saveNumpy() method
+		- update saveVTK() method
+
+	- widgets.toolBarThumnail.ToolBarThumbnail
+
+		- update open() method
+		- update addVolume() method
+		- update saveSelected() method
+		- update saveSelectedAs() method
+		- update editAttributesSelected() method
+		- update dropEvent() method
+
+	- widgets.sliceViewWidgets.SliceViewWidget
+
+		- update _getInfoValuesText() method
+
+- **updated methods**
+
+	- core.sisypheTransform.Sisyphe.SisypheApplyTransform.resampleMoving()
+
+		- line 3153, copy geometric tranform ID to resampled volume
+
+	- core.sisypheDicom.XmlDicom.getDataElement()
+
+		- lines 1536 & 1548, try to split with ' ' if there is no separator '|''
+
+	- core.sisypheVolume.SisypheVolume.getICBMfromWorld()
+
+		- add the mni parameter (bool) to indicate whether or not to take the MNI origin (x=98.0,y=134.0,z=72.0) into account
+
+	- gui.windowSisyphe.WindowSisyphe._updatePluginsMenu()
+
+		- replace '_' with space in the plugin name
+
+	- gui.windowSisyphe.WindowSisyphe._openPluginsMenu()
+
+		- replace space with '_' in the plugin name
+
+	- gui.windowSisyphe.WindowSisyphe._addPlugin()
+
+		- bug fix windows platform, line 4801, replace '/' with '\\' in path strings
+	
+	- gui.windowSisyphe.WindowSisyphe._removePlugin()
+
+		- bug fix windows platform, line 4858, replace '/' with '\\' in path string using abspath
+
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation.load()
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation.save()
+
+		- add 'RegistrationSequence' XML field
+
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation.showEvent()
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation._structChange()
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation._updateTemplateFilter()
+
+		- bug fix, add self._structSelect.isEnabled() condition
+
+	- gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation.execute()
+
+		- bug fix, line 1444, replace flt with extractor
+
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.execute()
+
+		- line 1732, replace generic “struct” sequence with tissue sequences
+
+	- gui.dialogWait.DialogWaitRegistration.setStages()
+	- gui.dialogWait.DialogWaitRegistration.setProgressByLevel()
+	- gui.dialogWait.DialogWaitRegistration.setConvergenceThreshold()
+	- gui.dialogWait.DialogWaitRegistration.setMultiResolutionIterations()
+
+		- bug fix, remove unnecessary conditions
+
+	- gui.dialogManualRegistration.DialogManualRegistration.__init__()
+
+		- self._ok is no longer the default button
+
+	- gui.dialogReorient.DialogReorient.__init__()
+
+		- self._cancel is no longer the default button
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveSisyphe()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveNifti()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveNRRD()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveMinc()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveNumpy()
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveVTK()
+
+		- bug fix, replace item by roi
+
+	- widgets.toolBarThumnail.ToolBarThumbnail.open()
+	- widgets.toolBarThumnail.ToolBarThumbnail.addVolume()
+	- widgets.toolBarThumnail.ToolBarThumbnail.saveSelected()
+	- widgets.toolBarThumnail.ToolBarThumbnail.saveSelectedAs()
+	- widgets.toolBarThumnail.ToolBarThumbnail.editAttributesSelected()
+	- widgets.toolBarThumnail.ToolBarThumbnail.dropEvent()
+
+		- replace messageBox parent (main window rather than self)
+
+	- widgets.sliceViewWidgets.SliceViewWidget._getInfoValuesText()
+
+		- display Leksell coordinates if self._action['showframe'].isChecked()
+		- display ICBM coordinates if self._action['showicbm'].isChecked()
+		- take the MNI origin (x=98.0, y=134.0, z=72.0) into account when calculating ICBM coordinates
+
+.. _build20-02-2026:
+
+version 0.80.15, build 20/02/2026
+---------------------------------
+
+- **new html documentation**
+
+	- PySisyphe_browser.rst
+
+- **updated html documentation**
+	
+	- PySisyphe_Version.rst
+	- PySisyphe_main.rst
+	- PySisyphe_ipython.rst
+	- PySisyphe_Registration.rst
+	- PySisyphe_installation.rst
+	- PySisyphe_overview.rst
+	- PySisyphe_File.rst
+	- PySisyphe_Functions.rst
+	- PySisyphe_Mapping.rst
+	- PySisyphe_dockroi.rst
+	- PySisyphe_dockmesh.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_database.rst
+	- rebuild sphinx documentation
+
+- **new files**
+
+	- /gui/darkroi/labels.png
+	- /gui/lightroi/labels.png
+	- /doc/_images/labels.png
+	- /doc/_images/browser.png
+
+- **updated files**
+
+	- /gui/doc/ipyhton.txt
+	- /settings/functions.xml
+	- /settings/dialogs.xml
+
+- **new external package**
+
+	- openpyxl
+
+		- bug fix, used by pandas Excel XLSX file IO methods
+
+- **update main PySisyphe.py**
+
+	- exception handling for registry manipulations on the Windows platform, to avoid exceptions for sessions without administrator rights
+	- fix crash on first run after installation
+	
+		- logging code calls initPySisypheUserPath() -> getDPIScaleFactor() which raises an exception because QApplication is called before application creation
+		- moving the logging code after creating the application
+	
+	- replace splash.close() by splash.hide()
+	- rebuild frozen version (pyinstaller) 
+
+- **new module**
+
+	- widgets.fileBrowserWidget
+
+- **updated modules**
+
+	- core.sisypheVolume
+	- core.sisypheImageAttributes
+	- core.processing.simpleItkFilters
+	- core.sisypheStatistics
+	- core.sisypheDownload
+	- core.sisypheMesh
+	- core.sisypheTools
+	- gui.dialogSegmentation
+	- gui.dialogRegistration
+	- gui.dialogFileSelection
+	- gui.dialogWorkflow
+	- gui.dialogWait
+	- gui.dialogStatResult
+	- gui.dialogStatModel
+	- gui.dialogStatContrast
+	- gui.dialogDicomDataset
+	- gui.dialogDatabase
+	- gui.dialogGenericResults
+	- gui.dialogSplash
+	- gui.dialogAlgebra
+	- gui.dialogDatatype
+	- gui.dialogDicomExport
+	- gui.dialogDicomImport
+	- gui.dialogRTImport
+	- gui.dialogExport
+	- gui.dialogFlipAxes
+	- gui.dialogImport
+	- gui.windowSisyphe
+	- widgets.iconBarViewWidgets
+	- widgets.multiComponentViewWidget
+	- widgets.multiViewWidgets
+	- widgets.consoleWidget
+	- widgets.selectFileWidgets
+	- widgets.attributesWidgets
+	- widgets.tabToolsWidget
+	- widgets.basicWidgets
+	- widgets.databaseWidget
+	- widgets.toolBarThumbnail
+
+- **new functions**
+
+	- core.sisypheDownload.getPackageMetadata()
+
+		- extract metadata from packages
+
+	- core.sisypheDownload.getPackagesToUpdate()
+
+		- list of packages to check for installation or update
+
+	- core.sisypheDownload.getPackageFolder()
+
+		- get the package folder of the current Python environment
+		- add wait parameter
+
+	- core.sisypheDownload.updatePackages()
+
+		- install or update package(s)
+
+- **updated functions**
+
+	- core.processing.simpleItkFilters.regressionIntensityMatching()
+
+		- bug fix, cast to reference image datatype
+		- line 973, replace copyPropertiesFrom by copyAttributesFrom
+
+	- core.sisypheDownload.updatePySisyphe()
+
+		- implementation of package installation/update
+
+- **new class**
+
+	- widgets.fileBrowserWidget.FileBrowserWidget
+
+		- File browser and preview widget.
+
+- **updated classes**
+
+	- core.sisypheVolume.SisypheVolume
+
+		- update cast() method
+		- update getICBMfromWorld() method
+		- update getWorldfromICBM() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- new getReselCount() method
+		- new setReselCount() method
+		- update __init_() method
+		- update __str__() method
+		- update createXML() method
+		- update parseXML() method
+		- update copyFrom() method
+		- update copy() method
+		- update setContrast() method
+
+	- core.sisypheStatistics.SisypheDesign
+
+		- new setANCOVADesign() method
+		- new isANCOVADesign() method
+		- update _makeDesignMatrix() method
+		- update addHRFBoxCarModelToCondition() method
+		- update addHighPassToCondition() method
+		- update __init__() method
+		- update estimate() method
+		- update parseXML() method
+		- update createXML() method
+
+	- core.sisypheMesh.SisypheMesh
+
+		- update convertToVTKImage() method
+		- update convertToSisypheROI() method
+		- update convertToSisypheVolume() method
+		- update createFromROI() method
+
+	- core.sisypheTools.ToolWidgetCollection
+
+		- new __str__() method
+		- update hasFilename() method
+
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation
+
+		- update execute() method
+
+	- gui.dialogRegistration.DialogEddyCurrentCorrection
+
+		- update __init__() method
+		- update execute() method
+
+	- gui.dialogFileSelection.DialogFileSelection
+
+		- update __init__() method
+
+	- gui.dialogFileSelection.DialogMultiFileSelection
+
+		- update __init__() method
+
+	- gui.dialogFileSelection.DialogFilesSelection
+
+		- update __init__() method
+
+	- gui.dialogWorkflow.WorkflowItem
+
+		- update init() method
+		- update setFilenames() method
+
+	- gui.dialogWorkflow.DialogWorkflow
+
+		- update __init__() method
+		- update _addProcessing() method
+		- update _insertProcessing() method
+		- update load() method
+		- update execute()
+
+	- gui.dialogWait.DialogWaitRegistration
+
+		- update setAntsRegistrationProgress() method
+
+	- gui.dialogStatModel.DialogModel
+
+		- update __init__() method
+		- update addObservations() method
+
+	- gui.dialogStatModel.DialogfMRIObs
+
+		- update __init__() method
+	
+	- gui.dialogStatModel.DialogModel
+
+		- update __init__() method
+		- update saveModel() method
+
+	- gui.dialogStatResult.DialogResult
+
+		- new _updateProjectionView() method
+		- update __init__() method
+		- update setMap() method
+		- update _update() method
+		- update _updateBetaChart() method
+
+	- gui.dialogStatContrast.DialogContrast
+
+		- update __init__() method
+
+	- gui.dialogDicomDataset.DialogDicomDataset
+
+		- new setFilename() method
+
+	- gui.dialogDatabase.DialogDatabase
+
+		- update __init__() method
+		- new _console() method
+		- new _acpc() method
+		- new _frame() method
+		- new _reorient() method
+
+	- gui.dialogGenericResults
+
+		- update addTreeWidgetRow() method
+		- update setTreeWidgetArray() method
+		- update setTreeWidgetDict() method
+
+	- gui.dialogSplash.DialogSplash
+
+		- update __init__() method
+
+	- gui.dialogAlgebra.DialogAlgebra
+
+		- update execute() method
+
+	- gui.dialogDatatype.DialogDatatype
+
+		- update execute() method
+
+	- gui.dialogDicomExport.DialogDicomExport
+
+		- update convert() method
+
+	- gui.dialogDicomImport.DialogDicomImport
+
+		- update convert() method
+
+	- gui.dialogRTImport.DialogRTImport
+
+		- update _convert() method
+
+	- gui.dialogExport.DialogExport
+
+		- update convert() method
+
+	- gui.dialogFlipAxes.DialogFlipAxes
+
+		- update accept() method
+
+	- gui.dialogImport.DialogImport
+
+		- update convert() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- new showBrowser() method
+		- new hideBrowser() method
+		- new setBrowserVisibility() method
+		- new getBrowserVisibility() method
+		- new getBrowser() method
+		- update __init__() method
+		- update _initWindowMenu() method
+		- update showCaptures() method
+		- update hideCaptures() method
+		- update setCapturesVisibility() method
+		- update getCapturesVisibility() method
+		- update showConsole() method
+		- update hideConsole() method
+		- update setConsoleVisibility() method
+		- update getConsoleVisibility() method
+		- update setCurrentTabView() method
+		- update _initFunctionsMenu() method
+		- update datasetDicom() method
+		- update about() method
+
+	- widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2
+
+		- update __init__() method
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+
+		- update __init__() method
+
+	- widgets.multiViewWidgets.MultiViewWidget
+
+		- new setOverlayColorBar() method
+
+	- widgets.consoleWidget.RichJupyterWidget2
+
+		- update execute() method
+		- new _gemini() metohd
+		- new _packages() method
+		- new _open() method
+
+	- widgets.selectFileWidgets.SelectionFilter
+
+		- new filterSisyspheTools() method
+		- update filterExtension() method
+		- update setFiltersToDefault() method
+		- update clearFilters() method
+
+	- widgets.selectFileWidgets.FileSelectionWidget
+
+		- update open() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
+
+	- widgets.attributesWidgets.ItemROIAttributesWidget
+
+		- update save() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+		- new labeling() method
+		- update __init__() method
+		- update setIconSize() method
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget
+
+		- new labeling() method
+		- update __init__() method
+		- update setIconSize() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- new labeling() method
+		- update __init__() method
+		- update setIconSize() method
+
+	- widgets.tabToolsWidget.TabROIToolsWidget
+
+		- new _brushSizePressed() method
+		- update __init__() method
+
+	- widgets.basicWidgets.LabeledSlider
+
+		- new __call__() method
+		- new mousePressEvent() method
+
+	- widgets.toolBarThumbnail.ToolBarThumbnail
+
+		- update open() method
+
+	- widgets.databaseWidget.DatabaseWidget
+
+		- new isEmpty() method
+		- new getPatientCount() method
+
+- **new methods**
+
+	- core.sisypheTools.ToolWidgetCollection.__str__()
+
+		- overloaded method called by the built-in str() python function
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getReselCount()
+	- core.sisypheImageAttributes.SisypheAcquisition.setReselCount()
+	- core.sisypheImageAttributes.SisypheAcquisition.hasReselCount()
+
+		- set/get/has resel count attribute (self._rc)
+
+	- core.sisypheStatistics.SisypheDesign.getAnalysisROIFilename()
+	- core.sisypheStatistics.SisypheDesign.getNormalizationROIFilename()
+	- core.sisypheStatistics.SisypheDesign.setAnalysisROIFilename()
+	- core.sisypheStatistics.SisypheDesign.setNormalizationROIFilename()
+	- core.sisypheStatistics.SisypheDesign.hasAnalysisROIFilename()
+	- core.sisypheStatistics.SisypheDesign.hasNormalizationROIFilename()
+
+		- get/set/has analysis ROI filename attribute (self._roi1)
+		- get/set/has normalization ROI filename attribute (self._roi2)
+
+	- core.sisypheStatistics.SisypheDesign.setANCOVADesign()
+	- core.sisypheStatistics.SisypheDesign.isANCOVADesign()
+
+		- get/set ANOVA design attribute (self._dancova)
+
+	- gui.dialogStatResult.DialogResult._updateProjectionView()
+
+		- update statistical map in the projection view display
+
+	- gui.windowSisyphe.WindowSisyphe.labelingROI()
+	- gui.windowSisyphe.WindowSisyphe.labelingMesh()
+	- gui.windowSisyphe.WindowSisyphe.labelingTool()
+
+		- atlas labeling of ROI(s), mesh(es) and tool(s)
+
+	- gui.windowSisyphe.WindowSisyphe.showBrowser()
+	- gui.windowSisyphe.WindowSisyphe.hideBrowser()
+	- gui.windowSisyphe.WindowSisyphe.setBrowserVisibility()
+	- gui.windowSisyphe.WindowSisyphe.getBrowserVisibility()
+	- gui.windowSisyphe.WindowSisyphe.getBrowser()
+
+		- file browser management
+
+	- gui.dialogDicomDataset.DialogDicomDataset.setFilename()
+
+		- add dicom filename to dialog
+
+	- gui.dialogDatabase.DialogDatabase._console()
+	- gui.dialogDatabase.DialogDatabase._acpc()
+	- gui.dialogDatabase.DialogDatabase._frame()
+	- gui.dialogDatabase.DialogDatabase._reorient()
+
+		- copy to console, AC-PC detection, frame detection management and reorient management
+
+	- widgets.multiViewWidgets.MultiViewWidget.setOverlayColorBar()
+
+		- replace volume colorbar by overlay color
+
+	- widgets.consoleWidget.RichJupyterWidget2._gemini()
+	- widgets.consoleWidget.RichJupyterWidget2._packages()
+	- widgets.consoleWidget.RichJupyterWidget2._open()
+
+		- methods called by %gemini, %packages and %open magic commands
+
+	- widgets.selectFileWidgets.SelectionFilter.filterSisyspheTools()
+
+		- create a new filter self._refxtools for .xpoint, .xline and .xtools files
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.labeling()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.labeling()
+	- widgets.attributesWidgets.ListToolAttributesWidget.labeling()
+
+		- atlas labeling methods for ROI, mesh, tool (HandleWidget, LindeWidget)
+
+	- widgets.tabToolsWidget.TabROIToolsWidget._brushSizePressed()
+
+		- pressed Qt event to trigger QSlider's single step
+
+	- widgets.basicWidgets.LabeledSlider.__call__()
+
+		- to get self._slider QSlider attribute
+
+	- widgets.basicWidgets.LabeledSlider.mousePressEvent()
+		 
+		- Qt event to trigger self._slider QSlider's single step
+
+	- widgets.databaseWidget.DatabaseWidget.isEmpty()
+	- widgets.databaseWidget.DatabaseWidget.getPatientCount()
+
+- **updated methods**
+
+	- core.sisypheVolume.SisypheVolume.cast()
+
+		- line 1587, copy transform ID
+
+	- core.sisypheVolume.SisypheVolume.getICBMfromWorld()
+	- core.sisypheVolume.SisypheVolume.getWorldfromICBM()
+
+		- implement the ICBM152 case, add mni parameter (take the MNI origin into account or not)
+		- bug fix, replace ICBM152 ID
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setContrast()
+
+		- tuple type management
+
+	- core.sisypheImageAttributes.SisypheAcquisition.__init__()
+
+		- add resel count attribute (self._rc)
+
+	- core.sisypheImageAttributes.SisypheAcquisition.__str__()
+
+		- print resel count attribute value (self._rc)
+
+	- core.sisypheImageAttributes.SisypheAcquisition.createXML()
+	- core.sisypheImageAttributes.SisypheAcquisition.parseXML()
+
+		- write/read resel count attribute (self._rc)
+
+	- core.sisypheImageAttributes.SisypheAcquisition.copy()
+	- core.sisypheImageAttributes.SisypheAcquisition.copyFrom()
+
+		- copy resel count attribute (self._rc)
+
+	- core.sisypheStatistics.SisypheDesign._makeDesignMatrix()
+
+		- line 2723, add global factor
+
+	- core.sisypheStatistics.SisypheDesign.addHRFBoxCarModelToCondition()
+
+		- line 3518, replace if ' '.join(name[1:]) == cond by if name[-1] == cond
+
+	- core.sisypheStatistics.SisypheDesign.addHighPassToCondition()
+
+		- line 3563, replace if ' '.join(name[1:]) == cond by if name[-1] == cond
+
+	- core.sisypheStatistics.SisypheDesign.__init__()
+
+		- add self._roi1 & self._roi2 attributes
+		
+	- core.sisypheStatistics.SisypheDesign.estimate()
+		
+		- management of self._roi1 & self._roi2 attributes
+
+	- core.sisypheStatistics.SisypheDesign.__init__()
+
+		- add ANCOVA design attribute (self._dancova)
+
+	- core.sisypheStatistics.SisypheDesign.parseXML()
+	- core.sisypheStatistics.SisypheDesign.createXML()
+
+		- read/write self._roi1 & self._roi2 attributes
+		- read/write ANOVA design attribute (self._dancova)
+
+	- core.sisypheMesh.SisypheMesh.convertToVTKImage()
+	- core.sisypheMesh.SisypheMesh.convertToSisypheROI()
+	- core.sisypheMesh.SisypheMesh.convertToSisypheVolume()	
+
+		- add str support for refimg paramete
+		- filename manamgement
+
+	- core.sisypheMesh.SisypheMesh.setDefaultFilename()
+
+		- bug fix, line 635, replace self._name != '': self.setDefaultName() by self._name == '': self.setDefaultName()
+
+	- core.sisypheMesh.SisypheMesh.createFromROI()
+
+		- bug fix, line 2522, replace self.setDirname(roi.getDirname()) by self.saveAs(roi.getFilename())
+
+	- core.sisypheTools.ToolWidgetCollection.hasFilename()
+
+		- bug fix, line 6726, remove exists condition
+
+	- gui.dialogSegmentation.DialogRegistrationBasedSegmentation.execute()
+
+		- line 2742, correcting wait dialog
+		- line 2890, save ROI
+
+	- gui.dialogRegistration.DialogEddyCurrentCorrection.__init__()
+
+		- line 1440, set B0 sequence filter
+
+	- gui.dialogRegistration.DialogEddyCurrentCorrection.execute()
+
+		- line 1504, add self._reg = 'Transform'
+
+	- gui.dialogFileSelection.DialogFileSelection.__init__()
+
+		- line 133, replace ok by self._ok, cancel by self._cancel
+
+	- gui.dialogFileSelection.DialogMultiFileSelection.__init__()
+
+		- line 224, replace ok by self._ok, cancel by self._cancel
+
+	- gui.dialogFileSelection.DialogFilesSelection.__init__()
+
+		- line 434, replace ok by self._ok, cancel by self._cancel
+
+	- gui.dialogWorkflow.WorkflowItem.__init__()
+
+		- lines 1088 & 1101, add self._erase QCheckBox
+
+	- gui.dialogWorkflow.WorkflowItem.setFilenames()
+
+		- line 968, replace setMoving(input1) by setMoving(input1, editable=False)
+		- line 968, replace setFixed(input1) by setFixed(input1, editable=False)
+
+	- gui.dialogWorkflow.DialogWorkflow.WorkflowItem.init()
+
+		- lines 164, 194, 587, 626, 665 and 704, add self._dialog._cancel.setFixedWidth(100)
+		- bug fix, line 268, replace k1 != 'Radius' by k1 not in ('Radius', 'Batch')
+
+	- gui.dialogWorkflow.DialogWorkflow._addProcessing()
+	- gui.dialogWorkflow.DialogWorkflow._insertProcessing()
+	- gui.dialogWorkflow.DialogWorkflow.load()
+
+		- lines 1122, 1137 and 1246, add parent parameter, WorkflowItem(node.nodeName, last, parent=self)
+		- line 1281, add w.init(last)
+
+	- gui.dialogWorkflow.DialogWorkflow.execute()
+
+		- bug fix, line 1352, bad use of shutils.copyfile function
+		- line 1485, Remove volumes of intermediate stages
+
+	- gui.dialogWait.DialogWaitRegistration.setAntsRegistrationProgress()
+
+		- take into account iter value
+
+	- gui.dialogStatModel.DialogModel.__init__()
+
+		- add progress dialog
+
+	- gui.dialogStatModel.DialogModel._isFull()
+	- gui.dialogStatModel.DialogModel.addGlobalCovariable()
+	- gui.dialogStatModel.DialogModel.addCovariableByGroup()
+	- gui.dialogStatModel.DialogModel.addCovariableBySubject()
+	- gui.dialogStatModel.DialogModel.addCovariableByCondition()
+
+		- ANCOVA design management for model estimability
+
+	- gui.dialogStatModel.DialogModel.saveModel()
+
+		- save self._maskroi and self._normroi attributes
+
+	- gui.dialogStatModel.DialogfMRIObs.__init__()
+
+		- self._cnd.setMinimum(1)
+		- self._sbj.setMinimum(2)
+		- self._grp.setMinimum(2)
+	
+	- gui.dialogStatModel.DialogModel.__init__()
+
+		- self._cnd.setMinimum(1)
+		- self._sbj.setMinimum(2)
+		- self._grp.setMinimum(2)
+
+	- gui.dialogStatResult.DialogResult.__init__()
+
+		- line 205, add self._projUpdateFlag attribute
+	
+	- gui.dialogStatResult.DialogResult.setMap()
+
+		- line 1375, add self._map.display.setWindowMin(0.0)
+		- line 1386, save resel count
+		- line 1541, hide the time series chart if it is fMRI design
+
+	- gui.dialogStatResult.DialogResult._update()
+
+		- line 764, only update the projection view if it is currently displayed
+
+	- gui.dialogStatResult.DialogResult._updateBetaChart()
+
+		- bug fix, line 1154, display beta values if is not fMRI Design
+
+	- gui.dialogStatContrast.DialogContrast.__init__()
+
+		- bug fix, line 215, factors visibility
+
+	- gui.dialogDatabase.DialogDatabase.__init__()
+
+		- add popup menu actions: self._action['console'], self._action['acpc'], self._action['frame'], self._action['reorient']
+
+	- gui.dialogGenericResults.addTreeWidgetRow()
+	- gui.dialogGenericResults.setTreeWidgetArray()
+	- gui.dialogGenericResults.setTreeWidgetDict()
+
+		- add text alignment paramerter
+
+	- gui.dialogSplash.DialogSplash.__init__()
+
+		- add esayocr, google genai, pymupdf module information
+
+	- gui.dialogAlgebra.DialogAlgebra.execute()
+
+		- line 156, add setCurrentProgressValue(0)
+
+	- gui.dialogDatatype.DialogDatatype.execute()
+
+		- line 434, add setCurrentProgressValue(0)
+
+	- gui.dialogDicomExport.DialogDicomExport.convert()
+
+		- line 124, add setCurrentProgressValue(0)
+
+	- gui.dialogDicomImport.DialogDicomImport.convert()
+
+		- line 184, add setCurrentProgressValue(0)
+
+	- gui.dialogRTImport.DialogRTImport._convert()
+
+		- lines 311 & 552, add setCurrentProgressValue(0)
+
+	- gui.dialogExport.DialogExport.convert()
+
+		- line 140, add setCurrentProgressValue(0)
+
+	- gui.dialogFlipAxes.DialogFlipAxes.accept()
+
+		- line 101, add setCurrentProgressValue(0)
+
+	- gui.dialogImport.DialogImport.convert()
+
+		- line 139, add setCurrentProgressValue(0)
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+	- gui.windowSisyphe.WindowSisyphe._initWindowMenu()
+	- gui.windowSisyphe.WindowSisyphe.showCaptures()
+	- gui.windowSisyphe.WindowSisyphe.hideCaptures()
+	- gui.windowSisyphe.WindowSisyphe.setCapturesVisibility()
+	- gui.windowSisyphe.WindowSisyphe.getCapturesVisibility()
+	- gui.windowSisyphe.WindowSisyphe.showConsole()
+	- gui.windowSisyphe.WindowSisyphe.hideConsole()
+	- gui.windowSisyphe.WindowSisyphe.setConsoleVisibility()
+	- gui.windowSisyphe.WindowSisyphe.getConsoleVisibility()
+	- gui.windowSisyphe.WindowSisyphe.setCurrentTabView()
+
+		- add file browser attribute (self._browser), and correction of its effects
+
+	- gui.windowSisyphe.WindowSisyphe.about()
+
+		- show persistent __main__.splash DialogSplash
+		- if exception, create a new DialogSplash
+
+	- gui.windowSisyphe.WindowSisyphe.dicomDataset()
+
+		- add filename parameter
+
+	- gui.windowSisyphe.WindowSisyphe._initFunctionsMenu()
+
+		- add labeling ROI(s), mesh(es) and tool(s) menus
+	
+	- widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2.__init__()
+
+		- line 2433, on macos platform, set the background of the frame with the translation and rotation buttons to black
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.__init__()
+
+		- line 144, self._canvas relative size (1/3)
+
+	- widgets.consoleWidget.RichJupyterWidget2.execute()
+
+		- add %packages and %open magic commands management
+		- call _gemini(), _packages() and _open() methods
+
+	- widgets.selectFileWidgets.SelectionFilter.filterExtension()
+	- widgets.selectFileWidgets.SelectionFilter.setFiltersToDefault()
+	- widgets.selectFileWidgets.SelectionFilter.clearFilters()
+
+		- new self._refxtools filter management
+
+	- widgets.selectFileWidgets.FileSelectionWidget.open()
+
+		- bug fix, line 2032, replace getDicomExt().append('') by getDicomExt()
+		- line 2056, new self._refxtools filter management
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- bug fix, line 4001, replace getDicomExt().append('') by getDicomExt()
+		- bug fix, lines 3793, 3916 & 4118, replace QFileDialog.getOpenFileName by QFileDialog.getOpenFileNames
+
+	- widgets.attributesWidgets.ItemROIAttributesWidget.save()
+
+		- bug fix, line 640, dirname correction
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
+	- widgets.attributesWidgets.ListROIAttributesWidget.setIconSize()
+
+		- add self._labeling button attribute
+		- size management of self._labeling button 
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget.__init__()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.setIconSize()
+
+		- add self._labeling button attribute
+		- size management of self._labeling button 
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+	- widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()
+
+		- add self._labeling button attribute
+		- size management of self._labeling button
+
+	- widgets.tabToolsWidget.TabROIToolsWidget. __init__()
+
+		- add self._brushSize QSlider pressed Qt event management
+
+	- widgets.toolBarThumbnail.ToolBarThumbnail
+
+		- bug fix, line 417, add wait.setCurrentProgressValue(0)
+
+.. _build20-03-2026:
+
+version 0.81.22, build 20/03/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Version.rst
+	- PySisyphe_dockroitools.rst
+	- PySisyphe_Diffusion.rst
+	- PySisyphe_Segmentation.rst
+	- rebuild sphinx documentation
+
+- **new files**
+
+	- /gui/darkroi/select2.png
+	- /gui/lightroi/select2.png
+	- /gui/darkroi/sam.png
+	- /gui/lightroi/sam.png
+	- /lib/sam/model/medsam_vit_b.pth
+	- /templates/ICBM152/LABELLING/icbm152_yale.xlabels
+
+- **updated files**
+
+	- /gui/doc/ipyhton.txt
+	- /settings/functions.xml
+	- /settings/settings.xml
+
+- **new external modules**
+
+	- sam (Segment Anything Pre-trained Model MedSAM), added as PySisyphe module Sisyphe.lib.sam
+	- openmap (OpenMAP-T1 Pre-trained Model, multiple anatomical structure parcellation), added as PySisyphe module Sisyphe.lib.openmap
+
+- **update main PySisyphe.py**
+
+	- update globalExceptionHandler() function
+
+		- avoid displaying the global exception handler dialog box for the UserAbortException
+
+	- rebuild frozen version (pyinstaller) 
+
+- **updated module**
+
+	- core.sisypheROI
+
+		- update cython compilation
+
+	- core.sisypheVolume
+	- core.sisypheROI
+	- core.sisypheImageAttributes
+	- processing.segmentation
+	- processing.capturedStdoutProcessing
+	- gui.windowSisyphe
+	- gui.dialogDeepSegmentation
+	- gui.dialogSkullStripping
+	- gui.dialogEditLabels
+	- widgets.selectFileWidgets
+	- widgets.dicomWidgets
+	- widgets.abstractViewWidgets
+	- widgets.sliceViewWidgets
+	- widgets.multiViewWidgets
+	- widgets.iconBarViewWidgets
+	- widgets.tabToolsWidgets
+
+- **new classes**
+
+	- gui.dialogDeepSegmentation.DialogDeepAtlasSegmentation
+
+		- class to perform deep learning multiple anatomical structure parcellation (OpenMAP-T1)
+
+	- processing.capturedStdoutProcessing.ProcessDeepAtlasSegmentation
+
+		- class to perform deep learning multiple anatomical structure parcellation (OpenMAP-T1)
+
+	- processing.segmentation.SegmentAnything
+
+		- class to perform segmentation with Segment Anything Pre-trained Model (MedSAM)
+
+- **updated classes**
+
+	- core.sisypheVolume.SisypheVolumeCollection
+
+		- update toLabelVolume() method
+
+	- core.sisypheROI.SisypheROI
+
+		- update drawLine() method
+		- update drawDisk() method
+		- update drawEllipse() method
+		- update drawSquare() method
+		- update drawRectangle() method
+		- update drawPolygon() method
+		- update drawCube() method
+		- update drawPrallelepiped() method
+
+	- core.sisypheROI.SisypheROIDraw
+
+		- update __init__() method
+		- update drawLine() method
+		- update drawDisk() method
+		- update drawEllipse() method
+		- update drawSquare() method
+		- update drawRectangle() method
+		- update drawPolygon() method
+		- update drawCube() method
+		- update drawPrallelepiped() method
+		- new drawThresholdedRectangle() method
+		- new setDrawThresholdedRectangleMajorBlob() method
+		- new getDrawThresholdedRectangleMajorBlob() method
+		- new setDrawThresholdedRectangleFillHoles() method
+		- new getDrawThresholdedRectangleFillHoles() method
+
+	- core.sisypheROI.SisypheROICollection
+
+		- update toLabelVolume() method
+		- update fromLabelVolume() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- new getLabelCount() method
+		- new getMinLabelIndex() method
+		- new getMaxLabelIndex() method
+		- update setLabel()
+		- update getLabel()
+		- update saveLabels() method
+		- update setModalityToLB() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- new atlasSegmentation() method
+		- update __init__() method
+		- update _initSegmentationMenu() method
+		- update savesaveNifti() method
+		- update saveMinc() method
+		- update saveNrrd() method
+		- update saveVtk() method
+		- update saveNumpy() method
+
+	- gui.DialogSkullStripping.dialogSkullStripping
+
+		- update _modelChanged() method
+		- update function() method
+
+	- gui.dialogEditLabels.DialogEditLabels
+
+		- new _initTreeLabels() method
+		- update __init__() method
+		- update _saveLabels() method
+		- update _moveTo() method
+		- update _load() method
+		- update _save() method
+		- update _clear() method
+		- update setVolume() method
+
+	- widgets.selectFileWidgets.FileSelectionWidget
+
+		- update open() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update add() method
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget
+
+		- new _verifySliceOrder() method
+		- update _dictToWidget() method
+
+	- widgets.abstractViewWidgets.AbstractViewWidget
+
+		- new _onRightReleaseEvent() method
+		- update _getWorldToMatrixCoordinate() method
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget
+
+		- update __init__() method
+		- update _menuOverlayVoxelTriggered() method
+		- update setOverlayColorBar() method
+		- update setVolumeColorBar() method
+		- new setOverlayColorbarAvailability() method
+		- new getOverlayColorbarAvailability() method
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget
+
+		- new _initBoundingBoxActor() method
+		- new setDrawRectangleFlag() method
+		- new getDrawRectangleFlag() method
+		- new setDrawThresholdRectangleFlag() method
+		- new getDrawThresholdRectangleFlag() method
+		- new setSamFlag() method
+		- new getSamFlag() method
+		- new sliceDrawSelection() method
+		- new sliceEraseSelection() method
+		- new sliceSam() method
+		- new setSamModel() method
+		- new getSamModel() method
+		- new _onRightReleaseEvent() method
+		- update __init__() method
+		- update _updateExclusiveFlags() method
+		- update _onLeftPressEvent() method
+		- update _onMouseMoveEvent() method
+		- update _onLeftReleaseEvent() method
+		- update _onRightPressEvent() method
+
+	- widgets.multiViewWidgets.GridViewWidget
+
+		- new setSamModel() method
+		- new getSamModel() method
+		- new hasSamModel() method
+
+	- widgets.multiViewWidgets.SynchronisedGridViewWidget
+
+		- update __init__() method
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection
+
+		- new setDrawRectangleFlag() method
+		- new getDrawRectangleFlag() method
+		- new setDrawThresholdRectangleFlag() method
+		- new getDrawThresholdRectangleFlag() method
+		- new setSamFlag() method
+		- new getSamFlag() method
+		- new setSamModel() method
+		- new getSamModel() method
+		- new hasSamModel() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- new area() method
+		- new sam() method
+		- update _initBrushGroupBox() method
+		- update _brushTypeChanged() method
+
+- **new methods**
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getLabelCount()
+
+		- get number of labels
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getMinLabelIndex()
+
+		- get minimum label index
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getMaxLabelIndex()
+
+		- get maximum label index
+
+
+	- core.sisypheROI.SisypheROIDraw.setDrawThresholdedRectangleMajorBlob()
+	- core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleMajorBlob()
+
+		- set/get self._dtrmajorblob attribute, used by the drawThresholdedRectangle method to keep only the major blob
+
+	- core.sisypheROI.SisypheROIDraw.setDrawThresholdedRectangleFillHoles()
+	- core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleFillHoles()
+
+		- set/get self._dtrfillholes attribute, used by the drawThresholdedRectangle method to fill holes
+
+	- core.sisypheROI.SisypheROIDraw.drawThresholdedRectangle()
+
+		- draw a mask by thresholding within the boundaries of a rectangle
+
+	- gui.windowSisyphe.WindowSisyphe.atlasSegmentation()
+
+		- dialog to perform deep learning multiple anatomical structure parcellation (OpenMAP-T1)
+
+	- gui.dialogEditLabels.DialogEditLabels._initTreeLabels()
+
+		- self._tree initialization (QTreeWidget for label editing)
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._verifySliceOrder()
+
+		- verify slice order based on ImagePositionPatient dicom field, reverse order if necessary
+
+	- widgets.abstractViewWidget._onRightReleaseEvent()
+
+		- mouse right buttom release event management
+	
+	- widgets.sliceViewWidgets._onRightReleaseEvent()
+
+		- mouse right buttom release event management
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.setOverlayColorbarAvailability()
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.getOverlayColorbarAvailability()
+
+		- choose whether the overlay color bar can be displayed in place of the volume color bar
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._initBoundingBoxActor()
+
+		- init self._selectbox actor
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setDrawRectangleFlag()
+	- widgets.sliceViewWidgets.SliceROIViewWidget.getDrawRectangleFlag()
+
+		- get/set activation flag of draw rectangle tool
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setThresholdDrawRectangleFlag()
+	- widgets.sliceViewWidgets.SliceROIViewWidget.getThresholdDrawRectangleFlag()
+
+		- get/set activation flag of draw tool by thresholding within rectangle boundaries
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setSamFlag()
+	- widgets.sliceViewWidgets.SliceROIViewWidget.getSamFlag()
+
+		- get/set activation flag of segment anything tool
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.sliceDrawSelection()
+
+		- draw mouse selection area on the current slice of the active ROI
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.sliceEraseSelection()
+
+		- erase mouse selection area on the current slice of the active ROI
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.sliceSam()
+
+		- segment the current slice of the active ROI with the SegmentAnything pre-trained model in the mouse selection area
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setSamModel()
+	- widgets.sliceViewWidgets.SliceROIViewWidget.getSamModel()
+		
+		- set/get self._sam SegmentAnything attribute
+
+	- widgets.multiViewWidgets.GridViewWidget.setSamModel()
+	- widgets.multiViewWidgets.GridViewWidget.getSamModel()
+	- widgets.multiViewWidgets.GridViewWidget.hasSamModel()
+
+		- set/get/has segment anything pre-trained model attribute
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.setDrawRectangleFlag()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.getDrawRectangleFlag()
+
+		- get/set activation flag of draw rectangle tool
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.setDrawThresholdRectangleFlag()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.getDrawThresholdRectangleFlag()
+
+		- get/set activation flag of draw tool by thresholding within rectangle boundaries
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.setSamFlag()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.getSamFlag()
+
+		- get/set activation flag of segment anything tool
+
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.setSamModel()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.getSamModel()
+	- widgets.iconBarViewWidgets.IconBarViewWidgetCollection.hasSamModel()
+
+		- set/get/has segment anything pre-trained model attribute
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.area()
+
+		- method called by draw rectangle tool activation
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.sam()
+
+		- method called by segment anything tool activation
+
+- **updated methods**
+
+	- core.sisypheVolume.SisypheVolumeCollection.toLabelVolume()
+
+		- label volume datatype extended to uint16
+
+	- core.sisypheROI.SisypheROI.drawLine()
+	- core.sisypheROI.SisypheROI.drawDisk()
+	- core.sisypheROI.SisypheROI.drawEllipse()
+	- core.sisypheROI.SisypheROI.drawSquare()
+	- core.sisypheROI.SisypheROI.drawRectangle()
+	- core.sisypheROI.SisypheROI.drawPolygon()
+	- core.sisypheROI.SisypheROI.drawCube()
+	- core.sisypheROI.SisypheROI.drawPrallelepiped()
+
+		- add v parameter, scalar value to draw (default 1)
+
+	- core.sisypheROI.SisypheROIDraw.__init__()
+
+		- add self._dtrmajorblob attribute, used by the drawThresholdedRectangle method to keep only the major blob
+		- add self._dtrfillholes attribute, used by the drawThresholdedRectangle method to fill holes
+
+	- core.sisypheROI.SisypheROIDraw.drawLine()
+	- core.sisypheROI.SisypheROIDraw.drawDisk()
+	- core.sisypheROI.SisypheROIDraw.drawEllipse()
+	- core.sisypheROI.SisypheROIDraw.drawSquare()
+	- core.sisypheROI.SisypheROIDraw.drawRectangle()
+	- core.sisypheROI.SisypheROIDraw.drawPolygon()
+	- core.sisypheROI.SisypheROIDraw.drawCube()
+	- core.sisypheROI.SisypheROIDraw.drawPrallelepiped()
+
+		- add v parameter, scalar value to draw (default 1)
+
+	- core.sisypheROI.SisypheROICollection.toLabelVolume()
+
+		- label volume datatype extended to uint16
+
+	- core.sisypheROI.SisypheROICollection.fromLabelVolume()
+
+		- extend to more than 256 labels, replace 256 with max value
+
+	- core.sisypheImageAttributes.SisypheAcquisition.saveLabels()
+
+		- save more than 256 labels
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setLabel()
+	- core.sisypheImageAttributes.SisypheAcquisition.getLabel()
+
+		- use more than 256 labels
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setModalityToLB()
+
+		- allowed data type extended to uint16
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- add self._sam attribute, Segment Anything Pre-trained Model (MedSAM)
+
+	- gui.windowSisyphe.WindowSisyphe._initSegmentationMenu()
+	
+		- add "Atlas segmentation..." menu
+
+	- gui.windowSisyphe.WindowSisyphe.savesaveNifti()
+	- gui.windowSisyphe.WindowSisyphe.saveMinc()
+	- gui.windowSisyphe.WindowSisyphe.saveNrrd()
+	- gui.windowSisyphe.WindowSisyphe.saveVtk()
+	- gui.windowSisyphe.WindowSisyphe.saveNumpy()
+
+		- Remove .xvol from the default file name
+
+	- gui.DialogSkullStripping.dialogSkullStripping._modelChanged()
+	- gui.DialogSkullStripping.dialogSkullStripping.function()
+
+		- add OpenMAP model management
+
+	- gui.dialogEditLabels.DialogEditLabels.__init__()
+	- gui.dialogEditLabels.DialogEditLabels._saveLabels()
+	- gui.dialogEditLabels.DialogEditLabels._moveTo()
+	- gui.dialogEditLabels.DialogEditLabels._load()
+	- gui.dialogEditLabels.DialogEditLabels._save()
+	- gui.dialogEditLabels.DialogEditLabels._clear()
+	- gui.dialogEditLabels.DialogEditLabels.setVolume()
+
+		- remove self._tree (QTreeWidget for label editing) initialization from constructor
+		- manage more than 256 labels for uint16 label volume
+
+	- widgets.selectFileWidgets.FileSelectionWidget.open()
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- change filter order of QFileDialog.getOpenFileNames (.xtools, xpoint, .xline)
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._dictToWidget()
+
+		- call _verifySliceOrder() method before adding series filenames in the widget
+
+	- widgets.abstractViewWidgets.AbstractViewWidget._getWorldToMatrixCoordinate()
+
+		- add rounded boolean parameter
+		- out-of-range coordinate test
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.__init__()
+
+		- add self._colorbarOverlayFlag, to choose whether the overlay color bar can be displayed in place of the volume color bar
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget._menuOverlayVoxelTriggered()
+
+		- display overlay colorbar
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.setOverlayColorBar()
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget.setVolumeColorBar()
+
+		- add signal parameter for synchronization
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.__init__()
+	
+		- add self._bbox attribute, vtkPolyLineSource, bounding box selection polydata
+		- add self._selectbox attribute, vtkActor2D, bounding box representation
+		- add self._action['rectflag'] action
+		- add self._action['samflag'] action
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._updateExclusiveFlags()
+
+		- self._action['rectflag'], self._action['thresholdrectflag'] & self._action['samflag'] action management
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onLeftPressEvent()
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onRightPressEvent()
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onMouseMoveEvent()
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onLeftReleaseEvent()
+
+		- manage the mouse area selection, which is used for the actions self.action['rectFlag'], self._action['thresholdrectflag'] and self.action['samFlag']
+
+	- widgets.multiViewWidgets.SynchronisedGridViewWidget.__init__()
+
+		- add line, w.setOverlayColorbarAvailability(False, signal=False), the colorbar cannot be changed
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget._initBrushGroupBox()
+
+		- add self._btn['area'] & self._btn['sam'] button
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget._brushTypeChanged()
+
+		- update DrawRectangleFlag & DrawThresholdRectangleFlag
+
+.. _build20-04-2026:
+
+version 0.87.12, build 20/04/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- version-histrory.rst
+	- PySisyphe_browser.rst
+	- PySisyphe_Diffusion.rst
+	- PySisyphe_File.rst
+	- PySisyphe_Mapping.rst
+	- PySisyphe_Functions.rst
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_menubar.rst
+	- rebuild sphinx documentation
+
+- **new files**
+
+	- /gui/font/DejaVuSans.ttf
+	- /gui/font/template.json
+
+- **updated files**
+
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+	- requirements.txt
+
+- **update main PySisyphe.py**
+
+	- line 43, fix PyTorch DLL loading issue on Windows
+	- line 70, fix matplotlib cache dir issue in frozen version
+
+- **upgraded packages**
+
+	- dipy, migrate from 1.11.0 to 1.12.0, PySisyphe dependencies
+
+		- core.sisypheTools
+		- core.sisypheImage
+		- core.sisypheTracts
+		- gui.dialogDiffusionPreprocessing
+		- lib.dipy.localpca
+		- lib.dipy.non_local_means
+		- lib.dipy.streamline
+		- processing.dipyFunctions
+
+	- matplotlib, migrate from 3.6.3 to 3.10.8, PySisyphe dependencies
+
+		- core.sisypheLUT
+		- core.sisypheVolume
+		- gui.dialogStatContrast
+		- gui.dialogStatResult
+		- gui.dialogGenericResults
+		- gui.dialogPerfusion
+		- gui.dialogROIStatistics
+		- gui.dialogSeriesRealignment
+		- gui.dialogSplash
+		- gui.dialogWait
+		- gui.windowSisyphe
+		- widgets.LUTWidgets
+		- widgets.abstractViewWidget
+		- widgets.fileBrowserWidget
+		- widgets.imageWidgets
+		- widgets.multiComponentViewWidget
+		- widgets.sheetWidget
+		- widgets.thresholdWidget
+
+- rebuild frozen version (pyinstaller)
+
+	- PySisyphe.py update
+	- upgrade to dipy version 1.12.0
+	- upgrade to matplotlib version 3.10.8
+
+- build python 3.12 frozen version for darwin platform
+
+- **new external modules**
+
+	- MyRelax, https://github.com/fragrussu/MyRelax, added as PySisyphe module Sisyphe.lib.myrelax
+	- TGVQSM, https://www.neuroimaging.at/pages/qsm.php, added as PySisyphe module Sisyphe.lib.tgvqsm
+
+- **new modules**
+
+	- processing.qMRFunctions
+	- gui.dialogQuantitativeMR
+
+- **updated modules**
+
+	- version
+	- core.sisypheLUT
+	- core.sisypheTracts
+	- core.sisypheImageAttributes
+	- core.sisypheStatistics
+	- core.sisypheDicom
+	- core.sisypheVolume
+	- core.sisypheImage
+	- core.sisypheTransform
+	- core.sisypheROI
+
+		- update cython compilation
+
+	- core.sisypheSettings
+	- gui.dialogVolumeAttributes
+	- gui.dialogStatResult
+	- gui.dialogGenericResults
+	- gui.dialogPerfusion
+	- gui.dialogROIStatistics
+	- gui.dialogPerfusion
+	- gui.dialogDiffusionModel
+	- gui.dialogStatContrast
+	- gui.dialogFunction
+	- gui.dialogSkullStripping
+	- gui.dialogImport
+	- gui.dialogResample
+	- gui.dialogDatatype
+	- gui.dialogDiffusionModel
+	- gui.dialogWait
+	- gui.dialogEditLabels
+	- gui.dialogSettings
+	- gui.dialogStatContrast
+	- gui.windowSisyphe
+	- processing.dscFunctions
+	- processing.capturedStdoutProcessing
+	- widgets.LUTWidgets
+	- widgets.imageWidgets
+	- widgets.multiComponentViewWidget
+	- widgets.sheetWidget
+	- widgets.thresholdWidget
+	- widgets.selectFileWidgets
+	- widgets.dicomWidgets
+	- widgets.attributesWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.consoleWidget
+
+- **new functions**
+
+	- processing.dscFunctions.cbfAslMap()
+
+		- CBF processing from Arterial Spin Labeling (ASL) series
+
+	- processing.qMRFunctions.B0DblEchoMap()
+
+		- B0 main static magnetic field map (in Hz) processing using the phase difference between two echoes
+
+	- processing.qMRFunctions.B1DblTRMap()
+
+		- B1 radiofrequency (RF) coil map processing from two-pulse spoiled gradient echo with short and long TR (actual flip angle imaging)
+
+	- processing.qMRFunctions.B1GEDblAngleMap()
+
+		- B1 radiofrequency (RF) coil map processing from two gradient echo images using the double angle method
+
+	- processing.qMRFunctions.B1SEDblAngleMap()
+
+		- B1 radiofrequency (RF) coil map processing from two spin echo images using the double angle method
+
+	- processing.qMRFunctions.T1MultiTRMap()
+
+		- voxel-wise mono-exponential T1 fitting on spin echo volumes at variable TR (VTR)
+
+	- processing.qMRFunctions.T1MultiAngleMap()
+
+		- voxel-wise mono-exponential T1 fitting for a variable flip angle (VFA) volumes
+
+	- processing.qMRFunctions.T2MonoExpMap()
+
+		- voxel-wise mono-exponential T2/T2* fitting on volumes at variable echo times
+
+	- processing.qMRFunctions.T2BiExpMap()
+
+		- voxel-wise bi-exponential T2/T2* fitting on volumes at variable echo times
+
+	- processing.qMRFunctions.T2primeMap()
+
+		- T2' processing from quantitative T2 and T2* maps
+
+	- processing.qMRFunctions.MTRMap()
+
+		- magnetization Transfer Ratio (MTR) from MT "on" and MT "off" acquisitions
+
+	- processing.qMRFunctions.QSMMap()
+
+		- quantitative susceptibility mapping (QSM) processing using total generalized variation (TGV-QSM).
+
+	- processing.qMRFunctions.phaseRescaling()
+
+		- phase MR image rescaling to (-pi, +pi)
+
+- **new classes**
+
+	- core.sisypheTracts.SisypheFreeWaterDTIModel
+
+		- class to manage free water diffusion tensor imaging model
+
+	- core.sisypheTracts.SisypheRumbaModel
+
+		- class to manage Robust and Unbiased Model-BAsed Spherical Deconvolution (RUMBA) model
+
+	- gui.dialogPerfusion.DialogASLPerfusion
+
+		- dialog for ASL processing
+
+	- gui.dialogQuantitativeMR.DialogB0Map
+
+		- dialog for B0 map processing
+
+	- gui.dialogQuantitativeMR.DialogB1Map
+
+		- dialog for B1 map processing
+
+	- gui.dialogQuantitativeMR.DialogT1Map
+
+		- dialog for T1 map processing
+
+	- gui.dialogQuantitativeMR.DialogT2Map
+
+		- dialog for T2/T2* map processing
+
+	- gui.dialogQuantitativeMR.DialogMTRMap
+
+		- dialog for Magnetization Transfer Ratio (MTR) map processing
+
+	- gui.dialogQuantitativeMR.DialogQSMMap
+
+		- dialog for map Quantitative Susceptibility (QSM) processing
+
+	- gui.dialogDiffusionModel.DialogALPS
+
+		- dialog for diffusion tensor image analysis along the perivascular space (DTI‑ALPS)
+
+	- widget.selectFileWidgets.FilesSelectionWithParametersWidget
+
+		- widget that manages files selection with associated parameters
+
+- **updated classes**
+
+	- version
+
+		- update isOlderThan() method
+		- update isNewerThan() method
+
+	- core.sisypheLUT.SisypheLUT
+	
+		- update SisypheLut.setInternalLut() method
+
+	- core.sisypheTracts.SisypheDTIModel
+
+		- new getLinearity() method
+		- new getPlanarity() method
+		- new getSphericity() method
+		- new getIsotropic() method
+		- new getDeviatropic() method
+		- new getTensor() method
+		- new getEigenValues() method
+		- new getEigenVectors() method
+		- new getMajorEigenVector() method
+
+	- core.sisypheTracts.SisypheDKIModel
+
+		- new getLinearity() method
+		- new getPlanarity() method
+		- new getSphericity() method
+
+	- core.sisypheTracts.SisypheSHCSAModel
+
+		- update getModel() method
+		- update computeFitting() method
+
+	- core.sisypheTracts.SisypheSHCSDModel
+
+		- update getModel() method
+		- update computeFitting() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- update getLBSequences() method
+		- new setSequenceToB0Map() method
+		- new setSequenceToB1Map() method
+		- new setSequenceToT1Map() method
+		- new setSequenceToT2Map() method
+		- new setSequenceToT2primeMap() method
+		- new setSequenceToMTRMap() method
+		- new setSequenceToQSMMap() method
+		- new setSequenceToMagnitude() method
+		- new setSequenceToPhase() method
+		- new isB0Map() method
+		- new isB1Map() method
+		- new isT1Map() method
+		- new isT2Map() method
+		- new isMTRMap() method
+		- new isQSMMap() method
+		- new isMagnitude() method
+		- new isPhase() method
+		- new setUnitToHz() method
+		- new setUnitToMillisecond() method
+
+	- core.sisypheStatistics.SisypheDesign
+
+		- update addHRFBoxCarModelToCondition() method
+		- update addHighPassToCondition() method
+
+	- core.sisypheDicom.DicomToXmlDicom
+
+		- update execute() method
+
+	- core.sisypheVolume.SisypheVolumeCollection
+
+		- update remove() method
+
+	- core.sisypheImage.SisypheImage
+
+		- update loadFromNIFTI() method
+
+	- core.sisypheTransform.SisypheApplyTransform
+
+		- update resampleMoving() method
+
+	- core.sisypheROI.SisypheROICollection
+
+		- update toLabelVolume() method
+
+	- core.sisypheSettings.SisypheSettings
+
+		- update getFieldValue() method
+		- update setFieldValue() method
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes
+
+		- update  _setSequencesFromModality() method
+
+	- gui.dialogStatResult.DialogResult
+
+		- update _updateBetaChart() method
+		- update _updateTimeSeriesChart() method
+		- update _updateRegressionChart() method
+
+	- gui.dialogGenericResults.DialogGenericResults
+
+		- update chartBarFromTreeWidgetColumn() method
+		- update chartPlotFromTreeWidgetColumn() method
+		- update chartBoxplotFromTreeWidgetColumn() method
+		- update chartPieFromTreeWidgetColumn() method
+
+	- gui.dialogPerfusion.DialogArterialInputFunction
+
+		- update _cursorPositionChanged() method
+		- update _addVoxel() method
+		- update _removeVoxel() method
+		- update _clear() method
+		- update setVolume() method
+
+	- gui.dialogPerfusion.DialogPerfusion
+	- gui.dialogPerfusion.DialogPerfusion2
+
+		- update function() method
+
+	- gui.dialogROIStatistics.DialogROIStatistics
+
+		- update _checkStateChanged() method
+		- update _binsChanged() method method
+		- update ._displayLineAt() method
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel
+
+		- update __init__() method
+		- update _modelChanged() method
+		- update multiExecute() method
+
+	- gui.dialogStatContrast.DialogContrast
+
+		- update __init__() method
+
+	- gui.dialogStatContrast.DialogLateralityIndex
+
+		- update execute() method
+
+	- gui.dialogFunction.AbstractDialogFunction
+
+		- update execute() method
+
+	- gui.dialogFunction.DialogRemoveNeckSlices
+	- gui.dialogFunction.DialogGaussianFilter
+	- gui.dialogFunction.DialogMeanFilter
+	- gui.dialogFunction.DialogMedianFilter
+	- gui.dialogFunction.DialogAnisotropicDiffusionFilter
+	- gui.dialogFunction.DialogGradientFilter
+	- gui.dialogFunction.DialogLaplacianFilter
+	- gui.dialogFunction.DialogBiasFieldCorrectionFilter
+	- gui.dialogFunction.DialogHistogramIntensityMatching
+	- gui.dialogFunction.DialogRegressionIntensityMatching
+	- gui.dialogFunction.DialogIntensityNormalization
+
+		- update __init__() method
+
+	- gui.dialogSkullStripping.DialogSkullStripping
+
+		- update __init__() method
+		- update execute() method
+
+	- gui.dialogImport.DialogImport
+
+		- update convert() method
+
+	- gui.dialogResample.DialogResample
+
+		- update __init__() method
+		- update _updateMoving() method
+		- update execute() method
+
+	- gui.dialogDatatype.DialogEditID
+
+		- update __init__() method
+		- update _refChanged() method
+		- update execute() method
+
+	- gui.dialogEditLabels.DialogEditLabels
+
+		- update setVolume() method
+
+	- gui.dialogWait.DialogWait
+
+		- update messageFromDictProxyManager() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update _initSettings() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update _initMapMenu() method
+		- upadte _initDiffusionMenu() method
+		- update _openModel() method
+		- new mapB0() method
+		- new mapB1() method
+		- new mapT1() method
+		- new mapT2() method
+		- new mapT2p() method
+		- new mapQSM() method
+		- new mapMTR() method
+		- new mapASL() method
+		- new diffusionALPS() method
+		- new versionControl() method
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel
+
+		- update run() method
+
+	- widgets.LUTWidgets.LutWidget
+
+		- update _get_span_left() method
+		- update _get_span_right() method
+		- update _set_span_left() method
+		- update _set_span_right() method
+		- update _draw() method
+
+	- widgets.LUTWidgets.LutEditWidget
+
+		- update __init__() method
+		- update _onMouseMoveEvent() method
+
+	- widgets.LUTWidgets.AlphaTransferWidget
+
+		- update __init__() method
+		- update _updateLines() method
+		- update setTransfer() method
+		- update _onMouseMoveEvent() method
+		- update _onMenuNew() method
+		- update _onMenuRemove() method
+		- update _onMenuClear() method
+
+	- widgets.LUTWidgets.ComboBoxLut
+
+		- update _addInternalLut() method
+		- update getCurrentAsMatplotlibColormap() method
+		- update _addInternalLut() method
+
+	- widgets.LUTWidgets.PopupMenuLut
+
+		- update getCurrentAsMatplotlibColormap() method
+
+	- widgets.imageWidgets.ImagePreviewWidget
+
+		- update __init__() method
+		- update setDefaultLut() method
+		- update setLut() method
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+		
+		- update _cursorPositionChanged() method
+		- update addCurrentCurveToChart() method
+		- update cleanChart() method
+		- update updateSpan() method
+
+	- widgets.sheetWidget.SheetChartWidget
+
+		- update _drawChart() method
+		- update properties() method
+
+	- widgets.thresholdWidget.ThresholdViewWidget
+
+		- update __init__() method
+		- update _get_span_left() method
+		- update _get_span_right() method
+		- update _set_span_left() method
+		- update _set_span_right() method
+		- update _onMouseMoveEvent() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- new fileCountWarningOn() method
+		- new fileCountWarningOff() method
+		- new setFileCountWarning() method
+		- new getFileCountWarning() method
+		- update copySelectionFrom() method
+		- update copySelectionTo() method
+		- update add() method
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget
+
+		- update __init__() method
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget
+
+		- update _pathToDict() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+		- update __init__() method
+		- new saveLabelSisyphe() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- update _initSettingsLayout() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- new _enable_inline() method
+		- update __init__() method
+		- upadte restart() method
+
+- **new methods**
+
+	- core.sisypheTracts.SisypheDTIModel.getLinearity()
+	- core.sisypheTracts.SisypheDTIModel.getPlanarity()
+	- core.sisypheTracts.SisypheDTIModel.getSphericity()
+
+		- get linearity, planarity and sphericity diffusion maps
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToB0Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToB1Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT1Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT2Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToT2primeMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToMTRMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToQSMMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToMagnitude()
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToPhase()
+	- core.sisypheImageAttributes.SisypheAcquisition.isB0Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.isB1Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.isT1Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.isT2Map()
+	- core.sisypheImageAttributes.SisypheAcquisition.isT2primeMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.isMTRMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.isQSMMap()
+	- core.sisypheImageAttributes.SisypheAcquisition.isMagnitude()
+	- core.sisypheImageAttributes.SisypheAcquisition.isPhase()
+
+		- add B0 map, B1 map, T1 map, T2 map, T2' map, MTR map, QSM map, phase & magnitude sequences
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setUnitToHz()
+	- core.sisypheImageAttributes.SisypheAcquisition.setUnitToMillisecond()
+
+		- add msec and Hz units
+
+	- gui.windowSisyphe.WindowSisyphe.mapB0()
+	- gui.windowSisyphe.WindowSisyphe.mapB1()
+	- gui.windowSisyphe.WindowSisyphe.mapT1()
+	- gui.windowSisyphe.WindowSisyphe.mapT2()
+	- gui.windowSisyphe.WindowSisyphe.mapT2p()
+	- gui.windowSisyphe.WindowSisyphe.mapQSM()
+	- gui.windowSisyphe.WindowSisyphe.mapMTR()
+	- gui.windowSisyphe.WindowSisyphe.asl()
+	- gui.windowSisyphe.WindowSisyphe.diffusionALPS()
+
+		- add processing of B0, B1, T1, T2, T2', QSM, MTR, ASL maps and DTI-ALPS
+
+	- gui.windowSisyphe.WindowSisyphe.versionControl()
+
+		- Check the module versions to detect any incompatibilities with the current version of PySisyphe
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOn()
+	- widgets.selectFileWidgets.FilesSelectionWidget.fileCountWarningOff()
+	- widgets.selectFileWidgets.FilesSelectionWidget.setFileCountWarning()
+	- widgets.selectFileWidgets.FilesSelectionWidget.getFileCountWarning()
+
+		- management of self._countWarning attribute
+		- self._countWarning is used as a flag to display or not a warning when the maximum number of files is reached
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveLabelSisyphe()
+
+		- save the checked ROI to label xvol
+
+	- widgets.consoleWidget.ConsoleWidget._enable_inline()
+
+		- workaround for the exception raised by %matplotlib inline during a frozen execution related to the matplotlib upgrade to 3.10.8 version
+
+- **updated methods**
+
+	- version.isOlderThan()
+	- version.isNewerThan()
+
+		- add current parameter
+
+	- core.sisypheTracts.SisypheSHCSAModel.getModel()
+	- core.sisypheTracts.SisypheSHCSAModel.computeFitting()
+	- core.sisypheTracts.SisypheSHCSDModel.getModel()
+	- core.sisypheTracts.SisypheSHCSDModel.computeFitting()
+
+		- replace sh_order parameter name by sh_order_max
+		- new parameter name since dipy v1.9
+		- required for dipy migration from version 1.11.0 to 1.12.0
+
+	- core.sisypheImageAttributes.SisypheAcquisition.getLBSequences()
+
+		- bug fix, return replace tuple(cls._LBSEQUENCE) by return cls._LBSEQUENCE,
+
+	- core.sisypheStatistics.SisypheDesign.addHRFBoxCarModelToCondition()
+
+		- bug fix, line 3659, name variable splitting/joining
+
+	- core.sisypheStatistics.SisypheDesign.addHighPassToCondition()
+
+		- bug fix, line 3709, name variable splitting/joining
+
+	- core.sisypheDicom.DicomToXmlDicom.execute()
+
+		- pydicom bug: some DataElements have empty keywords
+		- work around the pydicom bug, detect empty keyword and create it from DataElement.name
+		- work around the pydicom bug, replace keyword by tag to extract DataElement from DataSet
+
+	- core.sisypheVolume.SisypheVolumeCollection.remove()
+
+		- bug fix for int value type, line 4930, replace self.pop(self.index(value)) by self.pop(value)
+
+	- core.sisypheImage.SisypheImage.loadFromNIFTI()
+
+		- bug fix, add support for vector images of all data types
+
+	- core.sisypheTransform.SisypheApplyTransform.resampleMoving()
+
+		- bug fix, origin update of the moving volume
+
+	- core.sisypheROI.SisypheROICollection.toLabelVolume()
+
+		- bug fix, replace roi = roi + self[i].getSITKImage() * i by roi = roi + self[i].getSITKImage() * (i + 1)
+
+	- core.sisypheSettings.SisypheSettings.getFieldValue()
+	- core.sisypheSettings.SisypheSettings.setFieldValue()
+
+		- lines 914 & 1007, add elif path == '~': base = abspath(expanduser('~'))
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes._setSequencesFromModality()
+
+		- add LB modality management
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.__init__()
+	- gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()
+	- gui.dialogDiffusionModel.DialogDiffusionModel.save()
+
+		- add free water DTI and RUMBA models management
+		- add linearity, planarity and sphericity maps (DTI, FWDTI and DKI models)
+
+	- gui.windowSisyphe.WindowSisyphe._initMapMenu()
+
+		- new 'B0 map...' menu
+		- new 'B1 map...' menu
+		- new 'T1 map...' menu
+		- new 'T2/T2* map...' menu
+		- new 'T2prinme map...' menu
+		- new 'MTR map...' menu
+		- new 'QSM map...' menu
+		- new 'QSM map...' menu
+		- new 'ASL perfusion...' menu
+
+	- gui.windowSisyphe.WindowSisyphe._initDiffusionMenu()
+
+		- new 'Diffusion analysis along perivascular space...' menu
+
+	- gui.windowSisyphe.WindowSisyphe._openModel()
+
+		- bug fix, line 2024, replace basename(filename)[0] by splitext(basename(filename))[0]
+
+	- gui.dialogStatContrast.DialogContrast.__init__()
+
+		- bug fix, line 206, replace self._cfactors.addItem('Main factor') by self._cfactors.addItem('Main')
+
+	- gui.dialogStatContrast.DialogLateralityIndex.execute()
+
+		- save masked statistical map
+
+	- gui.dialogFunction.AbstractDialogFunction.execute()
+
+		- add a messageBox to perform additional processing
+		- add self._files.setSelectionTo(i)
+
+	- gui.dialogFunction.DialogRemoveNeckSlices.__init__()
+	- gui.dialogFunction.DialogGaussianFilter.__init__()
+	- gui.dialogFunction.DialogMeanFilter.__init__()
+	- gui.dialogFunction.DialogMedianFilter.__init__()
+	- gui.dialogFunction.DialogAnisotropicDiffusionFilter.__init__()
+	- gui.dialogFunction.DialogGradientFilter.__init__()
+	- gui.dialogFunction.DialogLaplacianFilter.__init__()
+	- gui.dialogFunction.DialogBiasFieldCorrectionFilter.__init__()
+	- gui.dialogFunction.DialogHistogramIntensityMatching.__init__()
+	- gui.dialogFunction.DialogRegressionIntensityMatching.__init__()
+	- gui.dialogFunction.DialogIntensityNormalization.__init__()
+	- gui.dialogSkullStripping.DialogSkullStripping.__init__()
+
+		- add setWindowTitle()
+
+	- gui.dialogPerfusion.DialogPerfusion.function()
+	- gui.dialogPerfusion.DialogPerfusion2.function()
+
+		- remove the messageBox to perform additional processing
+
+	- gui.dialogSkullStripping.DialogSkullStripping.execute()
+
+		- add a messageBox to perform additional processing
+		- add self._files.setSelectionTo(i)
+
+	- gui.dialogImport.DialogImport.convert()
+
+		- hide dialog and dialogWait if exception
+
+	- gui.dialogResample.DialogResample. __init__()
+
+		- add self._apply FilesSelectionWidget attribute
+
+	- gui.dialogResample.DialogResample._updateMoving()
+	- gui.dialogResample.DialogResample.execute()
+
+		- self._apply FilesSelectionWidget management
+		- resample additional moving volumes
+
+	- gui.dialogDatatype.DialogEditID.__init__()
+
+		- add self._origin attribute (volume origin)
+
+	- gui.dialogDatatype.DialogEditID._refChanged()
+	- gui.dialogDatatype.DialogEditID.execute()
+
+		- self._origin management
+		- copy reference volume origin
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.__init__()
+
+		- add self._FWDTI and self._RUMBA attributes
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()
+	
+		- add management of FWDTI and RUMBA models
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.multiExecute()
+
+		- save support for linearity, planarity, sphericity, ifree water fraction, 
+		- save support for csf fraction, gray matter fraction, white matter fraction
+		- save support tensor, eigen values, eigen vectors, tensor major direction
+
+	- gui.dialogWait.DialogWait.messageFromDictProxyManager()
+
+		- add 'acc' key
+
+	- gui.dialogEditLabels.DialogEditLabels.setVolume()
+
+		- bug fix if number of labels > max value in image array
+
+	- gui.dialogSettings.DialogSettings._initSettings()
+
+		- add sections
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel.run()
+
+		- add FWDTI model processing & free water fraction map
+		- add RUMBA model processing & cerebro-spinal fluid fraction, gray matter fraction, white matter fraction, isotropic fraction maps
+		- add linearity, planarity, sphericity, tensor, tensor major direction maps for DTI
+		- add linearity, planarity, sphericity FWDTI & DKI models
+
+	- widgets.LUTWidgets.LutWidget._get_span_left()
+
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()
+
+	- widgets.LUTWidgets.LutWidget._get_span_right()
+
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()
+		
+	- widgets.LUTWidgets.LutWidget._set_span_left()
+
+		- matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)
+
+	- widgets.LUTWidgets.LutWidget._set_span_right()
+
+		- matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())
+
+	- widgets.LUTWidgets.LutWidget._draw()
+
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.LUTWidgets.LutEditWidget.__init__()
+	- widgets.LUTWidgets.LutEditWidget._onMouseMoveEvent()
+	
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.LUTWidgets.AlphaTransferWidget.__init__()
+	- widgets.LUTWidgets.AlphaTransferWidget._updateLines()
+	- widgets.LUTWidgets.AlphaTransferWidget.setTransfer()
+	- widgets.LUTWidgets.AlphaTransferWidget._onMouseMoveEvent()
+	- widgets.LUTWidgets.AlphaTransferWidget._onMenuNew()
+	- widgets.LUTWidgets.AlphaTransferWidget._onMenuRemove()
+	- widgets.LUTWidgets.AlphaTransferWidget._onMenuClear()
+
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.LUTWidgets.ComboBoxLut._addInternalLut()
+	- widgets.LUTWidgets.ComboBoxLut.getCurrentAsMatplotlibColormap()
+	- widgets.LUTWidgets.ComboBoxLut._addInternalLut()
+
+		- matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)
+
+	- widgets.LUTWidgets.PopupMenuLut.getCurrentAsMatplotlibColormap()
+
+		- matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)
+
+	- widgets.imageWidgets.ImagePreviewWidget.__init__()
+	- widgets.imageWidgets.ImagePreviewWidget.setDefaultLut()
+	- widgets.imageWidgets.ImagePreviewWidget.setLut()
+
+		- matplotlib migration to 3.10.8, replace self._lut = get_cmap(lut, 256) by self._lut = colormaps[lut].resampled(256)
+		- matplotlib migration to 3.10.8, replace self._lut = get_cmap('gray', 256) by self._lut = colormaps['gray'].resampled(256)
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget._cursorPositionChanged()
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.addCurrentCurveToChart()
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.cleanChart()
+		
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.updateSpan()
+
+		- matplotlib migration to 3.10.8, replace left span update by self._span.set_x(self._first)
+		- matplotlib migration to 3.10.8, replace right span update by self._span.set_width(last - self._first)
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.sheetWidget.SheetChartWidget._drawChart()
+	- widgets.sheetWidget.SheetChartWidget.properties()
+
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.thresholdWidget.ThresholdViewWidget.__init__()
+	- widgets.thresholdWidget.ThresholdViewWidget._onMouseMoveEvent()
+
+		- replace self._canvas.draw() by self._canvas.draw_idle()
+
+	- widgets.thresholdWidget.ThresholdViewWidget._get_span_left()
+
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()
+
+	- widgets.thresholdWidget.ThresholdViewWidget._get_span_right()
+
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()
+
+	- widgets.thresholdWidget.ThresholdViewWidget._set_span_left()
+
+		- matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)
+
+	- widgets.thresholdWidget.ThresholdViewWidget._set_span_right()
+
+		- matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.copySelectionFrom()
+	- widgets.selectFileWidgets.FilesSelectionWidget.copySelectionTo()
+
+		- bug fix, replace widget by widget._list
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.add()
+
+		- self._countWarning attribute is used as a flag to display or not a warning when the maximum number of files is reached
+
+	- widgets.selectFileWidgets.SynchronizedFilesSelectionWidget.__init__()
+
+		- add params paramter, if false, multiple widgets are FileSelectionWidget or FilesSelectionWithParametersWidget, otherwise.
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()
+
+		- bug fix, support for mosaics with dimensions other than 8 x 8
+		- line 1023, replace mosaic = ((v // 8) + 1) * 8 by mosaic = (int(sqrt(v)) + 1) ** 2
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
+
+		- add self._action['lbl'] action, save the checked ROI to label xvol
+
+	- widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()
+
+		- add attribute 'component' for 'vol' node, to define single or multicomponent xvol selection
+		- bug fix, line 755, replace data = abspath(join(base, data)) by if base != '': data = abspath(join(base, data))
+
+	- widgets.consoleWidget.ConsoleWidget.__init__()
+	- widgets.consoleWidget.ConsoleWidget.restart()
+
+		- workaround for the exception raised by %matplotlib inline during a frozen execution related to the matplotlib upgrade to 3.10.8 version
+
+.. _build30-05-2026:
+
+version 0.92.10, build 30/05/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Versions.rst
+	- PySisyphe_sliceview.rst
+	- PySisyphe_orthogonalview.rst
+	- PySisyphe_synchronizedview.rst
+	- PySisyphe_projectionview.rst
+	- PySisyphe_multicomponentview.rst
+	- PySisyphe_dockroitools.rst
+	- PySisyphe_docktracking.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_Mapping.rst
+	- PySisyphe_Diffusion.rst
+	- PySisyphe_File.rst
+	- PySisyphe_Functions.rst
+	- PySisyphe_menubar
+	- API/api_image.rst
+	- API/api_volume.rst
+	- API/api_transform.rst
+	- rebuild sphinx documentation
+
+- **new files**
+
+	- /gui/darkroi/bitmap.png
+	- /gui/darkroi/folder.png
+	- /gui/darkroi/json.png
+	- /gui/darkroi/model.png
+	- /gui/darkroi/page.png
+	- /gui/darkroi/scan.png
+	- /gui/darkroi/sheet.png
+	- /gui/darkroi/workflow.png
+	- /gui/darkroi/xml.png
+	- /gui/lightroi/bitmap.png
+	- /gui/lightroi/folder.png
+	- /gui/lightroi/json.png
+	- /gui/lightroi/model.png
+	- /gui/lightroi/page.png
+	- /gui/lightroi/scan.png
+	- /gui/lightroi/sheet.png
+	- /gui/lightroi/workflow.png
+	- /gui/lightroi/xml.png
+
+- **updated files**
+
+	- /settings/dialogs.xml
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+
+- **new external modules**
+
+	- deepFCD, https://github.com/NOEL-MNI/deepFCD, added as PySisyphe module Sisyphe.lib.deepfcd
+	- SHIVA-CMB, https://github.com/pboutinaud/SHIVA_CMB, added as PySisyphe module Sisyphe.lib.shiva
+
+- **updated plugin**
+
+	- SEEG_Trajectories
+
+- **updated modules**
+
+	- core.sisypheImage
+	- core.sisypheVolume
+	- core.sisypheTransform
+	- processing.segmentation
+	- processing.capturedStdoutProcessing
+	- gui.dialogSettings
+	- gui.dialogDeepSegmentation
+	- gui.dialogXmlDicom
+	- gui.dialogDicomDataset
+	- gui.dialogFunction
+	- gui.windowSisyphe
+	- widgets.abstractViewWidget
+	- widgets.basicWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.attributesWidgets
+	- widgets.iconBarWidgets
+	- widgets.multiComponentViewWidget
+	- widgets.projectionViewWidget
+	- widgets.tabToolsWidgets
+	- widgets.fileBrowserWidget
+
+- **new classes**
+
+	- processing.capturedStdoutProcessing.ProcessDeepFCDSegmentation
+
+		- deep learning focal cortical dysplasia (FCD) segmentation using deepFCD model
+
+	- processing.capturedStdoutProcessing.ProcessDeepMicrobleedsSegmentation
+
+		- deep learning microbleeds segmentation using SHIVA-CMB model
+
+	- widgets.fileBrowserWidget.IconProvider
+
+		- class to customize the icons of the FileBrowserWidget
+
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation
+
+		- dialog for deep learning focal cortical dysplasia (FCD) segmentation using deepFCD model
+
+	- gui.dialogDeepSegmentation.DialogDeepMicrobleedsSegmentation
+
+		- dialog for deep learning microbleeds segmentation using SHIVA-CMB model
+
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+
+		- new getThresholdingMask() method
+		- update truncateIntensity() method
+		- update getTruncateIntensity() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- new getThresholdingMask() method
+		- new clearTransforms() method
+		- new removeTransforms() method
+
+	- core.sisypheTransform.SisypheApplyTransform
+
+		- new resampleToFOV() method
+		- update updateTransforms() method
+		- update getTruncateIntensity() method
+
+	- processing.segmentation.SegmentAnything
+
+		- update __init__() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update setApplicationFont() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update apply() method
+		- update _initSettings() method
+
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepLesionSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepAtlasParcellation
+
+		- update __init__() method
+		- update execute() method
+
+	- gui.dialogXmlDicom.DialogXmlDicom
+
+		- update __init__() method
+
+	- gui.dialogDicomDataset.DialogDicomDataset
+
+		- update setFilename() method
+
+	- gui.dialogFunction.DialogIntensityNormalization
+
+		- update function() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- new fcdDetection() method
+		- update xmlDicom() method
+
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- new _updateLineProperties() method
+		- update __init__() method
+
+	- widgets.basicWidgets.FontSelect
+
+		- new def getFontPath() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- update setParameterValue() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update __init__() method
+		- upadte properties() method
+
+	- widgets.iconBarWidgets.IconBarWidget
+
+		- update __init__() method
+		- update setViewWidget() method
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+
+		- update setVolulme() method
+		- update setNumberOfVisibleViews() method
+		- update updateSpan() method
+
+	- widgets.multiComponentViewWidget.IconBarMultiComponentViewWidget
+
+		- update setViewWidget() method
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget
+
+		- update __init__() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- new getLastAction() method
+		- update __init__() method
+		- update brush() method
+		- update area() method
+		- update sam() method
+		- update undo() method
+		- update redo() method
+		- update slcDilate() method
+		- update slcErode() method
+		- update slcOpening() method
+		- update slcClosing() method
+		- update slcInvert() method
+		- update slcHoles() method
+		- update slcFill() method
+		- update slcObject() method
+		- update slcBack() method
+		- update slcThresholding() method
+		- update slcCopy() method
+		- update slcCut() method
+		- update slcPaste() method
+		- update slcClear() method
+		- update slcHFlip() method
+		- update slcVFlip() method
+		- update slcUp() method
+		- update slcDown() method
+		- update slcLeft() method
+		- update slcRight() method
+		- update slcFilterExtent() method
+		- update slcRegionGrowing() method
+		- update slcRegionConfidence() method
+		- update slcBlobDilate() method
+		- update slcBlobErode() method
+		- update slcBlobOpening() method
+		- update slcBlocClosing() method
+		- update slcBlobCopy() method
+		- update slcBlobCuy() method
+		- update slcBlobPaste() method
+		- update slcBlobRemove() method
+		- update slcBlobKeep() method
+		- update slcBlobTresholding() method
+		- update slcBlobRegionGrowing() method
+		- update slcBlobRegionConfidence() method
+		- update voiEuclideanExpand() method
+		- update voiEuclideanShrink() method
+		- update voiDilate() method
+		- update voiErode() method
+		- update voiOpening() method
+		- update voiClosing() method
+		- update voiInvert() method
+		- update voi3DHoles() method	
+		- update voi2DHoles() method
+		- update voiFill() method
+		- update voiClear() method
+		- update voiObject() method
+		- update voiBack() method
+		- update voiThresholding() method
+		- update voiHFlip() method
+		- update voiVFlip() method
+		- update voiUp() method
+		- update voiDown() method
+		- update voiLeft() method
+		- update voiRight() method
+		- update voiFilterExtent() method
+		- update voiRegionGrowing() method
+		- update voiRegionConfidence() method
+		- update voiActiveContour() method
+		- update statistics() method
+		- update voiBlobDilate() method
+		- update voiBlobErode() method
+		- update voiBlobOpening() method
+		- update voiBlocClosing() method
+		- update voiBlobCopy() method
+		- update voiBlobCuy() method
+		- update voiBlobPaste() method
+		- update voiBlobRemove() method
+		- update voiBlobKeep() method
+		- update voiBlobEuclideanExpand() method
+		- update voiBlobEuclideanShrink() method
+		- update voiBlobTresholding() method
+		- update voiBlobRegionGrowing() method
+		- update voiBlobRegionConfidence() method
+
+	- widgets.iconBarWidgets.IconBarMultiSliceGridViewWidget
+
+		- new lastAction() method
+		- update __init__() method
+
+	- widgets.iconBarWidgets.IconBarSynchronisedGridViewWidget
+
+		- new lastAction() method
+		- update __init__() method
+
+	- widgets.fileBrowserWidget.FileBrowserWidget
+
+		- update __init__() method
+		- update _open() method
+		- update _dirClicked() method
+
+	- widgets.fileBrowserWidget.FileFilterProxyModel
+
+		- update filterAcceptsRow() method
+
+- **new methods**
+
+	- core.sisypheImage.SisypheImage.getThresholdingMask
+	- core.sisypheVolume.SisypheVolume.getThresholdingMask
+
+		- converting SisypheImage/Volume to mask using a threshold
+
+	- core.sisypheVolume.SisypheVolume.clearTransforms()
+
+		- clear the self._transforms attribute
+
+	- core.sisypheVolume.SisypheVolume.removeTransforms()
+
+		- clear the self._transforms attribute & delete the associated .xtrfs file
+
+	- core.sisypheTransform.SisypheApplyTransform.resampleToFOV()
+
+		- reslice the moving volume attribute in a new FOV
+
+	- gui.windowSisyphe.WindowSisyphe.fcdDetection()
+
+		- focal cortical dysplasia detection
+
+	- widgets.abstractViewWidget.AbstractViewWidget._updateLineProperties()
+
+		- dialog for line/font properties
+
+	- widgets.basicWidgets.FontSelect.getFontPath()
+
+		- get path of the selected font
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.getLastAction()
+
+		- get self._lastaction attribute, last ROI tool method that was called
+
+	- widgets.iconBarWidgets.IconBarMultiSliceGridViewWidget.lastAction()
+	- widgets.iconBarWidgets.IconBarSynchronisedGridViewWidget.lastAction()
+
+		- called by QShortcut self._shcutLastAction activation (² key)
+
+- **updated methods**
+
+	- core.sisypheImage.SisypheImage.truncateIntensity()
+	- core.sisypheImage.SisypheImage.getTruncateIntensity()
+
+		- add onlymax parameter, to truncate only max values
+		- bug fix, convert wmin & wmax to float
+
+	- core.sisypheVolume.SisypheVolume.getTruncateIntensity()
+
+		- add onlymax parameter, to truncate only max values
+
+	- core.sisypheTransform.SisypheApplyTransform.updateTransforms()
+
+		- A geometric transform is not added to the moving volume if it has no ID
+
+	- processing.segmentation.SegmentAnything.__init__()
+
+		- line 294, add mps support to torch
+		- PyTorch backend that enables GPU acceleration on Apple silicon devices using the Metal Performance Shaders (mps) framework
+
+	- gui.windowSisyphe.WindowSisyphe.setApplicationFont()
+
+		- update font in child widgets
+
+	- gui.dialogSettings.DialogSettings.apply()
+
+		- add wait box
+
+	- gui.dialogSettings.DialogSettings._initSettings()
+
+		- add DeepFCDSegmentation section
+		- add DeepMicrobleedsSegmentation section
+
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation.__init__()
+	- gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation.__init__()
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.__init__()
+	- gui.dialogDeepSegmentation.DialogDeepLesionSegmentation.__init__()
+	- gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation.__init__()
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.__init__()
+	- gui.dialogDeepSegmentation.DialogDeepAtlasParcellation.__init__()
+
+		- remove default button
+
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepLesionSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepAtlasParcellation.execute()
+		
+		- bug fix, replace self._volumeSelect.clear() by self._volumeSelect.clearall()
+
+	- gui.dialogXmlDicom.DialogXmlDicom.__init__()
+
+		- remove self._save.setFixedWidth(60)
+
+	- gui.dialogDicomDataset.DialogDicomDataset.setFilename()
+
+		- replace self._files.add(filename) by self._files.add(filename, signal=False)
+
+	- gui.dialogFunction.DialogIntensityNormalization.function()
+
+		- add truncate only max parameter
+
+	- gui.windowSisyphe.WindowSisyphe.xmlDicom()
+
+		- add filename parameter
+
+	- widgets.abstractViewWidget.AbstractViewWidget.__init__()
+
+		- add 'lineprop' QAction, dialog for line/font properties is calling
+
+	- widgets.functionsSettingsWidget.SettingsWidget.setParameterValue()
+
+		- bug fix, font path conversion to font family name
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+
+		- change self._properties tooltip
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.properties()
+
+		- changes the properties of all tools if none are checked
+
+	- widgets.iconBarWidgets.__init__()
+
+		- add self._shcutp attribute, f shortkey for line/font properties
+
+	- widgets.iconBarWidgets.setViewWidget()
+
+		- add f shortkey action for line/font properties
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.setVolulme()
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.setNumberOfVisibleViews()
+
+		- bug fix, adjust the grid layout on the number of visible rows
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.updateSpan()
+
+		- update the span width based on the number of visible views
+
+	- widgets.multiComponentViewWidget.IconBarMultiComponentViewWidget.setViewWidget()
+
+		- add f shortkey action for line/font properties
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.__init__()
+
+		- add f shortkey action for line/font properties
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.__init__() method
+
+		- add self._lastaction attribute, last ROI tool method that was called
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.brush()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.area()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.sam()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.undo()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.redo()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcDilate()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcErode()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcOpening()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcClosing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcInvert()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcHoles()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcFill()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcObject()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBack()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcThresholding()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcCopy()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcCut()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcPaste()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcClear()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcHFlip()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcVFlip()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcUp()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcDown()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcLeft()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcRight()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcFilterExtent()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcRegionGrowing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcRegionConfidence()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobDilate()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobErode()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobOpening()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlocClosing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobCopy()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobCuy()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobPaste()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRemove()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobKeep()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobTresholding()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRegionGrowing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRegionConfidence()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiEuclideanExpand()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiEuclideanShrink()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiDilate()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiErode()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiOpening()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiClosing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiInvert()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voi3DHoles()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voi2DHoles()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiFill()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiClear()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiObject()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBack()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiThresholding()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiHFlip()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiVFlip()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiUp()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiDown()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiLeft()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiRight()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiFilterExtent()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiRegionGrowing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiRegionConfidence()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiActiveContour()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.statistics()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobDilate()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobErode()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobOpening()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlocClosing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobCopy()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobCuy()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobPaste()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobRemove()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobKeep()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobEuclideanExpand()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobEuclideanShrink()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobTresholding()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobRegionGrowing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiBlobRegionConfidence()
+
+		- copy last ROI tool method that was called to self._lastaction attribute
+
+	- widgets.iconBarWidgets.IconBarMultiSliceGridViewWidget.__init__()
+	- widgets.iconBarWidgets.IconBarSynchronisedGridViewWidget.__init__()
+
+		- add QShortcut self._shcutLastAction attribute
+
+	- widgets.fileBrowserWidget.FileBrowserWidget.__init__()
+
+		- custom icons for folders and files
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._open()
+
+		- bug fix, replace self._mainWindow_openWorkflow(action) by self._mainWindow._openWorkflow(action)
+		- open the dataset of dicom file
+		- open the dataset of .xdcm file
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._dirClicked()
+
+		- replace srcindex = self._filemodel2.setRootPath(path) by srcindex = self._filemodel2.index(path)
+		- this result in a dramatic improvement in the widget's responsiveness (end of lags)
+
+	- widgets.fileBrowserWidget.FileFilterProxyModel.filterAcceptsRow()
+
+		- add
+
+			- path = self.sourceModel().filePath(index)
+        	- if path == self._rootpath: return True
+
+        - required for the method FileBrowserWidget._dirClicked() to work correctly after its fix
+
+.. _build20-06-2026:
+
+version 0.96.24, build 20/06/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Versions.rst
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_menubar.rst
+	- PySisyphe_toolbar.rst
+	- PySisyphe_thumbnailbar.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_dockroitools.rst
+	- PySisyphe_dockroi.rst
+	- PySisyphe_dockmesh.rst
+	- PySisyphe_docktarget.rst
+	- PySisyphe_docktracking.rst
+	- PySisyphe_projectionview.rst
+	- PySisyphe_Functions.rst
+	- PySisyphe_Diffusion.rst
+	- PySisyphe_browser.rst
+	- rebuild sphinx documentation
+
+- **new files**
+
+	- /gui/lightroi/targets.png
+	- /gui/darkroi/targets.png
+	- /doc/_images/targets.png
+	- /settings/electrodes.xml
+
+- **updated files**
+
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+	- /settings/settings.xml
+	- /settings/dialogs.xml
+	- /gui/darkicons/hide.png
+	- /gui/lighticons/hide.png
+
+- **new external module**
+
+	- RLK-Unet, https://github.com/nibabel/RLK-Unet, added as PySisyphe module Sisyphe.lib.rlk
+
+- **new docstrings**
+
+	- widgets.basicWidgets
+	- widgets.dicomWidgets
+
+- **new type hinting**
+
+	- widgets.imageWidgets.ImagePreviewWidget
+	- widgets.imageWidgets.SisypheImageViewWidget
+	- widgets.imageWidgets.SisypheVolumeViewWidget
+	- widgets.toolBarThumbail.ToolBarThumbnail
+	- widgets.sheetWidget.SheetWidgetEditingDelegate
+	- widgets.sheetWidget.SheetWidget
+	- widgets.sheetWidget.SheetStatisticsWidget
+	- widgets.sheetWidget.SheetChartWidget
+	- widgets.tabToolsWidgets.TabWidget
+	- widgets.tabToolsWidgets.TabROIListWidget
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+	- widgets.tabToolsWidgets.TabMeshListWidget
+	- widgets.tabToolsWidgets.TabTargetListWidget
+	- widgets.tabToolsWidgets.TabTrackingWidget
+	- widgets.screenshotsGridWidget.ScreenshotsGridWidget
+	- widgets.databaseWidget.DatabaseWidget
+	- widgets.consoleWidget.RichJupyterWidget2
+	- widgets.consoleWidget.ConsoleWidget
+	- widgets.attributesWidgets.ItemAttributesWidget
+	- widgets.attributesWidgets.ItemOverlayAttributesWidget
+	- widgets.attributesWidgets.ItemROIAttributesWidget
+	- widgets.attributesWidgets.ItemMeshAttributesWidget
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+	- widgets.attributesWidgets.ItemBundleAttributesWidget
+	- widgets.attributesWidgets.ListAttributesWidget
+	- widgets.attributesWidgets.ListROIAttributesWidget
+	- widgets.attributesWidgets.ListMeshAttributesWidget
+	- widgets.attributesWidgets.ListToolAttributesWidget
+	- widgets.attributesWidgets.ListBundleAttributesWidget
+
+- **update type hinting**
+
+	- core.sisypheConstants
+	- core.sisypheDatabase
+	- core.sisypheDicom
+	- core.sisypheDownload
+	- core.sisypheFiducialBox
+	- core.sisypheImage
+	- core.sisypheImageAttributes
+	- core.sisypheImageIO
+	- core.sisypheLUT
+	- core.sisypheMesh
+	- core.sisypheMeshIO
+	- core.sisyphePDF
+	- core.sisypheRecent
+	- core.sisypheROI
+	- core.sisypheSettings
+	- core.sisypheSheet
+	- core.sisypheStatistics
+	- core.sisypheTools
+	- core.sisypheTracts
+	- core.sisypheTransform
+	- core.sisypheVolume
+	- core.sisypheXml
+	- widgets.thresholdWidgets.ThresholdViewWidget
+
+- **updated modules**
+
+	- core.sisypheRecent
+	- core.sisypheVolume
+	- core.sisypheFudicialBox
+	- core.sisypheROI
+	- core.sisypheDownload
+	- lib.mega.mega
+	- processing.capturedStdoutProcessing
+	- gui.dialogDeepSegmentation
+	- gui.dialogSettings
+	- gui.dialogStatResult
+	- gui.dialogDeepSegmentation
+	- gui.dialogVolumeAttributes
+	- gui.dialogPatient
+	- gui.dialogDicomQuery
+	- gui.dialogTarget
+	- gui.dialogDownload
+	- gui.windowSisyphe
+	- widgets.imageWidgets
+	- widgets.toolBarThumbnail
+	- widgets.sliceViewWidgets
+	- widgets.projectionViewWidget
+	- widgets.volumeViewWidget
+	- widgets.attributeWidgets
+	- widgets.databaseWidget
+	- widgets.functionsSettingsWidget
+	- widgets.LUTWidgets
+	- widgets.basicWidgets
+	- widgets.fileBrowserWidget
+	- widgets.attributesWidgets
+
+- **updated functions**
+
+	- core.sisypheDownload.installFromHost
+
+		- replace copy by copy2
+		- remove try/except downloadFromHost(urls, temp, wait=wait)
+
+	- core.sisypheDownload.downloadFromHost
+
+		- remove try/except filename = mega.download_url(url, dest_path=dst)
+
+	- core.sisypheDownload.updatePySisyphe
+
+		-bug fix, replace filename = join(dst, 'settings/host.xml') by filename = abspath(join(dst, 'settings', 'host.xml'))
+	
+- **new classes**
+
+	- processing.capturedStdoutProcessing.ProcessDeepMetastasisSegmentation
+
+		- deep learning metastasis segmentation using RLK-Unet model
+
+	- gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation
+
+		- dialog for deep learning metastasis segmentation using RLK-Unet model
+
+	- gui.dialogTarget.DialogTargetsAlongTrajectory
+
+		- dialog to create equidistant targets along a trajectory
+
+- **updated classes**
+
+	- core.sisypheRecent.SisypheRecent
+
+		- update append() method
+		- update load() method
+
+	- core.sisypheVolume.SîsypheVolume
+
+		- new getFilenamePrefixes() method
+		- new getFilenameSuffixes() method
+		- new hasFilenamePrefix() method
+		- new hasFilenameSuffix() method
+
+	- core.sisypheFudicialBox.SisypheFiducialBox
+
+		- update _firstSliceSearch() method
+		- update _markersSearch() method
+
+	- core.sisypheROI.SisypheROIDraw
+
+		- update popRedoLIFO() method
+
+	- lib.mega.mega.Mega
+
+		- update _download_file() method
+
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation
+
+		- update execute() method
+
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation
+
+		- update execute() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- add 'DeepMetastasisSegmentation' section
+
+	- gui.dialogStatResult.DialogResult
+
+		- update setMap() method
+
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation
+
+		- update execute() method
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes
+	- gui.dialogPatient.DialogPatient
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve
+
+		- update __init__() method
+
+	- gui.dialogDownload.DialogDownload
+
+		- update download() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- new metastasisSegmentation() method
+		- new closeAllViews() method
+		- new _openTemplateFolder() method
+		- new _openPluginsFolder() method
+		- update _initSegmentationMenu() method
+		- update _initToolBar() method
+		- update _initWindowMenu() method
+		- update _initFileMenu() method
+		- update _initFunctionsMenu() method
+		- update join() method
+		- update checkUpdate() method
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+
+		- new removeFromAllViews() method
+		- new getDisplayedViewCount() method
+		- update __init__() method
+		- update displayInSliceView() method
+		- update displayInOrthogonalView() method
+		- update displayInSynchronisedView() method
+		- update displayInProjectionView() method
+		- update displayInMultiComponentView() method
+		- update mouseDoubleClickEvent() method
+		- update overlay() method
+		- update changeDatatype() method
+
+	- widgets.toolBarThumbnail.ToolBarThumbnail
+
+		- new removeReference() method
+		- new getThumbnailCount() method
+
+	- widgets.sliceViewWidgets.SliceViewWidget
+	- widgets.volumeViewWidget.VolumeViewWidget
+
+		- update replaceVolume() method
+
+	- widgets.projectionViewWidget.ProjectionViewWidget
+
+		- update replaceVolume() method
+		- update updateWindowingFromReference() method
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget
+
+		- update __init__() method
+		- update _opacityChanged() method
+		- update setVolume() method
+
+	- widgets.attributeWidgets.ListROIAttributesWidget
+
+		- update getSelectedROI() method
+
+	- widgets.attributeWidgets.ListMeshAttributesWidget
+
+		- update getSelectedMesh() method
+		- update saveOBJ() method
+		- upadte saveSTL() method
+		- update saveVTK() method
+		- update saveXMLVTK() method
+	
+	- widgets.attributeWidgets.ItemToolAttributesWidget
+
+		- update mouseDoubleClickEvent() method
+
+	- widgets.attributeWidgets.ListToolAttributesWidget
+
+		- update getSelectedTool() method
+		- update properties() method
+
+	- widgets.databaseWidget.DatabaseWidget
+
+		- update __init__() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- update _initSettingsLayout() method
+
+	- widgets.basicWidgets.OpacityPushButton
+	- widgets.basicWidgets.WidthPushButton
+
+		- update __init__() method
+
+	- widgets.fileBrowserWidget.FileBrowserWidget
+
+		- update __init__() method
+		- update _popupFolder() method
+		- update _popupFiles() method
+		- new _openExplorer() method
+		- new _userFolder() method
+		- new _templateFolder() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- new targets() method
+		- update __init__() method
+		- update setIconSize()
+		- update properties() method
+		- update remove() method
+
+- **new methods**
+
+	- core.sisypheVolume.SîsypheVolume.getPrefixes()
+	- core.sisypheVolume.SîsypheVolume.getSuffixes()
+
+		- get the list of the file name prefixes or suffixes
+
+	- core.sisypheVolume.SisypheVolume.hasPrefix()
+	- core.sisypheVolume.SisypheVolume.hasSuffix()
+
+		- check if a prefix or suffix is in the file name
+	
+	- gui.windowSisyphe.WindowSisyphe.metastasisSegmentation()
+
+		- deep learning metastasis segmentation
+
+	- gui.windowSisyphe.WindowSisyphe.closeAllViews()
+
+		- remove reference status from thumbnail and close all views
+
+	- gui.windowSisyphe.WindowSisyphe._openTemplateFolder()
+
+		- open template folder in file explorer/finder
+
+	- gui.windowSisyphe.WindowSisyphe._openPluginsFolder()
+
+		- open plugins folder in file explorer/finder
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.removeFromAllViews()
+
+		- remove the current volume from all views
+
+	- widgets.toolBarThumbnail.ToolBarThumbnail.removeReference()
+
+		- remove reference status from thumbnail
+
+	- widgets.toolBarThumbnail.ToolBarThumbnail.getThumbnailCount()
+
+		- number of thumbnail in the thumbnail toolbar
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.getDisplayedViewCount()
+
+		- number of views in which the current thumbnail is displayed
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._openExplorer()
+
+		- open the current folder in file explorer/finder
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._userFolder()
+
+		- select user folder (~/.PySisyphe)
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._templateFolder()
+	
+		- select template folder
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.targets()
+
+		- method called by self._target buttons clicked event
+		- add targets along a trajectory
+
+- **updated classes**
+
+	- core.sisypheRecent.SisypheRecent.append()
+
+		- bug fix in windows platform, add filename = abspath(filename) to avoid duplicates
+
+	- core.sisypheRecent.SisypheRecent.load()
+
+		- handle exceptions related to parsing the recent.xml file
+
+	- core.sisypheFudicialBox.SisypheFiducialBox._firstSliceSearch()
+	- core.sisypheFudicialBox.SisypheFiducialBox._markersSearch()
+
+		- bug fix, remove posterior plate fiducials
+
+	- core.sisypheROI.SisypheROIDraw.popRedoLIFO()
+
+		- bug fix, replace self._roi.getNumpy[:, :, item[1]] = buff by self._roi.getNumpy()[:, :, item[1]] = buff
+
+	- lib.mega.mega.Mega._download_file()
+
+		- fix file_size overflow error
+
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation.execute()
+
+		- bug fix, size and spacing tuple to list conversion
+
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()
+
+		- add the label names of the wip model
+
+	- gui.dialogStatResult.DialogResult
+
+		- bug fix, line 1456, force origin to (98.0, 134.0, 72.0) if ICBM152 ID
+
+	- gui.dialogDownload.DialogDownload.download()
+
+		- add try/except downloadFromHost(url, path, info=k, wait=wait)
+
+	- gui.windowSisyphe.WindowSisyphe._initSegmentationMenu()
+
+		- add self._action['meta'] action
+
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()
+
+		- relabelling label volume
+
+	- gui.dialogVolumeAttributes.DialogVolumeAttributes.__init__()
+
+		- change QDateEdit format (setDisplayFormat('dd/MM/yyyy'))
+		- add tooltips
+
+	- gui.dialogPatient.DialogPatient.__init__()
+	- gui.dialogDicomQuery.DialogDicomQueryRetrieve.__init__()
+
+		- change QDateEdit format (setDisplayFormat('dd/MM/yyyy'))
+
+	- gui.windowSisyphe.WindowSisyphe._initToolBar()
+
+		- add self._action['hide'] to toolbar
+
+	- gui.windowSisyphe.WindowSisyphe._initWindowMenu()
+
+		- add self._action['hide'] action
+		- self._action['dock'].setShortcut(QKeySequence(Qt.Key.Key_Tab))
+
+	- gui.windowSisyphe.WindowSisyphe._initFileMenu()
+
+		- add self._action['template2'] = self._menu['file'].addAction('Open template folder')
+		- add self._action['template2'].triggered.connect(self._openTemplateFolder)
+
+	- gui.windowSisyphe.WindowSisyphe._initFunctionsMenu()
+
+		- add self._action['pluginfolder'] = self._menu['func'].addAction('Open plugins folder...')
+		- add self._action['pluginfolder'].triggered.connect(self._openPluginsFolder)
+
+	- gui.windowSisyphe.WindowSisyphe.join()
+
+		- create 3D volume from 2D multicomponent
+
+	- gui.windowSisyphe.WindowSisyphe.checkUpdate()
+
+		- add try/except updatePySisyphe(wait)
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()
+
+		- add self._action['hide'] action
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInSliceView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInOrthogonalView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInSynchronisedView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInProjectionView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInMultiComponentView()
+
+		- hide view widget if uncheck
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.mouseDoubleClickEvent()
+
+		- add self._action['slices'].setChecked(True)
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.overlay()
+
+		- add self._volume.loadTransforms() to update overlay transforms before displaying
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.changeDatatype()
+
+		- add self._lutwidget.setVolume(self._volume), update the volume of the lutwidget
+
+	- widgets.sliceViewWidgets.SliceViewWidget.replaceVolume()
+	- widgets.projectionViewWidget.ProjectionViewWidget.replaceVolume()
+	- widgets.volumeViewWidget.VolumeViewWidget.replaceVolume()
+
+		- bug fix, update info labels
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.updateWindowingFromReference()
+
+		- bug fix, update range values before window
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.__init__()
+
+		- add submenu.aboutToShow.connect(lambda: self._slider.setFocus()) to move keyboard focus to slider
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget._opacityChanged()
+
+		- display the opacity value in a tooltip
+
+	- widgets.projectionViewWidget.IconBarMultiProjectionViewWidget.setVolume()
+
+		- Set the opacity to 100% for ICBM152 volume
+
+	- widgets.attributeWidgets.ItemToolAttributesWidget.mouseDoubleClickEvent()
+
+		- align view to LineWidget trajectory
+
+	- widgets.attributeWidgets.ListROIAttributesWidget.getSelectedROI()
+	- widgets.attributeWidgets.ListMeshAttributesWidget.getSelectedMesh()
+	- widgets.attributeWidgets.ListToolAttributesWidget.getSelectedTool()
+	
+		- bug fix, return None if no selected roi/mesh/tool
+
+	- widgets.attributeWidgets.ListMeshAttributesWidget.saveOBJ()
+	- widgets.attributeWidgets.ListMeshAttributesWidget.saveSTL()
+	- widgets.attributeWidgets.ListMeshAttributesWidget.saveVTK()
+	- widgets.attributeWidgets.ListMeshAttributesWidget.saveXMLVTK()
+
+		- bug fix, remove item and replace item by mesh
+
+	- widgets.attributeWidgets.ListToolAttributesWidget.properties()
+
+		- copy properties from selected tool
+
+	- widgets.databaseWidget.DatabaseWidget.__init__()
+
+		- change QDateEdit format (setDisplayFormat('dd/MM/yyyy'))
+
+	- widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()
+
+		- change QDateEdit format (setDisplayFormat('dd/MM/yyyy'))
+
+	- widgets.basicWidgets.OpacityPushButton.__init__()
+	- widgets.basicWidgets.WidthPushButton.__init__()
+
+		- add self._popup.aboutToShow.connect(lambda: self._slider.setFocus()) to move keyboard focus to slider
+
+	- widgets.fileBrowserWidget.FileBrowserWidget.__init__()
+
+		- add self.actions['explorer'] = QAction('Open current folder in file explorer/finder...')
+		- add self.actions['user'] = QAction('Go to user folder...')
+		- add self.actions['template'] = QAction('Go to template folder...')
+		- add self.actions['explorer'].triggered.connect(self._openExplorer)
+		- add self.actions['user'].triggered.connect(self._userFolder)
+		- add self.actions['template'].triggered.connect(self._templateFolder)
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._popupFolder()
+
+		- add self.actions['explorer'] to popup menu
+		- add self.actions['user'] to popup menu
+		- add self.actions['template'] to popup^menu
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._popupFiles()
+
+		- add self.actions['explorer'] to popup menu
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.properties()
+
+		- bugfix, add widget.updateSettingsFromAttributes()
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+
+		- add self._targets button
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()
+
+		- add self._targets.setIconSize(QSize(size - 8, size - 8))
+        - add self._targets.setFixedSize(size, size)
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.properties()
+
+		- add 'TextTarget' and 'TextEntry' editing
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.remove()
+
+		- bug fix, remove super().remove() from the loop (for tool in tools:)
+
+.. _build30-09-2026:
+
+version 0.97.04, build 30/09/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Versions.rst
+	- rebuild sphinx documentation
+
+- **updated cython annotations**
+
+	- core.sisypheROI.SisypheROIDraw 
+
+		- cdef class conversion
+
+- **updated cython compiled module**
+
+	- core.sisypheROI
+
+- **updated modules**
+
+	- core.sisypheImage
+	- core.sisypheVolume
+	- core.sisypheROI
+	- widgets.sliceViewWidgets
+
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+	- core.sisypheVolume.SisypheVolume
+
+		- update __add__() method
+		- update __sub__() method
+		- update __mul__() method
+		- update __div__() method
+		- update __floordiv__() method
+		- update __truediv__() method
+		- update __radd__() method
+		- update __rsub__() method
+		- update __rmul__() method
+		- update __rdiv__() method
+		- update __rfloordiv__() method
+		- update __rtruediv__() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- new applySlopeIntercept() method	
+		- update _updateRange() method
+
+	- core.sisypheROI.SisypheROIDraw
+
+		- update getDrawThresholdedRectangleFillHoles() method
+		- update setROI() method
+		- update clearClipboard() method
+		- update __init__() method
+		- update _calcBrush() method
+		- update solidBrush() method
+		- update thresholdBrush() method
+		- update solid3DBrush() method
+		- update setBrushType() method
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget
+
+		- update ROISelectionChanged pyqtsignal
+
+			- add object parameter (vtkImageData | None)
+
+		- update _updateSliceROI() method
+		- update synchroniseROISelectionChanged() method
+		- update setActiveROI() method
+
+- **new method**
+
+	- core.sisypheVolume.SisypheVolume.applySlopeIntercept()
+
+		- returns (self * self._slope) + self._intercept
+
+- **updated methods**
+
+	- core.sisypheImage.SisypheImage.__add__()
+	- core.sisypheImage.SisypheImage.__sub__()
+	- core.sisypheImage.SisypheImage.__mul__()
+	- core.sisypheImage.SisypheImage.__div__()
+	- core.sisypheImage.SisypheImage.__floordiv__()
+	- core.sisypheImage.SisypheImage.__truediv__()
+	- core.sisypheImage.SisypheImage.__radd__()
+	- core.sisypheImage.SisypheImage.__rsub__()
+	- core.sisypheImage.SisypheImage.__rmul__()
+	- core.sisypheImage.SisypheImage.__rdiv__()
+	- core.sisypheImage.SisypheImage.__rfloordiv__()
+	- core.sisypheImage.SisypheImage.__rtruediv__()
+	- core.sisypheVolume.SisypheVolume.__add__()
+	- core.sisypheVolume.SisypheVolume.__sub__()
+	- core.sisypheVolume.SisypheVolume.__mul__()
+	- core.sisypheVolume.SisypheVolume.__div__()
+	- core.sisypheVolume.SisypheVolume.__floordiv__()
+	- core.sisypheVolume.SisypheVolume.__truediv__()
+	- core.sisypheVolume.SisypheVolume.__radd__()
+	- core.sisypheVolume.SisypheVolume.__rsub__()
+	- core.sisypheVolume.SisypheVolume.__rmul__()
+	- core.sisypheVolume.SisypheVolume.__rdiv__()
+	- core.sisypheVolume.SisypheVolume.__rfloordiv__()
+	- core.sisypheVolume.SisypheVolume.__rtruediv__()
+
+		- bug fix, cast to sitkFloat64 if the data types do not match
+
+	- core.sisypheVolume.SisypheVolume._updateRange()
+
+		- bug fix, remove nan/inf values
+
+	- core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleFillHoles()
+
+		- bug fix, replace self._dtrfillholes = v by return self._dtrfillholes
+
+	- core.sisypheROI.SisypheROIDraw.setROI()
+
+		- bug fix, replace if self.hasVolume by if self.hasVolume()
+
+	- core.sisypheROI.SisypheROIDraw.clearClipboard()
+
+		- remove line del self._clipboard (cython error: Cannot delete C attribute)
+
+	- core.sisypheROI.SisypheROIDraw.__init__()
+
+		- add self._ibrush ndarray attribute (binary not of brush)
+
+	- core.sisypheROI.SisypheROIDraw._calcBrush()
+
+		- self._ibrush processing (binary not of brush)
+
+	- core.sisypheROI.SisypheROIDraw.solidBrush()
+	- core.sisypheROI.SisypheROIDraw.thresholdBrush()
+	- core.sisypheROI.SisypheROIDraw.solid3DBrush()
+	- core.sisypheROI.SisypheROIDraw.setBrushType()
+
+		- code optimization
+
+	- core.sisypheROI.SisypheROIDraw.setBrushType()
+
+		- bug fix, replace if 0 <= brushtype < 3 by if 0 <= brushtype < 4
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.synchroniseROISelectionChanged()
+
+		- add blended parameter
+		- only call self.setActiveROI(r, blended, signal=False)
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._updateSliceROI()	
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setActiveROI()
+
+		- change blended parameter type from int to vtkImageData
+		- add blended = self._slicerois.GetMapper().GetInput() after self.updateROIAttributes(blended, signal=False)
+		- blend image of non-active SisypheROI is processed only one time (not in synchronized views)

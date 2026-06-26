@@ -1,0 +1,520 @@
+.. _page-dockroitools:
+
+ROI Tools tab of the dock
+=========================
+
+- :ref:`tools-section-brush-box`
+- :ref:`tools-section-slice-box`
+- :ref:`tools-section-slice-blob-box`
+- :ref:`tools-section-volume-box`
+- :ref:`tools-section-volume-blob-box`
+- :ref:`tools-section-brush-settings`
+- :ref:`tools-section-dialog-statistics`
+
+.. _tools-section-brush-box:
+
+Brush
+-----
+
+.. image:: /GUI/roi-brush.png
+   :align: center
+|
+
+**Shape**
+	Select the brush shape for ROI drawing in the view widget.
+
+	- "Full disc" for drawing with a 2D full disc-shaped brush.
+	- "Thresholded disc" only pixels with a given signal range in the reference volume are drawn on the surface area of the 2D disc-shaped brush. The upper and lower thresholds are set by |threshold|.
+	- "Full ball" for drawing with a 3D full sphere-shaped brush.
+	- "Thresholded ball" only voxels with a given signal range in the refrence volume are drawn on the volume of the 3D sphere-shaped brush. The upper and lower thresholds are set by |threshold|.
+
+**Radius**
+	Radius in pixels/voxels of the disc/ball-shaped brush. Left-click on the slider to increment or decrement the opacity by ten percent. There are also keyboard shortcuts for the slider. The left or up arrow keys decrement the radius by one percent. The right or down arrow keys increment the radius by one percent. The PageUp key decrements the radius by ten percent. The PageDown key increments the radius by ten percent. The Home key sets the radius to zero percent (transparent). The End key sets the radius to one hundred percent (opaque).
+
+|brush|
+	The brush mode is activated by selecting this button (a blue border) with a left click. To deselect the button, click it again. The mouse cursor in the view widget is displayed as a circle with the radius of the brush and the color of the current ROI. Left-click to draw at the current mouse position, right-click to erase.
+
+|select2|
+	The drawing mode in the mouse selection area is activated by selecting this button (blue border) with a left click. To deselect the button, click it again. The behavior depends on the brush **Shape** (see above). For options beginning with "Full" ("Full disc" or "Full ball"), a filled rectangle is drawn in the selection area. For options beginning with "Thresholded", upper and lower thresholds are applied to the selection area. These thresholds are set using the |threshold| button (see below). The **Fill holes** and **Major blob** options are available in the :ref:`tools-section-brush-settings`.
+
+	Press and hold the left mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. This area is drawn when the left mouse button is released.
+
+	Press and hold the right mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. This area is erased when the right mouse button is released.
+
+|sam|
+	The automatic segmentation in the mouse selection area is activated by selecting this button (blue border) with a left click. To deselect the button, click it again. Press and hold the left mouse button while moving the mouse within the view widget. This will display a selection area framed by the color of the current ROI. The segmentation is performed in the selection area when the left mouse button is released.
+
+	This tool is based on the **Segment Anything Model** (SAM), which is provided by Meta AI (https://github.com/facebookresearch/segment-anything). SAM is a promptable segmentation method that requires bounding boxes to specify the segmentation targets. PySisyphe uses a specialized model that was specifically trained for general medical image segmentation tasks (https://github.com/bowang-lab/MedSAM). This model was developed using a large-scale medical image dataset with 1,570,263 image-mask pairs, covering ten imaging modalities and over thirty cancer types.
+
+	`Reference <https://pmc.ncbi.nlm.nih.gov/articles/PMC10803759/>`_: Segment anything in medical images. Ma J., He Y., Li F., Han L., You C., Wang B. Nat Commun. 2024 Jan 22;15(1):654.
+
+|threshold|
+	Shows a threshold widget (see :ref:`widgets <page-widgets>`) to define upper and lower thresholds used by various tools (threshold brushes, thresholding, region growing, active contour threshold variant).
+
+|layer|
+	Left-click to interpolate empty slices between first and last displayed slices.
+
+|undo|
+	Undo previous operations. The undo/redo stack is cleared when ROI is saved.
+
+|redo|
+	Redo previous operations. The undo/redo stack is cleared when ROI is saved.
+
+.. _tools-section-slice-box:
+
+Slice tools
+-----------
+
+.. image:: /GUI/roi-slice.png
+   :align: center
+|
+
+All tools in this section work in 2D and are applied to the selected slice displayed in the view widget (slice view or synchronized view in the central area), other slices are not affected. Left-click in the view widget to select a slice, the selected slice will be outlined in white. If no slice is selected, these tools will have no effect.
+
+The keyboard shortcut **²** re-executes the action of the last tool clicked.
+
+|dilate|
+	Left-click for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|erode|
+	Left-click for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|morphoopen|
+	Left-click for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|morphoclose|
+	Left-click for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|invert|
+	Left-click to invert ROI pixels (binary not operator) of the selected slice.
+
+|bucket|
+	Left-click to automatically fill all detected holes of the selected slice.
+
+|fill|
+	Left-click to select this button (blue border), and fill left-clicked hole in the view widget (slice view or synchronized view in the central area).
+
+|copy|
+	Left-click to copy the selected ROI slice to the clipboard.
+
+|cut|
+	Left-click to cut the selected ROI slice to the clipboard.
+
+|paste|
+	Left-click to paste the clipboard (if not empty) to the selected ROI slice.
+
+|head|
+	Left-click for automatic object segmentation of the selected slice. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
+
+|ihead|
+	Left-click for automatic background segmentation of the selected slice. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
+
+|threshold2|
+	Left-click for thresholding the selected ROI slice. The upper and lower thresholds are set by |threshold|.
+
+|magic|
+	Left-click to display a menu with two segmentation algorithms:
+
+	- **Region growing**, select and left-click in the view widget to calculate the region growing from the clicked seed pixel (see `SimpleITK ConnectedThresholdImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html>`_). The upper and lower thresholds used by this algorithm are set by |threshold|.
+	- **Confidence connected**, select and left-click in the view widget to calculate the confidence connected region from the clicked seed pixel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
+
+|cross|
+	Left-click to clear the selected ROI slice.
+
+|gemini|
+	Left-click to display a menu from which you can select a Gemini AI prompt that you previously saved in the 'prompts' subfolder of the user folder (~/.PySisype). Open the Gemini prompt dialog box by selecting the "New prompt..." menu.
+
+	This interface allows you to edit multimodal prompts, which combine text with a 2D image of the current slice displayed in the slice view widget.
+
+	- There is an edit box at the top where you can write the **prompt**.
+	- Left-click **Load** button to load an XML prompt file.
+	- Left-click **Save** button to save the current prompt to an XML file.
+	- Left-click **Clear** to erase the current promt.
+	- Left-click **Add spacing** to add pixel dimensions of the attached image to the text prompt.
+
+	Use the radio buttons to select the type of response to generate:
+
+	- **Text**, only text that will be displayed in the dialog box.
+	- **Bounding box**, a bounding box displayed as a ROI in the slice view of the object described in the text prompt. The JSON response is also displayed as text in the dialog box. 
+	- **Contour**, a filled contour displayed as a ROI in the slice view of the object described in the text prompt. The JSON response is also displayed as text in the dialog box.
+	- **Points**, points saved as Target tools (.xtools file) whose position must be described in the text prompt. The JSON response is also displayed as text in the dialog box.
+
+	- Left-click **Send** button to send the prompt to Gemini AI.
+
+|flipx|
+	Left-click to flip the selected ROI slice along the x-axis display (x-axis world if axial or coronal slice, z-axis world if sagittal slice).
+
+|flipy|
+	Left-click to flip the selected ROI slice along the y-axis display (y-axis world if axial slice, z-axis world if coronal or sagittal slice).
+
+|up|
+	Left-click for upward translation of the selected ROI slice (anterior translation if axial slice, cranial translation if coronal or sagittal slice).
+
+|down|
+	Left-click for downward translation of the selected ROI slice (posterior translation if axial slice, caudal translation if coronal or sagittal slice).
+
+|left|
+	Left-click to translate the selected ROI slice to the left (right translation if axial or coronal slice, anterior translation if sagittal slice).
+
+|right|
+	Left-click to translate the selected ROI slice to the right (left translation if axial or coronal slice, posterior translation if sagittal slice).
+
+.. _tools-section-slice-blob-box:
+
+Slice blob tools
+----------------
+
+.. image:: /GUI/roi-slice-blob.png
+   :align: center
+|
+
+All tools in this section work on 2D blobs that are displayed in a slice of the view widget (see `Connected component in wikipedia <https://en.wikipedia.org/wiki/Connected_space#Connected_components>`_). Other blobs in the selected slice and other slices are not affected. First, select a tool button (blue border), then left-click on a blob in the view widget.
+
+|dilate|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|erode|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|morphoopen|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|morphoclose|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|copy|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to copy it to the clipboard.
+
+|cut|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to cut it to the clipboard.
+
+|paste|
+	Left-click to select this button (blue border). Left-click in the view widget to paste the clipboard (if not empty) to the selected ROI slice.
+
+|select-keep|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to select it, all other blobs in the selected slice will be removed.
+
+|select-remove|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to remove it.
+
+|extent|
+	Left-click to remove blobs of the selected slice with a pixel count less than a threshold. The extent threshold is defined in :ref:`tools-section-brush-settings`.
+
+|threshold2|
+	Left-click to select this button. Left-click on a blob in the view widget to threshold it. The upper and lower thresholds are defined in |threshold|.
+
+|magic|
+	Left-click to display a menu with two segmentation algorithms:
+
+	- **Region growing**, select and left-click on a blob in the view widget to calculate the region growing from the clicked seed pixel (see `SimpleITK ConnectedThresholdImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html>`_). The upper and lower thresholds used by this algorithm are defined in |threshold|.
+	- **Confidence connected**, select and left-click on a blob in the view widget to calculate the confidence connected region from the clicked seed pixel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
+
+.. _tools-section-volume-box:
+
+Volume tools
+------------
+
+.. image:: /GUI/roi-volume.png
+   :align: center
+|
+
+All tools in this section work in 3D, in the full volume of the ROI.
+
+The keyboard shortcut **²** re-executes the action of the last tool clicked.
+
+|dilate|
+	Left-click for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|erode|
+	Left-click for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|morphoopen|
+	Left-click for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|morphoclose|
+	Left-click for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|invert|
+	Left-click to invert ROI pixels (binary not operator).
+
+|bucket|
+	Left-click to automatically fill all detected 3D holes.
+
+|fill|
+	Left-click to select this button (blue border), and fill 3D hole left-clicked in the view widget (slice view or synchronized view in the central area).
+
+|expand2|
+	Left-click to expand ROI with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
+
+|shrink2|
+	Left-click to shrink ROI with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
+
+|head|
+	Left-click for automatic object segmentation. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
+
+|ihead|
+	Left-click for automatic background segmentation. The Algorithm used is defined in :ref:`tools-section-brush-settings`.
+
+|threshold2|
+	Left-click for thresholding. The upper and lower thresholds are defined in |threshold|.
+
+|magic|
+	Left-click to display a menu with two segmentation algorithms:
+
+	- **Region growing**, select and left-click in the view widget to calculate the region growing from the clicked seed voxel (see `SimpleITK ConnectedThresholdImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html>`_). The upper and lower thresholds used by this algorithm are defined in |threshold|.
+	- **Confidence connected**, select and left-click in the view widget to calculate the confidence connected region from the clicked seed voxel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
+	- **Active contour**, select and left-click in the view widget to calculate the active contour from the clicked seed voxel. Parameters used by this algorithm are defined in the next menu **Active contour settings...**
+	- **Active Contour Settings...**, select to display a settings dialog box. Active contour level set method (also known as snake) segments structures in images based on a user supplied edge potential map. An initial contour is itertively propagated outwards (or inwards) until it "sticks" to the shape boundaries. This is done by using a level set speed function based on a user supplied edge potential map. This map has values close to zero in regions near edges and values close to one in regions with relatively constant intensity. Typically, the edge potential map is a function of the gradient magnitude.
+	
+		- **Level set algorithm**, Three active contour algorithms are available: original geodesic active contour, shape detection and threshold variants (see `SimpleITK GeodesicActiveContourLevelSetImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1GeodesicActiveContourLevelSetImageFilter.html>`_, `ShapeDetectionLevelSetImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ShapeDetectionLevelSetImageFilter.html>`_, `ThresholdSegmentationLevelSetImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ThresholdSegmentationLevelSetImageFilter.html>`_). The threshold variant algorithm used thresholds defined in |threshold|.
+		- **Seed radius**, radius en mm of the seed sphere centered used as initial contour (default 2.0 mm).
+		- **Curvature weight**, curvature (default relative weight 1.0), controls the magnitude of the curvature values which are calculated on the evolving isophote. This is important in controlling the relative effect of curvature in the calculation. Higher values relative to the other level set equation terms (propagation and advection) will give a smoother result.
+		- **Propagation weight**, propagation speed (default relative weight 1.0) controls the scaling of the scalar propagation (speed) term relative to other terms in the level set equation. Positive values propagate contour towards outside the seed, negative values inside.
+		- **Advection weight**, advection (default relative weight 1.0) controls the scaling of the vector advection field term relative to other terms in the level set equation.
+		- **RMS convergence threshold**, Convergence threshold (0.0 to 1.0, default 0.01) used to determine when the solution has converged. A lower value will result in a tighter-fitting solution, but will require more computations. Too low a value could put the solver into an infinite loop unless a reasonable number of iterations parameter is set.
+		- **Number of iterations**, maximum number of iterations (default 1000) can be used to halt the solution after a specified number of iterations, overriding the rms halting criteria.
+		- **Gaussian kernel sigma**, gaussian kernel sigma used to compute the magnitude of the gradient (default 1.0).
+		- **Threshold factor**, Factor value x standard deviation of signal in seed sphere to estimate lower and upper thresholds used by threshold variant of the level set algorithm (default 3.0).
+
+|cross|
+	Left-click to clear ROI.
+
+|statistics|
+	Display signal and shape statistics of ROI(s) in a dialog box (see :ref:`tools-section-dialog-statistics`).
+
+|flipx|
+	Left-click to flip ROI along the x-axis display (x-axis world if axial or coronal display, z-axis world if sagittal display).
+
+|flipy|
+	Left-click to flip ROI along the y-axis display (y-axis world if axial display, z-axis world if coronal or sagittal display).
+
+|up|
+	Left-click for upward ROI translation (anterior translation if axial slice, cranial translation if coronal or sagittal slice).
+
+|down|
+	Left-click for downward ROI translation (posterior translation if axial display, caudal translation if coronal or sagittal dsiplay).
+
+|left|
+	Left-click to translate ROI to the left (right translation if axial or coronal display, anterior translation if sagittal display).
+
+|right|
+	Left-click to translate ROI to the right (left translation if axial or coronal slice, posterior translation if sagittal display).
+
+.. _tools-section-volume-blob-box:
+
+Volume blob tools
+-----------------
+
+.. image:: /GUI/roi-volume-blob.png
+   :align: center
+|
+
+All tools in this section work in a selected 3D blob (see `Connected component in wikipedia <https://en.wikipedia.org/wiki/Connected_space#Connected_components>`_). Other blobs are not affected. First, select a tool button (blue border), then left-click on a blob in the view widget.
+
+|dilate|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological dilatation (see `Morphology dilatation in wikipedia <https://en.wikipedia.org/wiki/Dilation_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|erode|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological erosion (see `Morphology erosion in wikipedia <https://en.wikipedia.org/wiki/Erosion_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|morphoopen|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological opening (see `Morphology opening in wikipedia <https://en.wikipedia.org/wiki/Opening_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|morphoclose|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget for morphological closing (see `Morphology closing in wikipedia <https://en.wikipedia.org/wiki/Closing_(morphology)>`_). Shape and size of the structuring element used by the morphology operator are defined in :ref:`tools-section-brush-settings`.
+
+|copy|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to copy it to the clipboard.
+
+|cut|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to cut it to the clipboard.
+
+|paste|
+	Left-click to select this button (blue border). Left-click in the view widget to paste the clipboard (if not empty).
+
+|expand2|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to expand it with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
+
+|shrink2|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to shrink it with an isotropic margin in mm. Margin value is defined in :ref:`tools-section-brush-settings`.
+
+|select-keep|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to select it, all other blobs will be removed.
+
+|select-remove|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to remove it.
+
+|extent|
+	Left-click to remove blobs with a voxel count less than a threshold. The extent threshold is defined in :ref:`tools-section-brush-settings`.
+
+|threshold2|
+	Left-click to select this button (blue border). Left-click on a blob in the view widget to threshold it. The upper and lower thresholds are set by |threshold|.
+
+|magic|
+	Left-click to display a menu with two segmentation algorithms:
+
+	- **Region growing**, select and left-click on a blob in the view widget to calculate the region growing from the clicked seed voxel (see `SimpleITK ConnectedThresholdImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConnectedThresholdImageFilter.html>`_). The upper and lower thresholds used by this algorithm are set by |threshold|.
+	- **Confidence connected**, select and left-click on a blob in the view widget to calculate the confidence connected region from the clicked seed voxel (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_). Parameters used by this algorithm are defined in :ref:`tools-section-brush-settings`.
+
+.. _tools-section-brush-settings:
+
+Brush settings
+--------------
+
+**Fill holes**
+	If this option is checked, holes are automatically filled after drawing with brush |brush| and selection area |select2| tools.
+
+**Major blob**
+	If this option is checked, only the major blob is kept after drawing with the selection area tool |select2|.
+
+**Structuring element size**
+	Size of the structuring element in pixels/voxels used by morphological operations (dilate/erode/opening/closing).
+
+**Structuring element shape**
+	Shape of the structuring element used by morphological operations (dilate/erode/opening/closing). Proposed shapes are "Ball", "Box", "Cross" and Annulus".
+
+**Move step**
+	Step value in pixels/voxels used by moving tools.
+
+**Blob extent threshold**
+	Threshold value in number of pixels/voxels used by blob selection tool (Keep/remove blob).
+
+**Expand/Shrink thickness**
+	Expansion or shrinkage value in mm applied by Expand/shrink tools.
+
+**Object/Background algorithm**
+	Algorithm used for automatic object/background segmentation. PySisyphe provides the following algorithms from the SimpleITK library: `Huang <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html>`_, Mean, `Otsu <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html>`_, `Renyi <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html>`_, `Yen <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html>`_, `Li <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html>`_, `Shanbhag <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html>`_, `Triangle <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html>`_, `Intermodes <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html>`_, `Maximumentropy <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html>`_, `Kittler <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html>`_, `Isodata <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html>`_, `Moments <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html>`_.
+
+**Cluster confidence sigma**
+	Sigma value used by the cluster confidence tools (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_).
+
+**Cluster confidence iterations**
+	Number of iterations of the of the cluster confidence tools (see `SimpleITK ConfidenceConnectedImageFilter class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1ConfidenceConnectedImageFilter.html>`_).
+
+.. _tools-section-dialog-statistics:
+
+Statistics dialog box
+---------------------
+
+.. image:: /GUI/roi-statistics.png
+   :align: center
+   :scale: 50%
+|
+
+|statistics| button in the Volume Tools box activates this dialog.
+
+The top of this dialog box is occupied by a tabbed stack widget of three charts:
+
+**Histogram** (3)
+	These are histogram(s) of the reference volume signal of voxels located in each ROI. The number of histogram bins i.e. intervals (default 100) can be changed in the **bins** combobox of the button bar. The line of each histogram has the color of the ROI associated with it.
+
+**Cumulative histogram** (4)
+	These are cumulative histogram(s) of the reference volume signal of voxels located in each ROI. The line of each histogram has the color of the ROI associated with it. This chart is interactive, the vertical dotted line (6) can be moved with the mouse (press left mouse button and drag). This line has the color of the selected ROI in the table and gives information (7) about it. Information to the right of the line includes: ROI name, signal value at line position, percentage of ROI volume with signal greater than current signal at line position, ROI volume (cc) with signal greater than current signal at line position.
+
+**Box and Whisker plot** (5)
+	This is a Box and Whisker plot (see `Box and Whisker plot in wikipedia <https://en.wikipedia.org/wiki/Box_plot>`_) of the reference volume signal of voxels located in each ROI.
+
+There is another tabbed stack widget below with two tables:
+
+**Grayscale statistics** (1)
+	These tables gives descriptive statitics of the reference volume signal in each ROI. Table columns are: ROI name with check box, voxels (number of voxels), volume (cc), mean, median, minimum, maximum, range, 25th percentile, 75th percentile, variance, standard deviation, skewness and kurtosis.
+
+**Shape features** (2)
+	These tables gives shape features of each ROI (see `pyradiomics shape features <https://pyradiomics.readthedocs.io/en/latest/features.html#module-radiomics.shape>`_). Table columns are: ROI name, volume (cc), surface, surface/volume ratio, sphericity, maximum diameter, maximum axial diameter, maximum coronal diameter, maximum sagittal diameter, major axis length, elongation, flatness.
+
+Finally, there is a button bar at the bottom:
+
+**Bins**
+	Combobox to define histogram bins i.e. intervals (from 50 to 500).
+
+**Save chart**
+	Left-click displays a menu to save bitmap capture (supported bitmap formats BMP, JPG, PNG, TIFF and SVG) of chart(s):
+
+	- **Save chart**, save a bitmap capture of the displayed chart using a default name (name of the reference volume, suffixed with "Histogram", Cumulative_Histogram" or "Box_Whisker")
+	- **Save chart as...**, show a dialog box to save a bitmap capture of the displayed chart.
+	- **Save all charts**, save bitmap captures of all charts using default names.
+	- **Save all chart as...**, show a dialog box to save a bitmap capture of all charts.
+
+**Copy chart**
+	Copy a bitmap capture of the displayed chart to the clipboard.
+
+**Save statistics**
+	Left-click displays a menu to save tables (supported formats CSV, JSON, LATEX, TXT, Excel XLSX, Pysisyphe XSHEET):
+	
+	- **Save current statistics**, save the displayed table using a default name (name of the reference volume, suffixed with "Shape" or "Statistics")
+	- **Save current statistics as...**, to show a dialog box to save the displayed table.
+	- **Save all statistics**, save all tables using default names (name of the reference volume, suffixed with "Shape" or "Statistics")
+	- **Save all statistics as..**, to show a dialog box to save all tables.
+	- **Save histograms**, save histograms using a default name ("histogram")
+	- **Save histograms as...**, to show a dialog box to save histograms.
+
+.. |brush| image:: /GUI/dock/brush.png
+   :scale: 50 %
+.. |threshold| image:: /GUI/dock/threshold.png
+   :scale: 50 %
+.. |layer| image:: /GUI/dock/layer.png
+   :scale: 50 %
+.. |undo| image:: /GUI/dock/undo.png
+   :scale: 50 %
+.. |redo| image:: /GUI/dock/redo.png
+   :scale: 50 %
+.. |dilate| image:: /GUI/dock/dilate.png
+   :scale: 50 %
+.. |erode| image:: /GUI/dock/erode.png
+   :scale: 50 %
+.. |morphoopen| image:: /GUI/dock/morphoopen.png
+   :scale: 50 %
+.. |morphoclose| image:: /GUI/dock/morphoclose.png
+   :scale: 50 %
+.. |invert| image:: /GUI/dock/invert.png
+   :scale: 50 %
+.. |bucket| image:: /GUI/dock/bucket.png
+   :scale: 50 %
+.. |fill| image:: /GUI/dock/fill.png
+   :scale: 50 %
+.. |copy| image:: /GUI/dock/copy.png
+   :scale: 50 %
+.. |cut| image:: /GUI/dock/cut.png
+   :scale: 50 %
+.. |paste| image:: /GUI/dock/paste.png
+   :scale: 50 %
+.. |head| image:: /GUI/dock/head.png
+   :scale: 50 %
+.. |ihead| image:: /GUI/dock/ihead.png
+   :scale: 50 %
+.. |threshold2| image:: /GUI/dock/threshold2.png
+   :scale: 50 %
+.. |magic| image:: /GUI/dock/magic.png
+   :scale: 50 %
+.. |cross| image:: /GUI/dock/cross.png
+   :scale: 50 %
+.. |flipx| image:: /GUI/dock/flipx.png
+   :scale: 50 %
+.. |flipy| image:: /GUI/dock/flipy.png
+   :scale: 50 %
+.. |up| image:: /GUI/dock/up.png
+   :scale: 50 %
+.. |down| image:: /GUI/dock/down.png
+   :scale: 50 %
+.. |left| image:: /GUI/dock/left.png
+   :scale: 50 %
+.. |right| image:: /GUI/dock/right.png
+   :scale: 50 %
+.. |select-keep| image:: /GUI/dock/select-keep.png
+   :scale: 50 %
+.. |select-remove| image:: /GUI/dock/select-remove.png
+   :scale: 50 %
+.. |extent| image:: /GUI/dock/extent.png
+   :scale: 50 %
+.. |expand2| image:: /GUI/dock/expand2.png
+   :scale: 50 %
+.. |shrink2| image:: /GUI/dock/shrink2.png
+   :scale: 50 %
+.. |statistics| image:: /GUI/dock/statistics.png
+   :scale: 50 %
+.. |gemini| image:: /GUI/dock/gemini.png
+   :scale: 50 %
+.. |select2| image:: /GUI/dock/select2.png
+   :scale: 50 %
+.. |sam| image:: /GUI/dock/sam.png
+   :scale: 50 %

@@ -1,0 +1,34 @@
+.. image:: ./logo.png
+   :align: center
+|
+
+PySisyphe documentation
+=======================
+
+- :ref:`Overview <page-overview>`
+- :ref:`Installation <page-installation>`
+- :ref:`Main window <page-main>`
+- :ref:`Toolbar <page-toolbar>`
+- :ref:`Thumbnail bar <page-thumbnailbar>`
+- :ref:`Widgets <page-widgets>`
+- :ref:`Slice view <page-sliceview>`
+- :ref:`Orthogonal view <page-orthogonalview>`
+- :ref:`Synchronized view <page-synchronizedview>`
+- :ref:`Projection view <page-projectionview>`
+- :ref:`Multi-component view <page-multicomponentview>`
+- :ref:`Database manager <page-database>`
+- :ref:`File browser <page-browser>`
+- :ref:`Screenshots manager <page-screenshots>`
+- :ref:`IPython window <page-ipython>`
+- :ref:`Dock ROI <page-dockroi>`
+- :ref:`Dock ROI Tools <page-dockroitools>`
+- :ref:`Dock Mesh <page-dockmesh>`
+- :ref:`Dock Target/Trajectory <page-docktarget>`
+- :ref:`Dock Tracking <page-docktracking>`
+- :ref:`Dock Documentation <page-dockhelp>`
+- :ref:`Menubar <page-menubar>`
+- :ref:`Core API <page-core-api>`
+- :ref:`Widgets & dialogs API <page-widgets-api>`
+- :ref:`License <page-license>`
+- :ref:`Version history <page-versions>`
+- :ref:`Contact <page-contact>`
