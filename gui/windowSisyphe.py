@@ -137,9 +137,9 @@ class WindowSisyphe(QMainWindow):
 
     # Class constants
 
-    _ICONSIZE = 32
-    _THUMBNAILSIZE = 96
-    _TOOLBARICONSIZE = 16
+    _ICONSIZE: int = 32
+    _THUMBNAILSIZE: int = 96
+    _TOOLBARICONSIZE: int = 16
 
     # Class methods
 
@@ -4286,7 +4286,9 @@ class WindowSisyphe(QMainWindow):
         wait.open()
         wait.setInformationText('Check for update, connection to host...')
         QApplication.processEvents()
-        try: v = version.getVersionFromHost()
+        try:
+            v = version.getVersionFromHost()
+            if v == '': raise ValueError
         except:
             wait.close()
             messageBox(self,
@@ -4297,7 +4299,7 @@ class WindowSisyphe(QMainWindow):
             wait.hide()
             r = messageBox(self,
                            'Check for update',
-                           'A more recent version of PySisyphe is available.\n'
+                           'A more recent version of PySisyphe is available. '
                            'Would you like to install it ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
@@ -4306,7 +4308,17 @@ class WindowSisyphe(QMainWindow):
                 from Sisyphe.core.sisypheDownload import updatePySisyphe
                 wait.setInformationText('Update to version {}...'.format(v))
                 wait.show()
-                updatePySisyphe(wait)
+                # < Revision 22/06/2026
+                # updatePySisyphe(wait)
+                try: updatePySisyphe(wait)
+                except:
+                    wait.close()
+                    messageBox(self,
+                               'Check for update',
+                               'Unable to install PySisyphe version {}. '
+                               'Please download the lastest full version from https://github.com/PySisyphe/Sisyphe.'.format(v))
+                    return
+                # Revision 22/06/2026 >
                 wait.hide()
                 # < Revision 08/01/2026
                 # noinspection PyUnresolvedReferences
@@ -4344,7 +4356,7 @@ class WindowSisyphe(QMainWindow):
                 # < Revision 17/10/2025
                 r = messageBox(self,
                                'Check for update',
-                               'You must close and restart the application to complete the update.\n'
+                               'You must close and restart the application to complete the update. '
                                'Do you want to exit now ?',
                                icon=QMessageBox.Question,
                                buttons=QMessageBox.Yes | QMessageBox.No,

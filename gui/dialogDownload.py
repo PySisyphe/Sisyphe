@@ -57,7 +57,7 @@ class DialogDownload(QDialog):
 
     QDialog -> DialogDownload
 
-    Last revision: 05/12/2025
+    Last revision: 22/06/2026
     """
 
     # class method
@@ -263,7 +263,16 @@ class DialogDownload(QDialog):
                         path = item[0]
                         url = item[1]
                         try:
-                            downloadFromHost(url, path, info=k, wait=wait)
+                            # < Revision 22/06/2026
+                            # downloadFromHost(url, path, info=k, wait=wait)
+                            try: downloadFromHost(url, path, info=k, wait=wait)
+                            except:
+                                if wait is not None: wait.close()
+                                messageBox(self,
+                                           'Download manager',
+                                           'Unable to install {}.'.format(k))
+                                return
+                            # Revision 22/06/2026 >
                             # < Revision 05/12/2025
                             if folder == 'Templates':
                                 if wait is not None: wait.hide()
@@ -273,7 +282,7 @@ class DialogDownload(QDialog):
                                 messageBox(self,
                                            icon=QMessageBox.Information,
                                            title='Download manager',
-                                           text='{} is installed in the PySisyphe template folder.\n'
+                                           text='{} is installed in the PySisyphe template folder. '
                                                 'Explore available templates by selecting the menu File > Open template.'.format(k))
                                 if wait is not None: wait.show()
                             elif folder == 'Controls':
@@ -281,7 +290,7 @@ class DialogDownload(QDialog):
                                 messageBox(self,
                                            icon=QMessageBox.Information,
                                            title='Download manager',
-                                           text='{} is copied in the PySisyphe ~/.PySisyphe/controls folder.\n'
+                                           text='{} is copied in the PySisyphe ~/.PySisyphe/controls folder. '
                                                 'Open user folder by selecting the menu File > User folder.'.format(k))
                                 if wait is not None: wait.show()
                             elif folder == 'Plugins':
@@ -292,7 +301,7 @@ class DialogDownload(QDialog):
                                 messageBox(self,
                                            icon=QMessageBox.Information,
                                            title='Download manager',
-                                           text='{} is installed in the PySisyphe plugins folder.\n'
+                                           text='{} is installed in the PySisyphe plugins folder. '
                                                 'Explore available plugins by selecting the menu Functions > Plugins.'.format(k))
                                 if wait is not None: wait.show()
                             elif folder == 'Samples':
@@ -300,7 +309,7 @@ class DialogDownload(QDialog):
                                 messageBox(self,
                                            icon=QMessageBox.Information,
                                            title='Download manager',
-                                           text='{} is installed in the PySisyphe ~/.PySisyphe/samples folder.\n'
+                                           text='{} is installed in the PySisyphe ~/.PySisyphe/samples folder. '
                                                 'Open user folder by selecting the menu File > User folder.'.format(k))
                                 if wait is not None: wait.show()
                             # Revision 05/12/2025 >
