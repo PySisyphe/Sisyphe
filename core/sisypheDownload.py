@@ -264,8 +264,7 @@ def downloadFromHost(urls: str | list[str],
             wait.setInformationText('Download{}...'.format(info))
             wait.progressVisibilityOff()
         if not exists(dst): mkdir(dst)
-        try: filename = mega.download_url(url, dest_path=dst)
-        except: continue
+        filename = mega.download_url(url, dest_path=dst)
         if splitext(filename)[1].lower() == '.zip':
             if wait is not None:
                 wait.setInformationText('Unzip{}...'.format(info))
@@ -496,7 +495,10 @@ def updatePySisyphe(wait: DialogWait | None = None) -> None:
     version = getVersionFromHost()
     if version != '':
         if isOlderThan(version):
-            filename = join(dst, 'settings/host.xml')
+            # < Revision 22/06/2026
+            # filename = join(dst, 'settings/host.xml')
+            filename = abspath(join(dst, 'settings', 'host.xml'))
+            # Revision 22/06/2026 >
             if exists(filename):
                 url = ''
                 doc = minidom.parse(filename)

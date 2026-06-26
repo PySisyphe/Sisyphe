@@ -84,6 +84,7 @@ from itk import GetArrayFromMatrix as itkGetArrayFromMatrix
 
 from SimpleITK import sitkUInt8
 from SimpleITK import sitkFloat32
+from SimpleITK import sitkFloat64
 from SimpleITK import sitkVectorInt8
 from SimpleITK import sitkVectorUInt8
 from SimpleITK import sitkVectorInt16
@@ -302,7 +303,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 20/05/2026
+    Last revision: 25/06/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -453,6 +454,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__add__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__add__(other))
 
     def __sub__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -471,6 +479,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__sub__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__sub__(other))
 
     def __mul__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -489,6 +504,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__mul__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__mul__(other))
 
     def __div__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -506,6 +528,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__div__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__div__(other))
 
     def __floordiv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -524,6 +553,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__floordiv__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__floordiv__(other))
 
     def __truediv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -542,6 +578,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__truediv__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__truediv__(other))
 
     def __radd__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -560,6 +603,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__radd__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__radd__(other))
 
     def __rsub__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -578,6 +628,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__rsub__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rsub__(other))
 
     def __rmul__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -596,6 +653,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__rmul__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rmul__(other))
 
     def __rdiv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -614,6 +678,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__rdiv__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rdiv__(other))
 
     def __rfloordiv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -632,6 +703,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__rfloordiv__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rfloordiv__(other))
 
     def __rtruediv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
@@ -650,6 +728,13 @@ class SisypheImage(object):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # < Revision 25/06/2026
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                return SisypheImage(img.__rtruediv__(other))
+        # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rtruediv__(other))
 
     def __neg__(self) -> SisypheImage:

@@ -56,6 +56,8 @@ from numpy import frombuffer
 from numpy import array
 from numpy import ndarray
 from numpy import fliplr
+from numpy import isfinite
+from numpy import nan_to_num
 
 from PIL.Image import Image as pilImage
 
@@ -68,6 +70,7 @@ from ants.core.ants_image import ANTsImage
 
 # noinspection PyUnresolvedReferences
 from itk import Image as itkImage
+from SimpleITK import sitkFloat64
 from SimpleITK import Image as sitkImage
 from SimpleITK import Cast as sitkCast
 from SimpleITK import LabelVoting as sitkLabelVoting
@@ -213,7 +216,7 @@ class SisypheVolume(SisypheImage):
     object -> SisypheImage -> SisypheVolume
 
     Creation: 04/02/2021
-    Last revisions: 20/05/2026
+    Last revisions: 25/06/2026
     """
     __slots__ = ['_ID', '_arrayID', '_filename', '_compression', '_identity', '_acquisition',
                  '_display', '_acpc', '_transforms', '_xdcm', '_slope', '_intercept', '_orientation']
@@ -530,7 +533,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__add__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__add__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__add__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__add__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -552,7 +564,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__sub__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__sub__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__sub__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__sub__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -574,7 +595,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__mul__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__mul__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__mul__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__mul__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -595,7 +625,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__div__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__div__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__div__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__div__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -617,7 +656,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__floordiv__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__floordiv__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__floordiv__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__floordiv__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -639,7 +687,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__truediv__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__truediv__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__truediv__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__truediv__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -661,7 +718,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__radd__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__radd__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__radd__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__radd__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -683,7 +749,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__rsub__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__rsub__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__rsub__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__rsub__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -705,7 +780,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__rmul__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__rmul__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__rmul__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__rmul__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -727,7 +811,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__rdiv__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__rdiv__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__rdiv__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__rdiv__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -749,7 +842,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__rfloordiv__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__rfloordiv__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__rfloordiv__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__rfloordiv__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -771,7 +873,16 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
-        r = SisypheVolume(self._sitk_image.__rtruediv__(other))
+        # < Revision 25/06/202
+        # r = SisypheVolume(self._sitk_image.__rtruediv__(other))
+        r = None
+        if isinstance(other, sitkImage):
+            if self._sitk_image.GetPixelID() != other.GetPixelID():
+                other = sitkCast(other, sitkFloat64)
+                img = sitkCast(self._sitk_image, sitkFloat64)
+                r = SisypheVolume(img.__rtruediv__(other))
+        if not r: r = SisypheVolume(self._sitk_image.__rtruediv__(other))
+        # Revision 25/06/2026 >
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
         r.acquisition.setSequenceToAlgebraMap()
@@ -1144,10 +1255,19 @@ class SisypheVolume(SisypheImage):
 
     def _updateRange(self) -> None:
         # bugfix, conversion numpy.float32 to float
-        # noinspection PyArgumentList
-        vmin = float(str(self.getNumpy().min()))
-        # noinspection PyArgumentList
-        vmax = float(str(self.getNumpy().max()))
+        # < Revsion 25/06/2026
+        # vmin = float(str(img.min()))
+        # vmax = float(str(img.max()))
+        img = self.getNumpy()
+        vmin = img.min()
+        vmax = img.max()
+        if not (isfinite(vmin) and isfinite(vmax)):
+            nan_to_num(img, copy=False, nan=0, posinf=0, neginf=0)
+            vmin = img.min()
+            vmax = img.max()
+        vmin = float(vmin)
+        vmax = float(vmax)
+        # Revsion 25/06/2026 >
         if vmin != self._display.getRangeMin() or vmax != self._display.getRangeMax():
             self._display.setRange(vmin, vmax)
             self._display.setDefaultWindow()
@@ -3323,7 +3443,7 @@ class SisypheVolume(SisypheImage):
     # add getStandardizeIntensity method, not yet tested
     def getStandardizeIntensity(self, method: str = 'norm') -> SisypheVolume:
         """
-        Get an intensity normalized copy of the current SisypheImage instance.
+        Get an intensity normalized copy of the current SisypheVolume instance.
 
         Parameters
         ----------
@@ -3333,8 +3453,8 @@ class SisypheVolume(SisypheImage):
 
         Returns
         -------
-            SisypheVolume
-                standardized volume
+        SisypheVolume
+            standardized volume
         """
         r = super().getStandardizeIntensity(method)
         r = SisypheVolume(r)
@@ -3350,7 +3470,7 @@ class SisypheVolume(SisypheImage):
                              outputrange: tuple[float, float] | None = None,
                              onlymax: bool = False) -> SisypheVolume:
         """
-        Get intensity truncated copy of the current SisypheImage instance. Truncate threshold is expressed in
+        Get intensity truncated copy of the current SisypheVolume instance. Truncate threshold is expressed in
         percentile (min threshold = centile, max threshold = 100 - centile). The max and min values of the output image
         are given in the output range parameter. If output range is None, max and min values of the output image are
         the max and min truncate thresholds.
@@ -3366,8 +3486,8 @@ class SisypheVolume(SisypheImage):
 
         Returns
         -------
-            SisypheVolume
-                truncated volume
+        SisypheVolume
+            truncated volume
         """
         # < Revision 20/05/2026
         # r = super().getTruncateIntensity(centile, outputrange)
@@ -3378,6 +3498,34 @@ class SisypheVolume(SisypheImage):
         r.setFilename(self.getFilename())
         return r
     # Revision 20/10/2024 >
+
+    # < Revision 25/06/2026
+    def applySlopeIntercept(self, inv: bool = False) -> SisypheVolume:
+        """
+        Get a copy of the current SisypheVolume instance to which a linear signal transformation has been applied
+        using the slope/intercept attributes.
+
+        Parameters
+        ----------
+        inv : bool
+            Slope/intercept values reverse the signal transformation if true; otherwise, the default values are
+            used (slope = 1.0, intercept = 0.0).
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        if self._slope != 1.0 or self._intercept != 0.0:
+            img = (self * self._slope) + self._intercept
+            if inv:
+                img._slope = 1.0 / self._slope
+                img._intercept = - self._intercept
+            else:
+                img._slope = 1.0
+                img._intercept = 0.0
+            return img
+        else: return self
+    # Revision 25/06/2026 >
 
     # Geometric transformation methods
 

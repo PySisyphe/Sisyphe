@@ -41,6 +41,7 @@ from collections import deque
 from numpy import uint8
 from numpy import array
 from numpy import zeros
+from numpy import ones
 from numpy import frombuffer
 from numpy import histogram
 from numpy import median
@@ -239,7 +240,7 @@ class SisypheROI(SisypheBinaryImage):
     object -> SisypheImage -> SisypheBinaryImage -> SisypheROI
 
     Creation: 08/09/2022
-    Last revision: 06/03/2026
+    Last revision: 10/06/2026
     """
 
     __slots__ = ['_filename', '_referenceID', '_compression', '_name', '_color', '_alpha', '_visibility', '_lut']
@@ -4056,7 +4057,7 @@ class SisypheROICollection(object):
             for roi in self:
                 if roi.hasFilename(): roi.save()
 
-
+@cython.cclass
 class SisypheROIDraw(object):
     """
     Description
@@ -4088,24 +4089,63 @@ class SisypheROIDraw(object):
     object -> SisypheROIDraw
 
     Creation: 08/09/2022
-    Last revision: 17/03/2026
+    Last revision: 25/06/2026
     """
 
-    __slots__ = {'_volume', '_mask', '_brush', '_vbrush', '_roi', '_undo', '_undolifo', '_redolifo',
+    __slots__ = {'_volume', '_mask', '_brush', '_ibrush', '_vbrush', '_ivbrush', '_roi', '_undo', '_undolifo', '_redolifo',
                  '_radius', '_morphradius', '_thickness', '_brushtype', '_dtrmajorblob', '_dtrfillholes', '_struct',
                  '_thresholdmin', '_thresholdmax', '_ccsigma', '_cciter', '_acradius', '_acrms', '_acsigma', '_accurv',
                  '_acadvec', '_acpropag', '_aciter', '_acalgo', '_acthresholds', '_acfactor', '_clipboard'}
 
     # Class constants
 
-    _DV, _DSZ, _DSY, _DSX = 0, 1, 2, 3
-    _UNDO, _REDO = 0, 1
+    _DV: cython.int = 0
+    _DSZ: cython.int = 1
+    _DSY: cython.int = 2
+    _DSX: cython.int = 3
+    _UNDO: cython.int = 0
+    _REDO: cython.int = 1
     _BRUSHTYPECODE: dict[str, int] = {'solid': 0, 'threshold': 1, 'solid3': 2, 'threshold3': 3}
     _BRUSHTYPENAME: dict[int, str] = {0: 'solid', 1: 'threshold', 2: 'solid3', 3: 'threshold3'}
-    _MAXRADIUS: int = 50
-    _DEFAULTRADIUS: int = 2
-    _DEFAULTMORPHRADIUS: int = 1
-    _MAXUNDO: int = 20
+    _MAXRADIUS: cython.int = 50
+    _DEFAULTRADIUS: cython.int = 2
+    _DEFAULTMORPHRADIUS: cython.int = 1
+    _MAXUNDO: cython.int = 20
+
+    # Static attribute types
+
+    _volume: SisypheVolume
+    _mask: ndarray
+    _brush: ndarray
+    _ibrush : ndarray
+    _vbrush: ndarray
+    _ivbrush: ndarray
+    _roi: SisypheROI
+    _undo: bool
+    _undolifo: deque
+    _redolifo: deque
+    _radius: cython.int
+    _brushtype: cython.int
+    _morphradius: cython.int
+    _thickness: cython.double
+    _struct: cython.int
+    _thresholdmin: cython.double
+    _thresholdmax: cython.double
+    _ccsigma: cython.double
+    _cciter: cython.int
+    _acradius: cython.double
+    _acrms: cython.double
+    _acsigma: cython.double
+    _accurv: cython.double
+    _acadvec: cython.double
+    _acpropag: cython.double
+    _aciter: cython.int
+    _acalgo: str
+    _acfactor: cython.double
+    _dtrmajorblob: bool
+    _dtrfillholes: bool
+    _acthresholds: tuple[float, float] | None
+    _clipboard: sitkImage | None
 
     # Special methods
 
@@ -4114,46 +4154,32 @@ class SisypheROIDraw(object):
         SisypheROIDraw instance constructor.
         """
         self._volume: SisypheVolume | None = None
-        self._mask: ndarray | None  = None
+        self._mask: ndarray | None = None
         self._brush: ndarray | None = None
+        self._ibrush: ndarray | None = None
         self._vbrush: ndarray | None = None
+        self._ivbrush: ndarray | None = None
         self._roi: SisypheROI | None = None
         self._undo: bool = False
         self._undolifo: deque = deque(maxlen=self._MAXUNDO)
         self._redolifo: deque = deque(maxlen=self._MAXUNDO)
-        # noinspection PyUnresolvedReferences
         self._radius: cython.int = self._DEFAULTRADIUS
-        # noinspection PyUnresolvedReferences
         self._brushtype: cython.int = self._BRUSHTYPECODE['solid']
-        # noinspection PyUnresolvedReferences
         self._morphradius: cython.int = self._DEFAULTMORPHRADIUS
-        # noinspection PyUnresolvedReferences
         self._thickness: cython.double = 0.0
-        self._struct = sitkBall
-        # noinspection PyUnresolvedReferences
+        self._struct: cython.int = sitkBall
         self._thresholdmin: cython.double = 0.0
-        # noinspection PyUnresolvedReferences
         self._thresholdmax: cython.double = 0.0
-        # noinspection PyUnresolvedReferences
         self._ccsigma: cython.double = 2.0
-        # noinspection PyUnresolvedReferences
         self._cciter: cython.int = 4
-        # noinspection PyUnresolvedReferences
         self._acradius: cython.double = 2.0
-        # noinspection PyUnresolvedReferences
         self._acrms: cython.double = 0.01
-        # noinspection PyUnresolvedReferences
         self._acsigma: cython.double = 1.0
-        # noinspection PyUnresolvedReferences
         self._accurv: cython.double = 1.0
-        # noinspection PyUnresolvedReferences
         self._acadvec: cython.double = 1.0
-        # noinspection PyUnresolvedReferences
         self._acpropag: cython.double = 1.0
-        # noinspection PyUnresolvedReferences
         self._aciter: cython.int = 1000
         self._acalgo: str = 'geodesic'
-        # noinspection PyUnresolvedReferences
         self._acfactor: cython.double = 2.0
         # < Revision 17/03/2026
         self._dtrmajorblob: bool = False
@@ -4170,7 +4196,9 @@ class SisypheROIDraw(object):
     _mask           numpy array
     _roi            SisypheROI
     _brush          numpy array, disk brush
+    _ibrush         numpy array, binary not of disk brush
     _vbrush         numpy array, ball brush
+    _ivbrush        numpy array, binary not of ball brush
     _undo           bool
     _undolifo       deque
     _redolifo       deque
@@ -4239,6 +4267,8 @@ class SisypheROIDraw(object):
 
     # Private methods
 
+    @cython.cfunc
+    @cython.returns(cython.void)
     def _calcMask(self) -> None:
         # img = self._volume.getNumpy()
         # self._mask = bitwise_and(img > self._thresholdmin,  img < self._thresholdmax).astype('uint8')
@@ -4247,6 +4277,8 @@ class SisypheROIDraw(object):
                             upperThreshold=float(self._thresholdmax))
         self._mask = sitkGetArrayFromImage(img)
 
+    @cython.cfunc
+    @cython.returns(cython.void)
     def _calcBrush(self) -> None:
         if self._radius > 1:
             # 2D brush
@@ -4256,28 +4288,58 @@ class SisypheROIDraw(object):
             self._brush = zeros(shape, dtype='uint8')
             rr, cc = disk((self._radius - 1, self._radius - 1), self._radius, shape=shape)
             self._brush[rr, cc] = 1
+            # < Revision 25/06/2026
+            self._ibrush = ones(shape, dtype='uint8')
+            self._ibrush[rr, cc] = 0
+            # Revision 25/06/2026 >
             # 3D brush
             self._vbrush = ellipsoid(self._radius, self._radius, self._radius, (1.0, 1.0, 1.0), False).astype('uint8')
             self._vbrush = self._vbrush[2:-2, 2:-2, 2:-2]
+            # < Revision 25/06/2026
+            self._ivbrush = invert(self._vbrush)
+            self._ivbrush = self._ivbrush[2:-2, 2:-2, 2:-2]
+            # Revision 25/06/2026 >
         else:
             self._brush = None
+            self._ibrush = None
             self._vbrush = None
+            self._ivbrush = None
 
     # Private methods to update and extract slices from volume
 
-    def _updateRoiFromSITKImage(self, img: sitkImage, replace: bool = True) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def _updateRoiFromSITKImage(self,
+                                img: sitkImage,
+                                replace: bool = True) -> None:
         npimg = sitkGetArrayViewFromImage(img)
         self._updateRoiFromNumpy(npimg, replace)
 
-    def _updateSliceFromSITKImage(self, img: sitkImage, sindex: int, dim: int, replace: bool = True) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def _updateSliceFromSITKImage(self,
+                                  img: sitkImage,
+                                  sindex: cython.int,
+                                  dim: cython.int,
+                                  replace: bool = True) -> None:
         npimg = sitkGetArrayViewFromImage(img)
         self._updateSliceFromNumpy(npimg, sindex, dim, replace)
 
-    def _updateRoiFromNumpy(self, img: ndarray, replace: bool = True) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def _updateRoiFromNumpy(self,
+                            img: ndarray,
+                            replace: bool = True) -> None:
         if not replace: img = self._roi.getNumpy() | img
         self._roi.getNumpy()[:] = img[:]
 
-    def _updateSliceFromNumpy(self, img: ndarray, sindex: int, dim: int, replace: bool = True):
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def _updateSliceFromNumpy(self,
+                              img: ndarray,
+                              sindex: cython.int,
+                              dim: cython.int,
+                              replace: bool = True) -> None:
         dz, dy, dx = self._roi.getNumpy().shape
         if dim == 0:
             if 0 <= sindex < dz:
@@ -4295,7 +4357,12 @@ class SisypheROIDraw(object):
                 self._roi.getNumpy()[:, :, sindex] = img[:]  # numpy z, y, x
             else: raise IndexError('slice index is out of range.')
 
-    def _extractSITKSlice(self, sindex: int, dim: int, roi: bool = True) -> sitkImage:
+    @cython.cfunc
+    @cython.returns(object)
+    def _extractSITKSlice(self,
+                          sindex: cython.int,
+                          dim: cython.int,
+                          roi: bool = True) -> sitkImage:
         dz, dy, dx = self._roi.getNumpy().shape
         if dim == 0:
             if 0 <= sindex < dz:
@@ -4315,6 +4382,8 @@ class SisypheROIDraw(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setVolume(self, volume: SisypheVolume) -> None:
         """
         Set the reference SisypheVolume image attribute to the current SisypheROIDraw instance. Same space as
@@ -4333,6 +4402,8 @@ class SisypheROIDraw(object):
                 if self._roi.getReferenceID() != self._volume.getID(): self._roi = None
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getVolume(self) -> SisypheVolume:
         """
         Get the reference SisypheVolume image attribute from the current SisypheROIDraw instance. Same space as
@@ -4346,6 +4417,8 @@ class SisypheROIDraw(object):
         """
         return self._volume
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasVolume(self) -> bool:
         """
         Check whether the reference SisypheVolume attribute of the current SisypheROIDraw instance is defined
@@ -4358,6 +4431,8 @@ class SisypheROIDraw(object):
         """
         return self._volume is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setROI(self, roi: SisypheROI) -> None:
         """
         Set the SisypheROI image attribute to the current SisypheROIDraw instance. This is the ROI image processed in
@@ -4369,7 +4444,7 @@ class SisypheROIDraw(object):
             roi to be processed
         """
         if isinstance(roi, SisypheROI):
-            if self.hasVolume:
+            if self.hasVolume():
                 if roi.getReferenceID() == self._volume.getID():
                     self._roi = roi
                     self._roi.setOrigin(self._volume.getOrigin())
@@ -4379,6 +4454,8 @@ class SisypheROIDraw(object):
             else: raise ValueError('SisypheVolume attribute is empty.')
         else: raise TypeError('parameter type {} is not SisypheROI.'.format(type(roi)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getROI(self) -> SisypheROI:
         """
         Get the SisypheROI image attribute from the current SisypheROIDraw instance. This is the ROI image processed in
@@ -4391,6 +4468,8 @@ class SisypheROIDraw(object):
         """
         return self._roi
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasROI(self) -> bool:
         """
         Check whether the SisypheROI attribute of the current SisypheROIDraw instance is defined (not None). This is
@@ -4403,6 +4482,8 @@ class SisypheROIDraw(object):
         """
         return self._roi is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def removeROI(self) -> None:
         """
         Remove the SisypheROI attribute to the current SisypheROIDraw instance.
@@ -4410,6 +4491,8 @@ class SisypheROIDraw(object):
         self._roi = None
         self.clearLIFO()
 
+    @cython.ccall
+    @cython.returns(str)
     def getBrushType(self) -> str:
         """
         Get the brush type, as str name, used to hand-draw in the SisypheROI image.
@@ -4428,6 +4511,8 @@ class SisypheROIDraw(object):
         """
         return self._BRUSHTYPENAME[self._brushtype]
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setBrushType(self, brushtype: int | str) -> None:
         """
         Set the brush type, as str name or int code, used to hand-draw in the SisypheROI image.
@@ -4447,9 +4532,14 @@ class SisypheROIDraw(object):
             if brushtype in self._BRUSHTYPECODE: self._brushtype = self._BRUSHTYPECODE[brushtype]
             else: self._brushtype = self._BRUSHTYPECODE['solid']
         elif isinstance(brushtype, int):
-            if 0 <= brushtype < 3: self._brushtype = brushtype
+            # < Revision 26/06/2026
+            # if 0 <= brushtype < 3: self._brushtype = brushtype
+            if 0 <= brushtype < 4: self._brushtype = brushtype
             else: self._brushtype = self._BRUSHTYPECODE['solid']
+            #  Revision 26/06/2026 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setBrushRadius(self, radius: int) -> None:
         """
         Set the radius (in voxels) of the brush used to hand-draw in the SisypheROI image.
@@ -4466,6 +4556,8 @@ class SisypheROIDraw(object):
             self._calcBrush()
         else: raise TypeError('parameter type {} is not int.'.format(type(radius)))
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getBrushRadius(self) -> int:
         """
         Get the radius (in voxels) of the brush used to hand-draw in the SisypheROI image.
@@ -4477,6 +4569,8 @@ class SisypheROIDraw(object):
         """
         return self._radius
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setStructElement(self, struct: str) -> None:
         """
         Set the structuring element shape, as str name, used in morphological methods (erosion, dilatation, opening,
@@ -4496,6 +4590,8 @@ class SisypheROIDraw(object):
             else: raise ValueError('parameter value {} is not valid.'.format(struct))
         else: raise TypeError('parameter type {} is not str.'.format(type(struct)))
 
+    @cython.ccall
+    @cython.returns(str)
     def getStructElement(self) -> str:
         """
         Get the structuring element shape, as str name, used in morphological methods (erosion, dilatation, opening,
@@ -4515,6 +4611,8 @@ class SisypheROIDraw(object):
     # add int parameter type
     # setMorphologyRadius(self, radius: float) -> None:
     # Revision 29/08/2025 >
+    @cython.ccall
+    @cython.returns(cython.void)
     def setMorphologyRadius(self, radius: int | float) -> None:
         """
         Set the radius (in voxels) of the structuring element used in morphological methods (erosion, dilatation,
@@ -4538,6 +4636,8 @@ class SisypheROIDraw(object):
     # replace return type, from float to int
     # def getMorphologyRadius(self) -> float:
     # Revision 29/08/2025 >
+    @cython.ccall
+    @cython.returns(cython.int)
     def getMorphologyRadius(self) -> int:
         """
         Get the radius (in voxels) of the structuring element used in morphological methods (erosion, dilatation,
@@ -4552,7 +4652,9 @@ class SisypheROIDraw(object):
 
     # < Revision 17/03/2026
     # add setDrawThresholdedRectangleMajorBlob method
-    def setDrawThresholdedRectangleMajorBlob(self, v: bool = True):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setDrawThresholdedRectangleMajorBlob(self, v: bool = True) -> None:
         """
         Set the flag attribute used by the drawThresholdedRectangle method to keep only the major blob in the threshold mask.
 
@@ -4565,6 +4667,8 @@ class SisypheROIDraw(object):
 
     # < Revision 17/03/2026
     # add getDrawThresholdedRectangleMajorBlob method
+    @cython.ccall
+    @cython.returns(cython.bint)
     def getDrawThresholdedRectangleMajorBlob(self) -> bool:
         """
         Get the flag attribute used by the drawThresholdedRectangle method to keep only the major blob in the threshold mask.
@@ -4578,7 +4682,9 @@ class SisypheROIDraw(object):
 
     # < Revision 17/03/2026
     # add setDrawThresholdedRectangleFillHoles method
-    def setDrawThresholdedRectangleFillHoles(self, v: bool = True):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setDrawThresholdedRectangleFillHoles(self, v: bool = True) -> None:
         """
         Set the flag attribute used by the drawThresholdedRectangle method to fill holes in the threshold mask.
 
@@ -4591,7 +4697,9 @@ class SisypheROIDraw(object):
 
     # < Revision 17/03/2026
     # add getDrawThresholdedRectangleFillHoles method
-    def getDrawThresholdedRectangleFillHoles(self, v: bool = True):
+    @cython.ccall
+    @cython.returns(cython.bint)
+    def getDrawThresholdedRectangleFillHoles(self) -> bool:
         """
         Get the flag attribute used by the drawThresholdedRectangle method to fill holes in the threshold mask.
 
@@ -4599,9 +4707,11 @@ class SisypheROIDraw(object):
         -------
         bool
         """
-        self._dtrfillholes = v
+        return self._dtrfillholes
     # Revision 17/03/2026 >
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getThickness(self) -> float:
         """
         Get the margin (in mm) used in euclidean expanding/shrinking methods (euclideanDilate,
@@ -4614,6 +4724,8 @@ class SisypheROIDraw(object):
         """
         return self._thickness
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setThickness(self, mm: float) -> None:
         """
         Set the margin (in mm) used in euclidean expanding/shrinking methods (euclideanDilate,
@@ -4629,6 +4741,8 @@ class SisypheROIDraw(object):
             else: raise ValueError('parameter value {} is out of range (0.0 to 50.0 mm).'.format(mm))
         else: raise TypeError('parameter type {} is not float.'.format(mm))
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getThresholdMin(self) -> float:
         """
         Get the minimum value threshold used in some methods.
@@ -4640,6 +4754,8 @@ class SisypheROIDraw(object):
         """
         return self._thresholdmin
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getThresholdMax(self) -> float:
         """
         Get the maximum value threshold used in some methods.
@@ -4651,6 +4767,8 @@ class SisypheROIDraw(object):
         """
         return self._thresholdmax
 
+    @cython.ccall
+    @cython.returns(tuple[float, float])
     def getThresholds(self) -> tuple[float, float]:
         """
         Get the minimum and maximum value thresholds used in some methods.
@@ -4662,6 +4780,8 @@ class SisypheROIDraw(object):
         """
         return self._thresholdmin, self._thresholdmax
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setThresholdMin(self, vmin: float) -> None:
         """
         Set the minimum value threshold used in some methods.
@@ -4678,6 +4798,8 @@ class SisypheROIDraw(object):
             self._calcMask()
         else: raise TypeError('parameter type {} is not int or float.'.format(type(vmin)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setThresholdMax(self, vmax: float) -> None:
         """
         Set the maximum value threshold used in some methods.
@@ -4694,6 +4816,8 @@ class SisypheROIDraw(object):
             self._calcMask()
         else: raise TypeError('parameter type {} is not int or float.'.format(type(vmax)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setThresholds(self, vmin: float, vmax: float) -> None:
         """
         Set the minimum and maximum value thresholds used in some methods.
@@ -4711,6 +4835,8 @@ class SisypheROIDraw(object):
             self._thresholdmax = vmax
             self._calcMask()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasThresholds(self) -> bool:
         """
         Check whether threshold attributes of the current SisypheROIDraw instance are defined.
@@ -4722,6 +4848,8 @@ class SisypheROIDraw(object):
         """
         return self._thresholdmax > 0
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFullRangeThreshold(self) -> None:
         """
         Set the minimum and maximum value thresholds to the minimum and maximum scalar values in the reference
@@ -4730,6 +4858,8 @@ class SisypheROIDraw(object):
         self._thresholdmin = self._volume.getDisplay().getRangeMin()
         self._thresholdmax = self._volume.getDisplay().getRangeMax()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setOtsuThreshold(self, background: bool = False) -> None:
         """
         Set minimum and maximum value thresholds using Otsu algorithm. These thresholds are used in some processing
@@ -4757,6 +4887,8 @@ class SisypheROIDraw(object):
             self._thresholdmin = otsu.GetThreshold()
             self._thresholdmax = self._volume.getDisplay().getRangeMax()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setHuangThreshold(self, background: bool = False) -> None:
         """
         Set minimum and maximum value thresholds using Huang algorithm. These thresholds are used in some processing
@@ -4784,6 +4916,8 @@ class SisypheROIDraw(object):
             self._thresholdmin = otsu.GetThreshold()
             self._thresholdmax = self._volume.getDisplay().getRangeMax()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setMeanThreshold(self, background: bool = False) -> None:
         """
         Set minimum and maximum value thresholds using Mean algorithm. These thresholds are used in some processing
@@ -4808,6 +4942,8 @@ class SisypheROIDraw(object):
             self._thresholdmax = self._volume.getDisplay().getRangeMax()
         self._calcMask()
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getConfidenceConnectedSigma(self) -> float:
         """
         Get the confidence connected sigma attribute of the current SisypheDraw instance.
@@ -4819,6 +4955,8 @@ class SisypheROIDraw(object):
         """
         return self._ccsigma
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getConfidenceConnectedIter(self) -> int:
         """
         Get the confidence connected number of iterations attribute of the current SisypheDraw instance.
@@ -4830,6 +4968,8 @@ class SisypheROIDraw(object):
         """
         return self._cciter
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getActiveContourSeedRadius(self) -> float:
         """
         Get the active contour seed radius attribute of the current SisypheDraw instance. This attribute is useb by the
@@ -4843,6 +4983,8 @@ class SisypheROIDraw(object):
         """
         return self._acradius
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getActiveContourCurvatureWeight(self) -> float:
         """
         Get the active contour curvature weight attribute of the current SisypheDraw instance. This attribute is useb
@@ -4861,6 +5003,8 @@ class SisypheROIDraw(object):
         """
         return self._accurv
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getActiveContourAdvectionWeight(self) -> float:
         """
         Get the active contour advection weight attribute of the current SisypheDraw instance. This attribute is useb
@@ -4877,6 +5021,8 @@ class SisypheROIDraw(object):
         """
         return self._acadvec
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getActiveContourPropagationWeight(self) -> float:
         """
         Get the active contour propagation weight attribute of the current SisypheDraw instance. This attribute is useb
@@ -4893,6 +5039,8 @@ class SisypheROIDraw(object):
         """
         return self._acpropag
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getActiveContourNumberOfIterations(self) -> int:
         """
         Get the active contour number of iterations attribute of the current SisypheDraw instance. This attribute is
@@ -4906,6 +5054,8 @@ class SisypheROIDraw(object):
         """
         return self._aciter
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getActiveContourConvergence(self) -> float:
         """
         Get the active contour convergence attribute of the current SisypheDraw instance. This attribute is useb by the
@@ -4923,6 +5073,8 @@ class SisypheROIDraw(object):
         """
         return self._acrms
 
+    @cython.ccall
+    @cython.returns(str)
     def getActiveContourAlgorithm(self) -> str:
         """
         Get the active contour algorithm attribute of the current SisypheDraw instance. This attribute is useb by the
@@ -4936,6 +5088,8 @@ class SisypheROIDraw(object):
         """
         return self._acalgo
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getActiveContourSigma(self) -> float:
         """
         Get the active contour sigma attribute of the current SisypheDraw instance. This attribute is useb by the
@@ -4954,6 +5108,8 @@ class SisypheROIDraw(object):
         """
         return self._acsigma
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getActiveContourFactor(self) -> float:
         """
         Get the active contour factorfactor attribute of the current SisypheDraw instance. This attribute is useb by the
@@ -4971,6 +5127,8 @@ class SisypheROIDraw(object):
         """
         return self._acfactor
 
+    @cython.ccall
+    @cython.returns(tuple[float, float])
     def getActiveContourThresholds(self) -> tuple[float, float] | None:
         """
         Get the active contour curvature weight attribute of the current SisypheDraw instance. These attributes are
@@ -4986,6 +5144,8 @@ class SisypheROIDraw(object):
         """
         return self._acthresholds
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setConfidenceConnectedSigma(self, sigma: float = 2.0) -> None:
         """
         Set the confidence connected sigma attribute of the current SisypheDraw instance.
@@ -4997,6 +5157,8 @@ class SisypheROIDraw(object):
         """
         self._ccsigma = sigma
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setConfidenceConnectedIter(self, iters: int = 4) -> None:
         """
         Set the confidence connected number of iterations attribute of the current SisypheDraw instance.
@@ -5008,6 +5170,8 @@ class SisypheROIDraw(object):
         """
         self._cciter = iters
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourSeedRadius(self, radius: float = 2.0) -> None:
         """
         Set the active contour seed radius attribute of the current SisypheDraw instance. This attribute is used by the
@@ -5021,6 +5185,8 @@ class SisypheROIDraw(object):
         """
         self._acradius = radius
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourCurvatureWeight(self, weight: float = 1.0) -> None:
         """
         Set the active contour curvature weight attribute of the current SisypheDraw instance. This attribute is used
@@ -5039,6 +5205,8 @@ class SisypheROIDraw(object):
         """
         self._accurv = weight
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourAdvectionWeight(self, weight: float = 1.0) -> None:
         """
         Set the active contour advection weight attribute of the current SisypheDraw instance. This attribute is used
@@ -5055,6 +5223,8 @@ class SisypheROIDraw(object):
         """
         self._acadvec = weight
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourPropagationWeight(self, weight: float = 1.0) -> None:
         """
         Set the active contour propagation weight attribute of the current SisypheDraw instance. This attribute is used
@@ -5071,6 +5241,8 @@ class SisypheROIDraw(object):
         """
         self._acpropag = weight
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourNumberOfIterations(self, niter: int = 1000) -> None:
         """
         Set the active contour number of iterations attribute of the current SisypheDraw instance. This attribute is
@@ -5084,6 +5256,8 @@ class SisypheROIDraw(object):
         """
         self._aciter = niter
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourConvergence(self, rms: float = 0.01) -> None:
         """
         Set the active contour convergence attribute of the current SisypheDraw instance. This attribute is used by the
@@ -5101,6 +5275,8 @@ class SisypheROIDraw(object):
         """
         self._acrms = rms
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourAlgorithm(self, algo: str = 'geodesic') -> None:
         """
         Set the active contour algorithm attribute of the current SisypheDraw instance. This attribute is used by the
@@ -5115,6 +5291,8 @@ class SisypheROIDraw(object):
         if algo in ('geodesic', 'shape', 'threshold'): self._acalgo = algo
         else: raise ValueError('{} invalid algorithm.'.format(algo))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourSigma(self, sigma: float = 1.0) -> None:
         """
         Set the active contour sigma attribute of the current SisypheDraw instance. This attribute is used by the
@@ -5133,6 +5311,8 @@ class SisypheROIDraw(object):
         """
         self._acsigma =  sigma
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourFactor(self, factor: float = 2.0) -> None:
         """
         Set the active contour factor attribute of the current SisypheDraw instance. This attribute is used by the
@@ -5150,6 +5330,8 @@ class SisypheROIDraw(object):
         """
         self._acfactor =  factor
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setActiveContourThresholds(self, thresholds: tuple[float, float] | None) -> None:
         """
         Set the active contour threshold attributes of the current SisypheDraw instance. This attribute is used by the
@@ -5165,17 +5347,23 @@ class SisypheROIDraw(object):
         """
         self._acthresholds = thresholds
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearClipboard(self) -> None:
         """
         Clear the clipboard attribute of the current SisypheROIDraw instance. The clipboard attribute is used as
         temporary buffer by copy/cut/paste methods.
         """
         if self._clipboard is not None:
-            del self._clipboard
+            # < Revision 25/06/2026
+            # del self._clipboard
+            # Revision 25/06/2026 >
             self._clipboard = None
 
     # Undo/redo
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUndoOn(self) -> None:
         """
         Enable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
@@ -5183,6 +5371,8 @@ class SisypheROIDraw(object):
         """
         self.setUndo(True)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUndoOff(self) -> None:
         """
         Disable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a LIFO
@@ -5190,6 +5380,8 @@ class SisypheROIDraw(object):
         """
         self.setUndo(False)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUndo(self, v: bool) -> None:
         """
         Enable/disable undo/redo abilities of the current SisypheROIDraw instance. All ROI processing is stored in a
@@ -5205,6 +5397,8 @@ class SisypheROIDraw(object):
             self.clearLIFO()
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def getUndo(self) -> bool:
         """
         Check whether undo/redo abilities of the current SisypheROIDraw instance are enabled. All ROI processing is
@@ -5217,7 +5411,11 @@ class SisypheROIDraw(object):
         """
         return self._undo
 
-    def appendZSliceToLIFO(self, i: int, pile: int = _UNDO) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def appendZSliceToLIFO(self,
+                           i: cython.int,
+                           pile: cython.int = _UNDO) -> None:
         """
         Add an axial slice of the SisypheROI attribute in the LIFO undo/redo stack. This method is called by 2D
         processing methods if undo/redo abilities are enabled.
@@ -5235,7 +5433,11 @@ class SisypheROIDraw(object):
             else: self._redolifo.append((self._DSZ, i, buff))
         else: raise IndexError('parameter index {} is out of range.'.format(i))
 
-    def appendYSliceToLIFO(self, i: int, pile: int = _UNDO) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def appendYSliceToLIFO(self,
+                           i: cython.int,
+                           pile: cython.int = _UNDO) -> None:
         """
         Add a coronal slice of the SisypheROI attribute in the LIFO undo/redo stack. This method is called by 2D
         processing methods if undo/redo abilities are enabled.
@@ -5253,7 +5455,11 @@ class SisypheROIDraw(object):
             else: self._redolifo.append((self._DSY, i, buff))
         else: raise IndexError('parameter index {} is out of range.'.format(i))
 
-    def appendXSliceToLIFO(self, i: int, pile: int = _UNDO) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def appendXSliceToLIFO(self,
+                           i: cython.int,
+                           pile: cython.int = _UNDO) -> None:
         """
         Add a sagittal slice of the SisypheROI attribute in the LIFO undo/redo stack. This method is called by 2D
         processing methods if undo/redo abilities are enabled.
@@ -5271,7 +5477,12 @@ class SisypheROIDraw(object):
             else: self._redolifo.append((self._DSY, i, buff))
         else: raise IndexError('parameter index {} is out of range.'.format(i))
 
-    def appendSliceToLIFO(self, i: int, dim: int, pile: int = _UNDO) -> None:
+    @cython.ccall
+    @cython.returns(cython.void)
+    def appendSliceToLIFO(self,
+                          i: cython.int,
+                          dim: cython.int,
+                          pile: cython.int = _UNDO) -> None:
         """
         Add a slice of the SisypheROI attribute in the LIFO undo/redo stack. This method is called by 2D processing
         methods if undo/redo abilities are enabled.
@@ -5290,7 +5501,9 @@ class SisypheROIDraw(object):
             elif dim == 1: self.appendYSliceToLIFO(i, pile)
             else: self.appendXSliceToLIFO(i, pile)
 
-    def appendVolumeToLIFO(self, pile: int = _UNDO) -> None:
+    @cython.ccall
+    @cython.returns(cython.void)
+    def appendVolumeToLIFO(self, pile: cython.int = _UNDO) -> None:
         """
         Add the whole volume of the SisypheROI attribute in the LIFO undo/redo stack. This method is called by 3D
         processing methods if undo/redo abilities are enabled.
@@ -5305,6 +5518,8 @@ class SisypheROIDraw(object):
             if pile == self._UNDO: self._undolifo.append((self._DV, None, buff))
             else: self._redolifo.append((self._DV, None, buff))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def popUndoLIFO(self) -> None:
         """
         Copy the last element (slice or whole ROI) of the LIFO undo stack to the SisypheROI attribute. Undo the last
@@ -5331,6 +5546,8 @@ class SisypheROIDraw(object):
                 buff = item[2].toarray().reshape(sz, sy)
                 self._roi.getNumpy()[:, :, item[1]] = buff
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def popRedoLIFO(self) -> None:
         """
         Copy the last element (slice or whole ROI) of the LIFO redo stack to the SisypheROI attribute. Redo the last
@@ -5359,6 +5576,8 @@ class SisypheROIDraw(object):
                 self._roi.getNumpy()[:, :, item[1]] = buff
                 # Revision 15/06/2026 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearLIFO(self) -> None:
         """
         Clear the LIFO undo/redo stacks.
@@ -5369,7 +5588,13 @@ class SisypheROIDraw(object):
 
     # Brush
 
-    def brush(self, x: int, y: int, z: int, dim: int) -> None:
+    @cython.ccall
+    @cython.returns(cython.void)
+    def brush(self,
+              x: cython.int,
+              y: cython.int,
+              z: cython.int,
+              dim: cython.int) -> None:
         """
         Draw a brush-shape at the x, y, z coordinates of the SisypheROI image attribute. Brush-shape is defined with
         setBrushType() method, and size with setBrushRadius() method.
@@ -5394,7 +5619,13 @@ class SisypheROIDraw(object):
             elif self._brushtype == self._BRUSHTYPECODE['solid3']: self.solid3DBrush(x, y, z)
             else: self.threshold3DBrush(x, y, z)
 
-    def erase(self, x: int, y: int, z: int, dim: int) -> None:
+    @cython.ccall
+    @cython.returns(cython.void)
+    def erase(self,
+              x: cython.int,
+              y: cython.int,
+              z: cython.int,
+              dim: cython.int) -> None:
         """
         Erase a brush-shape at the x, y, z coordinates of the SisypheROI image attribute. Brush-shape is defined with
         setBrushType() method, and size with setBrushRadius() method.
@@ -5417,7 +5648,14 @@ class SisypheROIDraw(object):
             if self._brushtype < self._BRUSHTYPECODE['solid3']: self.solidBrush(x, y, z, 0, dim)
             else: self.solid3DBrush(x, y, z, 0)
 
-    def solidBrush(self, x: int, y: int, z: int, c: int, dim: int) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def solidBrush(self,
+                   x: cython.int,
+                   y: cython.int,
+                   z: cython.int,
+                   c: cython.int,
+                   dim: cython.int) -> None:
         """
         Draw a disk at the x, y, z coordinates of the SisypheROI image attribute. Disk radius is defined with
         setBrushRadius() method.
@@ -5444,87 +5682,99 @@ class SisypheROIDraw(object):
             xmax, ymax, zmax = self._roi.getSize()
             if dim == 0:
                 if 0 <= x < xmax and 0 <= y < ymax:
-                    # noinspection PyUnresolvedReferences
                     idx1: cython.int = self._radius - 1 - x
-                    # noinspection PyUnresolvedReferences
                     idy1: cython.int = self._radius - 1 - y
-                    # noinspection PyUnresolvedReferences
                     idx2: cython.int = xmax - x - self._radius
-                    # noinspection PyUnresolvedReferences
                     idy2: cython.int = ymax - y - self._radius
                     if idx1 < 0: x, idx1 = -idx1, 0
                     else: x = 0
                     if idy1 < 0: y, idy1 = -idy1, 0
                     else: y = 0
-                    # noinspection PyUnresolvedReferences
                     m: cython.int = 2 * self._radius - 1
                     if idx2 > -1: idx2 = m
                     if idy2 > -1: idy2 = m
-                    brush = self._brush[idy1:idy2, idx1:idx2]
+                    # < Revision 25/06/2026
+                    if c ==1: brush = self._brush[idy1:idy2, idx1:idx2]
+                    else: brush = self._ibrush[idy1:idy2, idx1:idx2]
+                    # Revision 25/06/2026 >
                     dy, dx = brush.shape
-                    # noinspection PyUnresolvedReferences
                     x2: cython.int = x + dx
-                    # noinspection PyUnresolvedReferences
                     y2: cython.int = y + dy
-                    back = self._roi.getNumpy()[z, y:y2, x:x2]
-                    if c == 1: self._roi.getNumpy()[z, y:y2, x:x2] = bitwise_or(back, brush)
-                    else: self._roi.getNumpy()[z, y:y2, x:x2] = bitwise_and(back, invert(brush))
+                    # < Revision 25/06/2026
+                    # back = self._roi.getNumpy()[z, y:y2, x:x2]
+                    # if c == 1: self._roi.getNumpy()[z, y:y2, x:x2] = bitwise_or(back, brush)
+                    # else: self._roi.getNumpy()[z, y:y2, x:x2] = bitwise_and(back, invert(brush))
+                    roi = self._roi.getNumpy()
+                    back = roi[z, y:y2, x:x2]
+                    if c == 1: bitwise_or(back, brush, out=roi[z, y:y2, x:x2])
+                    else: bitwise_and(back, brush, out=roi[z, y:y2, x:x2])
+                    # Revision 25/06/2026 >
             elif dim == 1:
                 if 0 <= x < xmax and 0 <= z < zmax:
-                    # noinspection PyUnresolvedReferences
                     idx1: cython.int = self._radius - 1 - x
-                    # noinspection PyUnresolvedReferences
                     idz1: cython.int = self._radius - 1 - z
-                    # noinspection PyUnresolvedReferences
                     idx2: cython.int = xmax - x - self._radius
-                    # noinspection PyUnresolvedReferences
                     idz2: cython.int = zmax - z - self._radius
                     if idx1 < 0: x, idx1 = -idx1, 0
                     else: x = 0
                     if idz1 < 0: z, idz1 = -idz1, 0
                     else: z = 0
-                    # noinspection PyUnresolvedReferences
                     m: cython.int = 2 * self._radius - 1
                     if idx2 > -1: idx2 = m
                     if idz2 > -1: idz2 = m
-                    brush = self._brush[idz1:idz2, idx1:idx2]
+                    # < Revision 25/06/2026
+                    if c==1: brush = self._brush[idz1:idz2, idx1:idx2]
+                    else: brush = self._ibrush[idz1:idz2, idx1:idx2]
+                    # Revision 25/06/2026 >
                     dz, dx = brush.shape
-                    # noinspection PyUnresolvedReferences
                     x2: cython.int = x + dx
-                    # noinspection PyUnresolvedReferences
                     z2: cython.int = z + dz
-                    back = self._roi.getNumpy()[z:z2, y, x:x2]
-                    if c == 1: self._roi.getNumpy()[z:z2, y, x:x2] = bitwise_or(back, brush)
-                    else: self._roi.getNumpy()[z:z2, y, x:x2] = bitwise_and(back, invert(brush))
+                    # < Revision 25/06/2026
+                    # back = self._roi.getNumpy()[z:z2, y, x:x2]
+                    # if c == 1: self._roi.getNumpy()[z:z2, y, x:x2] = bitwise_or(back, brush)
+                    # else: self._roi.getNumpy()[z:z2, y, x:x2] = bitwise_and(back, invert(brush))
+                    roi = self._roi.getNumpy()
+                    back = roi[z:z2, y, x:x2]
+                    if c == 1: bitwise_or(back, brush, out=roi[z:z2, y, x:x2])
+                    else: bitwise_and(back, brush, out=roi[z:z2, y, x:x2])
+                    # Revision 25/06/2026 >
             else:
                 if 0 <= y < ymax and 0 <= z < zmax:
-                    # noinspection PyUnresolvedReferences
                     idy1: cython.int = self._radius - 1 - y
-                    # noinspection PyUnresolvedReferences
                     idz1: cython.int = self._radius - 1 - z
-                    # noinspection PyUnresolvedReferences
                     idy2: cython.int = ymax - y - self._radius
-                    # noinspection PyUnresolvedReferences
                     idz2: cython.int = zmax - z - self._radius
                     if idy1 < 0: y, idy1 = -idy1, 0
                     else: y = 0
                     if idz1 < 0: z, idz1 = -idz1, 0
                     else: z = 0
-                    # noinspection PyUnresolvedReferences
                     m: cython.int = 2 * self._radius - 1
                     if idy2 > -1: idy2 = m
                     if idz2 > -1: idz2 = m
-                    brush = self._brush[idz1:idz2, idy1:idy2]
+                    # < Revision 25/06/2026
+                    if c==1: brush = self._brush[idz1:idz2, idy1:idy2]
+                    else: brush = self._ibrush[idz1:idz2, idy1:idy2]
+                    # Revision 25/06/2026 >
                     dz, dy = brush.shape
-                    # noinspection PyUnresolvedReferences
                     y2: cython.int = y + dy
-                    # noinspection PyUnresolvedReferences
                     z2: cython.int = z + dz
-                    back = self._roi.getNumpy()[z:z2, y:y2, x]
-                    if c == 1: self._roi.getNumpy()[z:z2, y:y2, x] = bitwise_or(back, brush)
-                    else: self._roi.getNumpy()[z:z2, y:y2, x] = bitwise_and(back, invert(brush))
+                    # < Revision 25/06/2026
+                    # back = self._roi.getNumpy()[z:z2, y:y2, x]
+                    # if c == 1: self._roi.getNumpy()[z:z2, y:y2, x] = bitwise_or(back, brush)
+                    # else: self._roi.getNumpy()[z:z2, y:y2, x] = bitwise_and(back, invert(brush))
+                    roi = self._roi.getNumpy()
+                    back = roi[z:z2, y:y2, x]
+                    if c == 1: bitwise_or(back, brush, out=roi[z:z2, y:y2, x])
+                    else: bitwise_and(back, brush, out=roi[z:z2, y:y2, x])
+                    # Revision 25/06/2026 >
 
-    def thresholdBrush(self, x: int, y: int, z: int, dim: int) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def thresholdBrush(self,
+                       x: cython.int,
+                       y: cython.int,
+                       z: cython.int,
+                       dim: cython.int) -> None:
         """
         Draw a disk at the x, y, z coordinates of the SisypheROI image attribute. In this thresholded version, only
         voxels with scalar values above a threshold in the SisypheVolume reference are added. Disk radius is defined
@@ -5552,88 +5802,88 @@ class SisypheROIDraw(object):
             else:
                 xmax, ymax, zmax = self._roi.getSize()
                 if dim == 0:
-                    # noinspection PyUnresolvedReferences
                     idx1: cython.int = self._radius - 1 - x
-                    # noinspection PyUnresolvedReferences
                     idy1: cython.int = self._radius - 1 - y
-                    # noinspection PyUnresolvedReferences
                     idx2: cython.int = xmax - x - self._radius
-                    # noinspection PyUnresolvedReferences
                     idy2: cython.int = ymax - y - self._radius
                     if idx1 < 0: x, idx1 = -idx1, 0
                     else: x = 0
                     if idy1 < 0: y, idy1 = -idy1, 0
                     else: y = 0
-                    # noinspection PyUnresolvedReferences
                     m: cython.int = 2 * self._radius - 1
                     if idx2 > -1: idx2 = m
                     if idy2 > -1: idy2 = m
                     brush = self._brush[idy1:idy2, idx1:idx2]
                     dy, dx = brush.shape
-                    # noinspection PyUnresolvedReferences
                     x2: cython.int = x + dx
-                    # noinspection PyUnresolvedReferences
                     y2: cython.int = y + dy
                     if self._mask is not None:
                         brush = bitwise_and(self._mask[z, y:y2, x:x2], brush)
-                    back = self._roi.getNumpy()[z, y:y2, x:x2]
-                    self._roi.getNumpy()[z, y:y2, x:x2] = bitwise_or(back, brush)
+                    # < Revision 25/06/2026
+                    # back = self._roi.getNumpy[z, y:y2, x:x2]
+                    # self._roi.getNumpy()[z, y:y2, x:x2] = bitwise_or(back, brush)
+                    roi = self._roi.getNumpy()
+                    back = roi[z, y:y2, x:x2]
+                    bitwise_or(back, brush, out=roi[z, y:y2, x:x2])
+                    # Revision 25/06/2026 >
                 elif dim == 1:
-                    # noinspection PyUnresolvedReferences
                     idx1: cython.int = self._radius - 1 - x
-                    # noinspection PyUnresolvedReferences
                     idz1: cython.int = self._radius - 1 - z
-                    # noinspection PyUnresolvedReferences
                     idx2: cython.int = xmax - x - self._radius
-                    # noinspection PyUnresolvedReferences
                     idz2: cython.int = zmax - z - self._radius
                     if idx1 < 0: x, idx1 = -idx1, 0
                     else: x = 0
                     if idz1 < 0: z, idz1 = -idz1, 0
                     else: z = 0
-                    # noinspection PyUnresolvedReferences
                     m: cython.int = 2 * self._radius - 1
                     if idx2 > -1: idx2 = m
                     if idz2 > -1: idz2 = m
                     brush = self._brush[idz1:idz2, idx1:idx2]
                     dz, dx = brush.shape
-                    # noinspection PyUnresolvedReferences
                     x2: cython.int = x + dx
-                    # noinspection PyUnresolvedReferences
                     z2: cython.int = z + dz
                     if self._mask is not None:
                         brush = bitwise_and(self._mask[z:z2, y, x:x2], brush)
-                    back = self._roi.getNumpy()[z:z2, y, x:x2]
-                    self._roi.getNumpy()[z:z2, y, x:x2] = bitwise_or(back, brush)
+                    # < Revision 25/06/2026
+                    # back = self._roi.getNumpy()[z:z2, y, x:x2]
+                    # self._roi.getNumpy()[z:z2, y, x:x2] = bitwise_or(back, brush)
+                    roi = self._roi.getNumpy()
+                    back = roi[z:z2, y, x:x2]
+                    bitwise_or(back, brush, out=roi[z:z2, y, x:x2])
+                    # Revision 25/06/2026 >
                 else:
-                    # noinspection PyUnresolvedReferences
                     idy1: cython.int = self._radius - 1 - y
-                    # noinspection PyUnresolvedReferences
                     idz1: cython.int = self._radius - 1 - z
-                    # noinspection PyUnresolvedReferences
                     idy2: cython.int = ymax - y - self._radius
-                    # noinspection PyUnresolvedReferences
                     idz2: cython.int = zmax - z - self._radius
                     if idy1 < 0: y, idy1 = -idy1, 0
                     else: y = 0
                     if idz1 < 0: z, idz1 = -idz1, 0
                     else: z = 0
-                    # noinspection PyUnresolvedReferences
                     m: cython.int = 2 * self._radius - 1
                     if idy2 > -1: idy2 = m
                     if idz2 > -1: idz2 = m
                     brush = self._brush[idz1:idz2, idy1:idy2]
                     dz, dy = brush.shape
-                    # noinspection PyUnresolvedReferences
                     y2: cython.int = y + dy
-                    # noinspection PyUnresolvedReferences
                     z2: cython.int = z + dz
                     if self._mask is not None:
                         brush = bitwise_and(self._mask[z:z2, y:y2, x], brush)
-                    back = self._roi.getNumpy()[z:z2, y:y2, x]
-                    self._roi.getNumpy()[z:z2, y:y2, x] = bitwise_or(back, brush)
+                    # < Revision 25/06/2026
+                    # back = self._roi.getNumpy()[z:z2, y:y2, x]
+                    # self._roi.getNumpy()[z:z2, y:y2, x] = bitwise_or(back, brush)
+                    roi = self._roi.getNumpy()
+                    back = roi[z:z2, y:y2, x]
+                    bitwise_or(back, brush, out=roi[z:z2, y:y2, x])
+                    # Revision 25/06/2026 >
 
-    def solid3DBrush(self, x: int, y: int, z: int, c: int = 1) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def solid3DBrush(self,
+                     x: cython.int,
+                     y: cython.int,
+                     z: cython.int,
+                     c: cython.int = 1) -> None:
         """
         Draw a sphere at the x, y, z coordinates of the SisypheROI image attribute. Disk radius is defined with
         setBrushRadius() method.
@@ -5654,17 +5904,11 @@ class SisypheROIDraw(object):
         else:
             xmax, ymax, zmax = self._roi.getSize()
             if 0 <= x < xmax and 0 <= y < ymax and 0 <= z < zmax:
-                # noinspection PyUnresolvedReferences
                 idx1: cython.int = self._radius - 1 - x
-                # noinspection PyUnresolvedReferences
                 idy1: cython.int = self._radius - 1 - y
-                # noinspection PyUnresolvedReferences
                 idz1: cython.int = self._radius - 1 - z
-                # noinspection PyUnresolvedReferences
                 idx2: cython.int = xmax - x - self._radius
-                # noinspection PyUnresolvedReferences
                 idy2: cython.int = ymax - y - self._radius
-                # noinspection PyUnresolvedReferences
                 idz2: cython.int = zmax - z - self._radius
                 if idx1 < 0: x, idx1 = -idx1, 0
                 else: x = 0
@@ -5672,24 +5916,35 @@ class SisypheROIDraw(object):
                 else: y = 0
                 if idz1 < 0: z, idz1 = -idz1, 0
                 else: z = 0
-                # noinspection PyUnresolvedReferences
                 m: cython.int = 2 * self._radius - 1
                 if idx2 > -1: idx2 = m
                 if idy2 > -1: idy2 = m
                 if idz2 > -1: idz2 = m
-                brush = self._vbrush[idz1:idz2, idy1:idy2, idx1:idx2]
+                # < Revision 25/06/2026
+                # brush = self._vbrush[idz1:idz2, idy1:idy2, idx1:idx2]
+                if c == 1: brush = self._vbrush[idz1:idz2, idy1:idy2, idx1:idx2]
+                else: brush = self._ivbrush[idz1:idz2, idy1:idy2, idx1:idx2]
+                # Revision 25/06/2026 >
                 dz, dy, dx = brush.shape
-                # noinspection PyUnresolvedReferences
                 x2: cython.int = x + dx
-                # noinspection PyUnresolvedReferences
                 y2: cython.int = y + dy
-                # noinspection PyUnresolvedReferences
                 z2: cython.int = z + dz
-                back = self._roi.getNumpy()[z:z2, y:y2, x:x2]
-                if c == 1: self._roi.getNumpy()[z:z2, y:y2, x:x2] = bitwise_or(back, brush)
-                else: self._roi.getNumpy()[z:z2, y:y2, x:x2] = bitwise_and(back, invert(brush))
+                # < Revision 25/06/2026
+                # back = self._roi.getNumpy()[z:z2, y:y2, x:x2]
+                # if c == 1: self._roi.getNumpy()[z:z2, y:y2, x:x2] = bitwise_or(back, brush)
+                # else: self._roi.getNumpy()[z:z2, y:y2, x:x2] = bitwise_and(back, invert(brush))
+                roi = self._roi.getNumpy()
+                back = roi[z:z2, y:y2, x:x2]
+                if c == 1: bitwise_or(back, brush, out=roi[z:z2, y:y2, x:x2])
+                else: bitwise_and(back, brush, out=roi[z:z2, y:y2, x:x2])
+                # Revision 25/06/2026 >
 
-    def threshold3DBrush(self, x: int, y: int, z: int) -> None:
+    @cython.cfunc
+    @cython.returns(cython.void)
+    def threshold3DBrush(self,
+                         x: cython.int,
+                         y: cython.int,
+                         z: cython.int) -> None:
         """
         Draw a sphere at the x, y, z coordinates of the SisypheROI image attribute. In this thresholded version, only
         voxels with scalar values above a threshold in the SisypheVolume reference are added. Disk radius is defined
@@ -5712,17 +5967,11 @@ class SisypheROIDraw(object):
             else:
                 xmax, ymax, zmax = self._roi.getSize()
                 if 0 <= x < xmax and 0 <= y < ymax and 0 <= z < zmax:
-                    # noinspection PyUnresolvedReferences
                     idx1: cython.int = self._radius - 1 - x
-                    # noinspection PyUnresolvedReferences
                     idy1: cython.int = self._radius - 1 - y
-                    # noinspection PyUnresolvedReferences
                     idz1: cython.int = self._radius - 1 - z
-                    # noinspection PyUnresolvedReferences
                     idx2: cython.int = xmax - x - self._radius
-                    # noinspection PyUnresolvedReferences
                     idy2: cython.int = ymax - y - self._radius
-                    # noinspection PyUnresolvedReferences
                     idz2: cython.int = zmax - z - self._radius
                     if idx1 < 0: x, idx1 = -idx1, 0
                     else: x = 0
@@ -5730,26 +5979,29 @@ class SisypheROIDraw(object):
                     else: y = 0
                     if idz1 < 0: z, idz1 = -idz1, 0
                     else: z = 0
-                    # noinspection PyUnresolvedReferences
                     m: cython.int = 2 * self._radius - 1
                     if idx2 > -1: idx2 = m
                     if idy2 > -1: idy2 = m
                     if idz2 > -1: idz2 = m
                     brush = self._vbrush[idz1:idz2, idy1:idy2, idx1:idx2]
                     dz, dy, dx = brush.shape
-                    # noinspection PyUnresolvedReferences
                     x2: cython.int = x + dx
-                    # noinspection PyUnresolvedReferences
                     y2: cython.int = y + dy
-                    # noinspection PyUnresolvedReferences
                     z2: cython.int = z + dz
                     if self._mask is not None:
                         brush = bitwise_and(self._mask[z:z2, y:y2, x:x2], brush)
-                    back = self._roi.getNumpy()[z:z2, y:y2, x:x2]
-                    self._roi.getNumpy()[z:z2, y:y2, x:x2] = bitwise_or(back, brush)
+                    # < Revision 25/06/2026
+                    # back = self._roi.getNumpy()[z:z2, y:y2, x:x2]
+                    # self._roi.getNumpy()[z:z2, y:y2, x:x2] = bitwise_or(back, brush)
+                    roi = self._roi.getNumpy()
+                    back = roi[z:z2, y:y2, x:x2]
+                    bitwise_or(back, brush, roi[z:z2, y:y2, x:x2])
+                    # Revision 25/06/2026 >
 
     # Slice processing
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def flipSlice(self, sindex: int, dim: int, flipx: bool, flipy: bool) -> None:
         """
         Flip axes of a SisypheROI attribute slice.
@@ -5774,6 +6026,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def shiftSlice(self, sindex: int, dim: int, movex: int, movey: int) -> None:
         """
         Image shift of a SisypheROI attribute slice.
@@ -5798,6 +6052,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copySlice(self, sindex: int, dim: int) -> None:
         """
         Copy a slice of the SisypheROI attribute to the clipboard.
@@ -5814,6 +6070,8 @@ class SisypheROIDraw(object):
         """
         self._clipboard = self._extractSITKSlice(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def cutSlice(self, sindex: int, dim: int) -> None:
         """
         Cut a slice of the SisypheROI attribute to the clipboard.
@@ -5832,6 +6090,8 @@ class SisypheROIDraw(object):
         self.clearSlice(sindex, dim)
         if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def pasteSlice(self, sindex: int, dim: int) -> None:
         """
         Paste a slice to the SisypheROI attribute from the clipboard.
@@ -5850,6 +6110,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(self._clipboard, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoSliceDilate(self,
                           sindex: int,
                           dim: int,
@@ -5886,6 +6148,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoSliceErode(self,
                          sindex: int,
                          dim: int,
@@ -5922,6 +6186,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoSliceOpening(self,
                            sindex: int,
                            dim: int,
@@ -5958,6 +6224,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoSliceClosing(self,
                            sindex: int,
                            dim: int,
@@ -5994,6 +6262,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoSliceBlobDilate(self,
                               sindex: int,
                               dim: int,
@@ -6046,6 +6316,8 @@ class SisypheROIDraw(object):
                     self._updateSliceFromSITKImage(img, sindex, dim)
                     if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoSliceBlobErode(self,
                              sindex: int,
                              dim: int,
@@ -6098,6 +6370,8 @@ class SisypheROIDraw(object):
                     self._updateSliceFromSITKImage(img, sindex, dim)
                     if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoSliceBlobOpening(self,
                                sindex: int,
                                dim: int,
@@ -6150,6 +6424,8 @@ class SisypheROIDraw(object):
                     self._updateSliceFromSITKImage(img, sindex, dim)
                     if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoSliceBlobClosing(self,
                                sindex: int,
                                dim: int,
@@ -6202,6 +6478,8 @@ class SisypheROIDraw(object):
                     self._updateSliceFromSITKImage(img, sindex, dim)
                     if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def fillHolesSlice(self, sindex: int, dim: int, undo: bool | None = None):
         """
         Fill holes in a SisypheROI attribute slice.
@@ -6226,6 +6504,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def fillHolesAllSlices(self, dim: int) -> None:
         """
         Fill holes of the SisypheROI attribute. This method executes iteratively in 2D on all slices of the SisypheROI
@@ -6250,6 +6530,8 @@ class SisypheROIDraw(object):
                 self.fillHolesSlice(i, dim, False)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def seedFillSlice(self, sindex: int, dim: int, x: int, y: int, z: int) -> None:
         """
         Fill background voxels (i.e. 0 value) from a seed voxel in a SisypheROI attribute slice. Filling algorithm
@@ -6290,6 +6572,8 @@ class SisypheROIDraw(object):
                 self._updateSliceFromSITKImage(img, sindex, dim)
                 if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def seedFill(self, x: int, y: int, z: int) -> None:
         """
         Fill background voxels (i.e. 0 value) from a seed voxel in the SisypheROI. Filling algorithm starts from a seed
@@ -6319,6 +6603,8 @@ class SisypheROIDraw(object):
                 self._updateRoiFromSITKImage(img)
                 if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearSlice(self, sindex: int, dim: int) -> None:
         """
         Clear a SisypheROI attribute slice (i.e. all voxels to 0).
@@ -6338,6 +6624,8 @@ class SisypheROIDraw(object):
         self._updateSliceFromSITKImage(img, sindex, dim)
         if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def binaryNotSlice(self, sindex: int, dim: int) -> None:
         """
         Apply the binary not operator in a SisypheROI attribute slice.
@@ -6357,6 +6645,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def objectSegmentSlice(self, sindex: int, dim: int, algo: str = 'huang') -> None:
         """
         Automatic mask segmentation in a SisypheROI attribute slice.
@@ -6397,6 +6687,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def backgroundSegmentSlice(self, sindex: int, dim: int, algo: str = 'huang') -> None:
         """
         Automatic background segmentation in a SisypheROI attribute slice.
@@ -6437,6 +6729,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def blobFilterExtentSlice(self, sindex: int, dim: int, n: int) -> None:
         """
         Remove blobs (connected components) from a SisypheROI attribute slice, according to their extent (number of
@@ -6462,7 +6756,9 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(img, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
-    def majorBlobSelectSlice(self, sindex: int, dim: int):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def majorBlobSelectSlice(self, sindex: int, dim: int) -> None:
         """
         Remove all blobs (connected components) except for the largest one, from a SisypheROI attribute slice.
 
@@ -6487,6 +6783,8 @@ class SisypheROIDraw(object):
 
     # < Revision 20/10/2024
     # add clearBorderBlobSlice method
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearBorderBlobSlice(self, sindex: int, dim: int) -> None:
         """
         Remove all blobs (connected components) connected to image border, from a SisypheROI attribute slice.
@@ -6508,6 +6806,8 @@ class SisypheROIDraw(object):
             if self._undo: self.appendSliceToLIFO(sindex, dim)
     # Revision 20/10/2024 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def blobSelectSlice(self, sindex: int, dim: int, x: int, y: int, z: int) -> None:
         """
         Remove all blobs except the one containing the voxel whose coordinates are transmitted, from a SisypheROI
@@ -6542,6 +6842,8 @@ class SisypheROIDraw(object):
                     self._updateSliceFromSITKImage(img, sindex, dim)
                     if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def blobRemoveSlice(self, sindex: int, dim: int, x: int, y: int, z: int) -> None:
         """
         Remove the blob containing the voxel whose coordinates are transmitted, from a SisypheROI attribute slice.
@@ -6574,6 +6876,8 @@ class SisypheROIDraw(object):
                     self._updateSliceFromSITKImage(img, sindex, dim)
                     if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyBlobSlice(self, sindex: int, dim: int, x: int, y: int, z: int) -> None:
         """
         Copy the blob containing the voxel whose coordinates are transmitted to clipboard, from a SisypheROI attribute
@@ -6610,6 +6914,8 @@ class SisypheROIDraw(object):
                         x0, y0, dx, dy = filtr.GetBoundingBox(1)
                         self._clipboard = img[x0:x0+dx, y0:y0+dy]
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def cutBlobSlice(self, sindex: int, dim: int, x: int, y: int, z: int) -> None:
         """
         Cut the blob containing the voxel whose coordinates are transmitted to clipboard, from a SisypheROI attribute
@@ -6649,6 +6955,8 @@ class SisypheROIDraw(object):
                         self._updateSliceFromSITKImage(img, sindex, dim)
                         if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def pasteBlobSlice(self, sindex: int, dim: int, x: int, y: int, z: int) -> None:
         """
         Paste the blob from clipboard at the position of the voxel whose coordinates are transmitted, into a SisypheROI
@@ -6692,6 +7000,8 @@ class SisypheROIDraw(object):
                     self._updateSliceFromSITKImage(img, sindex, dim)
                     if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def interpolateEmptySlices(self, sindex: int, dim: int) -> None:
         """
         Empty slices are interpolated between two non-empty slices above and below. Non-empty slices are searched for
@@ -6737,6 +7047,8 @@ class SisypheROIDraw(object):
             # Interpolate below
             if bindex < sindex: self.interpolateBetweenSlices(bindex, sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def interpolateBetweenSlices(self, sindex1: int, sindex2: int, dim: int, replace=False) -> None:
         """
         Cavalieri's interpolation method is used to fill in the slices of the SisypheROI attribute between two slices
@@ -6778,6 +7090,8 @@ class SisypheROIDraw(object):
                         self._updateSliceFromSITKImage(img, sindex1 + i, dim, replace=replace)
                     if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def extractingValueSlice(self,
                              sindex: int,
                              dim: int,
@@ -6814,6 +7128,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(roi, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def extractingValueBlobSlice(self, sindex: int, dim: int, value: float, x: int, y: int, z: int) -> None:
         """
         Calculate a mask limited to the surface of a blob in a slice of the SisypheROI attribute from voxels with a
@@ -6851,6 +7167,8 @@ class SisypheROIDraw(object):
                 self._updateSliceFromSITKImage(roi, sindex, dim)
                 if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def thresholdingSlice(self, sindex: int, dim: int, mask: bool = False, replace: bool = False) -> None:
         """
         Calculate a mask in a slice of the SisypheROI attribute of voxels whose scalar value is greater than a
@@ -6882,6 +7200,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(roi, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def thresholdingBlobSlice(self, sindex: int, dim: int, x: int, y: int, z: int) -> None:
         """
         Calculate a mask limited to the surface of a blob in a slice of the SisypheROI attribute of voxels whose scalar
@@ -6919,6 +7239,8 @@ class SisypheROIDraw(object):
                 self._updateSliceFromSITKImage(roi, sindex, dim)
                 if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def regionGrowingSlice(self,
                            sindex: int,
                            dim: int,
@@ -6969,6 +7291,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(roi, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def regionGrowingBlobSlice(self, sindex: int, dim: int, x: int, y: int, z: int) -> None:
         """
         Region growing from a seed voxel limited to the surface of a blob in a slice of the SisypheROI attribute.
@@ -7014,6 +7338,8 @@ class SisypheROIDraw(object):
                 self._updateSliceFromSITKImage(roi, sindex, dim)
                 if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def regionGrowingConfidenceSlice(self,
                                      sindex: int,
                                      dim: int,
@@ -7096,6 +7422,8 @@ class SisypheROIDraw(object):
             self._updateSliceFromSITKImage(roi, sindex, dim)
             if self._undo: self.appendSliceToLIFO(sindex, dim)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def regionGrowingConfidenceBlobSlice(self,
                                          sindex: int,
                                          dim: int,
@@ -7179,6 +7507,8 @@ class SisypheROIDraw(object):
 
     # Volume processing
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def flip(self, flipx: bool, flipy: bool, flipz: bool) -> None:
         """
         Flip axes of the SisypheROI image attribute.
@@ -7197,6 +7527,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def shift(self, movex: int, movey: int, movez: int) -> None:
         """
         Image shift of the SisypheROI image attribute.
@@ -7215,6 +7547,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def euclideanDilate(self, mm: float = 0.0) -> None:
         """
         Expand the SisypheROI image attribute with a constant margin (in mm)
@@ -7233,6 +7567,8 @@ class SisypheROIDraw(object):
                 self._updateRoiFromSITKImage(img)
                 if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def euclideanErode(self, mm: float = 0.0) -> None:
         """
         Shrink the SisypheROI image attribute with a constant margin (in mm)
@@ -7251,6 +7587,8 @@ class SisypheROIDraw(object):
                 self._updateRoiFromSITKImage(img)
                 if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoDilate(self, radius: int | None = None, struct: int | None = None) -> None:
         """
         Morphological dilatation of the SisypheROI image attribute.
@@ -7275,6 +7613,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoErode(self, radius: int | None = None, struct: int | None = None) -> None:
         """
         Morphological erosion of the SisypheROI image attribute.
@@ -7299,6 +7639,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoOpening(self, radius: int | None = None, struct: int | None = None) -> None:
         """
         Morphological opening of the SisypheROI image attribute.
@@ -7323,6 +7665,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoClosing(self, radius: int | None = None, struct: int | None = None) -> None:
         """
         Morphological closing of the SisypheROI image attribute.
@@ -7347,6 +7691,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def euclideanBlobDilate(self, x: int, y: int, z: int, mm: float = 0.0) -> None:
         """
         Expand a selected blob in the SisypheROI image attribute with a constant margin (in mm).
@@ -7378,6 +7724,8 @@ class SisypheROIDraw(object):
                         self._updateRoiFromSITKImage(img)
                         if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def euclideanBlobErode(self, x: int, y: int, z: int, mm: float = 0.0) -> None:
         """
         Shrink a selected blob in the SisypheROI image attribute with a constant margin (in mm).
@@ -7409,6 +7757,8 @@ class SisypheROIDraw(object):
                         self._updateRoiFromSITKImage(img)
                         if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoBlobDilate(self,
                          x: int, y: int, z: int,
                          radius: int | None = None,
@@ -7449,6 +7799,8 @@ class SisypheROIDraw(object):
                     self._updateRoiFromSITKImage(img)
                     if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoBlobErode(self,
                         x: int, y: int, z: int,
                         radius: int | None = None,
@@ -7489,6 +7841,8 @@ class SisypheROIDraw(object):
                     self._updateRoiFromSITKImage(img)
                     if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoBlobOpening(self,
                           x: int, y: int, z: int,
                           radius: int | None = None,
@@ -7529,6 +7883,8 @@ class SisypheROIDraw(object):
                     self._updateRoiFromSITKImage(img)
                     if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def morphoBlobClosing(self,
                           x: int, y: int, z: int,
                           radius: int | None = None,
@@ -7569,6 +7925,8 @@ class SisypheROIDraw(object):
                     self._updateRoiFromSITKImage(img)
                     if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def binaryAND(self, rois: list[SisypheROI] | SisypheROICollection) -> None:
         """
         Binary "logic and" between the SisypheROI image attribute and a list of SisypheROI images (or
@@ -7591,6 +7949,8 @@ class SisypheROIDraw(object):
                 if self._undo: self.appendVolumeToLIFO()
             else: raise ValueError('list parameter has less than two items.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def binaryOR(self, rois: list[SisypheROI] | SisypheROICollection) -> None:
         """
         Binary "logic or" between the SisypheROI image attribute and a list of SisypheROI images (or
@@ -7613,6 +7973,8 @@ class SisypheROIDraw(object):
                 if self._undo: self.appendVolumeToLIFO()
             else: raise ValueError('list parameter has less than two items.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def binaryXOR(self, rois: list[SisypheROI] | SisypheROICollection) -> None:
         """
         Binary "logic xor" between the SisypheROI image attribute and a list of SisypheROI images (or
@@ -7635,6 +7997,8 @@ class SisypheROIDraw(object):
                 if self._undo: self.appendVolumeToLIFO()
             else: raise ValueError('list parameter has less than two items.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def binaryNAND(self, rois: list[SisypheROI] | SisypheROICollection) -> None:
         """
         Binary "logic nand (not and)" between the SisypheROI image attribute and a list of SisypheROI images (or
@@ -7661,6 +8025,8 @@ class SisypheROIDraw(object):
                 if self._undo: self.appendVolumeToLIFO()
             else: raise ValueError('list parameter is empty.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def binaryNOT(self) -> None:
         """
         Binary "not" of the SisypheROI image attribute.
@@ -7670,6 +8036,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def fillHoles(self) -> None:
         """
         Fill holes in the SisypheROI image attribute.
@@ -7679,6 +8047,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clear(self) -> None:
         """
         Clear the SisypheROI image attribute (i.e. all voxels to 0).
@@ -7687,6 +8057,8 @@ class SisypheROIDraw(object):
         self._updateRoiFromSITKImage(img)
         if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def objectSegment(self, algo: str = 'huang') -> None:
         """
         Automatic mask segmentation of the SisypheROI image attribute.
@@ -7719,6 +8091,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def backgroundSegment(self, algo: str = 'huang') -> None:
         """
         Automatic background segmentation of the SisypheROI image attribute.
@@ -7750,12 +8124,14 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def maskSegment(self,
                     algo: str = 'huang',
                     morpho: str = '',
                     niter: int = 1,
                     kernel: int = 0,
-                    fill: str = ''):
+                    fill: str = '') -> None:
         """
         Automatic head/brain mask segmentation of the SisypheROI image attribute.
 
@@ -7833,10 +8209,12 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def maskSegment2(self,
                      algo: str = 'huang',
                      morphoiter: int = 2,
-                     kernel: int = 0):
+                     kernel: int = 0) -> None:
         """
         Automatic head/brain mask segmentation of the SisypheROI image attribute.
 
@@ -7926,10 +8304,12 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def notMaskSegment2(self,
                         algo: str = 'huang',
                         morphoiter: int = 2,
-                        kernel: int = 0):
+                        kernel: int = 0) -> None:
         """
         Automatic background mask segmentation of the SisypheROI image attribute.
 
@@ -7947,6 +8327,8 @@ class SisypheROIDraw(object):
         self.maskSegment2(algo, morphoiter, kernel)
         self.binaryNOT()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def blobFilterExtent(self, n: int) -> None:
         """
         Remove blobs (connected components) from the SisypheROI image attribute, according to their extent (number of
@@ -7964,6 +8346,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def majorBlobSelect(self) -> None:
         """
         Remove all blobs (connected components) except the largest one, from the SisypheROI image attribute.
@@ -7978,6 +8362,8 @@ class SisypheROIDraw(object):
 
     # < Revision 20/10/2024
     # add clearBorderBlob method
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearBorderBlob(self) -> None:
         """
         Remove all blobs (connected components) linked to image border.
@@ -7988,6 +8374,8 @@ class SisypheROIDraw(object):
             if self._undo: self.appendVolumeToLIFO()
     # Revision 20/10/2024 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def blobSelect(self, x: int, y: int, z: int) -> None:
         """
         Remove all blobs except the one containing the transmitted voxel coordinates, from the SisypheROI
@@ -8012,6 +8400,8 @@ class SisypheROIDraw(object):
                     self._updateRoiFromSITKImage(img)
                     if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def blobRemove(self, x: int, y: int, z: int) -> None:
         """
         Remove the blob containing the transmitted voxel coordinates, from the SisypheROI image attribute.
@@ -8035,6 +8425,8 @@ class SisypheROIDraw(object):
                     self._updateRoiFromSITKImage(img)
                     if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyBlob(self, x: int, y: int, z: int) -> None:
         """
         Copy to clipboard the blob containing the transmitted voxel coordinates, from the SisypheROI image
@@ -8061,6 +8453,8 @@ class SisypheROIDraw(object):
                         x0, y0, z0, dx, dy, dz = filtr.GetBoundingBox(1)
                         self._clipboard = img[x0:x0+dx, y0:y0+dy, z0:z0+dz]
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def cutBlob(self, x: int, y: int, z: int) -> None:
         """
         Cut to clipboard the blob containing the transmitted voxel coordinates, from the SisypheROI image
@@ -8090,6 +8484,8 @@ class SisypheROIDraw(object):
                         self._updateRoiFromSITKImage(img)
                         if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def pasteBlob(self, x: int, y: int, z: int) -> None:
         """
         Paste the blob from clipboard at the position of the transmitted voxel coordinates, into the
@@ -8113,6 +8509,8 @@ class SisypheROIDraw(object):
                 self._updateRoiFromSITKImage(img)
                 if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def extractingValue(self, value: float, mask: bool = False, replace: bool = False) -> None:
         """
         Calculate a mask of the SisypheROI image attribute of voxels with a given scalar value in the reference
@@ -8135,6 +8533,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def extractingValueBlob(self, value: float, x: int, y: int, z: int) -> None:
         """
         Calculate a mask limited to a blob of the SisypheROI image attribute from voxels with a given scalar value in
@@ -8163,6 +8563,8 @@ class SisypheROIDraw(object):
                 self._updateRoiFromSITKImage(img)
                 if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def thresholding(self, mask: bool = False, replace: bool = False) -> None:
         """
         Calculate a mask of the SisypheROI image attribute of voxels whose scalar value is greater than a threshold
@@ -8185,6 +8587,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def thresholdingBlob(self, x: int, y: int, z: int) -> None:
         """
         Calculate a mask limited to a blob of the SisypheROI image attribute of voxels whose scalar value is greater
@@ -8212,6 +8616,8 @@ class SisypheROIDraw(object):
                 self._updateRoiFromSITKImage(img)
                 if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def regionGrowing(self, x: int, y: int, z: int, mask: bool = False, replace: bool = False) -> None:
         """
         Region growing from a seed voxel in the SisypheROI image attribute.
@@ -8238,6 +8644,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def regionGrowingBlob(self, x: int, y: int, z: int) -> None:
         """
         Region growing from a seed voxel limited to a blob in the SisypheROI image attribute.
@@ -8263,6 +8671,8 @@ class SisypheROIDraw(object):
                 self._updateRoiFromSITKImage(img)
                 if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def regionGrowingConfidence(self,
                                 x: int, y: int, z: int,
                                 niter: int | None = None,
@@ -8325,6 +8735,8 @@ class SisypheROIDraw(object):
             self._updateRoiFromSITKImage(img)
             if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def regionGrowingConfidenceBlob(self,
                                     x: int, y: int, z: int,
                                     niter: int | None = None,
@@ -8385,6 +8797,8 @@ class SisypheROIDraw(object):
                 if self._undo: self.appendVolumeToLIFO()
 
     # < Revision 25/03/2025
+    @cython.ccall
+    @cython.returns(cython.void)
     def activeContourSegmentation(self, x: int, y: int, z: int) -> None:
         """
         Active contour, level set method of segmentation, in the SisypheROI image attribute. Iterative algorithm
@@ -8423,6 +8837,8 @@ class SisypheROIDraw(object):
         else: raise ValueError('{} invalid active contour algorithm.'.format(self._acalgo))
     # Revision 25/03/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def activeContour(self,
                       x: int, y: int, z: int,
                       seedradius: float = 2.0,
@@ -8522,6 +8938,8 @@ class SisypheROIDraw(object):
         self._updateRoiFromSITKImage(img)
         if self._undo: self.appendVolumeToLIFO()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def activeThresholdContour(self,
                                x: int, y: int, z: int,
                                seedradius: float = 2.0,
@@ -8623,6 +9041,8 @@ class SisypheROIDraw(object):
     # add drawLine method, not yet tested
     # < Revision 06/03/2026
     # add v parameter, scalar value to draw
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawLine(self,
                  p0: vectorInt3,
                  p1: vectorInt3,
@@ -8657,6 +9077,8 @@ class SisypheROIDraw(object):
     # add drawDisk method, not yet tested
     # < Revision 06/03/2026
     # add v parameter, scalar value to draw
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawDisk(self,
                  p: vectorInt3,
                  radius: int,
@@ -8690,6 +9112,8 @@ class SisypheROIDraw(object):
     # add drawEllipse method, not yet tested
     # < Revision 06/03/2026
     # add v parameter, scalar value to draw
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawEllipse(self,
                     p: vectorInt3,
                     radius: vectorInt2,
@@ -8726,6 +9150,8 @@ class SisypheROIDraw(object):
     # add drawSquare method, not yet tested
     # < Revision 06/03/2026
     # add v parameter, scalar value to draw
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawSquare(self,
                    p: vectorInt3,
                    extent: int,
@@ -8759,6 +9185,8 @@ class SisypheROIDraw(object):
     # add drawRectangle method
     # < Revision 06/03/2026
     # add v parameter, scalar value to draw
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawRectangle(self,
                       p: vectorInt3,
                       extent: vectorInt2,
@@ -8790,6 +9218,8 @@ class SisypheROIDraw(object):
 
     # < Revision 08/03/2026
     # add drawThresholdedRectangle
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawThresholdedRectangle(self,
                                  p: vectorInt3,
                                  extent: vectorInt2,
@@ -8887,6 +9317,8 @@ class SisypheROIDraw(object):
     # add drawPolygon method, not yet tested
     # < Revision 06/03/2026
     # add v parameter, scalar value to draw
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawPolygon(self,
                     p: list[list[int]],
                     orient: int = 0,
@@ -8921,6 +9353,8 @@ class SisypheROIDraw(object):
     # add drawCube method, not yet tested
     # < Revision 06/03/2026
     # add v parameter, scalar value to draw
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawCube(self,
                  p: vectorInt3,
                  extent: int,
@@ -8948,6 +9382,8 @@ class SisypheROIDraw(object):
     # add drawParallelepiped method, not yet tested
     # < Revision 06/03/2026
     # add v parameter, scalar value to draw
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawParallelepiped(self,
                            p: vectorInt3,
                            extent: vectorInt3,
@@ -8973,6 +9409,8 @@ class SisypheROIDraw(object):
 
     # < Revision 20/10/2024
     # add drawSphere method, not yet tested
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawSphere(self, p: vectorInt3, radius: int) -> None:
         """
         Draw a sphere in the current SisypheROI image attribute.
@@ -8990,6 +9428,8 @@ class SisypheROIDraw(object):
     # Revision 20/10/2024 >
 
     # < Revision 04/01/2026
+    @cython.ccall
+    @cython.returns(cython.void)
     def drawFilledPolygon(self,
                           p: list[vectorInt2 | vectorInt3],
                           orient: int = 0,
@@ -9018,6 +9458,8 @@ class SisypheROIDraw(object):
 
     # Statistics
 
+    @cython.ccall
+    @cython.returns(dict[str, float])
     def getIntensityStatistics(self) -> dict[str, float]:
         """
         Get the descriptive statistics of scalar values in the reference SisypheVolume image attribute masked by the
@@ -9068,6 +9510,8 @@ class SisypheROIDraw(object):
             stats['kurtosis'] = r.kurtosis
         return stats
 
+    @cython.ccall
+    @cython.returns(dict[str, float])
     def getSliceIntensityStatistics(self, sindex: int, dim: int) -> dict[str, float]:
         """
         Get the descriptive statistics of scalar values in a slice of the reference SisypheVolume image attribute
@@ -9131,6 +9575,8 @@ class SisypheROIDraw(object):
             stats['kurtosis'] = r.kurtosis
         return stats
 
+    @cython.ccall
+    @cython.returns(list[dict[str, float]])
     def getShapeStatistics(self) -> list[dict[str, float]]:
         """
         Get the shape statistics of the SisypheROI image attribute.
@@ -9368,7 +9814,7 @@ class SisypheROIFeatures(object):
             roi collection to be processed
         """
         if isinstance(rois, SisypheROICollection):
-            if self.hasVolume:
+            if self.hasVolume():
                 if len(rois) > 0:
                     for roi in rois:
                         if roi.getReferenceID() != self._volume.getID():
@@ -9929,7 +10375,7 @@ class SisypheROIHistogram(object):
             roi collection to be processed
         """
         if isinstance(rois, SisypheROICollection):
-            if self.hasVolume:
+            if self.hasVolume():
                 if len(rois) > 0:
                     for roi in rois:
                         if roi.getReferenceID() != self._volume.getID():
