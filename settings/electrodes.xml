@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<SEEG version="1.0">
+	<electrode manufacturer="DIXI" model="D08" size="2.0" spacing="1.5" checked="True">5|8|10|12|15|18</electrode>
+	<electrode manufacturer="DIXI" model="MME10" size="2.0" spacing="1.9" checked="True">10</electrode>
+	<electrode manufacturer="DIXI" model="MME12" size="2.0" spacing="2.8" checked="True">12</electrode>
+	<electrode manufacturer="DIXI" model="MME15" size="2.0" spacing="4.1" checked="True">15</electrode>
+	<electrode manufacturer="ADTECH" model="SD-SP05X" size="2.41" spacing="2.59" checked="False">4|6|8|10|12|14</electrode>
+	<electrode manufacturer="ADTECH" model="SD-AP58X" size="1.32" spacing="0.88" checked="False">4|6|8</electrode>
+	<electrode manufacturer="ADTECH" model="AD-SP05X" size="1.27" spacing="3.73" checked="False">6|8</electrode>
+	<electrode manufacturer="ADTECH" model="AD-SP10X" size="1.27" spacing="8.73" checked="False">4</electrode>
+	<electrode manufacturer="ADTECH" model="RD-SP03X" size="2.29" spacing="0.71" checked="False">6|8|10|14</electrode>
+	<electrode manufacturer="ADTECH" model="RD-SP05X" size="2.29" spacing="2.71" checked="False">10|14</electrode>
+	<electrode manufacturer="ADTECH" model="RD-SP07X" size="2.29" spacing="4.71" checked="False">10</electrode>
+	<electrode manufacturer="ADTECH" model="MM-SP05X" size="2.41" spacing="2.59" checked="False">6|8</electrode>
+	<electrode manufacturer="PMT" model="2102" size="2.0" spacing="1.5" checked="False">8|10|12|14|16</electrode>
+</SEEG>

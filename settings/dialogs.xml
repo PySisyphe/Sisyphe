@@ -16,6 +16,11 @@
 		<Orientation vartype="lstr">Native|ACPC|Camera</Orientation>
 		<Projection label="Point projection" vartype="lstr">No</Projection>
 	</DuplicateTool>
+	<TargetsTool>
+		<Count label="Target count" varmax="30" varmin="1" decimals="1" vartype="int">1</Count>
+		<First label="First target spacing from extremity" varmax="10.0" varmin="-10.0" decimals="2" vartype="float">1.0</First>
+		<Spacing label="Spacing between targets" varmax="10.0" varmin="1.0" decimals="2" vartype="float">3.5</Spacing>
+	</TargetsTool>
 	<FlipAxes>
 		<Volumes vartype="vols"/>
 		<FlipX label="Flip left/right axis" vartype="bool">False</FlipX>
