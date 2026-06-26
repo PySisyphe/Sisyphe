@@ -4839,7 +4839,8 @@ class AbstractViewWidget(QFrame):
             if 0 <= key < self._tools.count(): key = self._tools[key]
             else: ValueError('tool index {} is out of range.'.format(key))
         elif isinstance(key, str):
-            if key in self._tools: key = self._tools[key]
+            if key in self._tools:
+                key = self._tools[key]
             else: ValueError('tool name {} not in SisypheToolCollection.'.format(key))
         if isinstance(key, (HandleWidget, LineWidget)):
             if key.getName() in self._tools:

@@ -67,6 +67,7 @@ from vtk import vtkImageMapToColors
 from vtk import vtkWindowToImageFilter
 from vtk import vtkContourFilter
 from vtk import vtkPolyData
+from vtk import vtkImageData
 from vtk import vtkPoints
 from vtk import vtkPlane
 from vtk import vtkPlaneCutter
@@ -6577,7 +6578,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     # Custom Qt signals
 
     ROIModified: pyqtSignal = pyqtSignal(QWidget)
-    ROISelectionChanged: pyqtSignal = pyqtSignal(QWidget, str)
+    ROISelectionChanged: pyqtSignal = pyqtSignal(QWidget, str, object)
     ROIAttributesChanged: pyqtSignal = pyqtSignal(QWidget)
     BrushRadiusChanged: pyqtSignal = pyqtSignal(QWidget, int)
     ROIFlagChanged: pyqtSignal = pyqtSignal(QWidget, str, object)
@@ -7233,14 +7234,14 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # < Revision 02/11/2024
     # add blended parameter
-    def _updateSliceROI(self, blended: int | None = None) -> None:
+    def _updateSliceROI(self, blended: vtkImageData | None = None) -> None:
         """
         Updates the vtkImageSlice for the inactive ROIs.
         Blends all visible, inactive ROIs into a single vtkImageSlice for efficient rendering.
 
         Parameters
         ----------
-        blended : vtkImageBlend | None (optional)
+        blended : vtkImageData | None (optional)
             pre-blended image to use, for synchronization purposes (default None).
         """
         if self._slicerois is not None:
@@ -7397,7 +7398,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # Public synchronization event methods
 
-    def synchroniseROISelectionChanged(self, obj: QWidget, r: str) -> None:
+    def synchroniseROISelectionChanged(self, obj: QWidget, r: str, blended: vtkImageData | None) -> None:
         """
         Synchronizes the active ROI selection from another SliceROIViewWidget instance.
 
@@ -7407,15 +7408,18 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             SliceROIViewWidget instance that emitted the signal.
         r : str
             name of the new active ROI.
+        blended : vtkImageData | None (optional)
+            pre-blended image to use, for synchronization purposes (default None).
         """
         if obj != self and self.hasVolume():
             # < Revision 02/11/2024
-            # noinspection PyProtectedMember
-            rois = obj._slicerois
-            if rois is not None: blended = rois.GetMapper().GetInput()
-            else: blended = None
+            # < Revision 26/06/2026
+            # rois = obj._slicerois
+            # if rois is None: blended = None
+            # else: blended = rois.GetMapper().GetInput()
+            # Revision 26/06/2026 >
             # Revision 02/11/2024 >
-            self.setActiveROI(r, blended=blended, signal=False)
+            self.setActiveROI(r, blended, signal=False)
 
     def synchroniseROIAttributesChanged(self, obj: QWidget) -> None:
         """
@@ -7430,10 +7434,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             # < Revision 02/11/2024
             # noinspection PyProtectedMember
             rois = obj._slicerois
-            if rois is not None: blended = rois.GetMapper().GetInput()
-            else: blended = None
+            if rois is None: blended = None
+            else: blended = rois.GetMapper().GetInput()
             # Revision 02/11/2024 >
-            self.updateROIAttributes(blended=blended, signal=False)
+            self.updateROIAttributes(blended, signal=False)
 
     def synchroniseROIModified(self, obj: QWidget) -> None:
         """
@@ -7699,7 +7703,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     # add blended parameter
     def setActiveROI(self,
                      r: str | SisypheROI,
-                     blended: int | None = None,
+                     blended: vtkImageData | None = None,
                      signal: bool = True) -> None:
         """
         Set the specified SisypheROI instance as the active one for drawing and editing.
@@ -7708,7 +7712,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         ----------
         r : str | SisypheROI
             SisypheROI instance to activate, identified by its name or instance.
-        blended : vtkImageBlend | None (optional)
+        blended : vtkImageData | None (optional)
             pre-blended image of non-active SisypheROI instances for synchronization (default None).
         signal : bool, optional
             If True, emits the ROISelectionChanged signal (default True).
@@ -7722,11 +7726,14 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                         self._draw.setROI(self._rois[r])
                         # < Revision 02/11/2024
                         # self.updateROIAttributes()
-                        self.updateROIAttributes(blended=blended, signal=False)
+                        self.updateROIAttributes(blended, signal=False)
                         # Revision 02/11/2024 >
                         if signal:
+                            if blended is None:
+                                if self._slicerois is not None:
+                                    blended = self._slicerois.GetMapper().GetInput()
                             # noinspection PyUnresolvedReferences
-                            self.ROISelectionChanged.emit(self, r)
+                            self.ROISelectionChanged.emit(self, r, blended)
     # Revision 02/11/2024 >
 
     def getActiveROI(self) -> SisypheROI | None:
@@ -9575,14 +9582,14 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     # < Revision 02/11/2024
     # add blended parameter
     def updateROIAttributes(self,
-                            blended: int | None = None,
+                            blended: vtkImageData | None = None,
                             signal: bool = False):
         """
         Perform a full update of all ROI-related visual components.
 
         Parameters
         ----------
-        blended : vtkImageBlend | None (optional)
+        blended : vtkImageData | None (optional)
             pre-blended image of non-active ROIs for synchronization (default None).
         signal : bool (optional)
             If True, emits the ROIAttributesChanged signal (default False).

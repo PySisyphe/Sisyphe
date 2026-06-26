@@ -83,6 +83,7 @@ from Sisyphe.gui.dialogMeshProperties import DialogMeshProperties
 from Sisyphe.gui.dialogFromXml import DialogFromXml
 from Sisyphe.gui.dialogSettings import DialogSetting
 from Sisyphe.gui.dialogTarget import DialogTarget
+from Sisyphe.gui.dialogTarget import DialogTargetsAlongTrajectory
 from Sisyphe.gui.dialogThreshold import DialogThreshold
 from Sisyphe.gui.dialogGenericResults import DialogGenericResults
 from Sisyphe.gui.dialogFileSelection import DialogFileSelection
@@ -5230,7 +5231,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 02/06/2026
+    Last revision: 18/06/2026
     """
 
     # Special method
@@ -5262,6 +5263,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
         # < Revision 14/02/2026
         self._labeling = IconPushButton('labels.png', size=ListAttributesWidget._VSIZE)
         # Revision 14/02/2026 >
+        # < Revision 18/06/2026
+        self._targets = IconPushButton('targets.png', size=ListAttributesWidget._VSIZE)
+        # Revision 18/06/2026 >
 
         # noinspection PyUnresolvedReferences
         self._target.clicked.connect(self.newHandle)
@@ -5286,6 +5290,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
         # noinspection PyUnresolvedReferences
         self._properties.clicked.connect(self.properties)
         # Revision 13/11/2025 >
+        # < Revision 18/06/2026
+        self._targets.clicked.connect(self.targets)
+        # Revision 18/06/2026 >
 
         self._target.setToolTip('Add new target tool')
         self._trajectory.setToolTip('Add new trajectory tool')
@@ -5302,12 +5309,16 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._properties.setToolTip('Change properties of checked tool(s)\n'
                                     'This is applied to all tools if none are checked.')
         # Revision 13/11/2025 >
+        # < Revision 18/06/2026
+        self._targets.setToolTip('Add targets along selected trajectory.')
+        # Revision 18/06/2026 >
 
         self._new.setVisible(False)
         # < Revision 14/02/2026
         self._btlayout1.insertWidget(6, self._labeling)
         # Revision 14/02/2026 >
         self._btlayout1.insertWidget(5, self._remove)
+        self._btlayout1.insertWidget(2, self._targets)
         self._btlayout1.insertWidget(2, self._trajectory)
         self._btlayout1.insertWidget(2, self._target)
         self._btlayout2.insertWidget(3, self._features2)
@@ -5329,12 +5340,17 @@ class ListToolAttributesWidget(ListAttributesWidget):
         # Revision 29/11/2025 >
 
         self._dialogtarget = DialogTarget()
+        # < Revision 18/06/2026
+        self._dialogtargets = DialogTargetsAlongTrajectory()
+        # Revision 18/06/2026 >
         self._dialogduplicate = DialogFromXml('Duplicate tool', ['DuplicateTool'])
         self._dialogfeatures = DialogGenericResults()
         self._dialogprop = DialogSetting('Tools')
         self._dialogprop.getSettingsWidget().setParameterVisibility('MaxCount', False)
-        self._dialogprop.getSettingsWidget().setParameterVisibility('TextTarget', False)
-        self._dialogprop.getSettingsWidget().setParameterVisibility('TextEntry', False)
+        # < Revision 18/06/2026
+        # self._dialogprop.getSettingsWidget().setParameterVisibility('TextTarget', False)
+        # self._dialogprop.getSettingsWidget().setParameterVisibility('TextEntry', False)
+        # Revision 18/06/2026 >
         if platform == 'win32':
             import pywinstyles
             # < Revision 20/11/2025
@@ -5343,6 +5359,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
                 cl = self._list.palette().base().color()
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialogtarget, c)
+                # < Revision 18/06/2026
+                pywinstyles.change_header_color(self._dialogtargets, c)
+                # Revision 18/06/2026 >
                 pywinstyles.change_header_color(self._dialogduplicate, c)
                 pywinstyles.change_header_color(self._dialogfeatures, c)
                 pywinstyles.change_header_color(self._dialogprop, c)
@@ -5420,6 +5439,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._properties.setIconSize(QSize(size - 8, size - 8))
         self._properties.setFixedSize(size, size)
         # Revision 20/11/2025 >
+        # < Revision 18/06/2026
+        self._targets.setIconSize(QSize(size - 8, size - 8))
+        self._targets.setFixedSize(size, size)
+        # Revision 18/06/2026 >
 
     def getCheckedTool(self) -> list[HandleWidget | LineWidget]:
         tools = list()
@@ -5498,7 +5521,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                             mainwindow = self._getMainWindow()
                             if mainwindow is not None:
                                 mainwindow.updateMemoryUsage()
-                                mainwindow.setStatusBarMessage('Add new point {}.'.format(item.getName()))
+                                mainwindow.setStatusBarMessage('Add new target {}.'.format(item.getName()))
                 else:
                     messageBox(self,
                                'Add new target',
@@ -6292,6 +6315,16 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     settings = self._dialogprop.getSettingsWidget()
                     tool = self.getSelectedTool()
                     if tool:
+                        # < Revision 18/06/2026
+                        if  isinstance(tool, HandleWidget):
+                            settings.setParameterValue('TextTarget', tool.getLegend())
+                            self._dialogprop.getSettingsWidget().setParameterVisibility('TextEntry', False)
+                        if isinstance(tool, LineWidget):
+                            v = tool.getLegend()
+                            settings.setParameterValue('TextTarget', v[0])
+                            settings.setParameterValue('TextEntry', v[1])
+                            self._dialogprop.getSettingsWidget().setParameterVisibility('TextEntry', True)
+                        # Revision 18/06/2026 >
                         settings.setParameterValue('FontSize', tool.getFontSize())
                         settings.setParameterValue('FontFamily', tool.getFontFamily())
                         settings.setParameterValue('FontBold', tool.getFontBold())
@@ -6325,6 +6358,18 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                 widget = self._list.itemWidget(self._list.item(i))
                                 tool = widget.getItem()
                                 wline = isinstance(tool, LineWidget)
+                                # < Revision 18/06/2026
+                                if wline:
+                                    v0 = settings.getParameterValue('TextTarget')
+                                    if v0 is None: v0 = ''
+                                    v1 = settings.getParameterValue('TextEntry')
+                                    if v1 is None: v1 = ''
+                                    v = [v0, v1]
+                                else:
+                                    v = settings.getParameterValue('TextTarget')
+                                    if v is None: v = ''
+                                tool.setLegend(v)
+                                # Revision 18/06/2026 >
                                 v = settings.getParameterValue('FontSize')
                                 if v is None: v = 12
                                 tool.setFontSize(v)
@@ -6378,9 +6423,53 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                 else: tool.setSphereVisibility(v)
                                 widget.setToolTip(str(tool))
                                 view = self._views.getVolumeView()
+                                # < Revision 18/06/2026
+                                widget.updateSettingsFromAttributes()
+                                # Revision 18/06/2026 >
                                 if view is not None: view.copyToolAttributes(tool, None, signal=True)
-                                self._logger.info('Change propertiers Tool {}'.format(widget.getName()))
+                                self._logger.info('Change properties Tool {}'.format(widget.getName()))
     # Revision 20/11/2025 >
+
+    # < Revision 18/06/2026
+    def targets(self) -> None:
+        tool = self.getSelectedTool()
+        if tool is not None and isinstance(tool, LineWidget):
+            if self._dialogtargets.exec() == QDialog.Accepted:
+                n = self._dialogtargets.getCount()
+                first = self._dialogtargets.getFirst()
+                inter = self._dialogtargets.getSpacing()
+                view = self._views.getVolumeView()
+                c = 1
+                l = first
+                p0 = tool.getPosition2()
+                for i in range(n):
+                    if i > 0: l += inter
+                    r = tool.getVector(l)
+                    p = [p0[i] + r[i] for i in range(len(p0))]
+                    item = view.addTarget(p)
+                    name = '#{}'.format(i + c)
+                    while name in self._collection:
+                        c += 1
+                        name = '#{}'.format(i + c)
+                    view.renameTool(item, name, signal=True)
+                    item.setName(name)
+                    item.setStatic()
+                    self._dialogtargets.updateItemProperties(item)
+                    widget = self._addItem(item)
+                    widget.setLock(True)
+                    widget.updateSettingsFromAttributes()
+                    self._logger.info('New target tool {}'.format(item.getName()))
+                    mainwindow = self._getMainWindow()
+                    if mainwindow is not None:
+                        mainwindow.updateMemoryUsage()
+                        mainwindow.setStatusBarMessage('Add new point {}.'.format(item.getName()))
+                self._collection.setPurpose('SEEG contacts')
+        else:
+            messageBox(self,
+                       'Targets along trajectory',
+                       'No trajectory tool selected.')
+
+    # Revision 18/06/2026 >
 
     def remove(self) -> None:
         if self.hasViewCollection():
@@ -6389,12 +6478,18 @@ class ListToolAttributesWidget(ListAttributesWidget):
                 for tool in tools:
                     view = self._views.getVolumeView()
                     if view is not None:
-                        view.removeTool(tool.getName())
+                        # view.removeTool(tool.getName())
+                        view.removeTool(tool)
                         # < Revision 17/12/2025
                         if self._collection.isEmpty(): self._collection.setPurpose('')
                         # Revision 17/12/2025 >
-                    super().remove()
+                        # < Revision 19/06/2026
+                        # super().remove()
+                        # Revision 19/06/2026 >
                     self._logger.info('Remove tool {}'.format(tool.getName()))
+            # < Revision 19/06/2026
+            super().remove()
+            # Revision 19/06/2026 >
             mainwindow = self._getMainWindow()
             if mainwindow is not None:
                 mainwindow.updateMemoryUsage()
