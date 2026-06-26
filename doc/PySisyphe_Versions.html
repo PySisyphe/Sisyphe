@@ -97,7 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-81-22-build-20-03-2026">version 0.81.22, build 20/03/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-87-12-build-20-04-2026">version 0.87.12, build 20/04/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-92-10-build-30-05-2026">version 0.92.10, build 30/05/2026</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-0-96-15-build-20-06-2026">version 0.96.15, build 20/06/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-96-24-build-20-06-2026">version 0.96.24, build 20/06/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -147,7 +147,7 @@
 <li><p><a class="reference internal" href="#build20-03-2026"><span class="std std-ref">version 0.81.22, build 20/03/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-04-2026"><span class="std std-ref">version 0.87.12, build 20/04/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build30-05-2026"><span class="std std-ref">version 0.92.10, build 30/05/2026</span></a></p></li>
-<li><p><a class="reference internal" href="#build20-06-2026"><span class="std std-ref">version 0.96.15, build 20/06/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-06-2026"><span class="std std-ref">version 0.96.24, build 20/06/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -9290,8 +9290,8 @@
 </li>
 </ul>
 </section>
-<section id="version-0-96-15-build-20-06-2026">
-<span id="build20-06-2026"></span><h2>version 0.96.15, build 20/06/2026<a class="headerlink" href="#version-0-96-15-build-20-06-2026" title="Link to this heading"></a></h2>
+<section id="version-0-96-24-build-20-06-2026">
+<span id="build20-06-2026"></span><h2>version 0.96.24, build 20/06/2026<a class="headerlink" href="#version-0-96-24-build-20-06-2026" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
@@ -9315,12 +9315,23 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p><strong>new files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/gui/lightroi/targets.png</p></li>
+<li><p>/gui/darkroi/targets.png</p></li>
+<li><p>/doc/_images/targets.png</p></li>
+<li><p>/settings/electrodes.xml</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p><strong>updated files</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>/settings/functions.xml</p></li>
 <li><p>/settings/tooltips.xml</p></li>
 <li><p>/settings/settings.xml</p></li>
+<li><p>/settings/dialogs.xml</p></li>
 <li><p>/gui/darkicons/hide.png</p></li>
 <li><p>/gui/lighticons/hide.png</p></li>
 </ul>
@@ -9413,6 +9424,7 @@
 <li><p>core.sisypheFudicialBox</p></li>
 <li><p>core.sisypheROI</p></li>
 <li><p>core.sisypheDownload</p></li>
+<li><p>lib.mega.mega</p></li>
 <li><p>processing.capturedStdoutProcessing</p></li>
 <li><p>gui.dialogDeepSegmentation</p></li>
 <li><p>gui.dialogSettings</p></li>
@@ -9421,6 +9433,8 @@
 <li><p>gui.dialogVolumeAttributes</p></li>
 <li><p>gui.dialogPatient</p></li>
 <li><p>gui.dialogDicomQuery</p></li>
+<li><p>gui.dialogTarget</p></li>
+<li><p>gui.dialogDownload</p></li>
 <li><p>gui.windowSisyphe</p></li>
 <li><p>widgets.imageWidgets</p></li>
 <li><p>widgets.toolBarThumbnail</p></li>
@@ -9433,17 +9447,31 @@
 <li><p>widgets.LUTWidgets</p></li>
 <li><p>widgets.basicWidgets</p></li>
 <li><p>widgets.fileBrowserWidget</p></li>
+<li><p>widgets.attributesWidgets</p></li>
 </ul>
 </div></blockquote>
 </li>
-<li><p><strong>updated function</strong></p>
+<li><p><strong>updated functions</strong></p>
 <blockquote>
 <div><ul>
 <li><p>core.sisypheDownload.installFromHost</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>replace copy by copy2</p></li>
+<li><p>remove try/except downloadFromHost(urls, temp, wait=wait)</p></li>
 </ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDownload.downloadFromHost</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove try/except filename = mega.download_url(url, dest_path=dst)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDownload.updatePySisyphe</p>
+<blockquote>
+<div><p>-bug fix, replace filename = join(dst, ‘settings/host.xml’) by filename = abspath(join(dst, ‘settings’, ‘host.xml’))</p>
 </div></blockquote>
 </li>
 </ul>
@@ -9463,6 +9491,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>dialog for deep learning metastasis segmentation using RLK-Unet model</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogTarget.DialogTargetsAlongTrajectory</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog to create equidistant targets along a trajectory</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9502,6 +9537,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update popRedoLIFO() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>lib.mega.mega.Mega</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _download_file() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9549,6 +9591,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogDownload.DialogDownload</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update download() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe</p>
 <blockquote>
 <div><ul class="simple">
@@ -9562,6 +9611,7 @@
 <li><p>update _initFileMenu() method</p></li>
 <li><p>update _initFunctionsMenu() method</p></li>
 <li><p>update join() method</p></li>
+<li><p>update checkUpdate() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9682,6 +9732,17 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new targets() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update setIconSize()</p></li>
+<li><p>update properties() method</p></li>
+<li><p>update remove() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
@@ -9781,6 +9842,14 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.targets()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>method called by self._target buttons clicked event</p></li>
+<li><p>add targets along a trajectory</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
@@ -9816,6 +9885,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>lib.mega.mega.Mega._download_file()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>fix file_size overflow error</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.dialogDeepSegmentation.DialogDeepFCDSegmentation.execute()</p>
 <blockquote>
 <div><ul class="simple">
@@ -9834,6 +9910,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, line 1456, force origin to (98.0, 134.0, 72.0) if ICBM152 ID</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDownload.DialogDownload.download()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add try/except downloadFromHost(url, path, info=k, wait=wait)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9902,6 +9985,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>create 3D volume from 2D multicomponent</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.checkUpdate()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add try/except updatePySisyphe(wait)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -10061,6 +10151,42 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>add self.actions[‘explorer’] to popup menu</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.properties()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bugfix, add widget.updateSettingsFromAttributes()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._targets button</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._targets.setIconSize(QSize(size - 8, size - 8))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>add self._targets.setFixedSize(size, size)</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.properties()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ‘TextTarget’ and ‘TextEntry’ editing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.remove()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, remove super().remove() from the loop (for tool in tools:)</p></li>
 </ul>
 </div></blockquote>
 </li>
