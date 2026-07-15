@@ -23,6 +23,8 @@ from os.path import commonpath
 from os.path import relpath
 from os.path import expanduser
 
+import cython
+
 from datetime import date
 from datetime import datetime
 
@@ -64,6 +66,9 @@ Class hierarchy
     Last revision 20/02/2026
 """
 
+
+@cython.ccall
+@cython.returns(str)
 def getUsername() -> str:
     """
     Get username of the current session.
@@ -78,7 +83,8 @@ def getUsername() -> str:
     elif system == 'win': return environ['USERNAME']
     else: raise OSError('{} system is not supported.'.format(sys.platform))
 
-
+@cython.ccall
+@cython.returns(str)
 def getUserPath() -> str:
     """
     Get user path of the current session.
@@ -88,12 +94,15 @@ def getUserPath() -> str:
     str
         user path of the current session
     """
-    system = sys.platform[:3]
-    if system == 'dar': return environ['HOME']
-    elif system == 'win': return environ['USERPROFILE']
+    system = sys.platform[0]
+    # < Revision 09/07/2026
+    if system == 'd' or system == 'l': return environ['HOME']
+    elif system == 'w': return environ['USERPROFILE']
+    # Revision 09/07/2026 >
     else: raise OSError('{} system is not supported.'.format(sys.platform))
 
-
+@cython.ccall
+@cython.returns(str)
 def getUserPySisyphePath() -> str:
     """
     Get PySisyphe user path of the current session.
@@ -107,7 +116,8 @@ def getUserPySisyphePath() -> str:
     if not exists(path): initPySisypheUserPath()
     return path
 
-
+@cython.ccall
+@cython.returns(cython.void)
 def initPySisypheUserPath() -> None:
     """
     Creates user PySisyphe directory. Creates controls, database, models, prompts, segmentation and workflows subdirectories.
@@ -195,7 +205,8 @@ def initPySisypheUserPath() -> None:
         default = join(path2, 'functions.xml')
         copy(default, path)
 
-
+@cython.ccall
+@cython.returns(cython.void)
 def setUserSettingsToDefault() -> None:
     """
     Copy default XML files (settings.xml and functions.xml) to PySisyphe user directory.
@@ -262,6 +273,8 @@ def setUserSettingsToDefault() -> None:
 
 # < Revision 11/10/2025
 # add getDPIScaleFactor function
+@cython.ccall
+@cython.returns(cython.double)
 def getDPIScaleFactor() -> float:
     """
     Calculate the scale factor (i.e. zoom factor), that is used to define the size of icons and some widgets. This
@@ -277,10 +290,9 @@ def getDPIScaleFactor() -> float:
     return QApplication.primaryScreen().logicalDotsPerInch() / 100.0
 # Revision 11/10/2025 >
 
-
 fieldTypes = int | float | bool | str | list[int] | list[float] | list[bool] | list[str] | QFont | None
 
-
+@cython.cclass
 class SisypheSettings(object):
     """
     SisypheSettings class
@@ -312,6 +324,11 @@ class SisypheSettings(object):
     # < Revision 23/12/2024
 
     _ATTRS: tuple[str, ...] = ('label', 'icon', 'vartype', 'varmin', 'varmax')
+
+    # Cython static attribute types
+
+    _doc: minidom.Document
+    _filename: str
 
     # Class methods
 
@@ -628,6 +645,8 @@ class SisypheSettings(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def isEmpty(self) -> int:
         """
         Check whether the current SisypheSettings instance is empty (No section and no field).
@@ -639,6 +658,8 @@ class SisypheSettings(object):
         """
         return len(self.getSectionsList())
 
+    @cython.ccall
+    @cython.returns(list[str])
     def getSectionsList(self) -> list[str]:
         """
         Get the section list of the current SisypheSettings instance.
@@ -656,7 +677,9 @@ class SisypheSettings(object):
             node = node.nextSibling
         return r
 
-    def newSection(self, section: str):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def newSection(self, section: str) -> None:
         """
         Create a new section in the current SisypheSettings instance.
 
@@ -669,6 +692,8 @@ class SisypheSettings(object):
             root = self._doc.documentElement
             root.appendChild(self._doc.createElement(section))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasSection(self, section: str) -> bool:
         """
         Check whether the current SisypheSettings instance contains a section.
@@ -686,6 +711,8 @@ class SisypheSettings(object):
         sections = self.getSectionsList()
         return section in sections
 
+    @cython.ccall
+    @cython.returns(object)
     def getSectionNode(self, section: str) -> minidom.Element | None:
         """
         Get a section node (minidom.Element) from the current SisypheSettings instance.
@@ -707,6 +734,8 @@ class SisypheSettings(object):
             node = node.nextSibling
         return None
 
+    @cython.ccall
+    @cython.returns(list[str])
     def getSectionFieldsList(self, section: str) -> list[str]:
         """
         Get the list of fields in a section of the current SisypheSettings instance.
@@ -731,7 +760,9 @@ class SisypheSettings(object):
                 child = child.nextSibling
         return r
 
-    def newField(self, section: str, field: str, attrs: dict):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def newField(self, section: str, field: str, attrs: dict) -> None:
         """
         Create a new field in a section of the current SisypheSettings instance.
 
@@ -765,6 +796,8 @@ class SisypheSettings(object):
                 fieldnode.appendChild(txtnode)
                 node.appendChild(fieldnode)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasField(self, section: str, field: str) -> bool:
         """
         Check whether the current SisypheSettings instance contains a section/field key.
@@ -784,6 +817,8 @@ class SisypheSettings(object):
         fields = self.getSectionFieldsList(section)
         return field in fields
 
+    @cython.ccall
+    @cython.returns(object)
     def getFieldNode(self, section: str, field: str) -> minidom.Element | None:
         """
         Get a field node (minidom.Element) from the current SisypheSettings instance.
@@ -806,6 +841,8 @@ class SisypheSettings(object):
                 if node.parentNode.nodeName == section: return node
         return None
 
+    @cython.ccall
+    @cython.returns(str)
     def getFieldVartype(self, section: str, field: str) -> str:
         """
         Get the vartype of a field in the current SisypheSettings instance.
@@ -891,6 +928,7 @@ class SisypheSettings(object):
                 - 'font', str
                 - 'txt', str text file name (in ./Sisyphe/doc folder if path attribute is not defined)
         """
+        i: cython.int
         node = self.getFieldNode(section, field)
         if node is not None:
             vartype = node.getAttribute('vartype')
@@ -954,6 +992,8 @@ class SisypheSettings(object):
             elif vartype == 'font': return 'Arial'
         return None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFieldValue(self, section: str, field: str, v: fieldTypes) -> None:
         """
         Set the field value of the current SisypheSettings instance.
@@ -1099,6 +1139,8 @@ class SisypheSettings(object):
 
     # < Revision 13/02/2025
     # add fieldsToDict method
+    @cython.ccall
+    @cython.returns(dict)
     def fieldsToDict(self, section: str) -> dict[str, fieldTypes]:
         """
         Copy section fields of the current SisypheSettings instance into a dict.
@@ -1117,7 +1159,9 @@ class SisypheSettings(object):
 
     # < Revision 13/02/2025
     # add fieldsFromDict method
-    def fieldsFromDict(self, section: str, fields: dict[str, fieldTypes]):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def fieldsFromDict(self, section: str, fields: dict[str, fieldTypes]) -> None:
         """
         Copy section field values of the current SisypheSettings instance from a dict.
 
@@ -1134,6 +1178,8 @@ class SisypheSettings(object):
                 self.setFieldValue(section, k, fields[k])
     # Revision 13/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadCustomFileSettings(self, filename: str) -> None:
         """
         Load the current SisypheSettings from a custom XML settings file.
@@ -1153,6 +1199,8 @@ class SisypheSettings(object):
                 self._filename = ''
         else: raise FileNotFoundError('No such file {}.'.format(basename(filename)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadUserFileSettings(self) -> None:
         """
         Load the current SisypheSettings from the user settings file (~/.PySisyphe/settings/settings.xml).
@@ -1160,6 +1208,8 @@ class SisypheSettings(object):
         self._doc = minidom.parse(self.getUserSettings())
         self._filename = ''
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadDefaultFileSettings(self) -> None:
         """
         Load the current SisypheSettings from the default settings file (./Sisyphe/settings/settings.xml).
@@ -1167,6 +1217,8 @@ class SisypheSettings(object):
         self._doc = minidom.parse(self.getDefaultSettings())
         self._filename = ''
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCustom(self) -> bool:
         """
         Check whether the current SisypheSettings is a custom settings instance. In this case, the associated XML
@@ -1179,6 +1231,8 @@ class SisypheSettings(object):
         """
         return self._filename != ''
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isUser(self) -> bool:
         """
         Check whether the current SisypheSettings is a user settings instance. In this case, the associated XML
@@ -1191,6 +1245,8 @@ class SisypheSettings(object):
         """
         return self._filename == ''
 
+    @cython.ccall
+    @cython.returns(str)
     def getFilename(self) -> str:
         """
         Get the custom save name of the current SisypheSettings instance. Save name is only defined in a custom
@@ -1203,6 +1259,8 @@ class SisypheSettings(object):
         """
         return self._filename
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def save(self) -> None:
         """
         Save the current SisypheSettings instance. In case of custom instance, saved with the custom save name
@@ -1212,6 +1270,8 @@ class SisypheSettings(object):
         else: filename = self.getUserSettings()
         self.saveAs(filename, current=False)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToDefault(self) -> None:
         """
         Save the current SisypheSettings instance to the default settings file. It is not recommended, because the
@@ -1219,6 +1279,8 @@ class SisypheSettings(object):
         """
         self.saveAs(self.getDefaultSettings(), current=False)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveAs(self, filename: str, current: bool = True, pretty: bool = False) -> None:
         """
         Save the current SisypheSettings instance to an XML file.
@@ -1319,12 +1381,12 @@ class SisypheDialogsSettings(SisypheSettings):
     @classmethod
     def getDefaultSettings(cls) -> str:
         """
-        Get default dialog settings xml file name (./Sisyphe/settings/dialogs.xml').
+        Get default dialog settings XML file name (./Sisyphe/settings/dialogs.xml).
 
         Returns
         -------
         str
-            default dialog settings xml file name
+            default dialog settings XML file name
         """
         import Sisyphe.settings
         return join(dirname(abspath(Sisyphe.settings.__file__)), 'dialogs.xml')
@@ -1332,12 +1394,12 @@ class SisypheDialogsSettings(SisypheSettings):
     @classmethod
     def getUserSettings(cls) -> str:
         """
-        Get user dialog settings xml file name (~/.PySisyphe/settings/dialogs.xml').
+        Get user dialog settings XML file name (~/.PySisyphe/settings/dialogs.xml).
 
         Returns
         -------
         str
-            user dialog settings xml file name
+            user dialog settings XML file name
         """
         return cls.getDefaultSettings()
 
@@ -1377,41 +1439,41 @@ class SisypheCustomSettings(SisypheSettings):
     @classmethod
     def setClassSettings(cls, filename: str) -> None:
         """
-        Set the custom settings xml file name.
+        Set the custom settings XML file name.
 
         Parameters
         ----------
         filename : str
-            custom settings xml file name
+            custom settings XML file name
 
         Returns
         -------
         str
-            custom settings xml file name.
+            custom settings XML file name.
         """
         cls._Filename = filename
 
     @classmethod
     def getDefaultSettings(cls) -> str:
         """
-        Get custom settings xml file name.
+        Get custom settings XML file name.
 
         Returns
         -------
         str
-            custom settings xml file name.
+            custom settings XML file name.
         """
         return cls._Filename
 
     @classmethod
     def getUserSettings(cls) -> str:
         """
-        Get custom settings xml file name.
+        Get custom settings XML file name.
 
         Returns
         -------
         str
-            custom settings xml file name.
+            custom settings XML file name.
         """
         return cls.getDefaultSettings()
 
@@ -1459,12 +1521,12 @@ class SisypheTooltips(SisypheSettings):
     @classmethod
     def getUserSettings(cls) -> str:
         """
-        Get user dialog settings xml file name (~/.PySisyphe/settings/dialogs.xml').
+        Get user dialog settings XML file name (~/.PySisyphe/settings/dialogs.xml).
 
         Returns
         -------
         str
-            user dialog settings xml file name
+            user dialog settings XML file name
         """
         return cls.getDefaultSettings()
 

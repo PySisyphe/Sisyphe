@@ -4112,7 +4112,7 @@ class SisypheROIDraw(object):
     _DEFAULTMORPHRADIUS: cython.int = 1
     _MAXUNDO: cython.int = 20
 
-    # Static attribute types
+    # Cython static attribute types
 
     _volume: SisypheVolume
     _mask: ndarray

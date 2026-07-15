@@ -14,6 +14,8 @@ from os.path import exists
 from os.path import dirname
 from os.path import splitext
 
+import cython
+
 from math import sqrt
 from math import atan2
 from math import degrees
@@ -56,6 +58,7 @@ Class hierarchy
 tupleFloat3 = tuple[float, float, float]
 
 
+@cython.cclass
 class SisypheIdentity(object):
     """
     Description
@@ -82,6 +85,14 @@ class SisypheIdentity(object):
     _GENDERTOCODE: dict[str, int] = {'Unknown': 0, 'Male': 1, 'Female': 2}
     _CODETOGENDER: dict[int, str] = {0: 'Unknown', 1: 'Male', 2: 'Female'}
     _FILEEXT: str = '.xidentity'
+
+    # Cython static attribute types
+
+    _firstname: str
+    _lastname: str
+    _gender: cython.int
+    _dateofbirthday: date
+    _parent: SisypheVolume
 
     # Class methods
 
@@ -331,6 +342,8 @@ class SisypheIdentity(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasParent(self) -> bool:
         """
         Check whether current SisypheIdentity instance has a parent (Sisyphe.core.sisypheVolume.SisypheVolume instance),
@@ -343,6 +356,8 @@ class SisypheIdentity(object):
         """
         return self._parent is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setParent(self, parent: SisypheVolume) -> None:
         """
         Set parent of the current SisypheIdentity instance.
@@ -356,6 +371,8 @@ class SisypheIdentity(object):
         if isinstance(parent, SisypheVolume): self._parent = parent
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(parent)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getParent(self) -> SisypheVolume:
         """
         Get parent of the current SisypheIdentity instance.
@@ -367,6 +384,8 @@ class SisypheIdentity(object):
         """
         return self._parent
 
+    @cython.ccall
+    @cython.returns(str)
     def getFirstname(self) -> str:
         """
         Get firstname attribute of the current SisypheIdentity instance.
@@ -378,6 +397,8 @@ class SisypheIdentity(object):
         """
         return self._firstname
 
+    @cython.ccall
+    @cython.returns(str)
     def setFirstname(self, buff: str) -> None:
         """
         Set firstname attribute of the current SisypheIdentity instance.
@@ -389,6 +410,8 @@ class SisypheIdentity(object):
         """
         self._firstname = buff.title()
 
+    @cython.ccall
+    @cython.returns(str)
     def getLastname(self) -> str:
         """
         Get lastname attribute of the current SisypheIdentity instance.
@@ -400,6 +423,8 @@ class SisypheIdentity(object):
         """
         return self._lastname
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLastname(self, buff: str) -> None:
         """
         Set lastname attribute of the current SisypheIdentity instance.
@@ -411,6 +436,8 @@ class SisypheIdentity(object):
         """
         self._lastname = buff.title()
 
+    @cython.ccall
+    @cython.returns(object)
     def getDateOfBirthday(self, string: bool = True, f: str = '%Y-%m-%d') -> str | date:
         """
         Get birthdate attribute of the current SisypheIdentity instance.
@@ -431,6 +458,8 @@ class SisypheIdentity(object):
         if string: return self._dateofbirthday.strftime(f)
         else: return self._dateofbirthday
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDateOfBirthday(self, buff: str | date | None = None, f: str = '%Y-%m-%d') -> None:
         """
         Set birthdate attribute of the current SisypheIdentity instance.
@@ -446,6 +475,8 @@ class SisypheIdentity(object):
         elif isinstance(buff, date): self._dateofbirthday = buff
         else: self._dateofbirthday = SisypheIdentity._DEFAULTDATE
 
+    @cython.ccall
+    @cython.returns(object)
     def getGender(self, string: bool = True) -> int | str:
         """
         Get gender attribute of the current SisypheIdentity instance.
@@ -464,6 +495,8 @@ class SisypheIdentity(object):
         if string: return SisypheIdentity._CODETOGENDER[self._gender]
         else: return self._gender
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setGender(self, v: int | str) -> None:
         """
         Set gender attribute of the current SisypheIdentity instance.
@@ -483,24 +516,32 @@ class SisypheIdentity(object):
             else: raise ValueError('parameter value {} is not between 0 and 2.'.format(v))
         else: raise TypeError('parameter type {} is not str or int.'.format(type(v)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setGenderToMale(self) -> None:
         """
         Set gender attribute of the current SisypheIdentity instance to male.
         """
         self._gender = self._GENDERTOCODE['Male']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setGenderToFemale(self) -> None:
         """
         Set gender attribute of the current SisypheIdentity instance to female.
         """
         self._gender = self._GENDERTOCODE['Female']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setGenderToUnknown(self) -> None:
         """
         Set gender attribute of the current SisypheIdentity instance to unknown.
         """
         self._gender = self._GENDERTOCODE['Unknown']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def anonymize(self) -> None:
         """
         Anonymize identity attributes of the current SisypheIdentity instance.
@@ -514,6 +555,8 @@ class SisypheIdentity(object):
         self._gender = 0
         self._dateofbirthday = SisypheIdentity._DEFAULTDATE
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isAnonymized(self) -> bool:
         """
         Check whether identity attributes of the current SisypheIdentity instance are anonymized.
@@ -526,6 +569,8 @@ class SisypheIdentity(object):
         return self._firstname == '' and self._lastname == '' and \
                self._gender == 0 and self._dateofbirthday == SisypheIdentity._DEFAULTDATE
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isEqual(self, buff: SisypheIdentity) -> bool:
         """
         Check that the attributes of the SisypheIdentity parameter are equal to those of the current SisypheIdentity
@@ -546,6 +591,8 @@ class SisypheIdentity(object):
                    self._gender == buff._gender and self._dateofbirthday == buff._dateofbirthday
         else: raise TypeError('parameter type is not {}.'.format(self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isNotEqual(self, buff: SisypheIdentity) -> bool:
         """
         Check that the attributes of the SisypheIdentity parameter are not equal to those of the current
@@ -563,6 +610,8 @@ class SisypheIdentity(object):
         """
         return not self.isEqual(buff)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFrom(self, buff: SisypheIdentity | SisypheVolume) -> None:
         """
         Copy attributes of the identity parameter to the current SisypheIdentity instance (deep copy).
@@ -582,6 +631,8 @@ class SisypheIdentity(object):
             self._dateofbirthday = buff._dateofbirthday
         else: raise TypeError('parameter type {} is not {} or SisypheVolume.'.format(type(buff), self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(object)
     def copy(self) -> SisypheIdentity:
         """
         Copy the current SisypheIdentity instance (deep copy).
@@ -593,6 +644,8 @@ class SisypheIdentity(object):
         """
         return deepcopy(self)
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getAge(self) -> int:
         """
         Get age as of today's date.
@@ -605,6 +658,8 @@ class SisypheIdentity(object):
         delta = date.today() - self._dateofbirthday
         return int(delta.days / 365)
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getAgeAt(self, d: date) -> int:
         """
         Get age at a given date.
@@ -623,6 +678,8 @@ class SisypheIdentity(object):
 
     # < Revision 05/11/2024
     # add setAge method
+    @cython.ccall
+    @cython.returns(cython.void)
     def setAge(self, age: int, acqdate: date | str | None = None, f: str = '%Y-%m-%d') -> None:
         """
         Set birthdate of the current SisypheIdentity instance using an age parameter (in years).
@@ -647,6 +704,8 @@ class SisypheIdentity(object):
             self.setDateOfBirthday(date.today() - timedelta(days=365 * age))
     # Revision 05/11/2024 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isYounger(self, buff: SisypheIdentity | date | int | float) -> bool:
         """
         Check whether current SisypheIdentity instance age calculated from birthdate attribute is younger than age
@@ -667,6 +726,8 @@ class SisypheIdentity(object):
         elif isinstance(buff, (int, float)): return self.getAge() < buff
         else: raise TypeError('parameter functype is not {}, date, int or float.'.format(self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isOlder(self, buff: SisypheIdentity | date | int | float) -> bool:
         """
         Check whether current SisypheIdentity instance age calculated from birthdate attribute is younger than age
@@ -687,6 +748,8 @@ class SisypheIdentity(object):
         elif isinstance(buff, (int, float)): return self.getAge() > buff
         else: raise TypeError('parameter functype is not {}, date, int or float.'.format(self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMale(self) -> bool:
         """
         Check whether current SisypheIdentity instance gender attribute is male.
@@ -698,6 +761,8 @@ class SisypheIdentity(object):
         """
         return self._gender == SisypheIdentity._GENDERTOCODE['Male']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFemale(self) -> bool:
         """
         Check whether current SisypheIdentity instance gender attribute is female.
@@ -709,6 +774,8 @@ class SisypheIdentity(object):
         """
         return self._gender == SisypheIdentity._GENDERTOCODE['Female']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToTxt(self, filename: str) -> None:
         """
         Save current SisypheIdentity instance to text file (.txt).
@@ -729,6 +796,8 @@ class SisypheIdentity(object):
         finally:
             f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromTxt(self, filename: str) -> None:
         """
         Load current SisypheIdentity instance attributes from text file (.txt).
@@ -756,6 +825,8 @@ class SisypheIdentity(object):
                 f.close()
         else: raise IOError('no such file : {}'.format(filename))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
         Write current SisypheIdentity instance attributes to xml instance.
@@ -794,6 +865,8 @@ class SisypheIdentity(object):
             else: raise TypeError('parameter type {} is not xml.dom.minidom.Element.'.format(type(currentnode)))
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
         """
         Read current SisypheIdentity instance attributes from XML instance.
@@ -820,6 +893,8 @@ class SisypheIdentity(object):
                     else: self._gender = 0
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToXML(self, filename: str) -> None:
         """
         Save current SisypheIdentity instance attributes to XML file (.xidentity).
@@ -846,6 +921,8 @@ class SisypheIdentity(object):
         finally:
             f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
         """
         Load current SisypheIdentity instance attributes from XML file (.xidentity).
@@ -867,6 +944,7 @@ class SisypheIdentity(object):
         else: raise IOError('no such file : {}'.format(filename))
 
 
+@cython.cclass
 class SisypheAcquisition(object):
     """
     Description
@@ -947,6 +1025,23 @@ class SisypheAcquisition(object):
     _TEMPLATES: tuple[str, ...] = ('ICBM152', 'ICBM452', 'ATROPOS', 'SRI24')
     _FILEEXT: str = '.xacq'
     _LABELSEXT: str = '.xlabels'
+
+    # Cython static attribute types
+
+    _modality: cython.int
+    _sequence: str
+    _type: str
+    _dateofscan: date
+    _frame: cython.int
+    _unit: str
+    _labels: dict[int, str]
+    _df: cython.int
+    _autocorrx: cython.double
+    _autocorry: cython.double
+    _autocorrz: cython.double
+    _rc: tuple[cython.double, cython.double, cython.double]
+    _contrast: list[cython.double]
+    _parent: SisypheVolume
 
     # Class methods
 
@@ -1328,7 +1423,7 @@ class SisypheAcquisition(object):
     _autocorrx      float, spatial autocorrelations, x-axis (mm)
     _autocorry      float, spatial autocorrelations, y-axis (mm)
     _autocorrz      float, spatial autocorrelations, z-axis (mm)
-    _rc             list[float], resel count
+    _rc             tuple[float, float, float], resel count
     _contrast       list[float]
     _parent         parent instance 
     """
@@ -1479,6 +1574,8 @@ class SisypheAcquisition(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasParent(self) -> bool:
         """
         Check whether current SisypheAcquisition instance has a parent (Sisyphe.core.sisypheVolume.SisypheVolume
@@ -1491,7 +1588,9 @@ class SisypheAcquisition(object):
         """
         return self._parent is not None
 
-    def setParent(self, parent: SisypheVolume):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setParent(self, parent: SisypheVolume) -> None:
         """
         Set parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheAcquisition instance.
 
@@ -1504,6 +1603,8 @@ class SisypheAcquisition(object):
         if isinstance(parent, SisypheVolume): self._parent = parent
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(parent)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getParent(self) -> SisypheVolume:
         """
         Get parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheAcquisition instance.
@@ -1515,6 +1616,8 @@ class SisypheAcquisition(object):
         """
         return self._parent
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def is2D(self) -> bool:
         """
         Check whether type attribute of the current SisypheAcquisition instance is 2D.
@@ -1526,6 +1629,8 @@ class SisypheAcquisition(object):
         """
         return self._type == self._TYPE[0]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def is3D(self) -> bool:
         """
         Check whether type attribute of the current SisypheAcquisition instance is 3D.
@@ -1537,18 +1642,24 @@ class SisypheAcquisition(object):
         """
         return self._type == self._TYPE[1]
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def set2D(self) -> None:
         """
         Set type attribute of the current SisypheAcquisition instance to 2D.
         """
         self._type = self._TYPE[0]
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def set3D(self) -> None:
         """
         Set type attribute of the current SisypheAcquisition instance to 3D.
         """
         self._type = self._TYPE[1]
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setType(self, v: str) -> None:
         """
         Set type attribute ('2D', '3D') of the current SisypheAcquisition instance.
@@ -1561,6 +1672,8 @@ class SisypheAcquisition(object):
         if v in self._TYPE: self._type = v
         else: self._type = '2D'
 
+    @cython.ccall
+    @cython.returns(str)
     def getType(self) -> str:
         """
         Get type attribute ('2D', '3D') of the current SisypheAcquisition instance.
@@ -1572,6 +1685,8 @@ class SisypheAcquisition(object):
         """
         return self._type
 
+    @cython.ccall
+    @cython.returns(object)
     def getModality(self, string: bool = True) -> str | int:
         """
         Get modality attribute of the current SisypheAcquisition instance.
@@ -1589,6 +1704,8 @@ class SisypheAcquisition(object):
         if string: return SisypheAcquisition._CODETOMODALITY[self._modality]
         else: return self._modality
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModality(self, buff: int | str) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance.
@@ -1606,12 +1723,16 @@ class SisypheAcquisition(object):
             self._modality = SisypheAcquisition._MODALITYTOCODE[buff]
         else: raise TypeError('parameter type {} is not int, str.'.format(type(buff)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModalityToMR(self) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance to MRI.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['MR']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModalityToCT(self) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance to CT-scan.
@@ -1619,12 +1740,16 @@ class SisypheAcquisition(object):
         self._modality = SisypheAcquisition._MODALITYTOCODE['CT']
         self.setUnitToHounsfield()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModalityToPT(self) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance to PET.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['PT']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModalityToNM(self) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance to Nuclear Medicine.
@@ -1632,12 +1757,16 @@ class SisypheAcquisition(object):
         self._modality = SisypheAcquisition._MODALITYTOCODE['NM']
         self.setUnitToCount()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModalityToOT(self) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance to OT.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['OT']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModalityToLB(self) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance to Label.
@@ -1656,18 +1785,24 @@ class SisypheAcquisition(object):
                                       'with LB modality, must be uint8.'.format(self._parent.getDatatype()))
                 # Revision 12/03/2026 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModalityToTP(self) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance to Template.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['TP']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setModalityToPJ(self) -> None:
         """
         Set modality attribute of the current SisypheAcquisition instance to Projection.
         """
         self._modality = SisypheAcquisition._MODALITYTOCODE['PJ']
 
+    @cython.ccall
+    @cython.returns(str)
     def getLabel(self, index: float | int) -> str:
         """
         Get label name from index value, only defined for label modality.
@@ -1696,6 +1831,8 @@ class SisypheAcquisition(object):
             else: raise TypeError('parameter type {} is not int.'.format(type(index)))
         else: raise ValueError('modality {} is not LB.'.format(self.getModality(True)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLabel(self, index: int, value: str) -> None:
         """
         Set label name for an index value, image modality must be label.
@@ -1717,6 +1854,8 @@ class SisypheAcquisition(object):
             else: raise TypeError('index parameter type {} is not int.'.format(type(index)))
         else: raise ValueError('modality {} is not LB.'.format(self.getModality(True)))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasLabels(self) -> bool:
         """
         Check that label table is not empty, only defined for label modality.
@@ -1728,6 +1867,8 @@ class SisypheAcquisition(object):
         """
         return len(self._labels) > 0
 
+    @cython.ccall
+    @cython.returns(dict[cython.int, str])
     def getLabels(self) -> dict[int, str]:
         """
         Get label table, only defined for label modality.
@@ -1743,6 +1884,8 @@ class SisypheAcquisition(object):
 
     # < Revision 06/11/2024
     # add setLabels method
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLabels(self, v: SisypheAcquisition | SisypheVolume | dict[int, str]) -> None:
         """
         Set label table, only defined for label modality.
@@ -1761,6 +1904,8 @@ class SisypheAcquisition(object):
 
     # < Revision 14/10/2025
     # add clearLabels method
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearLabels(self) -> None:
         """
         Remove all labels, image modality must be of the label type.
@@ -1770,6 +1915,8 @@ class SisypheAcquisition(object):
 
     # < Revision 12/02/2026
     # add labelsToStr method
+    @cython.ccall
+    @cython.returns(str)
     def labelsToStr(self) -> str:
         """
         Generate a string of labels.
@@ -1786,6 +1933,8 @@ class SisypheAcquisition(object):
 
     # < Revision 12/03/2026
     # add getLabelCount method
+    @cython.ccall
+    @cython.returns(cython.int)
     def getLabelCount(self) -> int:
         """
         Get the number of labels, only defined for label modality.
@@ -1800,6 +1949,8 @@ class SisypheAcquisition(object):
 
     # < Revision 12/03/2026
     # add getMinLabelIndex method
+    @cython.ccall
+    @cython.returns(cython.int)
     def getMinLabelIndex(self) -> int:
         """
         Get the minimum index value of the labels, only defined for label modality.
@@ -1814,6 +1965,8 @@ class SisypheAcquisition(object):
 
     # < Revision 12/03/2026
     # add getMaxLabelIndex method
+    @cython.ccall
+    @cython.returns(cython.int)
     def getMaxLabelIndex(self) -> int:
         """
         Get the maximum index value of the labels, only defined for label modality.
@@ -1826,6 +1979,8 @@ class SisypheAcquisition(object):
         return max(self._labels)
     # Revision 12/03/2026 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadLabels(self) -> None:
         """
         Load label table from XML file (.xlabels), image modality must be label.
@@ -1845,6 +2000,8 @@ class SisypheAcquisition(object):
                                 # noinspection PyUnresolvedReferences
                                 self._labels[index] = node.firstChild.data
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveLabels(self) -> None:
         """
         Save label table from XML file (.xlabels), only defined for label modality.
@@ -1874,6 +2031,8 @@ class SisypheAcquisition(object):
             buffxml = doc.toprettyxml()
             with open(filename, 'w') as f: f.write(buffxml)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDegreesOfFreedom(self, v) -> None:
         """
         Set degrees of freedom attribute of the current SisypheAcquisition instance. This attribute is only defined for
@@ -1887,6 +2046,8 @@ class SisypheAcquisition(object):
         if isinstance(v, int): self._df = v
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getDegreesOfFreedom(self) -> int:
         """
         Get degrees of freedom attribute of the current SisypheAcquisition instance. This attribute is only defined for
@@ -1899,6 +2060,8 @@ class SisypheAcquisition(object):
         """
         return self._df
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setAutoCorrelations(self, v: list[float] | tupleFloat3 | ndarray) -> None:
         """
         Set autocorrelations attribute of the current SisypheAcquisition instance. This attribute is only defined for
@@ -1923,6 +2086,8 @@ class SisypheAcquisition(object):
             else: raise ValueError('list parameter does not have 3 elements ({}).'.format(len(v)))
         else: raise TypeError('parameter type {} is not list or tuple.'.format(type(v)))
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getAutoCorrelations(self) -> tupleFloat3:
         """
         Get autocorrelations attribute of the current SisypheAcquisition instance. This attribute is only defined for
@@ -1937,6 +2102,8 @@ class SisypheAcquisition(object):
 
     # < Revision 22/11/2024
     # add getContrast method
+    @cython.ccall
+    @cython.returns(list[cython.double])
     def getContrast(self) -> list[float]:
         """
         Get contrast attribute of the current SisypheAcquisition instance. This attribute is only defined for
@@ -1952,6 +2119,8 @@ class SisypheAcquisition(object):
 
     # < Revision 22/11/2024
     # add setContrast method
+    @cython.ccall
+    @cython.returns(cython.void)
     def setContrast(self, c: ndarray | list[float] | tuple[float, float]) -> None:
         """
         Set contrast attribute of the current SisypheAcquisition instance. This attribute is only defined for
@@ -1973,6 +2142,8 @@ class SisypheAcquisition(object):
 
     # < Revision 22/11/2024
     # add hasContrast method
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasContrast(self) -> bool:
         """
         Check that contrast attribute is not empty, only defined for statistical map.
@@ -1987,6 +2158,8 @@ class SisypheAcquisition(object):
 
     # < Revision 05/02/2026
     # add getReselCount method
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double, cython.double])
     def getReselCount(self) -> tuple[float, float, float, float]:
         """
         Get resel count attribute of the current SisypheAcquisition instance. This attribute is only defined for
@@ -2012,6 +2185,8 @@ class SisypheAcquisition(object):
 
     # < Revision 05/02/2026
     # add setReselCount method
+    @cython.ccall
+    @cython.returns(cython.void)
     def setReselCount(self, c: ndarray | list[float] | tuple[float, float, float, float]) -> None:
         """
         Set resel count attribute of the current SisypheAcquisition instance. This attribute is only defined for
@@ -2039,6 +2214,8 @@ class SisypheAcquisition(object):
 
     # < Revision 05/02/2026
     # add hasReselCount method
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasReselCount(self) -> bool:
         """
         Check that resel count attribute is not empty, only defined for statistical map.
@@ -2061,6 +2238,8 @@ class SisypheAcquisition(object):
         return self._rc != (0.0, 0.0, 0.0, 0.0)
     # Revision 05/02/2026 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToTMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to t map.
@@ -2069,6 +2248,8 @@ class SisypheAcquisition(object):
         self._sequence = self.TMAP
         self.setUnitToTValue()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToZMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to Z map.
@@ -2079,6 +2260,8 @@ class SisypheAcquisition(object):
 
     # < Revision 03/02/2025
     # add setSequenceToCMap method
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToCMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to correlation coeff. map.
@@ -2088,6 +2271,8 @@ class SisypheAcquisition(object):
         self.setUnitToCC()
     # Revision 03/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToPMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to probability map.
@@ -2096,6 +2281,8 @@ class SisypheAcquisition(object):
         self._sequence = self.PMAP
         self._unit = self.PVAL
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToGreyMatterMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to gray matter map.
@@ -2104,6 +2291,8 @@ class SisypheAcquisition(object):
         self._sequence = self.GM
         self.setUnitToPercent()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToSubCorticalGreyMatterMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to subcortical gray matter map.
@@ -2112,6 +2301,8 @@ class SisypheAcquisition(object):
         self._sequence = self.SCGM
         self.setUnitToPercent()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToWhiteMatterMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to white matter map.
@@ -2120,6 +2311,8 @@ class SisypheAcquisition(object):
         self._sequence = self.WM
         self.setUnitToPercent()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToCerebroSpinalFluidMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to cerebro-spinal fluid map.
@@ -2128,6 +2321,8 @@ class SisypheAcquisition(object):
         self._sequence = self.CSF
         self.setUnitToPercent()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToBrainstemMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to brainstem map.
@@ -2136,6 +2331,8 @@ class SisypheAcquisition(object):
         self._sequence = self.BSTEM
         self.setUnitToPercent()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToCerebellumMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to cerebellum map.
@@ -2144,6 +2341,8 @@ class SisypheAcquisition(object):
         self._sequence = self.CRBL
         self.setUnitToPercent()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToCorticalThicknessMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to cortical thickness map.
@@ -2152,6 +2351,8 @@ class SisypheAcquisition(object):
         self._sequence = self.THICK
         self.setUnitToMillimeter()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToCerebralBloodFlowMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to cerebral blood flow map.
@@ -2160,6 +2361,8 @@ class SisypheAcquisition(object):
         self._sequence = self.CBF
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToCerebralBloodVolumeMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to cerebral blood volume map.
@@ -2168,6 +2371,8 @@ class SisypheAcquisition(object):
         self._sequence = self.CBV
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToMeanTransitTimeMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to mean transit time map.
@@ -2176,6 +2381,8 @@ class SisypheAcquisition(object):
         self._sequence = self.MTT
         self.setUnitToSecond()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToTimeToPicMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to time to pic map.
@@ -2184,6 +2391,8 @@ class SisypheAcquisition(object):
         self._sequence = self.TTP
         self.setUnitToSecond()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToDoseMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to dose map.
@@ -2192,6 +2401,8 @@ class SisypheAcquisition(object):
         self._sequence = self.DOSE
         self.setUnitToGy()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToFractionalAnisotropyMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to fractional anisotropy map.
@@ -2200,6 +2411,8 @@ class SisypheAcquisition(object):
         self._sequence = self.FA
         self.setUnitToRatio()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToApparentDiffusionMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to apparent diffusion map.
@@ -2208,6 +2421,8 @@ class SisypheAcquisition(object):
         self._sequence = self.ADC
         self.setUnitToADCunit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToDensityMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to density map.
@@ -2216,6 +2431,8 @@ class SisypheAcquisition(object):
         self._sequence = self.DENSITY
         self.setUnitToCount()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToBiasFieldMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to bias field map.
@@ -2224,6 +2441,8 @@ class SisypheAcquisition(object):
         self._sequence = self.BIAS
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToDistanceMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to euclidean distance map.
@@ -2232,6 +2451,8 @@ class SisypheAcquisition(object):
         self._sequence = self.DIST
         self.setUnitToMillimeter()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToMeanMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to mean map.
@@ -2240,6 +2461,8 @@ class SisypheAcquisition(object):
         self._sequence = self.MEAN
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToMedianMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to median map.
@@ -2248,6 +2471,8 @@ class SisypheAcquisition(object):
         self._sequence = self.MEDIAN
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToMinimumMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to minimum map.
@@ -2256,6 +2481,8 @@ class SisypheAcquisition(object):
         self._sequence = self.MIN
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToMaximumMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to maximum map.
@@ -2264,6 +2491,8 @@ class SisypheAcquisition(object):
         self._sequence = self.MAX
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToStandardDeviationMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to standard deviation map.
@@ -2272,6 +2501,8 @@ class SisypheAcquisition(object):
         self._sequence = self.STD
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToAlgebraMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to algebra map.
@@ -2280,6 +2511,8 @@ class SisypheAcquisition(object):
         self._sequence = self.ALGEBRA
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToMask(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to mask.
@@ -2288,6 +2521,8 @@ class SisypheAcquisition(object):
         self._sequence = self.MASK
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToB0Map(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to B0 map.
@@ -2296,6 +2531,8 @@ class SisypheAcquisition(object):
         self._sequence = self.B0MAP
         self.setUnitToHz()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToB1Map(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to B1 map.
@@ -2304,6 +2541,8 @@ class SisypheAcquisition(object):
         self._sequence = self.B1MAP
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToT1Map(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to T1 map.
@@ -2312,6 +2551,8 @@ class SisypheAcquisition(object):
         self._sequence = self.T1MAP
         self.setUnitToMillisecond()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToT2Map(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to T2 map.
@@ -2320,6 +2561,8 @@ class SisypheAcquisition(object):
         self._sequence = self.T2MAP
         self.setUnitToMillisecond()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToT2primeMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to T2' map.
@@ -2328,6 +2571,8 @@ class SisypheAcquisition(object):
         self._sequence = self.T2PMAP
         self.setUnitToMillisecond()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToMTRMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to MTR map.
@@ -2336,6 +2581,8 @@ class SisypheAcquisition(object):
         self._sequence = self.MTR
         self.setUnitToPercent()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToQSMMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to QSM map.
@@ -2344,6 +2591,8 @@ class SisypheAcquisition(object):
         self._sequence = self.QSM
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToFilledMask(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to filled mask.
@@ -2352,6 +2601,8 @@ class SisypheAcquisition(object):
         self._sequence = self.FMASK
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToStructMap(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to struct.
@@ -2360,6 +2611,8 @@ class SisypheAcquisition(object):
         self._sequence = self.STRUCT
         self._unit = self.PERC
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToLabels(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to labels.
@@ -2367,6 +2620,8 @@ class SisypheAcquisition(object):
         self._sequence = self.LABELS
         self._modality = SisypheAcquisition._MODALITYTOCODE['LB']
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToDisplacementField(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to displacement field.
@@ -2384,6 +2639,8 @@ class SisypheAcquisition(object):
                                   'displacement field.'.format(parent.isFloat64Datatype()))
         else: raise ValueError('No SisypheVolume parent.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToT1Weighted(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to T1 weighted.
@@ -2392,6 +2649,8 @@ class SisypheAcquisition(object):
         self._sequence = self.T1
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToT2Weighted(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to T2 weighted.
@@ -2400,6 +2659,8 @@ class SisypheAcquisition(object):
         self._sequence = self.T2
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToT2Star(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to T2*.
@@ -2408,6 +2669,8 @@ class SisypheAcquisition(object):
         self._sequence = self.T2S
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToProtonDensityWeighted(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to proton density weighted.
@@ -2416,6 +2679,8 @@ class SisypheAcquisition(object):
         self._sequence = self.PD
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToFLAIR(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to FLAIR.
@@ -2424,6 +2689,8 @@ class SisypheAcquisition(object):
         self._sequence = self.FLAIR
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToContrastEnhancedT1(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced T1 weighted.
@@ -2432,6 +2699,8 @@ class SisypheAcquisition(object):
         self._sequence = self.CET1
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToContrastEnhancedT2(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced T2 weighted.
@@ -2440,6 +2709,8 @@ class SisypheAcquisition(object):
         self._sequence = self.CET2
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToContrastEnhancedFLAIR(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced FLAIR.
@@ -2448,6 +2719,8 @@ class SisypheAcquisition(object):
         self._sequence = self.CEFLAIR
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToContrastEnhancedTOF(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced TOF.
@@ -2456,6 +2729,8 @@ class SisypheAcquisition(object):
         self._sequence = self.CETOF
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToEchoPlanar(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to echo-planar.
@@ -2464,6 +2739,8 @@ class SisypheAcquisition(object):
         self._sequence = self.EPI
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToB0(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to B0.
@@ -2472,6 +2749,8 @@ class SisypheAcquisition(object):
         self._sequence = self.B0
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToDiffusionWeighted(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to diffusion weighted.
@@ -2480,6 +2759,8 @@ class SisypheAcquisition(object):
         self._sequence = self.DWI
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToPerfusionWeighted(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to perfusion weighted.
@@ -2488,6 +2769,8 @@ class SisypheAcquisition(object):
         self._sequence = self.PWI
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToSusceptibilityWeighted(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to susceptibility weighted.
@@ -2496,6 +2779,8 @@ class SisypheAcquisition(object):
         self._sequence = self.SWI
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToTimeOfFlight(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to time of flight.
@@ -2504,6 +2789,8 @@ class SisypheAcquisition(object):
         self._sequence = self.TOF
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToMagnitude(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to time of magnitude.
@@ -2512,6 +2799,8 @@ class SisypheAcquisition(object):
         self._sequence = self.MGNT
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToPhase(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to phase.
@@ -2520,6 +2809,8 @@ class SisypheAcquisition(object):
         self._sequence = self.PHSE
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToContrastEnhancedCT(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to contrast enhanced CT-scan.
@@ -2527,6 +2818,8 @@ class SisypheAcquisition(object):
         if not (self.isCT() or self.isTP()): self.setModalityToCT()
         self._sequence = self.CECT
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToBoneWindowCT(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to bone window CT-scan.
@@ -2534,6 +2827,8 @@ class SisypheAcquisition(object):
         if not (self.isCT() or self.isTP()): self.setModalityToCT()
         self._sequence = self.BONECT
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToFDG(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to FDG.
@@ -2542,6 +2837,8 @@ class SisypheAcquisition(object):
         self._sequence = self.FDG
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToFDOPA(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to FDOPA.
@@ -2550,6 +2847,8 @@ class SisypheAcquisition(object):
         self._sequence = self.FDOPA
         self.setNoUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToHMPAO(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to HMPAO.
@@ -2558,6 +2857,8 @@ class SisypheAcquisition(object):
         self._sequence = self.HMPAO
         self.setUnitToCount()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToECD(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to ECD.
@@ -2566,6 +2867,8 @@ class SisypheAcquisition(object):
         self._sequence = self.ECD
         self.setUnitToCount()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequenceToFPCIT(self) -> None:
         """
         Set sequence attribute of the current SisypheAcquisition instance to FPCIT.
@@ -2574,6 +2877,8 @@ class SisypheAcquisition(object):
         self._sequence = self.FPCIT
         self.setUnitToCount()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isTMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a t-map.
@@ -2585,6 +2890,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.TMAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isZMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a z-map.
@@ -2595,6 +2902,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.ZMAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCMAP(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a correlation coeff. map.
@@ -2605,6 +2914,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CMAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isPMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a correlation probability map.
@@ -2615,6 +2926,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.PMAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isStatisticalMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a t-map, a z-map or a correlation
@@ -2630,6 +2943,8 @@ class SisypheAcquisition(object):
         return self.isTMap() or self.isZMap() or self.isCMAP()
         # Revision 03/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCMap(self) -> bool:
         """
                 Check whether the current SisypheAcquisition instance sequence attribute is a correlation coeff. map.
@@ -2640,6 +2955,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CMAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isGreyMatterMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a gray matter map.
@@ -2651,6 +2968,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.GM
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isSubCorticalGreyMatterMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a subcortical gray matter map.
@@ -2662,6 +2981,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.SCGM
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isWhiteMatterMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a white matter map.
@@ -2673,6 +2994,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.WM
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCerebroSpinalFluidMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a cerebro-spinal fluid map.
@@ -2684,6 +3007,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CSF
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isBrainstemMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a brainstem map.
@@ -2695,6 +3020,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.BSTEM
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCerebellumMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a cerebellum map.
@@ -2706,6 +3033,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CRBL
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCorticalThicknessMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a cortical thickness map.
@@ -2717,6 +3046,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.THICK
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCerebralBloodFlowMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a cerebral blood flow map.
@@ -2728,6 +3059,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CBF
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCerebralBloodVolumeMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a cerebral blood volume map.
@@ -2739,6 +3072,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CBV
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMeanTransitTimeMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a mean transit time map.
@@ -2750,6 +3085,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MTT
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isTimeToPicMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a time to pic map.
@@ -2761,6 +3098,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.TTP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDoseMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a dose map.
@@ -2772,6 +3111,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.DOSE
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFractionalAnisotropyMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a fractional anisotropy map.
@@ -2783,6 +3124,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.FA
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isApparentDiffusionMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is an apparent diffusion map.
@@ -2794,6 +3137,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.ADC
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDensityMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a density map.
@@ -2805,6 +3150,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.DENSITY
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isBiasFieldMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a bias field map.
@@ -2816,6 +3163,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.BIAS
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDistanceMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a euclidean distance map.
@@ -2827,6 +3176,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.DIST
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMeanMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a mean map.
@@ -2838,6 +3189,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MEAN
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMedianMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a median map.
@@ -2849,6 +3202,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MEDIAN
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMinimumMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a minimum map.
@@ -2860,6 +3215,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MIN
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMaximumMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a maximum map.
@@ -2871,6 +3228,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MAX
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isStandardDeviationMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a standard deviation map.
@@ -2882,6 +3241,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.STD
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isAlgebraMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is an algebra map.
@@ -2893,6 +3254,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.ALGEBRA
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMask(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a mask.
@@ -2904,6 +3267,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MASK
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isB0Map(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a B0 map.
@@ -2915,6 +3280,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.B0MAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isB1Map(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a B1 map.
@@ -2926,6 +3293,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.B1MAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isT1Map(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a T1 map.
@@ -2937,6 +3306,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.T1MAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isT2Map(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a T2 map.
@@ -2948,6 +3319,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.T2MAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isT2primeMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a T2' map.
@@ -2959,6 +3332,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.T2PMAP
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMTRMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is an MTR map.
@@ -2970,6 +3345,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MTR
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isQSMMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a QSM map.
@@ -2981,6 +3358,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.QSM
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFilledMask(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a filled mask.
@@ -2992,6 +3371,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.FMASK
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isStructMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a struct map.
@@ -3003,6 +3384,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.STRUCT
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isLabelMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a label map.
@@ -3014,6 +3397,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.LABELS
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDisplacementFieldMap(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a displacement field map.
@@ -3025,6 +3410,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.FIELD
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isT1Weighted(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is T1 weighted.
@@ -3036,6 +3423,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.T1
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isT2Weighted(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is T2 weighted.
@@ -3047,6 +3436,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.T2
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isT2Star(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is T2*.
@@ -3058,6 +3449,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.T2S
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isProtonDensityWeighted(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is proton density weighted.
@@ -3069,6 +3462,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.PD
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFLAIR(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is FLAIR.
@@ -3080,6 +3475,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.FLAIR
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isContrastEnhancedT1(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced T1 weighted.
@@ -3091,6 +3488,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CET1
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isContrastEnhancedT2(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced T2 weighted.
@@ -3102,6 +3501,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CET2
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isContrastEnhancedFLAIR(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced FLAIR.
@@ -3113,6 +3514,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CEFLAIR
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isContrastEnhancedTOF(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced TOF.
@@ -3124,6 +3527,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CETOF
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isEchoPlanar(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is echo-planar.
@@ -3135,6 +3540,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.EPI
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isB0(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is B0.
@@ -3146,6 +3553,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.B0
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDiffusionWeighted(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is diffusion weighted.
@@ -3157,6 +3566,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.DWI
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isPerfusionWeighted(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is perfusion weighted.
@@ -3168,6 +3579,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.PWI
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isSusceptibilityWeighted(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is susceptibility weighted.
@@ -3179,6 +3592,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.SWI
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isTimeOfFlight(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is time of flight.
@@ -3190,6 +3605,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.TOF
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMagnitude(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is magnitude.
@@ -3201,6 +3618,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.MGNT
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isPhase(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is phase.
@@ -3212,6 +3631,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.PHSE
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isContrastEnhancedCT(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a contrast enhanced CT-scan.
@@ -3223,6 +3644,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.CECT
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isBoneWindowCT(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a bone window CT-scan.
@@ -3234,6 +3657,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.BONECT
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFDG(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is FDC.
@@ -3245,6 +3670,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.FDG
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFDOPA(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is FDOPA.
@@ -3256,6 +3683,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.FDOPA
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isHMPAO(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is HMPAO.
@@ -3267,6 +3696,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.HMPAO
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isECD(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is ECD.
@@ -3278,6 +3709,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.ECD
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFPCIT(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is FPCIT.
@@ -3289,6 +3722,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence == self.FPCIT
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isStandardSequence(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is standard. A standard sequence has a
@@ -3306,6 +3741,8 @@ class SisypheAcquisition(object):
         elif self.isPT(): return self._sequence in self._PTSEQUENCE
         else: return False
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDisplacementField(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is a displacement field.
@@ -3317,102 +3754,136 @@ class SisypheAcquisition(object):
         """
         return self.getSequence() == self.FIELD
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setNoUnit(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to no unit.
         """
         self._unit = self.NOUNIT
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToPercent(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to percent.
         """
         self._unit = self.PERC
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToRatio(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to ratio.
         """
         self._unit = self.RATIO
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToSecond(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to second.
         """
         self._unit = self.SEC
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToMillisecond(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to millisecond.
         """
         self._unit = self.MSEC
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToHz(self):
         """
         Set the unit attribute of the current SisypheAcquisition instance to Hz.
         """
         self._unit = self.HZ
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToMillimeter(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to millimeter.
         """
         self._unit = self.MM
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToCount(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to count.
         """
         self._unit = self.COUNT
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToBq(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to Bq.
         """
         self._unit = self.BQ
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToBqMl(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to Bq/ml.
         """
         self._unit = self.BQML
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToSUV(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to SUV.
         """
         self._unit = self.SUV
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToADCunit(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to mm2/s.
         """
         self._unit = self.MM2S
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToHounsfield(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to Hounsfield.
         """
         self._unit = self.HU
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToGy(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to Gy.
         """
         self._unit = self.GY
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToTValue(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to t-value.
         """
         self._unit = self.TVAL
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToZScore(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to Z-score.
         """
         self._unit = self.ZSCORE
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToPValue(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to p-value.
@@ -3421,6 +3892,8 @@ class SisypheAcquisition(object):
 
     # < Revision 03/02/2025
     # add setUnitToCC method
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnitToCC(self) -> None:
         """
         Set the unit attribute of the current SisypheAcquisition instance to correlation coeff.
@@ -3428,6 +3901,8 @@ class SisypheAcquisition(object):
         self._unit = self.CCVAL
     # Revision 03/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isStandardUnit(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance unit attribute is standard. A standard unit has a
@@ -3440,6 +3915,8 @@ class SisypheAcquisition(object):
         """
         return self._unit in self._UNIT
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isContrastEnhanced(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is contrast enhanced.
@@ -3451,6 +3928,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence[:2] == 'CE'
 
+    @cython.ccall
+    @cython.returns(str)
     def getSequence(self) -> str:
         """
         Get current SisypheAcquisition instance sequence attribute.
@@ -3462,6 +3941,8 @@ class SisypheAcquisition(object):
         """
         return self._sequence
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSequence(self, buff: str) -> None:
         """
         Set the current SisypheAcquisition instance sequence attribute.
@@ -3543,6 +4024,8 @@ class SisypheAcquisition(object):
         if string: return self._dateofscan.strftime(f)
         else: return self._dateofscan
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDateOfScan(self, buff: str | date = datetime.today(), f: str = '%Y-%m-%d') -> None:
         """
         Set the date of scan attribute of the current SisypheAcquisition instance.
@@ -3561,6 +4044,8 @@ class SisypheAcquisition(object):
         else:
             raise TypeError('parameter functype is not date or str.')
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getFrame(self) -> int:
         """
         Get frame code attribute of the current SisypheAcquisition instance (0 unknown, 1 no frame, 2 Leksell frame).
@@ -3572,6 +4057,8 @@ class SisypheAcquisition(object):
         """
         return self._frame
 
+    @cython.ccall
+    @cython.returns(str)
     def getFrameAsString(self) -> str:
         """
         Get frame str attribute of the current SisypheAcquisition instance  ('UNKNOWN', 'NO FRAME', 'LEKSELL').
@@ -3583,6 +4070,8 @@ class SisypheAcquisition(object):
         """
         return self._FRAME[self._frame]
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFrame(self, v: int) -> None:
         """
         Set frame code attribute of the current SisypheAcquisition instance (0 unknown, 1 no frame, 2 Leksell frame).
@@ -3598,6 +4087,8 @@ class SisypheAcquisition(object):
             else: raise ValueError('parameter value {} is not between 0 and 2.'.format(v))
         else: raise TypeError('parameter type {} is not int.'.format(type(v)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFrameAsString(self, v: str) -> None:
         """
         Set frame str attribute of the current SisypheAcquisition instance ('UNKNOWN', 'NO FRAME', 'LEKSELL').
@@ -3613,24 +4104,32 @@ class SisypheAcquisition(object):
             else: raise ValueError('parameter is not a valid frame str.')
         else: raise TypeError('parameter type {} is not str.'.format(type(v)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFrameToUnknown(self) -> None:
         """
         Set the current SisypheAcquisition instance frame attribute to unknown.
         """
         self._frame = 0
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFrameToNo(self) -> None:
         """
         Set the current SisypheAcquisition instance frame attribute to no frame.
         """
         self._frame = 1
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFrameToLeksell(self) -> None:
         """
         Set the current SisypheAcquisition instance frame attribute to Leksell.
         """
         self._frame = 2
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setUnit(self, unit: str) -> None:
         """
         Set unit attribute of the current SisypheAcquisition instance.
@@ -3643,6 +4142,8 @@ class SisypheAcquisition(object):
         if isinstance(unit, str): self._unit = unit
         else: raise TypeError('parameter type {} is not str'.format(type(unit)))
 
+    @cython.ccall
+    @cython.returns(str)
     def getUnit(self) -> str:
         """
         Get unit attribute of the current SisypheAcquisition instance.
@@ -3654,6 +4155,8 @@ class SisypheAcquisition(object):
         """
         return self._unit
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasUnit(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance unit attribute is defined.
@@ -3665,6 +4168,8 @@ class SisypheAcquisition(object):
         """
         return self._unit not in ('', 'No', 'No unit', 'None', self.NOUNIT)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCustomSequence(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance sequence attribute is not standard. A standard sequence
@@ -3677,6 +4182,8 @@ class SisypheAcquisition(object):
         """
         return not self.isStandardSequence()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCustomUnit(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance unit attribute is not standard. A standard unit has a
@@ -3689,6 +4196,8 @@ class SisypheAcquisition(object):
         """
         return not self.isStandardUnit()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFrom(self, buff: SisypheAcquisition | SisypheVolume) -> None:
         """
         Copy attributes of the acquisition parameter to the current SisypheAcquisition instance (deep copy).
@@ -3718,6 +4227,8 @@ class SisypheAcquisition(object):
             # Revision 05/02/2026 >
         else: raise TypeError('parameter type {} is not {} or SisypheVolume.'.format(type(buff), self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(object)
     def copy(self) -> SisypheAcquisition:
         """
         Copy the current SisypheAcquisition instance (deep copy).
@@ -3747,6 +4258,8 @@ class SisypheAcquisition(object):
         return buff
         # Revision 06/11/2024 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMR(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance modality attribute is MRI.
@@ -3758,6 +4271,8 @@ class SisypheAcquisition(object):
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['MR']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCT(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance modality attribute is CT-scan.
@@ -3769,6 +4284,8 @@ class SisypheAcquisition(object):
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['CT']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isPT(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance modality attribute is PET.
@@ -3780,6 +4297,8 @@ class SisypheAcquisition(object):
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['PT']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isNM(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance modality attribute is Nuclear Medicine.
@@ -3791,6 +4310,8 @@ class SisypheAcquisition(object):
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['NM']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isOT(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance modality attribute is OT.
@@ -3802,6 +4323,8 @@ class SisypheAcquisition(object):
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['OT']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isLB(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance modality attribute is Label.
@@ -3813,6 +4336,8 @@ class SisypheAcquisition(object):
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['LB']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isTP(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance modality attribute is Template.
@@ -3824,6 +4349,8 @@ class SisypheAcquisition(object):
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['TP']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isPJ(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance modality attribute is Projection.
@@ -3835,6 +4362,8 @@ class SisypheAcquisition(object):
         """
         return self._modality == SisypheAcquisition._MODALITYTOCODE['PJ']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isICBM152(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance attributes are Template modality and ICBM152 sequence.
@@ -3851,6 +4380,8 @@ class SisypheAcquisition(object):
         return ID == self._TEMPLATES[0]
         # Revision 21/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isICBM452(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance attributes are Template modality and ICBM452 sequence.
@@ -3867,6 +4398,8 @@ class SisypheAcquisition(object):
         return ID == self._TEMPLATES[1]
         # Revision 21/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isATROPOS(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance attributes are Template modality and ATROPOS sequence.
@@ -3883,6 +4416,8 @@ class SisypheAcquisition(object):
         return ID == self._TEMPLATES[2]
         # Revision 21/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isSRI24(self) -> bool:
         """
         Check whether the current SisypheAcquisition instance attributes are Template modality and SRI24 sequence.
@@ -3899,6 +4434,8 @@ class SisypheAcquisition(object):
         return ID == self._TEMPLATES[3]
         # Revision 21/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isEqual(self, buff: SisypheAcquisition) -> bool:
         """
         Check whether parameter instance and current SisypheAcquisition instance have the same modality, sequence and
@@ -3921,6 +4458,8 @@ class SisypheAcquisition(object):
                    buff._dateofscan == self._dateofscan
         else: raise TypeError('parameter type is not {}.'.format(self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isNotEqual(self, buff: SisypheAcquisition) -> bool:
         """
         Check whether parameter instance and current SisypheAcquisition instance have not the same modality, sequence
@@ -3939,6 +4478,8 @@ class SisypheAcquisition(object):
         """
         return not self.isEqual(buff)
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getAgeAtScanDate(self, dateofbirthday: str | SisypheIdentity | date, f: str = '%Y-%m-%d') -> int:
         """
         Get the patient's age supplied as parameter on the scan date.
@@ -3966,6 +4507,8 @@ class SisypheAcquisition(object):
             return int(delta.days / 365)
         else: raise TypeError('parameter functype is not str, date, SisypheIdentity.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def createXML(self, doc:  minidom.Document, currentnode: minidom.Element) -> None:
         """
         Write current SisypheAcquisition instance attributes to xml instance.
@@ -4046,6 +4589,8 @@ class SisypheAcquisition(object):
             else: raise TypeError('parameter functype is not xml.dom.minidom.Element.')
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
         """
         Read current SisypheAcquisition instance attributes from xml instance.
@@ -4102,6 +4647,8 @@ class SisypheAcquisition(object):
                     # Revision 05/02/2026 >
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToXML(self, filename: str) -> None:
         """
         Save current SisypheAcquisition instance attributes to xml file (.xacq).
@@ -4126,6 +4673,8 @@ class SisypheAcquisition(object):
         finally: f.close()
         if self.isLB() and self.hasLabels(): self.saveLabels()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
         """
         Load current SisypheAcquisition instance attributes from xml file (.xacq).
@@ -4150,6 +4699,7 @@ class SisypheAcquisition(object):
     isTemplate = isTP
 
 
+@cython.cclass
 class SisypheDisplay(object):
     """
     Description
@@ -4171,6 +4721,15 @@ class SisypheDisplay(object):
     # Class constant
 
     _FILEEXT: str = '.xdisplay'
+
+    # Cython static attribute types
+
+    _rangemin: cython.double
+    _rangemax: cython.double
+    _windowmin: cython.double
+    _windowmax: cython.double
+    _lut: SisypheLut
+    _parent: SisypheVolume | None
 
     # Class method
 
@@ -4286,6 +4845,8 @@ class SisypheDisplay(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasParent(self) -> bool:
         """
         Check whether current SisypheDisplay instance has a parent (Sisyphe.core.sisypheVolume.SisypheVolume instance),
@@ -4298,6 +4859,8 @@ class SisypheDisplay(object):
         """
         return self._parent is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setParent(self, parent: SisypheVolume) -> None:
         """
         Set parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheDisplay instance.
@@ -4311,6 +4874,8 @@ class SisypheDisplay(object):
         if isinstance(parent, SisypheVolume): self._parent = parent
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(parent)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getParent(self) -> SisypheVolume:
         """
         Get parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheDisplay instance.
@@ -4322,6 +4887,8 @@ class SisypheDisplay(object):
         """
         return self._parent
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFrom(self, buff: SisypheDisplay | SisypheVolume) -> None:
         """
         Copy attributes of the display parameter to the current SisypheDisplay instance (deep copy).
@@ -4342,6 +4909,8 @@ class SisypheDisplay(object):
             self._lut = buff._lut.copy()
         else: raise TypeError('parameter type {} is not {} or SisypheVolume.'.format(type(buff), self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(object)
     def copy(self) -> SisypheDisplay:
         """
         Copy the current SisypheDisplay instance (deep copy).
@@ -4359,12 +4928,16 @@ class SisypheDisplay(object):
         buff._lut = self._lut.copy()
         return buff
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def updateVTKLUT(self) -> None:
         """
         Apply windowing attributes to current SisypheDisplay instance.
         """
         self._lut.setWindowRange(self._windowmin, self._windowmax)
 
+    @cython.ccall
+    @cython.returns(object)
     def getLUT(self) -> SisypheLut:
         """
         Get Lut attribute of the current SisypheDisplay instance.
@@ -4376,6 +4949,8 @@ class SisypheDisplay(object):
         """
         return self._lut
 
+    @cython.ccall
+    @cython.returns(object)
     def getVTKLUT(self) -> vtkLookupTable:
         """
         Get Lut attribute of the current SisypheDisplay instance.
@@ -4387,6 +4962,8 @@ class SisypheDisplay(object):
         """
         return self._lut.getvtkLookupTable()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLUT(self, lut: str | SisypheLut) -> None:
         """
         Set Lut attribute of the current SisypheDisplay instance.
@@ -4406,6 +4983,8 @@ class SisypheDisplay(object):
         self._windowmin, self._windowmax = self._lut.getWindowRange()
         # Revision 13/12/2024 >
 
+    @cython.ccall
+    @cython.returns(tuple)
     def getWindow(self) -> tuple[float, float] | tuple[int, int]:
         """
         Get lut windowing attributes of the current SisypheDisplay instance.
@@ -4417,6 +4996,8 @@ class SisypheDisplay(object):
         """
         return self._windowmin, self._windowmax
 
+    @cython.ccall
+    @cython.returns(object)
     def getWindowMin(self) -> float | int:
         """
         Get minimum lut windowing attribute of the current SisypheDisplay instance.
@@ -4428,6 +5009,8 @@ class SisypheDisplay(object):
         """
         return self._windowmin
 
+    @cython.ccall
+    @cython.returns(object)
     def getWindowMax(self) -> float | int:
         """
         Get maximum lut windowing attribute of the current SisypheDisplay instance.
@@ -4439,6 +5022,8 @@ class SisypheDisplay(object):
         """
         return self._windowmax
 
+    @cython.ccall
+    @cython.returns(tuple)
     def getRange(self) -> tuple[float, float] | tuple[int, int]:
         """
         Get scalar values range attributes of the current SisypheDisplay instance.
@@ -4450,6 +5035,8 @@ class SisypheDisplay(object):
         """
         return self._rangemin, self._rangemax
 
+    @cython.ccall
+    @cython.returns(object)
     def getRangeMin(self) -> float | int:
         """
         Get minimum scalar value attribute of the current SisypheDisplay instance.
@@ -4461,6 +5048,8 @@ class SisypheDisplay(object):
         """
         return self._rangemin
 
+    @cython.ccall
+    @cython.returns(object)
     def getRangeMax(self) -> float | int:
         """
         Get maximum scalar value attribute of the current SisypheDisplay instance.
@@ -4472,6 +5061,8 @@ class SisypheDisplay(object):
         """
         return self._rangemax
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultWindowMin(self) -> None:
         """
         Set minimum windowing value of the current SisypheDisplay instance to minimum scalar value of the image array.
@@ -4479,6 +5070,8 @@ class SisypheDisplay(object):
         self._windowmin = self._rangemin
         self.updateVTKLUT()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setWindowMin(self, v: float) -> None:
         """
         Set minimum windowing value of the current SisypheDisplay instance.
@@ -4492,6 +5085,8 @@ class SisypheDisplay(object):
         else: self._windowmin = v
         self.updateVTKLUT()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultWindowMax(self) -> None:
         """
         Set maximum windowing value of the current SisypheDisplay instance to maximum scalar value of the image array.
@@ -4499,6 +5094,8 @@ class SisypheDisplay(object):
         self._windowmax = self._rangemax
         self.updateVTKLUT()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setWindowMax(self, v: float) -> None:
         """
         Set maximum windowing value of the current SisypheDisplay instance.
@@ -4512,6 +5109,8 @@ class SisypheDisplay(object):
         else: self._windowmax = v
         self.updateVTKLUT()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setRangeMin(self, v: float) -> None:
         """
         Set minimum scalar value of the current SisypheDisplay instance.
@@ -4525,6 +5124,8 @@ class SisypheDisplay(object):
         if self._windowmin < v: self._windowmin = v
         self.updateVTKLUT()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setRangeMax(self, v: float) -> None:
         """
         Set maximum scalar value of the current SisypheDisplay instance.
@@ -4538,6 +5139,8 @@ class SisypheDisplay(object):
         if self._windowmax > v: self._windowmax = v
         self.updateVTKLUT()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setWindow(self, vmin: float, vmax: float) -> None:
         """
         Set windowing lut attributes of the current SisypheDisplay instance.
@@ -4557,6 +5160,8 @@ class SisypheDisplay(object):
             self.updateVTKLUT()
         else: raise ValueError('second parameter {} is not greater than first parameter {}.'.format(vmax, vmin))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setCenterWidthWindow(self, center: float, width: float) -> None:
         """
         Set windowing lut attributes of the current SisypheDisplay instance.
@@ -4578,7 +5183,9 @@ class SisypheDisplay(object):
 
     # < Revision 12/06/2025
     # add setSymmetricWindow method
-    def setSymmetricWindow(self):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setSymmetricWindow(self) -> None:
         """
         Set symmetric values to the windowing lut attributes of the current SisypheDisplay instance. Take the lowest
         absolute value between the upper and lower window thresholds, set it as the upper window, and minus this value
@@ -4591,6 +5198,8 @@ class SisypheDisplay(object):
             self.setWindow(-v, v)
     # Revision 12/06/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def autoWindow(self, cmin: int = 1, cmax: int = 99) -> None:
         """
         Set windowing lut attributes of the current SisypheDisplay instance.
@@ -4611,6 +5220,8 @@ class SisypheDisplay(object):
             vmax = parent.getPercentile(cmax)
             self.setWindow(vmin, vmax)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setCTBrainWindow(self) -> None:
         """
         Set windowing lut attributes of the current SisypheDisplay instance to improve brain display.
@@ -4620,6 +5231,8 @@ class SisypheDisplay(object):
             if parent.acquisition.isCT():
                 self.setCenterWidthWindow(40.0, 80.0)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setCTBoneWindow(self) -> None:
         """
         Set windowing lut attributes of the current SisypheDisplay instance to improve bone display.
@@ -4629,6 +5242,8 @@ class SisypheDisplay(object):
             if parent.acquisition.isCT():
                 self.setCenterWidthWindow(600.0, 2800.0)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setCTMetallicWindow(self) -> None:
         """
         Set windowing lut attributes of the current SisypheDisplay instance to improve metallic material display.
@@ -4638,6 +5253,8 @@ class SisypheDisplay(object):
             if parent.acquisition.isCT():
                 self.setCenterWidthWindow(2600.0, 600.0)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setRange(self, vmin: float, vmax: float) -> None:
         """
         Set scalar range attributes of the current SisypheDisplay instance.
@@ -4657,6 +5274,8 @@ class SisypheDisplay(object):
             self.updateVTKLUT()
         else: raise ValueError('second parameter {} is not greater than first parameter {}.'.format(vmax, vmin))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasZeroOneRange(self) -> bool:
         """
         Check whether scalar values range of the current SisypheDisplay instance is normalized (0.0, 1.0).
@@ -4668,6 +5287,8 @@ class SisypheDisplay(object):
         """
         return self._rangemin >= 0.0 and self._rangemax <= 1.0
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasNegativeValues(self) -> bool:
         """
         Check whether scalar value minimum of the current SisypheDisplay instance is negative.
@@ -4679,6 +5300,8 @@ class SisypheDisplay(object):
         """
         return self._rangemin < 0.0
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def convertRangeWindowToInt(self) -> None:
         """
         Conversion of windowing and scalar values attributes of the current SisypheDisplay instance to integers.
@@ -4688,6 +5311,8 @@ class SisypheDisplay(object):
         self._windowmin = int(self._windowmin)
         self._windowmax = int(self._windowmax)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultWindow(self) -> None:
         """
         Set minimum windowing value to minimum scalar value of the image array.
@@ -4697,6 +5322,8 @@ class SisypheDisplay(object):
         self._windowmax = self._rangemax
         self.updateVTKLUT()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDefaultWindow(self) -> bool:
         """
         Check whether minimum windowing value = minimum scalar value and maximum windowing value = maximum scalar value
@@ -4710,12 +5337,16 @@ class SisypheDisplay(object):
         return self._windowmin == self._rangemin and \
                self._windowmax == self._rangemax
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultLut(self) -> None:
         """
         Set Lut attribute of the current SisypheDisplay instance to default (grayscale colormap).
         """
         self._lut.setDefaultLut()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
         Write current SisypheDisplay instance attributes to XML instance.
@@ -4764,6 +5395,8 @@ class SisypheDisplay(object):
             else: raise TypeError('parameter functype is not xml.dom.minidom.Element.')
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
         """
         Read current SisypheDisplay instance attributes from XML instance.
@@ -4796,6 +5429,8 @@ class SisypheDisplay(object):
                     if ext.lower() == self._lut.getFileExt(): self._lut.loadFromXML(lutname)
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToXML(self, filename: str) -> None:
         """
         Save current SisypheDislpay instance attributes to XML file (.xdisplay).
@@ -4822,6 +5457,8 @@ class SisypheDisplay(object):
         finally:
             f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
         """
         Load current SisypheDisplay instance attributes from XML file (.xdisplay).
@@ -4843,6 +5480,7 @@ class SisypheDisplay(object):
         else: raise IOError('No such file : {}'.format(filename))
 
 
+@cython.cclass
 class SisypheACPC(object):
     """
     Description
@@ -4868,6 +5506,13 @@ class SisypheACPC(object):
     # Class constant
 
     _FILEEXT: str = '.xacpc'
+
+    # Cython static attribute types
+
+    _ac: tuple[cython.double, cython.double, cython.double]
+    _pc: tuple[cython.double, cython.double, cython.double]
+    _trf: SisypheTransform
+    _parent: SisypheVolume
 
     # Class method
 
@@ -4954,6 +5599,8 @@ class SisypheACPC(object):
 
     # Private method
 
+    @cython.cfunc
+    @cython.returns(cython.void)
     def _updateTransform(self) -> None:
         # Revision 02/04/2023, replace atan by atan2
         if self.hasACPC():
@@ -4969,6 +5616,8 @@ class SisypheACPC(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasParent(self) -> bool:
         """
         Check whether current SisypheACPC instance has a parent (Sisyphe.core.sisypheVolume.SisypheVolume instance),
@@ -4981,6 +5630,8 @@ class SisypheACPC(object):
         """
         return self._parent is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setParent(self, parent: SisypheVolume) -> None:
         """
         Set parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheACPC instance.
@@ -4994,6 +5645,8 @@ class SisypheACPC(object):
         if isinstance(parent, SisypheVolume): self._parent = parent
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(parent)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getParent(self) -> SisypheVolume:
         """
         Get parent (Sisyphe.core.sisypheVolume.SisypheVolume instance) of the current SisypheACPC instance.
@@ -5005,6 +5658,8 @@ class SisypheACPC(object):
         """
         return self._parent
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getAC(self) -> tupleFloat3:
         """
         Get AC coordinates attribute of the current SisypheACPC instance.
@@ -5016,6 +5671,8 @@ class SisypheACPC(object):
         """
         return self._ac
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getPC(self) -> tupleFloat3:
         """
         Get PC coordinates attribute of the current SisypheACPC instance.
@@ -5027,6 +5684,8 @@ class SisypheACPC(object):
         """
         return self._pc
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getMidACPC(self) -> tupleFloat3:
         """
         Get midACPC coordinates of the current SisypheACPC instance.
@@ -5042,6 +5701,8 @@ class SisypheACPC(object):
                     self._ac[1] + (self._pc[1] - self._ac[1]) / 2,
                     self._ac[2] + (self._pc[2] - self._ac[2]) / 2)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setAC(self, v: tupleFloat3 | list[float]) -> None:
         """
         Set AC coordinates attribute of the current SisypheACPC instance.
@@ -5058,6 +5719,8 @@ class SisypheACPC(object):
             else: raise TypeError('parameter element type of the list/tuple is not int or float.')
         else: raise TypeError('parameter type is not tuple/list of 3 elements.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setPC(self, v: tupleFloat3 | list[float]) -> None:
         """
         Set PC coordinates attribute of the current SisypheACPC instance.
@@ -5074,6 +5737,8 @@ class SisypheACPC(object):
             else: raise TypeError('parameter element type of the list/tuple is not int or float.')
         else: raise TypeError('parameter type is not tuple/list of 3 elements.')
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasAC(self) -> bool:
         """
         Check whether AC attribute of the current SisypheACPC instance is defined (not 0.0, 0.0 0.0).
@@ -5085,6 +5750,8 @@ class SisypheACPC(object):
         """
         return self._ac != (0.0, 0.0, 0.0)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasPC(self) -> bool:
         """
         Check whether PC attribute of the current SisypheACPC instance is defined (not 0.0, 0.0 0.0).
@@ -5096,6 +5763,8 @@ class SisypheACPC(object):
         """
         return self._pc != (0.0, 0.0, 0.0)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasACPC(self) -> bool:
         """
         Check whether AC and PC attributes of the current SisypheACPC instance is defined (not 0.0, 0.0 0.0).
@@ -5108,6 +5777,8 @@ class SisypheACPC(object):
         return self._ac != (0.0, 0.0, 0.0) and \
                self._pc != (0.0, 0.0, 0.0)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasTransform(self) -> bool:
         """
         Check whether geometric transformation attribute of the current SisypheAPC instance is not identity.
@@ -5119,6 +5790,8 @@ class SisypheACPC(object):
         """
         return not self._trf.isIdentity()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setTransform(self, trf: SisypheTransform) -> None:
         """
         Set geometric transformation attribute of the current SisypheACPC instance. Geometric transformation to
@@ -5133,6 +5806,8 @@ class SisypheACPC(object):
         if isinstance(trf, SisypheTransform):
             self._trf = trf
 
+    @cython.ccall
+    @cython.returns(object)
     def getTransform(self) -> SisypheTransform:
         """
         Get geometric transformation attribute of the current SisypheACPC instance. Geometric transformation to
@@ -5145,6 +5820,8 @@ class SisypheACPC(object):
         """
         return self._trf
 
+    @cython.ccall
+    @cython.returns(object)
     def getEquivalentVolumeCenteredTransform(self) -> SisypheTransform:
         """
         Get geometric transformation attribute of the current SisypheACPC instance. Conversion of the geometric
@@ -5196,6 +5873,8 @@ class SisypheACPC(object):
             return t1
         else: raise AttributeError('No parent or AC PC attributes are not defined.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getEquivalentVolumeCenteredTransform2(self) -> SisypheTransform:
         """
         Get geometric transformation attribute of the current SisypheACPC instance. Conversion of the geometric
@@ -5226,6 +5905,8 @@ class SisypheACPC(object):
         trf.preMultiply(trf2, homogeneous=True)
         return trf
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setYRotation(self, r: float, deg: bool = False) -> None:
         """
         Set rotation around Y-axis with update of geometric transformation attribute of the current SisypheACPC
@@ -5244,6 +5925,8 @@ class SisypheACPC(object):
             self._trf.setRotations(rot, deg=deg)
         else: raise TypeError('parameter type {} is not float.'.format(type(r)))
 
+    @cython.ccall
+    @cython.returns(list[cython.double])
     def getRotations(self, deg: bool = False) -> list[float]:
         """
         Get rotation around Y-axis with update of geometric transformation attribute of the current SisypheACPC
@@ -5261,6 +5944,8 @@ class SisypheACPC(object):
         """
         return self._trf.getRotations(deg=deg)
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getACPCDistance(self) -> float:
         """
         Get euclidean distance between AC and PC points.
@@ -5276,6 +5961,8 @@ class SisypheACPC(object):
                         (self._ac[2] - self._pc[2]) ** 2)
         else: return 0.0
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getEuclideanDistanceFromAC(self, p: tupleFloat3 | list[float]) -> float:
         """
         Get euclidean distance between AC and parameter point.
@@ -5296,6 +5983,8 @@ class SisypheACPC(object):
                         (self._ac[2] - p[2]) ** 2)
         else: return 0.0
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getEuclideanDistanceFromPC(self, p: tupleFloat3 | list[float]) -> float:
         """
         Get euclidean distance between PC and parameter point.
@@ -5316,6 +6005,8 @@ class SisypheACPC(object):
                         (self._pc[2] - p[2]) ** 2)
         else: return 0.0
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getEuclideanDistanceFromMidACPC(self, p: tupleFloat3 | list[float]) -> float:
         """
         Get euclidean distance between midACPC and parameter point.
@@ -5337,6 +6028,8 @@ class SisypheACPC(object):
                         (p0[2] - p[2]) ** 2)
         else: return 0.0
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getRelativeDistanceFromAC(self, p: tupleFloat3 | list[float]) -> tupleFloat3:
         """
         Get relative distance between a point and AC in each axis x (lat), y (ap) and z (h) in the geometric reference
@@ -5363,6 +6056,8 @@ class SisypheACPC(object):
             return p[0] - ref[0], p[1] - ref[1], p[2] - ref[2]
         else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getRelativeDistanceFromPC(self, p: tupleFloat3 | list[float]) -> tupleFloat3:
         """
         Get relative distance between a point and PC in each axis x (lat), y (ap) and z (h) in the geometric reference
@@ -5389,6 +6084,8 @@ class SisypheACPC(object):
             return p[0] - ref[0], p[1] - ref[1], p[2] - ref[2]
         else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getRelativeDistanceFromMidACPC(self, p: tupleFloat3 | list[float]) -> tupleFloat3:
         """
         Get relative distance between a point and midACPC in each axis x (lat), y (ap) and z (h) in the geometric
@@ -5415,6 +6112,8 @@ class SisypheACPC(object):
             return p[0] - ref[0], p[1] - ref[1], p[2] - ref[2]
         else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getRelativeDistanceFromReferencePoint(self,
                                               p: tupleFloat3 | list[float],
                                               ref: tupleFloat3 | list[float]) -> tupleFloat3:
@@ -5445,6 +6144,8 @@ class SisypheACPC(object):
             return p[0] - ref[0], p[1] - ref[1], p[2] - ref[2]
         else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getPointFromRelativeDistanceToAC(self, r: tupleFloat3 | list[float]) -> tupleFloat3:
         """
         Get coordinates of a point giving relative distances from AC point in each axis x (lat), y (ap) and z (h), in
@@ -5472,6 +6173,8 @@ class SisypheACPC(object):
             return self._trf.applyToPoint(p)
         else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getPointFromRelativeDistanceToPC(self, r: tupleFloat3 | list[float]) -> tupleFloat3:
         """
         Get coordinates of a point giving relative distances from PC point in each axis x (lat), y (ap) and z (h), in
@@ -5499,6 +6202,8 @@ class SisypheACPC(object):
             return self._trf.applyToPoint(p)
         else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getPointFromRelativeDistanceToMidACPC(self, r: tupleFloat3 | list[float]) -> tupleFloat3:
         """
         Get coordinates of a point giving relative distances from midACPC point in each axis x (lat), y (ap) and z (h),
@@ -5526,6 +6231,8 @@ class SisypheACPC(object):
             return self._trf.applyToPoint(p)
         else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getPointFromRelativeDistanceToReferencePoint(self,
                                                      r: tupleFloat3 | list[float],
                                                      ref: tupleFloat3 | list[float]) -> tupleFloat3:
@@ -5557,6 +6264,8 @@ class SisypheACPC(object):
             return self._trf.applyToPoint(p)
         else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFrom(self, buff: SisypheACPC | SisypheVolume) -> None:
         """
         Copy attributes of the ACPC parameter to the current SisypheACPC instance (deep copy).
@@ -5575,6 +6284,8 @@ class SisypheACPC(object):
             self._trf = buff._trf.copy()
         else: raise TypeError('parameter type {} is not {} or SisypheVolume.'.format(type(buff), self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(object)
     def copy(self) -> SisypheACPC:
         """
         Copy the current SisypheACPC instance (deep copy).
@@ -5590,6 +6301,8 @@ class SisypheACPC(object):
         buff._trf = self._trf.copy()
         return buff
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
         Write current SisypheACPC instance attributes to xml instance.
@@ -5626,6 +6339,8 @@ class SisypheACPC(object):
             else: raise TypeError('parameter functype is not xml.dom.minidom.Element.')
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
         """
         Read current SisypheACPC instance attributes from XML instance.
@@ -5655,6 +6370,8 @@ class SisypheACPC(object):
                         self._updateTransform()
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToXML(self, filename: str) -> None:
         """
         Save current SisypheACPC instance attributes to XML file (.xacpc).
@@ -5678,6 +6395,8 @@ class SisypheACPC(object):
         except IOError: raise IOError('XML file write error.')
         finally: f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
         """
         Load current SisypheACPC instance attributes from XML file (.xacpc).

@@ -22,6 +22,8 @@ from os.path import splitext
 from os.path import split
 from os.path import join
 
+import cython
+
 from math import radians
 from math import degrees
 
@@ -70,6 +72,7 @@ from SimpleITK import Euler3DTransform as sitkEuler3DTransform
 from SimpleITK import DisplacementFieldTransform as sitkDisplacementFieldTransform
 from SimpleITK import ReadTransform as sitkReadTransform
 from SimpleITK import TransformToDisplacementFieldFilter as sitkTransformToDisplacementFieldFilter
+from SimpleITK import InverseDisplacementFieldImageFilter as sitkInverseDisplacementFieldImageFilter
 from SimpleITK import ResampleImageFilter as sitkResampleImageFilter
 
 from ants.core.ants_transform import ANTsTransform
@@ -120,7 +123,7 @@ listInt = list[int]
 tupleInt3 = tuple[int, int, int]
 vectorInt3 = listInt | tupleInt3
 
-
+@cython.cclass
 class SisypheTransform(object):
     """
     Description
@@ -146,13 +149,25 @@ class SisypheTransform(object):
     object -> SisypheTransform
 
     Creation: 05/10/2021
-    Last revision: 19/03/2025
+    Last revision: 02/07/2026
     """
     __slots__ = ['_parent', '_name', '_ID', '_size', '_spacing', '_transform', '_field', '_fieldname']
 
     # Class constant
 
     _FILEEXT: str = '.xtrf'
+    _CITER: int = 0
+
+    # Cython static attribute types
+
+    _parent: SisypheVolume | None
+    _name: str
+    _ID: str
+    _size: list
+    _spacing: list
+    _transform: sitkAffineTransform
+    _field: sitkDisplacementFieldTransform | None
+    _fieldname: str
 
     # Class methods
 
@@ -256,10 +271,9 @@ class SisypheTransform(object):
     _parent     SisypheVolume, reference volume
     _ID         str, ID of floating image,  fixed volume ID
     _name       str
-    _size       tuple[int, int, int], fixed volume size
+    _size       list[int], fixed volume size
     _spacing    tuple[float, float, float], fixed volume spacing
     _transform  sitkAffineTransform, backward transformation, fixed coordinates to moving coordinates
-    _affine     sitkScaleSkewVersor3DTransform
     _field      sitkDisplacementFieldTransform
     _fieldname  str    
     """
@@ -279,14 +293,14 @@ class SisypheTransform(object):
         if parent and isinstance(parent, SisypheVolume):
             self._ID: str = parent.getID()
             self._name: str = parent.getName()
-            self._size: tuple[int, int, int] = parent.getSize()
-            self._spacing: tuple[float, float, float] = parent.getSpacing()
+            self._size: list[int] = list(parent.getSize())
+            self._spacing: list[float] = list(parent.getSpacing())
             self._transform.SetCenter(parent.getCenter())
         else:
             self._ID: str = ''  # moving SisypheVolume ID
             self._name: str = ''
-            self._size: tuple[int, int, int] = (0, 0, 0)
-            self._spacing:tuple[float, float, float] = (0.0, 0.0, 0.0)
+            self._size: list[int] = [0, 0, 0]
+            self._spacing: list[float] = [0.0, 0.0, 0.0]
             self.setCenter((0.0, 0.0, 0.0))
         self._parent = parent
 
@@ -368,6 +382,8 @@ class SisypheTransform(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasParent(self) -> bool:
         """
         Check if the parent attribute of the current SisypheTransform instance is defined (not None).
@@ -379,6 +395,8 @@ class SisypheTransform(object):
         """
         return self._parent is not None
 
+    @cython.ccall
+    @cython.returns(object)
     def getParent(self) -> SisypheVolume | None:
         """
         Get the parent attribute of the current SisypheTransform instance.
@@ -390,6 +408,8 @@ class SisypheTransform(object):
         """
         return self._parent
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setParent(self, parent: SisypheVolume) -> None:
         """
         Set the parent attribute of the current SisypheTransform instance.
@@ -405,7 +425,12 @@ class SisypheTransform(object):
             self._size = parent.getSize()
             self._spacing = parent.getSpacing()
             self._transform.SetCenter(parent.getCenter())
+            # < Revision 01/07/2026
+            self._parent = parent
+            # Revision 01/07/2026 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setName(self, name: str) -> None:
         """
         Set the name attribute of the current SisypheTransform instance.
@@ -417,6 +442,8 @@ class SisypheTransform(object):
         """
         self._name = splitext(basename(name))[0]
 
+    @cython.ccall
+    @cython.returns(str)
     def getName(self) -> str:
         """
         Get the name attribute of the current SisypheTransform instance.
@@ -428,6 +455,8 @@ class SisypheTransform(object):
         """
         return self._name
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasName(self) -> bool:
         """
         Check if the name attribute of the current SisypheTransform instance is defined (not '').
@@ -439,6 +468,8 @@ class SisypheTransform(object):
         """
         return self._name != ''
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setIdentity(self) -> None:
         """
         Clear the current SisypheTransform instance (set geometric transformation to identity).
@@ -450,6 +481,8 @@ class SisypheTransform(object):
         # Set center
         self._transform.SetCenter(c)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isIdentity(self) -> bool:
         """
         Check if the current SisypheTransform instance is an identity geometric transformation.
@@ -464,6 +497,8 @@ class SisypheTransform(object):
                    self._transform.GetTranslation() == (0.0, 0.0, 0.0)
         else: raise TypeError('Displacement field transform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getInverseTransform(self) -> SisypheTransform:
         """
         Get the inverse geometric transformation of the current SisypheTransform instance.
@@ -482,6 +517,8 @@ class SisypheTransform(object):
             return trf
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setTranslations(self, t: vectorFloat3) -> None:
         """
         Set translation attributes of the current SisypheTransform instance.
@@ -494,6 +531,8 @@ class SisypheTransform(object):
         if self._field is None: self._transform.SetTranslation(t)
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setRotations(self, r: vectorFloat3, deg: bool = False) -> None:
         """
         Set rotation attributes of the current SisypheTransform instance. The order in which rotations are applied is
@@ -517,6 +556,8 @@ class SisypheTransform(object):
             self._transform.SetMatrix(t.GetMatrix())
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setVersor(self, v: vectorFloat4) -> None:
         """
         Set rotation attributes of the current SisypheTransform instance from a versor i.e. quaternion in w, x, y, z
@@ -533,6 +574,8 @@ class SisypheTransform(object):
             self._transform.SetMatrix(t.GetMatrix())
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setAngleVector(self, a: float, v: vectorFloat3, deg: bool = False) -> None:
         """
         Set rotation attributes of the current SisypheTransform instance from a vector of rotation axis and an angle.
@@ -554,6 +597,8 @@ class SisypheTransform(object):
             self._transform.SetMatrix(R.flatten())
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setAffineParameters(self,
                             t: vectorFloat3 | None = None,
                             r: vectorFloat3 | None = None,
@@ -596,6 +641,8 @@ class SisypheTransform(object):
                 self._transform.SetMatrix(M.flatten())
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def addTranslations(self, t: vectorFloat3) -> None:
         """
         Add translations to the current SisypheTransform instance.
@@ -613,6 +660,8 @@ class SisypheTransform(object):
             self.setTranslations(t2)
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def composeRotations(self, r: vectorFloat3, deg: bool = False) -> None:
         """
         Compose rotations to the current SisypheTransform instance.
@@ -630,6 +679,8 @@ class SisypheTransform(object):
             self.preMultiply(trf, homogeneous=True)
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def composeTransform(self, trf: SisypheTransform) -> None:
         """
         Compose a geometric transformation (SisypheTransform) to the current SisypheTransform instance.
@@ -645,6 +696,8 @@ class SisypheTransform(object):
             else: raise TypeError('parameter type {} is not SisypheTransform'.format(trf))
         else: raise TypeError('Displacement field transform has no affine matrix parameter.')
 
+    @cython.ccall
+    @cython.returns(list)
     def getTranslations(self) -> listFloat:
         """
         Get translation attributes of the current SisypheTransform instance.
@@ -658,6 +711,8 @@ class SisypheTransform(object):
 
     # < Revision 07/09/2024
     # add getOffsets method
+    @cython.ccall
+    @cython.returns(list)
     def getOffsets(self) -> listFloat:
         """
         Get offsets of the current SisypheTransform instance. if center of rotation is default (0.0, 0.0, 0.0),
@@ -675,6 +730,8 @@ class SisypheTransform(object):
         else: return self.getTranslations()
     # Revision 07/09/2024 >
 
+    @cython.ccall
+    @cython.returns(object)
     def getRotations(self, deg: bool = False) -> listFloat | None:
         """
         Get rotation attributes of the current SisypheTransform instance.
@@ -696,6 +753,8 @@ class SisypheTransform(object):
             else: return [t.GetAngleX(), t.GetAngleY(), t.GetAngleZ()]
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(list)
     def getRotationsFromMatrix(self, deg: bool = False) -> listFloat:
         """
         Get rotations from the affine matrix attribute of the current SisypheTransform instance.
@@ -717,6 +776,8 @@ class SisypheTransform(object):
             # Revision 08/09/2024 >
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(list)
     def getVersor(self) -> listFloat:
         """
         Get versor i.e. quaternion in w, x, y, z (real, then unit vector in 3D) from the rotation attributes of the
@@ -733,6 +794,8 @@ class SisypheTransform(object):
             return list(t.GetVersor())
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(tuple)
     def getAngleVector(self, deg: bool = False) -> tuple[float, listFloat]:
         """
         Get angle and vector of rotation axis from the rotations of the current SisypheTransform instance.
@@ -755,6 +818,8 @@ class SisypheTransform(object):
             return a, list(v)
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(tuple)
     def getAffineParametersFromMatrix(self, deg: bool = False) -> tuple[listFloat, listFloat, listFloat, listFloat]:
         """
         Get affine parameters from the affine matrix attribute of the current SisypheTransform instance.
@@ -796,6 +861,8 @@ class SisypheTransform(object):
             return self.getTranslations(), [r1, r2, r3], list(diag(Z)), [C[0, 1], C[0, 2], C[1, 2]]
         else: raise TypeError('Displacement field transform has no affine attribute.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setCenter(self, c: vectorFloat3) -> None:
         """
         Set the center of rotation of the current SisypheTransform instance.
@@ -809,6 +876,8 @@ class SisypheTransform(object):
 
     # < Revision 03/09/2024
     # add removeCenter method
+    @cython.ccall
+    @cython.returns(cython.void)
     def removeCenter(self) -> None:
         """
         Set the center of rotation of the current SisypheTransform instance to [0.0, 0.0, 0.0]
@@ -816,6 +885,8 @@ class SisypheTransform(object):
         self._transform.SetCenter([0.0, 0.0, 0.0])
     # Revision 03/09/2024 >
 
+    @cython.ccall
+    @cython.returns(object)
     def getEquivalentTransformWithNewCenterOfRotation(self, c: vectorFloat3) -> SisypheTransform:
         """
         Calculate a geometric transformation equivalent to the current SisypheTransform instance, with a new center
@@ -883,6 +954,8 @@ class SisypheTransform(object):
             t = self.copy()
             return t
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setCenterFromSisypheVolume(self, vol: SisypheVolume) -> None:
         """
         Set the center of rotation of the current SisypheTransform instance to the center of a SisypheVolume image.
@@ -895,6 +968,8 @@ class SisypheTransform(object):
         if isinstance(vol, SisypheVolume): self._transform.SetCenter(vol.getCenter())
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCenteredToSisypheVolume(self, vol: SisypheVolume) -> bool:
         """
         Check whether the center of rotation of the current SisypheTransform instance is the center of a SisypheVolume
@@ -916,6 +991,8 @@ class SisypheTransform(object):
             return c1 == c2
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setCenterFromParent(self) -> None:
         """
         Set the center of rotation of the current SisypheTransform instance to the center of the SisypheVolume parent
@@ -924,6 +1001,8 @@ class SisypheTransform(object):
         if self.hasParent():
             self.setCenterFromSisypheVolume(self._parent)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCenteredFromParent(self) -> bool:
         """
         Check whether the center of rotation of the current SisypheTransform instance is the center of the
@@ -938,6 +1017,8 @@ class SisypheTransform(object):
             return self.isCenteredToSisypheVolume(self._parent)
         else: raise AttributeError('SisypheVolume parent attribute is None.')
 
+    @cython.ccall
+    @cython.returns(list)
     def getCenter(self) -> listFloat:
         """
         Get the center of rotation of the current SisypheTransform instance.
@@ -949,6 +1030,8 @@ class SisypheTransform(object):
         """
         return list(self._transform.GetCenter())
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasCenter(self) -> bool:
         """
         Check whether the center of rotation of the current SisypheTransform instance is defined (not 0.0, 0.0, 0.0).
@@ -960,6 +1043,8 @@ class SisypheTransform(object):
         """
         return self._transform.GetCenter() != (0.0, 0.0, 0.0)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFrom(self, t: SisypheTransform) -> None:
         """
         Copy a SisypheTransform instance to the current SisypheTransform instance.
@@ -986,6 +1071,8 @@ class SisypheTransform(object):
                 self._transform.SetMatrix(t.getSITKTransform().GetMatrix())
         else: raise TypeError('parameter type {} is not SisypheTransform or SisypheVolume.'.format(type(t)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyTo(self, t: SisypheTransform) -> None:
         """
         Copy the current SisypheTransform instance to a SisypheTransform instance.
@@ -1013,6 +1100,8 @@ class SisypheTransform(object):
                 t.setSITKDisplacementFieldTransform(f)
         else: raise TypeError('parameter type {} is not SisypheTransform.'.format(type(t)))
 
+    @cython.ccall
+    @cython.returns(object)
     def copy(self) -> SisypheTransform:
         """
         Copy the current SisypheTransform instance.
@@ -1026,7 +1115,9 @@ class SisypheTransform(object):
         self.copyTo(t)
         return t
 
-    def setSITKTransform(self, trf):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setSITKTransform(self, trf) -> None:
         """
         Copy a SimpleITK.Transform instance to the current SisypheTransform instance.
 
@@ -1085,6 +1176,8 @@ class SisypheTransform(object):
             else: raise TypeError('transform type {} is not supported.'.format(type(trf)))
         else: self.setSITKDisplacementFieldTransform(trf)
 
+    @cython.ccall
+    @cython.returns(object)
     def getSITKTransform(self) -> sitkAffineTransform | sitkDisplacementFieldTransform:
         """
         Get a SimpleITK.Transform instance from the current SisypheTransform instance.
@@ -1097,6 +1190,8 @@ class SisypheTransform(object):
         if self._field is None: return self._transform
         else: return self._field
 
+    @cython.ccall
+    @cython.returns(object)
     def getSITKDisplacementFieldTransform(self) -> sitkDisplacementFieldTransform:
         """
         Get a SimpleITK.DisplacementFieldTransform instance from the current SisypheTransform instance.
@@ -1109,6 +1204,8 @@ class SisypheTransform(object):
         if self._field is not None: return self._field
         else: raise ValueError('No displacement field transform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getSITKDisplacementFieldSITKImage(self) -> sitkImage:
         """
         Get a SimpleITK.Image instance from the displacement field of the current SisypheTransform instance.
@@ -1121,6 +1218,8 @@ class SisypheTransform(object):
         if self._field is not None: return self._field.GetDisplacementField()
         else: raise AttributeError('Displacement field attribute is None.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getDisplacementField(self) -> SisypheVolume:
         """
         Get the displacement field of the current SisypheTransform instance as SisypheVolume.
@@ -1137,6 +1236,186 @@ class SisypheTransform(object):
             return field
         else: raise AttributeError('Displacement field attribute is None.')
 
+    # < Revision 02/07/2026
+    # add getInverseSITKDisplacementFieldTransform method
+    @cython.ccall
+    @cython.returns(object)
+    def getInverseSITKDisplacementFieldTransform(self,
+                                                 size: listInt | tupleInt3,
+                                                 spacing: listFloat | tupleFloat3,
+                                                 origin: tupleInt3 | listInt = (0.0, 0.0, 0.0),
+                                                 sub: int = 16,
+                                                 wait: DialogWait | None = None) -> sitkDisplacementFieldTransform | None:
+        """
+        Get a SimpleITK.DisplacementFieldTransform instance from the current SisypheTransform instance.
+
+        SimpleITK InverseDisplacementFieldImageFilter class
+        (https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1InverseDisplacementFieldImageFilter.html)
+
+        This method subsamples the input field using a regular grid and create Kerned-Base Spline in which the
+        reference landmarks are the coordinates of the deformed point and the target landmarks are the negative of the
+        displacement vectors. The kernel-base spline is then used for regularly sampling the output space and recover
+        vector values for every single pixel.
+
+        The subsampling factor used for the regular grid of the input field will determine the number of landmarks in
+        the KernelBased spline, and therefore it will have a dramatic effect on both the precision of output displacement
+        field and the computational time required for the filter to complete the estimation. A large subsampling factor
+        will result in few landmarks in the KernelBased spline, therefore on fast computation and low precision. A small
+        subsampling factor will result in a large number of landmarks in the KernelBased spline, therefore a large
+        memory consumption, long computation time and high precision for the inverse estimation.
+
+        Parameters
+        ----------
+        size : listInt | tupleInt3
+            size of the inverse displacement field image
+        spacing : istFloat | tupleFloat3
+            spacing of the inverse displacement field image
+        origin : tuple[float, float, float] | list[float] (optional)
+            origin of the inverse displacement field (default 0.0, 0.0, 0.0)
+        sub : int (optional)
+            subsampling factor (default 16)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None (optional)
+                progress bar dialog (default None)
+
+        Returns
+        -------
+        SimpleITK.DisplacementFieldTransform | None
+            inverse displacement field transform
+        """
+        if self._field is not None:
+            field = self.getInverseSITKDisplacementFieldSITKImage(size, spacing, origin, sub, wait)
+            if field:
+                trf = SisypheTransform()
+                trf.setSITKDisplacementFieldImage(field)
+                return trf
+            else: return None
+        else: raise ValueError('No displacement field transform.')
+    # Revision 02/07/2026 >
+
+    # < Revision 02/07/2026
+    # add getInverseSITKDisplacementFieldSITKImage method
+    @cython.ccall
+    @cython.returns(object)
+    def getInverseSITKDisplacementFieldSITKImage(self,
+                                                 size: listInt | tupleInt3,
+                                                 spacing: listFloat | tupleFloat3,
+                                                 origin: tupleInt3 | listInt = (0.0, 0.0, 0.0),
+                                                 sub: int = 16,
+                                                 wait: DialogWait | None = None) -> sitkImage | None:
+        """
+        Get a SimpleITK.Image instance from the inverse displacement field of the current SisypheTransform instance.
+
+        SimpleITK InverseDisplacementFieldImageFilter class
+        (https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1InverseDisplacementFieldImageFilter.html)
+
+        This method subsamples the input field using a regular grid and create Kerned-Base Spline in which the
+        reference landmarks are the coordinates of the deformed point and the target landmarks are the negative of the
+        displacement vectors. The kernel-base spline is then used for regularly sampling the output space and recover
+        vector values for every single pixel.
+
+        The subsampling factor used for the regular grid of the input field will determine the number of landmarks in
+        the KernelBased spline, and therefore it will have a dramatic effect on both the precision of output displacement
+        field and the computational time required for the filter to complete the estimation. A large subsampling factor
+        will result in few landmarks in the KernelBased spline, therefore on fast computation and low precision. A small
+        subsampling factor will result in a large number of landmarks in the KernelBased spline, therefore a large
+        memory consumption, long computation time and high precision for the inverse estimation.
+
+        Parameters
+        ----------
+        size : listInt | tupleInt3
+            size of the inverse displacement field image
+        spacing : istFloat | tupleFloat3
+            spacing of the inverse displacement field image
+        origin : tuple[float, float, float] | list[float] (optional)
+            origin of the inverse displacement field (default 0.0, 0.0, 0.0)
+        sub : int (optional)
+            subsampling factor (default 16)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None (optional)
+                progress bar dialog (default None)
+
+        Returns
+        -------
+        SimpleITK.Image | None
+            inverse displacement field image
+        """
+        if self._field is not None:
+            f = sitkInverseDisplacementFieldImageFilter()
+            f.SetSize(size)
+            f.SetOutputSpacing(spacing)
+            f.SetOutputOrigin((0.0, 0.0, 0.0))
+            f.SetSubsamplingFactor(sub)
+            if wait is not None:
+                wait.setSimpleITKFilter(f)
+                wait.addSimpleITKFilterProcessCommand()
+            field = f.Execute(self._field.GetDisplacementField())
+            if field:
+                field.SetOrigin(origin)
+                if wait is not None:
+                    if wait.getStopped(): field = None
+            return field
+        else: raise ValueError('No displacement field transform.')
+    # Revision 02/07/2026 >
+
+    # < Revision 02/07/2026
+    # add getInverseDisplacementField method
+    @cython.ccall
+    @cython.returns(object)
+    def getInverseDisplacementField(self,
+                                    size: listInt | tupleInt3,
+                                    spacing: listFloat | tupleFloat3,
+                                    origin: tupleInt3 | listInt = (0.0, 0.0, 0.0),
+                                    sub: int = 16,
+                                    wait: DialogWait | None = None) -> SisypheVolume | None:
+        """
+        Get the inverse displacement field of the current SisypheTransform instance as SisypheVolume.
+
+        SimpleITK InverseDisplacementFieldImageFilter class
+        (https://simpleitk.org/doxygen/v2_4/html/classitk_1_1simple_1_1InverseDisplacementFieldImageFilter.html)
+
+        This method subsamples the input field using a regular grid and create Kerned-Base Spline in which the
+        reference landmarks are the coordinates of the deformed point and the target landmarks are the negative of the
+        displacement vectors. The kernel-base spline is then used for regularly sampling the output space and recover
+        vector values for every single pixel.
+
+        The subsampling factor used for the regular grid of the input field will determine the number of landmarks in
+        the KernelBased spline, and therefore it will have a dramatic effect on both the precision of output displacement
+        field and the computational time required for the filter to complete the estimation. A large subsampling factor
+        will result in few landmarks in the KernelBased spline, therefore on fast computation and low precision. A small
+        subsampling factor will result in a large number of landmarks in the KernelBased spline, therefore a large
+        memory consumption, long computation time and high precision for the inverse estimation.
+
+        Parameters
+        ----------
+        size : listInt | tupleInt3
+            size of the inverse displacement field image
+        spacing : istFloat | tupleFloat3
+            spacing of the inverse displacement field image
+        origin : tuple[float, float, float] | list[float] (optional)
+            origin of the inverse displacement field (default 0.0, 0.0, 0.0)
+        sub : int (optional)
+            subsampling factor (default 16)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None (optional)
+                progress bar dialog (default None)
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume | None
+            inverse displacement field image
+        """
+        if self._field is not None:
+            v = SisypheVolume()
+            field = self.getInverseSITKDisplacementFieldSITKImage(size, spacing, origin, sub, wait)
+            if field:
+                v.setSITKImage(field)
+                v.setOrigin(origin)
+                v.getAcquisition().setSequenceToDisplacementField()
+                return v
+            else: return None
+        else: raise ValueError('No displacement field transform.')
+    # Revision 02/07/2026 >
+
+    @cython.ccall
+    @cython.returns(object)
     def getInverseSITKTransform(self) -> sitkAffineTransform:
         """
         Get inverse of the current SisypheTransform instance as a SimpleITK.Transform instance.
@@ -1149,6 +1428,8 @@ class SisypheTransform(object):
         if self._field is None: return self._transform.GetInverse()
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSITKDisplacementFieldTransform(self, trf: sitkDisplacementFieldTransform) -> None:
         """
         Set a SimpleITK.DisplacementFieldTransform instance to the current SisypheTransform instance.
@@ -1163,6 +1444,8 @@ class SisypheTransform(object):
             self.setIdentity()
         else: raise TypeError('parameter type {} is not sitkDisplacementFieldTransform.'.format(type(trf)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSITKDisplacementFieldImage(self, img: SisypheImage | sitkImage) -> None:
         """
         Set a displacement field as SimpleITK.Image or Sisyphe.core.sisypheImage.SisypheImage instance to the current
@@ -1189,6 +1472,8 @@ class SisypheTransform(object):
             else: raise ValueError('image parameter is not a displacement field.')
         else: raise TypeError('parameter type {} is not sitkImage or SisypheImage.'.format(type(img)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromDisplacementFieldImage(self, img: SisypheImage | sitkImage) -> None:
         """
         Copy a displacement field as SimpleITK.Image or Sisyphe.core.sisypheImage.SisypheImage instance to the current
@@ -1214,6 +1499,8 @@ class SisypheTransform(object):
             else: raise ValueError('image parameter is not a displacement field.')
         else: raise TypeError('parameter type {} is not SisypheImage.'.format(type(img)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def removeDisplacementField(self) -> None:
         """
         Remove the displacement field of the current SisypheTransform instance.
@@ -1223,6 +1510,8 @@ class SisypheTransform(object):
             self._field = None
             self._fieldname = ''
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setVTKTransform(self, trf: vtkTransform, center_reset: bool = False) -> None:
         """
         Copy a vtk.vtkTransform instance to the current SisypheTransform instance.
@@ -1246,6 +1535,8 @@ class SisypheTransform(object):
             else: raise TypeError('parameter type {} is not vtkTransform.'.format(type(trf)))
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getVTKTransform(self, center_correction: bool = False) -> vtkTransform:
         """
         Get a vtk.vtkTransform instance from the current SisypheTransform instance.
@@ -1283,6 +1574,8 @@ class SisypheTransform(object):
             return trf
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setVTKMatrix3x3(self, mat: vtkMatrix3x3, center_reset: bool = False) -> None:
         """
         Copy an affine matrix as vtk.vtkMatrix3x3 instance to the current SisypheTransform instance.
@@ -1308,6 +1601,8 @@ class SisypheTransform(object):
             else: raise TypeError('parameter type {} is not vtkMatrix3x3.'.format(type(mat)))
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setVTKMatrix4x4(self, mat: vtkMatrix4x4, center_reset: bool = False) -> None:
         """
         Copy an affine matrix as vtk.vtkMatrix4x4 instance to the current SisypheTransform instance.
@@ -1338,6 +1633,8 @@ class SisypheTransform(object):
             else: raise TypeError('parameter type {} is not tkMatrix4x4.'.format(type(mat)))
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getVTKMatrix4x4(self, center_correction: bool = False) -> vtkMatrix4x4:
         """
         Get the affine matrix as vtk.vtkMatrix4x4 instance of the current SisypheTransform instance.
@@ -1355,6 +1652,8 @@ class SisypheTransform(object):
         if self._field is None: return self.getVTKTransform(center_correction).GetMatrix()
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getVTKMatrix3x3(self) -> vtkMatrix3x3:
         """
         Get the affine matrix as vtk.vtkMatrix3x3 instance
@@ -1374,6 +1673,8 @@ class SisypheTransform(object):
             return m3
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getInverseVTKTransform(self, center_correction: bool = False) -> vtkTransform:
         """
         Get the inverse affine matrix as vtk.vtkMatrix3x3 instance of the current SisypheTransform instance.
@@ -1395,6 +1696,8 @@ class SisypheTransform(object):
             return trf.Inverse()
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(ndarray)
     def getNumpyArray(self, homogeneous: bool = False) -> ndarray:
         """
         Get the affine matrix as numpy.ndarray instance of the current SisypheTransform instance.
@@ -1418,6 +1721,8 @@ class SisypheTransform(object):
                 return np.reshape(3, 3)
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setNumpyArray(self, np: ndarray) -> None:
         """
         Copy an affine matrix as numpy.ndarray instance to the current SisypheTransform instance.
@@ -1441,6 +1746,8 @@ class SisypheTransform(object):
             else: raise TypeError('parameter type {} is not numpy array.'.format(type(np)))
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setANTSTransform(self, trf: ANTsTransform) -> None:
         """
         Copy an ants.core.ants_transform.ANTsTransform instance to the current SisypheTransform instance.
@@ -1465,6 +1772,8 @@ class SisypheTransform(object):
             else: raise TypeError('parameter type {} is not ANTsTransform.'.format(type(trf)))
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getANTSTransform(self) -> ANTsTransform:
         """
         Get an ants.core.ants_transform.ANTsTransform instance from the current SisypheTransform instance.
@@ -1493,7 +1802,9 @@ class SisypheTransform(object):
             # Revision 26/10/2024 >
         return trf
 
-    def getMatrixColumn(self, c: int) -> vectorFloat3:
+    @cython.ccall
+    @cython.returns(list)
+    def getMatrixColumn(self, c: int) -> listFloat:
         """
         Get a column from the affine matrix of the current SisypheTransform instance.
 
@@ -1516,7 +1827,9 @@ class SisypheTransform(object):
             else: raise TypeError('parameter type {} isn not int'.format(type(c)))
         else: raise TypeError('No affine transform.')
 
-    def getMatrixDiagonal(self) -> vectorFloat3:
+    @cython.ccall
+    @cython.returns(list)
+    def getMatrixDiagonal(self) -> listFloat:
         """
         Get the diagonal of the affine matrix of the current SisypheTransform instance.
 
@@ -1528,6 +1841,8 @@ class SisypheTransform(object):
         r = self.getFlattenMatrix()
         return [r[0], r[4], r[8]]
 
+    @cython.ccall
+    @cython.returns(list)
     def getFlattenMatrix(self, homogeneous: bool = False) -> list[float]:
         """
         Get the affine matrix of the current SisypheTransform instance as a list.
@@ -1551,6 +1866,8 @@ class SisypheTransform(object):
             else: return list(self._transform.GetMatrix())
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFlattenMatrix(self, m: list[float], bycolumn: bool = False) -> None:
         """
         Set the affine matrix of the current SisypheTransform instance from a list.
@@ -1575,7 +1892,9 @@ class SisypheTransform(object):
             else: raise ValueError('List size is not supported.')
         else: raise TypeError('No affine transform.')
 
-    def applyToPoint(self, coor: vectorFloat3) -> vectorFloat3:
+    @cython.ccall
+    @cython.returns(tuple)
+    def applyToPoint(self, coor: vectorFloat3) -> tuple[float, float, float]:
         """
         Apply the geometric transformation of the current SisypheTransform instance to a point.
 
@@ -1586,7 +1905,7 @@ class SisypheTransform(object):
 
         Returns
         -------
-        tuple[float, float, float] | list[float]
+        tuple[float, float, float]
             x-axis, y-axis and z-axis point coordinates
         """
         if self._field is None:
@@ -1594,7 +1913,9 @@ class SisypheTransform(object):
         else: return self._field.TransformPoint(coor)
 
     # noinspection PyTypeChecker
-    def applyInverseToPoint(self, coor: vectorFloat3) -> vectorFloat3:
+    @cython.ccall
+    @cython.returns(tuple)
+    def applyInverseToPoint(self, coor: vectorFloat3) -> tuple[float, float, float]:
         """
         Apply the inverse geometric transformation of the current SisypheTransform instance to a point.
 
@@ -1605,7 +1926,7 @@ class SisypheTransform(object):
 
         Returns
         -------
-        tuple[float, float, float] | list[float]
+        tuple[float, float, float]
             x-axis, y-axis and z-axis point coordinates
         """
         if self._field is None:
@@ -1613,6 +1934,8 @@ class SisypheTransform(object):
             return t.TransformPoint(tuple(coor))
         else: raise AttributeError('_field attribute is None.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def preMultiply(self,
                     trf: vtkTransform | vtkMatrix4x4 | SisypheTransform | sitkAffineTransform | sitkEuler3DTransform | ndarray,
                     homogeneous: bool = False) -> None:
@@ -1645,6 +1968,8 @@ class SisypheTransform(object):
                                   'vtkMatrix4x4, sitkTransform or SisypheTransform. '.format(type(trf)))
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def postMultiply(self,
                      trf: vtkTransform | vtkMatrix4x4 | SisypheTransform | sitkAffineTransform | sitkEuler3DTransform | ndarray,
                      homogeneous: bool = False) -> None:
@@ -1678,6 +2003,8 @@ class SisypheTransform(object):
                                 'vtkMatrix4x4, sitkTransform or SisypheTransform. '.format(type(trf)))
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDisplacementField(self) -> bool:
         """
         Check whether the current SisypheTransform instance is a displacement field geometric transformation.
@@ -1689,6 +2016,8 @@ class SisypheTransform(object):
         """
         return self._field is not None
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isRigid(self) -> bool:
         """
         Check whether the current SisypheTransform instance is rigid geometric transformation. True if matrix is
@@ -1706,6 +2035,8 @@ class SisypheTransform(object):
             r = allclose(m1, m2)
         return r
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isAffine(self) -> bool:
         """
         Check whether the current SisypheTransform instance is an affine geometric transformation.
@@ -1717,6 +2048,8 @@ class SisypheTransform(object):
         """
         return self._field is None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def affineToDisplacementField(self, inverse: bool = True) -> None:
         """
         Convert the affine geometric transformation of the current SisypheTransform instance to a displacement field.
@@ -1744,6 +2077,8 @@ class SisypheTransform(object):
                 self.setCenter([0.0, 0.0, 0.0])
         else: raise TypeError('No affine transform.')
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasID(self) -> bool:
         """
         Check whether the ID attribute of the current SisypheTransform instance is defined (not '')
@@ -1755,6 +2090,8 @@ class SisypheTransform(object):
         """
         return self._ID != ''
 
+    @cython.ccall
+    @cython.returns(str)
     def getID(self) -> str:
         """
         Get the ID attribute of the current SisypheTransform instance.
@@ -1766,6 +2103,8 @@ class SisypheTransform(object):
         """
         return self._ID
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setID(self, ID: str | SisypheVolume) -> None:
         """
         Set the ID attribute of the current SisypheTransform instance.
@@ -1779,7 +2118,9 @@ class SisypheTransform(object):
         elif isinstance(ID, SisypheVolume): self._ID = ID.getID()
         else: raise TypeError('parameter is not str, SisypheImage or SisypheVolume.')
 
-    def getSpacing(self) -> vectorFloat3:
+    @cython.ccall
+    @cython.returns(list)
+    def getSpacing(self) -> listInt:
         """
         Get the spacing attribute of the current SisypheTransform instance. Voxel size in the x, y and z axes of the
         floating volume in mm.
@@ -1791,6 +2132,8 @@ class SisypheTransform(object):
         """
         return self._spacing
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSpacing(self, spacing: vectorFloat3) -> None:
         """
         Set the spacing attribute of the current SisypheTransform instance. Voxel size in the x, y and z axes of the
@@ -1798,13 +2141,15 @@ class SisypheTransform(object):
 
         Parameters
         ----------
-        spacing : list[float]
+        spacing : list[float] | tuple[float, float, float]
             Voxel size in the x, y and z axes of the floating volume in mm
         """
         from Sisyphe.core.sisypheVolume import SisypheVolume
         if isinstance(spacing, (SisypheImage, SisypheVolume)): self._spacing = list(spacing.getSpacing())
         else:  self._spacing = list(spacing)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasSpacing(self) -> bool:
         """
         Check whether the spacing attribute of the current SisypheTransform instance is defined (not 0.0, 0.0, 0.0)
@@ -1816,7 +2161,9 @@ class SisypheTransform(object):
         """
         return self._spacing != (0.0, 0.0, 0.0)
 
-    def getSize(self) -> vectorInt3:
+    @cython.ccall
+    @cython.returns(list)
+    def getSize(self) -> listInt:
         """
         Get the size attribute of the current SisypheTransform instance. Image size in the x, y and z axes of the
         floating volume (in voxels).
@@ -1828,7 +2175,9 @@ class SisypheTransform(object):
         """
         return self._size
 
-    def setSize(self, size: vectorInt3):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setSize(self, size: vectorInt3) -> None:
         """
         Set the size attribute of the current SisypheTransform instance. Image size in the x, y and z axes of the
         floating volume (in voxels).
@@ -1842,6 +2191,8 @@ class SisypheTransform(object):
         if isinstance(size, (SisypheImage, SisypheVolume)): self._size = list(size.getSize())
         else: self._size = list(size)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasSize(self) -> bool:
         """
         Check whether the size attribute of the current SisypheTransform instance is defined (not 0, 0, 0)
@@ -1853,6 +2204,8 @@ class SisypheTransform(object):
         """
         return self._size != (0, 0, 0)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyAttributesTo(self, t: SisypheTransform) -> None:
         """
         Copy attributes of the current SisypheTransform instance to a SisypheTransform instance.
@@ -1868,6 +2221,8 @@ class SisypheTransform(object):
         t.setID(self.getID())
         t.setName(self.getName())
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyAttributesFrom(self, t: SisypheTransform) -> None:
         """
         Copy attributes of a SisypheTransform instance to the current SisypheTransform instance.
@@ -1883,6 +2238,8 @@ class SisypheTransform(object):
         self.setID(t.getID())
         self.setName(t.getName())
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setAttributesFromFixedVolume(self, vol: SisypheVolume) -> None:
         """
         Set the attributes relating to fixed volume (ID, size, spacing) of the current SisypheTransform instance
@@ -1899,6 +2256,8 @@ class SisypheTransform(object):
             self._size = vol.getSize()
             self._spacing = vol.getSpacing()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasFixedVolumeAttributes(self) -> bool:
         """
         Check whether the attributes relating to fixed volume (size, spacing) of the current SisypheTransform instance
@@ -1911,6 +2270,8 @@ class SisypheTransform(object):
         """
         return self.hasSize() and self.hasSpacing()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasSameFixedVolumeAttributes(self, vol: SisypheVolume) -> bool:
         """
         Check whether the attributes of the current SisypheTransform instance relating to fixed volume (size, spacing)
@@ -1931,7 +2292,11 @@ class SisypheTransform(object):
                    self._spacing == vol.getSpacing()
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
-    def saveDisplacementField(self, filename: str) -> None:
+    @cython.ccall
+    @cython.returns(cython.void)
+    def saveDisplacementField(self,
+                              filename: str,
+                              origin: tupleInt3 | listInt = (0.0, 0.0, 0.0)) -> None:
         """
         Save the displacement field of the current SisypheTransform instance as SisypheVolume.
         Adds 'field_' prefix to the filename parameter.
@@ -1940,17 +2305,24 @@ class SisypheTransform(object):
         ----------
         filename : str
             displacement field file name
+        origin : tuple[float, float, float] | list[float] (optional)
+            origin of the displacement field (default 0.0, 0.0, 0.0)
         """
         if self._field is not None:
             field = SisypheVolume()
             field.setSITKImage(Cast(self._field.GetDisplacementField(), sitkVectorFloat32))
             field.getAcquisition().setSequenceToDisplacementField()
             field.setID(self.getID())
+            # < Revision 02/07/2026
+            field.setOrigin(origin)
+            # Revision 02/07/2026 >
             path = split(filename)
             if path[1][:6] != 'field_': self._fieldname = join(path[0], 'field_' + path[1])
             else: self._fieldname = filename
             field.save(self._fieldname)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
         Write the current SisypheTransform instance attributes to XML document instance. Use of this method is not
@@ -2032,6 +2404,8 @@ class SisypheTransform(object):
                     node.appendChild(txt)
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def parseXMLNode(self, currentnode: minidom.Element) -> None:
         """
         Read the current SisypheTransform instance attributes from XML document instance. The use of this method is
@@ -2105,6 +2479,8 @@ class SisypheTransform(object):
             else: raise IOError('XML file read error.')
         else: raise ValueError('Node name {} is not \'transform\'.'.format(currentnode.nodeName))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
         """
         Read the current SisypheTransform instance attributes from XML document instance. The use of this method is
@@ -2123,6 +2499,8 @@ class SisypheTransform(object):
             else: raise IOError('XML file format is not supported.')
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveAs(self, filename: str) -> None:
         """
         Save the current SisypheTransform instance to a PySisyphe Transform (.xtrf) file.
@@ -2156,6 +2534,8 @@ class SisypheTransform(object):
         except IOError: raise IOError('XML file write error.')
         finally: f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def load(self, filename: str) -> None:
         """
         Load the current SisypheTransform instance from PySisyphe Transform (.xtrf) file.
@@ -2195,6 +2575,8 @@ class SisypheTransform(object):
 
     # IO public methods
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToXfmTransform(self, filename: str) -> None:
         """
         Save the current SisypheTransform instance to a XFM (.xfm) file.
@@ -2213,6 +2595,8 @@ class SisypheTransform(object):
             w.Write()
         else: raise TypeError('Displacement field transform can not be saved to Xfm format.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToTfmTransform(self, filename: str) -> None:
         """
         Save the current SisypheTransform instance to a TFM (.tfm) file.
@@ -2228,6 +2612,8 @@ class SisypheTransform(object):
             self._transform.WriteTransform(filename)
         else: raise TypeError('Displacement field transform can not be saved to Tfm format.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToMatfileTransform(self, filename: str) -> None:
         """
         Save the current SisypheTransform instance to a Matlab (.mat) file.
@@ -2243,6 +2629,8 @@ class SisypheTransform(object):
             self._transform.WriteTransform(filename)
         else: raise TypeError('Displacement field transform can not be saved to Matfile format.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToTxtTransform(self, filename: str) -> None:
         """
         Save the current SisypheTransform instance to a text (.txt) file.
@@ -2258,6 +2646,8 @@ class SisypheTransform(object):
             self._transform.WriteTransform(filename)
         else: raise TypeError('Displacement field transform can not be saved to txt format.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToANTSTransform(self, filename: str) -> None:
         """
         Save the current SisypheTransform instance to a ANTs transform (.mat) file.
@@ -2274,6 +2664,8 @@ class SisypheTransform(object):
             write_transform(trf, filename)
         else: raise TypeError('Displacement field transform can not be saved to ANTs format.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromXfmTransform(self, filename: str) -> None:
         """
         Load the current SisypheTransform instance from a XFM (.xfm) file.
@@ -2297,6 +2689,8 @@ class SisypheTransform(object):
             else: raise IOError('{} is not a XFM file extension.'.format(ext))
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromTfmTransform(self, filename: str) -> None:
         """
         Load the current SisypheTransform instance from a TFM (.tfm) file.
@@ -2317,6 +2711,8 @@ class SisypheTransform(object):
             else: raise IOError('{} is not a TFM file extension.'.format(ext))
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromMatfileTransform(self, filename: str) -> None:
         """
         Load the current SisypheTransform instance from a Matlab (.mat) file.
@@ -2337,6 +2733,8 @@ class SisypheTransform(object):
             else: raise IOError('{} is not a Matfile file extension.'.format(ext))
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromTxtTransform(self, filename: str) -> None:
         """
         Load the current SisypheTransform instance from a text (.txt) file.
@@ -2357,6 +2755,8 @@ class SisypheTransform(object):
             else: raise IOError('{} is not a Txt file extension.'.format(ext))
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromANTSTransform(self, filename: str) -> None:
         """
         Load the current SisypheTransform instance from a ANTs transform (.mat) file.
@@ -2375,6 +2775,8 @@ class SisypheTransform(object):
             self.setANTSTransform(trf)
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromBrainVoyagerTransform(self, filename: str) -> None:
         """
         Load the current SisypheTransform instance from a BrainVoyager transform (.trf) file.
@@ -2394,6 +2796,7 @@ class SisypheTransform(object):
         else: raise FileNotFoundError('No such file {}.'.format(filename))
 
 
+@cython.cclass
 class SisypheApplyTransform(object):
     """
     Description
@@ -2441,6 +2844,15 @@ class SisypheApplyTransform(object):
                                  sitkWelchWindowedSinc: 'welchsinc',
                                  sitkLanczosWindowedSinc: 'lanczossinc',
                                  sitkBlackmanWindowedSinc: 'blackmansinc'}
+
+    # Cython static attribute types
+
+    _moving: SisypheVolume | None
+    _roi: SisypheROI  | None
+    _mesh: SisypheMesh  | None
+    _sl: SisypheStreamlines  | None
+    _transform: SisypheTransform  | None
+    _resample: sitkResampleImageFilter | None
 
     # Class methods
 
@@ -2532,6 +2944,8 @@ class SisypheApplyTransform(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setInterpolator(self, v: int | str) -> None:
         """
         Set the interpolator attribute of the current SisypheApplyTransform instance. This attribute defines the method
@@ -2554,6 +2968,8 @@ class SisypheApplyTransform(object):
                 else: raise ValueError('interpolator int {} is not valid, must be less than 10.'.format(v))
             else: raise TypeError('parameter type {} is not str or int'.format(type(v)))
 
+    @cython.ccall
+    @cython.returns(str)
     def getInterpolator(self) -> str:
         """
         Get the interpolator attribute of the current SisypheApplyTransform instance. This attribute defines the method
@@ -2567,6 +2983,8 @@ class SisypheApplyTransform(object):
         """
         return self._FROMCODE[self._resample.GetInterpolator()]
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getInterpolatorSITKCode(self) -> int:
         """
         Get the interpolator attribute of the current SisypheApplyTransform instance. This attribute defines the method
@@ -2579,6 +2997,8 @@ class SisypheApplyTransform(object):
         """
         return self._resample.GetInterpolator()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setTransform(self, trf: SisypheTransform, center: bool = True) -> None:
         # < Revision 03/09/2024
         # setTransform(self, trf: SisypheTransform, center: bool = False) -> None:
@@ -2609,6 +3029,8 @@ class SisypheApplyTransform(object):
                 self._resample.SetTransform(trf.getSITKTransform())
         else: raise TypeError('parameter type {} is not SisypheTransform'.format(type(trf)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFromTransforms(self, trfs: SisypheTransforms, ID: str | SisypheVolume) -> None:
         """
         Set the transform attribute of the current SisypheApplyTransform instance  from a SisypheTransforms instance
@@ -2626,6 +3048,8 @@ class SisypheApplyTransform(object):
             if ID in trfs: self.setTransform(trfs[ID])
         else: raise TypeError('parameter type {} is not SisypheTransforms'.format(type(trfs)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setFromVolumes(self,
                        fixed: SisypheVolume,
                        moving: SisypheVolume) -> None:
@@ -2655,6 +3079,8 @@ class SisypheApplyTransform(object):
                                                                                   moving.getBasename()))
         else: raise TypeError('Image parameters type is not SisypheVolume.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getTransform(self) -> SisypheTransform:
         """
         Get the forward transform attribute of the current SisypheApplyTransform instance.
@@ -2666,6 +3092,8 @@ class SisypheApplyTransform(object):
         """
         return self._transform
 
+    @cython.ccall
+    @cython.returns(object)
     def getResampleTransform(self) -> SisypheTransform:
         """
         Get the backward transform attribute of the current SisypheApplyTransform instance.
@@ -2677,6 +3105,8 @@ class SisypheApplyTransform(object):
         """
         return self._transform.getInverseTransform()
 
+    @cython.ccall
+    @cython.returns(object)
     def getSITKTransform(self) -> sitkAffineTransform | sitkDisplacementFieldTransform:
         """
         Get forward transform attribute of the current SisypheApplyTransform instance as SimpleITK.Transform.
@@ -2688,6 +3118,8 @@ class SisypheApplyTransform(object):
         """
         return self._transform.getSITKTransform()
 
+    @cython.ccall
+    @cython.returns(object)
     def getSITKResampleTransform(self) -> sitkTransform:
         """
         Get backward transform attribute of the current SisypheApplyTransform instance as SimpleITK.Transform.
@@ -2699,6 +3131,8 @@ class SisypheApplyTransform(object):
         """
         return self._resample.GetTransform()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasTransform(self) -> bool:
         """
         Check whether the transform attribute of the current SisypheApplyTransform instance is defined (not None).
@@ -2710,6 +3144,8 @@ class SisypheApplyTransform(object):
         """
         return self._transform is not None
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasAffineTransform(self) -> bool:
         """
         Check whether the transform attribute of the current SisypheApplyTransform instance is an affine geometric
@@ -2722,6 +3158,8 @@ class SisypheApplyTransform(object):
         """
         return self._transform is not None and self._transform.isAffine()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasDisplacementFieldTransform(self) -> bool:
         """
         Check whether the transform attribute of the current SisypheApplyTransform instance is a displacement field
@@ -2734,6 +3172,8 @@ class SisypheApplyTransform(object):
         """
         return self._transform is not None and self._transform.isDisplacementField()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setMoving(self, img: SisypheVolume) -> None:
         """
         Set the moving volume attribute of the current SisypheApplyTransform instance.
@@ -2753,6 +3193,8 @@ class SisypheApplyTransform(object):
                 if self._moving.getAcquisition().isLB(): self._resample.SetInterpolator(sitkNearestNeighbor)
         else: raise TypeError('parameter type {} is not SisypheImage'.format(type(img)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getMoving(self) -> SisypheVolume:
         """
         Get the moving volume attribute of the current SisypheApplyTransform instance.
@@ -2764,6 +3206,8 @@ class SisypheApplyTransform(object):
         """
         return self._moving
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasMoving(self) -> bool:
         """
         Check whether the moving volume attribute of the current SisypheApplyTransform instance is defined (not None).
@@ -2775,12 +3219,16 @@ class SisypheApplyTransform(object):
         """
         return self._moving is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearMoving(self) -> None:
         """
         Clear the moving volume attribute of the current SisypheApplyTransform instance (set to none)
         """
         self._moving = None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setMovingROI(self, roi: SisypheROI) -> None:
         """
         Set the moving ROI attribute of the current SisypheApplyTransform instance.
@@ -2793,6 +3241,8 @@ class SisypheApplyTransform(object):
         if isinstance(roi, SisypheROI): self._roi = roi
         else: raise TypeError('parameter type {} is not SisypheROI.'.format(type(roi)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getMovingROI(self) -> SisypheROI:
         """
         Get the moving ROI attribute of the current SisypheApplyTransform instance.
@@ -2804,6 +3254,8 @@ class SisypheApplyTransform(object):
         """
         return self._roi
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasMovingROI(self) -> bool:
         """
         Check whether the moving ROI attribute of the current SisypheApplyTransform instance is defined (not None).
@@ -2815,12 +3267,16 @@ class SisypheApplyTransform(object):
         """
         return self._roi is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearMovingROI(self) -> None:
         """
         Clear the moving ROI attribute of the current SisypheApplyTransform instance (set to none)
         """
         self._roi = None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setMovingMesh(self, mesh: SisypheMesh) -> None:
         """
         Set the moving mesh attribute of the current SisypheApplyTransform instance.
@@ -2833,6 +3289,8 @@ class SisypheApplyTransform(object):
         if isinstance(mesh, SisypheMesh): self._mesh = mesh
         else: raise TypeError('parameter type {} is not SisypheMesh.'.format(type(mesh)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getMovingMesh(self) -> SisypheMesh:
         """
         Get the moving mesh attribute of the current SisypheApplyTransform instance.
@@ -2844,6 +3302,8 @@ class SisypheApplyTransform(object):
         """
         return self._mesh
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasMovingMesh(self) -> bool:
         """
         Check whether the moving mesh attribute of the current SisypheApplyTransform instance is defined (not None).
@@ -2855,12 +3315,16 @@ class SisypheApplyTransform(object):
         """
         return self._mesh is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearMesh(self) -> None:
         """
         Clear the moving mesh attribute of the current SisypheApplyTransform instance (set to none)
         """
         self._mesh = None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setMovingStreamlines(self, sl: SisypheStreamlines) -> None:
         """
         Set the moving streamlines attribute of the current SisypheApplyTransform instance.
@@ -2873,6 +3337,8 @@ class SisypheApplyTransform(object):
         if isinstance(sl, SisypheStreamlines): self._sl = sl
         else: raise TypeError('parameter type {} is not SisypheStreamlines.'.format(type(sl)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getMovingStreamlines(self) -> SisypheStreamlines:
         """
         Get the moving streamlines attribute of the current SisypheApplyTransform instance.
@@ -2884,6 +3350,8 @@ class SisypheApplyTransform(object):
         """
         return self._sl
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasMovingStreamlines(self) -> bool:
         """
         Check whether the moving streamlines attribute of the current SisypheApplyTransform instance is defined
@@ -2896,12 +3364,16 @@ class SisypheApplyTransform(object):
         """
         return self._sl is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearMovingStreamlines(self) -> None:
         """
         Clear the moving streamlines attribute of the current SisypheApplyTransform instance (set to none)
         """
         self._sl = None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def updateVolumeTransformsFromMoving(self, vol: SisypheVolume) -> None:
         """
         Copy the SisypheTransforms instance associated to the SisypheVolume moving volume to another SisypheVolume
@@ -2927,6 +3399,8 @@ class SisypheApplyTransform(object):
                 if vol.hasFilename(): vol.saveTransforms()
             else: raise ValueError('Incorrect ID of the parameter volume.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def updateTransforms(self,
                          resampled: SisypheVolume,
                          fixed: SisypheVolume | None) -> None:
@@ -3054,6 +3528,8 @@ class SisypheApplyTransform(object):
 
     # < Revision 18/05/2026
     # add resampleToFOV method
+    @cython.ccall
+    @cython.returns(object)
     def resampleToFOV(self,
                       size: tuple[int, int, int] | list[int],
                       spacing: tuple[float, float, float] | list[float],
@@ -3097,6 +3573,8 @@ class SisypheApplyTransform(object):
         else: raise AttributeError('No moving SisypheVolume.')
     # Revision 18/05/2026 >
 
+    @cython.ccall
+    @cython.returns(object)
     def resampleMoving(self,
                        fixed: SisypheVolume | None = None,
                        save: bool = True,
@@ -3254,6 +3732,8 @@ class SisypheApplyTransform(object):
             else: raise AttributeError('No moving SisypheVolume.')
         else: raise AttributeError('No SisypheTransform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def resampleROI(self,
                     save: bool = True,
                     dialog: bool = False,
@@ -3328,6 +3808,8 @@ class SisypheApplyTransform(object):
             else: raise AttributeError('No moving SisypheROI.')
         else: raise AttributeError('No SisypheTransform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def resampleMesh(self,
                      save: bool = True,
                      dialog: bool = False,
@@ -3408,6 +3890,8 @@ class SisypheApplyTransform(object):
             else: raise AttributeError('No moving SisypheMesh.')
         else: raise AttributeError('No SisypheTransform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def resampleStreamlines(self,
                             save: bool = True,
                             dialog: bool = False,
@@ -3473,6 +3957,8 @@ class SisypheApplyTransform(object):
             else: raise AttributeError('No moving SisypheStreamlines.')
         else: raise AttributeError('No SisypheTransform.')
 
+    @cython.ccall
+    @cython.returns(object)
     def execute(self,
                 fixed: SisypheVolume | None = None,
                 save: bool = True,

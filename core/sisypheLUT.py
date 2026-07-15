@@ -22,6 +22,8 @@ from os.path import dirname
 from os.path import basename
 from os.path import splitext
 
+import cython
+
 from xml.dom import minidom
 
 from numpy import frombuffer
@@ -75,6 +77,9 @@ Class hierarchy
              -> SisypheColorTransfer
 """
 
+
+@cython.ccall
+@cython.returns(cython.void)
 def lutConversion(filenames: str | list[str], out: str = 'xlut') -> None:
     """
     Batch look-up table colormaps conversion. Supported formats are .lut, .xlut, .olt, .txt
@@ -107,6 +112,8 @@ def lutConversion(filenames: str | list[str], out: str = 'xlut') -> None:
 
 
 # noinspection PyShadowingBuiltins
+@cython.ccall
+@cython.returns(cython.void)
 def saveColormapBitmapPreview(filenames: str | list[str], format: str = 'jpg') -> None:
     """
     Save a bitmap preview of look-up table colormap files.
@@ -136,7 +143,7 @@ tupleInt4 = tuple[int, int, int, int]
 tupleFloat3 = tuple[float, float, float]
 tupleFloat4 = tuple[float, float, float, float]
 
-
+@cython.cclass
 class SisypheLut(object):
     """
     SisypheLut class
@@ -181,6 +188,12 @@ class SisypheLut(object):
     _LUTTOCODE: dict[str, int] = {'default': 0, 'internal': 1, 'file': 2, 'custom': 3}
     _CODETOLUT: dict[int, str] = {0: 'default', 1: 'internal', 2: 'file', 3: 'custom'}
     _FILEEXT: str = '.xlut'
+
+    # Cython static attribute types
+
+    _vtklut: vtkLookupTable
+    _name: str
+    _typeLUT: cython.int
 
     # Class methods
 
@@ -349,6 +362,7 @@ class SisypheLut(object):
             conversion of SisypheLut instance to str
          """
         buff = '{}\n{}\n'.format(self._name, self.getLUTType(True))
+        i: cython.int
         for i in range(0, 256):
             rgba = self._vtklut.GetTableValue(i)
             rgba = [int(j * 255.0) for j in rgba]
@@ -429,6 +443,7 @@ class SisypheLut(object):
         bool
             True if v parameter (color) is in the look-up table colormap
         """
+        i: cython.int
         for i in range(0, 256):
             if self.isSameColor(i, v):
                 return True
@@ -453,6 +468,8 @@ class SisypheLut(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(object)
     def copy(self) -> SisypheLut:
         """
         Copy of the current SisypheLut instance (deep copy).
@@ -465,6 +482,7 @@ class SisypheLut(object):
         buff = SisypheLut()
         buff._name = self._name
         buff._typeLUT = self._typeLUT
+        i: cython.int
         for i in range(0, 256):
             buff._vtklut.SetTableValue(i, self._vtklut.GetTableValue(i))
         buff._vtklut.SetUseBelowRangeColor(self._vtklut.GetUseBelowRangeColor())
@@ -472,6 +490,8 @@ class SisypheLut(object):
         buff.setWindowRange(w1, w2)
         return buff
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFrom(self, buff: SisypheLut) -> None:
         """
         Copy SisypheLut attributes to the current SisypheLut instance (deep copy).
@@ -488,6 +508,7 @@ class SisypheLut(object):
         if isinstance(buff, SisypheLut):
             self._name = buff._name
             self._typeLUT = buff._typeLUT
+            i: cython.int
             for i in range(0, 256):
                 self._vtklut.SetTableValue(i, buff._vtklut.GetTableValue(i))
             self._vtklut.SetUseBelowRangeColor(buff._vtklut.GetUseBelowRangeColor())
@@ -495,6 +516,8 @@ class SisypheLut(object):
             self.setWindowRange(w1, w2)
         else: raise TypeError('parameter functype is not {}.'.format(self.__class__.__name__))
 
+    @cython.ccall
+    @cython.returns(list[list[cython.double]])
     def copyToList(self) -> list[list[float]]:
         """
         Copy look-up table colormap of the current SisypheLut instance to a list.
@@ -505,11 +528,14 @@ class SisypheLut(object):
             list of 255 colors (red, green, blue, alpha)
         """
         clist = []
+        i: cython.int
         for i in range(0, 256):
             v = self._vtklut.GetTableValue(i)
             clist.append(list(v))
         return clist
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromList(self, clist: list[list[float]]) -> None:
         """
         Copy look-up table colormap sent as list parameter to the current SisypheLut instance.
@@ -522,11 +548,14 @@ class SisypheLut(object):
         if isinstance(clist, list):
             self._name = 'from list'
             self._typeLUT = self._LUTTOCODE['custom']
+            i: cython.int
             for i in range(0, 256):
                 v = clist[i]
                 self._vtklut.SetTableValue(i, v[0], v[1], v[2], 1.0)
         else: raise TypeError('parameter {} type is not list.'.format(type(clist)))
 
+    @cython.ccall
+    @cython.returns(ndarray)
     def copyToNumpy(self) -> ndarray:
         """
         Copy look-up table colormap of the current SisypheLut instance to a numpy array.
@@ -538,6 +567,8 @@ class SisypheLut(object):
         """
         return array(self.copyToList())
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromNumpy(self, cnp: ndarray) -> None:
         """
         Copy look-up table colormap sent as numpy.ndarray parameter to the current SisypheLut instance.
@@ -550,12 +581,15 @@ class SisypheLut(object):
         if isinstance(cnp, ndarray):
             self._name = 'from numpy'
             self._typeLUT = self._LUTTOCODE['custom']
+            i: cython.int
             for i in range(0, 256):
                 v = cnp[i, :]
                 # noinspection PyTypeChecker
                 self._vtklut.SetTableValue(i, v[0], v[1], v[2], 1.0)
         else: raise TypeError('parameter type {} is not a numpy.ndarray.'.format(type(cnp)))
 
+    @cython.ccall
+    @cython.returns(object)
     def copyToMatplotlibColormap(self) -> ListedColormap:
         """
         Copy look-up table colormap of the current SisypheLut instance to a matplotlib.colors.ListedColormap.
@@ -570,6 +604,8 @@ class SisypheLut(object):
         cmap.set_under(cmap(0))
         return cmap
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromMatplotlibColormap(self, cmap: ListedColormap | LinearSegmentedColormap) -> None:
         """
         Copy matplotlib look-up table colormap sent as parameter to the current SisypheLut instance.
@@ -582,6 +618,7 @@ class SisypheLut(object):
         if isinstance(cmap, (ListedColormap, LinearSegmentedColormap)):
             self._name = cmap.name
             self._typeLUT = self._LUTTOCODE['internal']
+            i: cython.int
             for i in range(0, 256):
                 v = cmap(i / 255)
                 self._vtklut.SetTableValue(i, v[0], v[1], v[2], 1.0)
@@ -589,17 +626,22 @@ class SisypheLut(object):
 
     # < Revision 25/10/2024
     # add reverseLut method
+    @cython.ccall
+    @cython.returns(cython.void)
     def reverseLut(self) -> None:
         """
         Reverse the color order in the look-up table colormap of the current SisypheLut instance.
         """
         c = self.copyToList()
+        i: cython.int
         for i in range(0, 256):
             self._vtklut.SetTableValue(i, c[255 - i])
     # Revision 25/10/2024 >
 
     # < Revision 25/10/2024
     # add getReversedLut method
+    @cython.ccall
+    @cython.returns(object)
     def getReversedLut(self) -> SisypheLut:
         """
         Copy of the current SisypheLut instance (deep copy) in reverse color order.
@@ -610,11 +652,14 @@ class SisypheLut(object):
                 reversed LUT
         """
         lut = self.copy()
+        i: cython.int
         for i in range(0, 256):
             lut._vtklut.SetTableValue(i, self._vtklut.GetTableValue(255 - i))
         return lut
     # Revision 25/10/2024 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isEqual(self, buff: ListedColormap | LinearSegmentedColormap | SisypheLut) -> bool:
         """
         Check whether the look-up table colormap of the current SisypheLut instance is identical to the one sent as
@@ -630,6 +675,7 @@ class SisypheLut(object):
         bool
             True if lut are identical
         """
+        i: cython.int
         if isinstance(buff, SisypheLut):
             for i in range(0, 256):
                 if buff[i] != self.__getitem__(i):
@@ -642,16 +688,21 @@ class SisypheLut(object):
             return True
         else: raise TypeError('parameter functype is not Matplotlib colormap or SisypheLut.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultLut(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'gray' (default).
         """
         self._name = 'gray'
         self._typeLUT = self._LUTTOCODE['default']
+        i: cython.int
         for i in range(0, 256):
             v = float(i) / 255.0
             self._vtklut.SetTableValue(i, v, v, v, 1.0)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLut(self, name: str) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance. If the name doesn't appear in the internal lut
@@ -678,6 +729,8 @@ class SisypheLut(object):
                 else: self.setDefaultLut()
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setInternalLut(self, name: str) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance.
@@ -698,84 +751,111 @@ class SisypheLut(object):
                 # Revision 23/03/2026 >
                 self._name = name
                 self._typeLUT = self._LUTTOCODE['internal']
+                i: cython.int
                 for i in range(0, 256):
                     v = cmap(i / 255)
                     self._vtklut.SetTableValue(i, v[0], v[1], v[2], 1.0)
             else: raise ValueError('{} is not a predefined Lut.'.format(name))
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToAutumn(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'autumn'.
         """
         self.setInternalLut(self._COLORMAPS[2])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToCool(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'cool'.
         """
         self.setInternalLut(self._COLORMAPS[3])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToGNU(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'gnu'.
         """
         self.setInternalLut(self._COLORMAPS[4])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToGNU2(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'gnu2'.
         """
         self.setInternalLut(self._COLORMAPS[5])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToHeat(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'heat'.
         """
         self.setInternalLut(self._COLORMAPS[6])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToHot(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'hot'.
         """
         self.setInternalLut(self._COLORMAPS[8])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToJet(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'jet'.
         """
         self.setInternalLut(self._COLORMAPS[10])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToSpectral(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'spectral'.
         """
         self.setInternalLut(self._COLORMAPS[11])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutSpring(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'spring'.
         """
         self.setInternalLut(self._COLORMAPS[12])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToSummer(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'summer'.
         """
         self.setInternalLut(self._COLORMAPS[13])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToRainbow(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'rainbow'.
         """
         self.setInternalLut(self._COLORMAPS[14])
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setLutToWinter(self) -> None:
         """
         Set look-up table colormap of the current SisypheLut instance to 'winter'.
         """
         self.setInternalLut(self._COLORMAPS[15])
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDefaultLut(self) -> bool:
         """
         Check whether look-up table colormap type of the current SisypheLut instance is 'default' (grayscale).
@@ -787,6 +867,8 @@ class SisypheLut(object):
         """
         return self._typeLUT == self._LUTTOCODE['default']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isInternalLut(self) -> bool:
         """
         Check whether look-up table colormap type of the current SisypheLut instance is 'internal'.
@@ -798,6 +880,8 @@ class SisypheLut(object):
         """
         return self._typeLUT == self._LUTTOCODE['internal']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFileLut(self) -> bool:
         """
         Check whether look-up table colormap type of the current SisypheLut instance is 'file'.
@@ -809,6 +893,8 @@ class SisypheLut(object):
         """
         return self._typeLUT == self._LUTTOCODE['file']
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isCustomLut(self) -> bool:
         """
         Check whether look-up table colormap type of the current SisypheLut instance is 'custom'.
@@ -820,6 +906,8 @@ class SisypheLut(object):
         """
         return self._typeLUT == self._LUTTOCODE['custom']
 
+    @cython.ccall
+    @cython.returns(str)
     def getFilename(self) -> str | None:
         """
         Get the look-up table colormap filename of the current SisypheLut instance.
@@ -849,6 +937,8 @@ class SisypheLut(object):
         if string: return self._CODETOLUT[self._typeLUT]
         else: return self._typeLUT
 
+    @cython.ccall
+    @cython.returns(str)
     def getName(self) -> str:
         """
         Get the name of the look-up table colormap of the current SisypheLut instance.
@@ -861,6 +951,8 @@ class SisypheLut(object):
         if self._typeLUT == self._LUTTOCODE['file']: return splitext(basename(self._name))[0]
         else: return self._name
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDisplayBelowRangeColorOff(self) -> None:
         """
         Set transparent color (alpha=0) to display values below the minimum window value of the current SisypheLut
@@ -868,6 +960,8 @@ class SisypheLut(object):
         """
         self._vtklut.UseBelowRangeColorOff()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDisplayBelowRangeColorOn(self) -> None:
         """
         Set opaque black color (alpha=1.0) to display values below the minimum window value of the current SisypheLut
@@ -876,6 +970,8 @@ class SisypheLut(object):
         self._vtklut.SetBelowRangeColor(0.0, 0.0, 0.0, 1.0)
         self._vtklut.UseBelowRangeColorOn()
 
+    @cython.ccall
+    @cython.returns(object)
     def getvtkLookupTable(self) -> vtkLookupTable:
         """
         Get the look-up table colormap attribute of the current SisypheLut instance.
@@ -887,6 +983,8 @@ class SisypheLut(object):
         """
         return self._vtklut
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setvtkLookupTable(self, vtklut: vtkLookupTable) -> None:
         """
         Set the look-up table colormap attribute of the current SisypheLut instance.
@@ -900,6 +998,8 @@ class SisypheLut(object):
             self._vtklut = vtklut
         else: raise TypeError('parameter type {} is not vtkLookupTable.'.format(type(vtklut)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setColor(self, i: int, r: float, g: float, b: float, a: float = 1.0) -> None:
         """
         Set a color (red, green, blue, alpha) to index i in the look-up table colormap of the current SisypheLut
@@ -921,6 +1021,8 @@ class SisypheLut(object):
         if 0 <= i <= 255: self._vtklut.SetTableValue(i, r, g, b, a)
         else: raise KeyError('invalid index (0 <= index <= 255)')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setQColor(self, i: int, c: QColor) -> None:
         """
         Set a color (Qt color) to index i in the look-up table colormap of the current SisypheLut instance.
@@ -934,7 +1036,9 @@ class SisypheLut(object):
         """
         self.setColor(i, c.redF(), c.greenF(), c.blueF())
 
-    def setIntColor(self, i: int, r: int, g: int, b: int, a: int = 255):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setIntColor(self, i: int, r: int, g: int, b: int, a: int = 255) -> None:
         """
         Set a color (red, green, blue, alpha) to index i in the look-up table colormap of the current SisypheLut
         instance.
@@ -958,6 +1062,8 @@ class SisypheLut(object):
         a = a / 255.0
         self.setColor(i, r, g, b, a)
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double, cython.double])
     def getColor(self, i: int) -> tupleFloat4:
         """
         Get the color (red, green, blue, alpha) at index i in the look-up table colormap of the current SisypheLut
@@ -976,6 +1082,8 @@ class SisypheLut(object):
         if 0 <= i <= 255: return self._vtklut.GetTableValue(i)
         else: raise KeyError('invalid index (0 <= index <= 255)')
 
+    @cython.ccall
+    @cython.returns(object)
     def getQColor(self, i: int) -> QColor:
         """
         Get the color (Qt color) at index i in the look-up table colormap of the current SisypheLut instance.
@@ -997,6 +1105,8 @@ class SisypheLut(object):
         c.setBlueF(rgba[2])
         return c
 
+    @cython.ccall
+    @cython.returns(tuple[cython.int, cython.int, cython.int, cython.int])
     def getIntColor(self, i: int) -> tupleInt4:
         """
         Get the color (red, green, blue, alpha) at index i in the look-up table colormap of the current SisypheLut
@@ -1021,6 +1131,8 @@ class SisypheLut(object):
             return r, g, b, a
         else: raise KeyError('invalid index (0 <= index <= 255)')
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double])
     def getWindowRange(self) -> tuple[float, float]:
         """
         Get the windowing range of the look-up table colormap of the current SisypheLut instance.
@@ -1032,6 +1144,8 @@ class SisypheLut(object):
          """
         return self._vtklut.GetTableRange()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setWindowRange(self, w1: float, w2: float) -> None:
         """
         Set the windowing range of the look-up table colormap of the current SisypheLut instance.
@@ -1045,6 +1159,8 @@ class SisypheLut(object):
         """
         self._vtklut.SetTableRange(w1, w2)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isSameColor(self, i: int, c: tupleFloat4 | list[float] | QColor) -> bool:
         """
         Check whether color at the index i in the look-up table colormap of the current SisypheLut instance identical
@@ -1065,6 +1181,8 @@ class SisypheLut(object):
         if isinstance(c, QColor): c = (c.redF(), c.greenF(), c.blueF(), c.alphaF())
         return self._vtklut.GetTableValue(i) == c
 
+    @cython.ccall
+    @cython.returns(object)
     def getBitmapPreview(self, width: int, height: int) -> QImage:
         """
         Get a look-up table colormap bitmap preview of the current SisypheLut instance.
@@ -1083,6 +1201,7 @@ class SisypheLut(object):
         """
         img = QImage(256, height, QImage.Format_ARGB32)
         paint = QPainter(img)
+        i: cython.int
         for i in range(256):
             paint.setPen(self.getQColor(i))
             paint.drawLine(i, 0, i, height-1)
@@ -1090,6 +1209,8 @@ class SisypheLut(object):
         return img
 
     # noinspection PyShadowingBuiltins
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveBitmapPreview(self, width: int, height: int, format: str = 'jpg') -> None:
         """
         Save a look-up table colormap bitmap preview of the current SisypheLut instance.
@@ -1109,6 +1230,8 @@ class SisypheLut(object):
             img.save(filename)
         else: raise ValueError('{} format is not supported'.format(format))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToTxt(self, filename: str) -> None:
         """
         Save current SisypheLut instance attributes to text file (.txt).
@@ -1118,6 +1241,8 @@ class SisypheLut(object):
         filename : str
             text file name (.txt)
         """
+        i: cython.int
+        j: cython.int
         path, ext = splitext(filename)
         if ext.lower() != '.txt':
             filename = path + '.txt'
@@ -1135,6 +1260,8 @@ class SisypheLut(object):
         finally:
             f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToXML(self, filename: str) -> None:
         """
         Save current SisypheLut instance attributes to xml file (.xlut).
@@ -1144,6 +1271,8 @@ class SisypheLut(object):
         filename : str
             xml file name (.xlut)
         """
+        i: cython.int
+        j: cython.int
         path, ext = splitext(filename)
         if ext.lower() != SisypheLut._FILEEXT:
             filename = path + SisypheLut._FILEEXT
@@ -1171,6 +1300,8 @@ class SisypheLut(object):
         finally:
             f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def save(self, filename: str) -> None:
         """
         Save current SisypheLut instance attributes to lut file (.lut).
@@ -1199,6 +1330,8 @@ class SisypheLut(object):
         finally:
             f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromOlt(self, filename: str) -> None:
         """
         Load current SisypheLut instance attributes from BrainVoyager lut file (.olt).
@@ -1208,6 +1341,7 @@ class SisypheLut(object):
         filename : str
             BrainVoyager lut file name (.olt)
         """
+        i: cython.int
         filename = abspath(filename)
         path, ext = splitext(filename)
         if ext.lower() != '.olt':
@@ -1244,6 +1378,8 @@ class SisypheLut(object):
             # noinspection PyTypeChecker
             self._vtklut.SetTableValue(i, r256[i], g256[i], b256[i], 1.0)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromTxt(self, filename: str) -> None:
         """
         Load current SisypheLut instance attributes from text file (.txt).
@@ -1253,6 +1389,8 @@ class SisypheLut(object):
         filename : str
             text file name (.txt)
         """
+        i: cython.int
+        j: cython.int
         filename = abspath(filename)
         path, ext = splitext(filename)
         if ext.lower() != '.txt':
@@ -1273,6 +1411,8 @@ class SisypheLut(object):
         finally:
             f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
         """
         Load current SisypheLut instance attributes from XML file (.xlut).
@@ -1282,6 +1422,7 @@ class SisypheLut(object):
         filename : str
             XML file name (.xlut)
         """
+        j: cython.int
         filename = abspath(filename)
         path, ext = splitext(filename)
         if ext.lower() != SisypheLut._FILEEXT:
@@ -1309,6 +1450,8 @@ class SisypheLut(object):
         except IOError:
             raise IOError('XML read error.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def load(self, filename: str) -> None:
         """
         Load current SisypheLut instance attributes from lut file (.lut).
@@ -1318,6 +1461,7 @@ class SisypheLut(object):
         filename : str
             lut file name (.lut)
         """
+        i: cython.int
         filename = abspath(filename)
         path, ext = splitext(filename)
         if ext.lower() != '.lut':
@@ -1355,7 +1499,7 @@ class SisypheLut(object):
         except IOError: raise IOError('read error.')
         finally: f.close()
 
-
+@cython.cclass
 class SisypheColorTransfer(object):
     """
     Description
@@ -1382,6 +1526,13 @@ class SisypheColorTransfer(object):
     # Class constants
 
     _FILEEXT: str = '.xtfer'
+
+    # Cython static attribute types
+
+    _ID: str
+    _colortransfer: vtkColorTransferFunction
+    _alphatransfer: vtkPiecewiseFunction
+    _gradienttransfer: vtkPiecewiseFunction
 
     # Class method
 
@@ -1461,6 +1612,7 @@ class SisypheColorTransfer(object):
         if self.isEmpty():
             return 'Empty'
         else:
+            i: cython.int
             buff = 'ID: {}\n'.format(self._ID)
             # color transfer
             buff += 'Color transfer:\n'
@@ -1523,6 +1675,8 @@ class SisypheColorTransfer(object):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isEmpty(self) -> bool:
         """
         Check whether all three transfer function of the current SisypheColorTransfer instance are empty.
@@ -1536,6 +1690,8 @@ class SisypheColorTransfer(object):
                self.getAlphaTransferSize() == 0 and \
                self.getGradientTransferSize() == 0
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isColorTransferEmpty(self) -> bool:
         """
         Check whether the color transfer function of the current SisypheColorTransfer instance is empty.
@@ -1547,6 +1703,8 @@ class SisypheColorTransfer(object):
         """
         return self.getColorTransferSize() == 0
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isAlphaTransferEmpty(self) -> bool:
         """
         Check whether the alpha transfer function of the current SisypheColorTransfer instance is empty.
@@ -1558,6 +1716,8 @@ class SisypheColorTransfer(object):
         """
         return self.getAlphaTransferSize() == 0
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isGradientTransferEmpty(self) -> bool:
         """
         Check whether the gradient transfer function of the current SisypheColorTransfer instance is empty.
@@ -1569,6 +1729,8 @@ class SisypheColorTransfer(object):
         """
         return self.getGradientTransferSize() == 0
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefault(self, volume: SisypheVolume) -> None:
         """
         Initialize all three transfer functions of the current SisypheColorTransfer instance with default values.
@@ -1581,6 +1743,8 @@ class SisypheColorTransfer(object):
             self.setDefaultGradient(volume)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultColor(self, volume: SisypheVolume) -> None:
         """
         Initialize the color transfer function of the current SisypheColorTransfer instance with default values.
@@ -1595,6 +1759,8 @@ class SisypheColorTransfer(object):
             self.addColorTransferElement(v=volume.display.getRangeMax(), r=1.0, g=1.0, b=1.0)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultAlpha(self, volume: SisypheVolume) -> None:
         """
         Initialize the alpha transfer function of the current SisypheColorTransfer instance with default values.
@@ -1609,6 +1775,8 @@ class SisypheColorTransfer(object):
             self.addAlphaTransferElement(v=volume.display.getRangeMax(), a=1.0)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultGradient(self, volume: SisypheVolume) -> None:
         """
         Initialize the gradient transfer function of the current SisypheColorTransfer instance with default values.
@@ -1623,6 +1791,8 @@ class SisypheColorTransfer(object):
             self.addGradientTransferElement(v=volume.display.getRangeMax() - volume.display.getRangeMin(), a=1.0)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def init(self) -> None:
         """
         Initialize all three transfer functions of the current SisypheColorTransfer instance with default values.
@@ -1638,6 +1808,8 @@ class SisypheColorTransfer(object):
         self.addGradientTransferElement(v=0, a=0.0)
         self.addGradientTransferElement(v=1, a=1.0)
 
+    @cython.ccall
+    @cython.returns(str)
     def getID(self) -> str:
         """
         Get ID attribute of the current SisypheColorTransfer instance.
@@ -1649,6 +1821,8 @@ class SisypheColorTransfer(object):
         """
         return self._ID
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setID(self, ID: str | SisypheVolume) -> None:
         """
         Set ID attribute of the current SisypheColorTransfer instance.
@@ -1663,6 +1837,8 @@ class SisypheColorTransfer(object):
         elif isinstance(ID, SisypheVolume): self._ID = ID.getArrayID()
         else: raise TypeError('parameter type {} is not str, SisypheImage or SisypheVolume.'.format(type(ID)))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasSameID(self, ID: str | SisypheVolume) -> bool:
         """
         Check whether the ID parameter is identical to that of the current SisypheColorTransfer instance ID.
@@ -1684,6 +1860,8 @@ class SisypheColorTransfer(object):
             elif isinstance(ID, str): return self._ID == ID
             else: raise TypeError('parameter type {} is not str or SisypheVolume.'.format(type(ID)))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasID(self) -> bool:
         """
         Check whether the ID attribute of the current SisypheColorTransfer is defined (not None).
@@ -1695,6 +1873,8 @@ class SisypheColorTransfer(object):
         """
         return self._ID is not None
 
+    @cython.ccall
+    @cython.returns(object)
     def getColorTransfer(self) -> vtkColorTransferFunction:
         """
         Get the color transfer function of the current SisypheColorTransfer instance.
@@ -1706,6 +1886,8 @@ class SisypheColorTransfer(object):
         """
         return self._colortransfer
 
+    @cython.ccall
+    @cython.returns(object)
     def getAlphaTransfer(self) -> vtkPiecewiseFunction:
         """
         Get the alpha transfer function of the current SisypheColorTransfer instance.
@@ -1717,6 +1899,8 @@ class SisypheColorTransfer(object):
         """
         return self._alphatransfer
 
+    @cython.ccall
+    @cython.returns(object)
     def getGradientTransfer(self) -> vtkPiecewiseFunction:
         """
         Get the gradient transfer function of the current SisypheColorTransfer instance.
@@ -1728,6 +1912,8 @@ class SisypheColorTransfer(object):
         """
         return self._gradienttransfer
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setColorTransfer(self, colortransfer: vtkColorTransferFunction) -> None:
         """
         Set the color transfer function of the current SisypheColorTransfer instance.
@@ -1741,6 +1927,8 @@ class SisypheColorTransfer(object):
             self._colortransfer = colortransfer
         else: raise TypeError('parameter type {} is not vtkColorTransferFunction.'.format(type(colortransfer)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setAlphaTransfer(self, alphatransfer: vtkPiecewiseFunction) -> None:
         """
         Set the alpha transfer function of the current SisypheColorTransfer instance.
@@ -1754,6 +1942,8 @@ class SisypheColorTransfer(object):
             self._alphatransfer = alphatransfer
         else: raise TypeError('parameter type {} is not vtkPiecewiseFunction.'.format(type(alphatransfer)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setGradientTransfer(self, gradienttransfer: vtkPiecewiseFunction) -> None:
         """
         Set the gradient transfer function of the current SisypheColorTransfer instance.
@@ -1767,6 +1957,8 @@ class SisypheColorTransfer(object):
             self._gradienttransfer = gradienttransfer
         else: raise TypeError('parameter type {} is not vtkPiecewiseFunction.'.format(type(gradienttransfer)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def addColorTransferElement(self,
                                 v: float | None = None,
                                 r: float | None = None,
@@ -1796,6 +1988,8 @@ class SisypheColorTransfer(object):
             b = vrgb[3]
         self._colortransfer.AddRGBPoint(v, r, g, b)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def addAlphaTransferElement(self,
                                 v: float | None = None,
                                 a: float | None = None,
@@ -1817,6 +2011,8 @@ class SisypheColorTransfer(object):
             a = va[1]
         self._alphatransfer.AddPoint(v, a)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def addGradientTransferElement(self,
                                    v: float | None = None,
                                    a: float | None = None,
@@ -1838,6 +2034,8 @@ class SisypheColorTransfer(object):
             a = va[1]
         self._gradienttransfer.AddPoint(v, a)
 
+    @cython.ccall
+    @cython.returns(list[cython.double])
     def getColorTransferElement(self, index: int) -> list[float]:
         """
         Get color from index of the color transfer function table of the current SisypheColorTransfer instance.
@@ -1856,6 +2054,8 @@ class SisypheColorTransfer(object):
         self._colortransfer.GetNodeValue(index, vrgb)
         return vrgb[:4]  # v, r, g, b, m, separator
 
+    @cython.ccall
+    @cython.returns(list[cython.double])
     def getAlphaTransferElement(self, index: int) -> list[float]:
         """
         Get alpha from index of the alpha transfer function table of the current SisypheColorTransfer instance.
@@ -1874,6 +2074,8 @@ class SisypheColorTransfer(object):
         self._alphatransfer.GetNodeValue(index, va)
         return va[:2]  # v, a, m, separator
 
+    @cython.ccall
+    @cython.returns(list[cython.double])
     def getGradientTransferElement(self, index: int) -> list[float]:
         """
         Get alpha from index of the gradient transfer function table of the current SisypheColorTransfer instance.
@@ -1892,6 +2094,8 @@ class SisypheColorTransfer(object):
         self._gradienttransfer.GetNodeValue(index, va)
         return va[:2]  # v, a, m, separator
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setColorTransferElement(self,
                                 index: int | None = None,
                                 v: float | None = None,
@@ -1929,6 +2133,8 @@ class SisypheColorTransfer(object):
             self._colortransfer.SetNodeValue(index, v, r, g, b, 0.5, 0.0)
         else: raise IndexError('index parameter is out of range.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setAlphaTransferElement(self,
                                 index: int | None = None,
                                 v: float | None = None,
@@ -1958,6 +2164,8 @@ class SisypheColorTransfer(object):
             self._alphatransfer.SetNodeValue(index, v, a, 0.5, 0.0)
         else: raise IndexError('index parameter is out of range.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setGradientTransferElement(self,
                                    index: int | None = None,
                                    v: float | None = None,
@@ -1987,6 +2195,8 @@ class SisypheColorTransfer(object):
             self._gradienttransfer.SetNodeValue(index, v, a, 0.5, 0.0)
         else: raise IndexError('index parameter is out of range.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def removeColorTransferElement(self,
                                    index: int | None = None,
                                    v: float | None = None) -> None:
@@ -2008,6 +2218,8 @@ class SisypheColorTransfer(object):
             else: raise IndexError('index parameter is out of range.')
         self._colortransfer.RemovePoint(v)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def removeAlphaTransferElement(self,
                                    index: int | None = None,
                                    v: float | None = None) -> None:
@@ -2029,6 +2241,8 @@ class SisypheColorTransfer(object):
             else: raise IndexError('index parameter is out of range.')
         self._alphatransfer.RemovePoint(v)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def removeGradientTransferElement(self,
                                       index: int | None = None,
                                       v: float | None = None) -> None:
@@ -2050,6 +2264,8 @@ class SisypheColorTransfer(object):
             else: raise IndexError('index parameter is out of range.')
         self._gradienttransfer.RemovePoint(v)
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getColorTransferSize(self) -> int:
         """
         Get number of colors in the color transfer function of the current SisypheColorTransfer instance.
@@ -2061,6 +2277,8 @@ class SisypheColorTransfer(object):
         """
         return self._colortransfer.GetSize()
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getAlphaTransferSize(self) -> int:
         """
         Get number of elements in the alpha transfer function of the current SisypheColorTransfer instance.
@@ -2072,6 +2290,8 @@ class SisypheColorTransfer(object):
         """
         return self._alphatransfer.GetSize()
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getGradientTransferSize(self) -> int:
         """
         Get number of elements in the gradient transfer function of the current SisypheColorTransfer instance.
@@ -2083,24 +2303,32 @@ class SisypheColorTransfer(object):
         """
         return self._gradienttransfer.GetSize()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearColorTransfer(self) -> None:
         """
         Remove all colors of the color transfer function of the current SisypheColorTransfer instance.
         """
         self._colortransfer.RemoveAllPoints()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearAlphaTransfer(self) -> None:
         """
         Remove all elements of the alpha transfer function of the current SisypheColorTransfer instance.
         """
         self._alphatransfer.RemoveAllPoints()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clearGradientTransfer(self) -> None:
         """
         Remove all elements of the gradient transfer function of the current SisypheColorTransfer instance.
         """
         self._gradienttransfer.RemoveAllPoints()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def clear(self) -> None:
         """
         Remove all elements of the three transfer function and clear ID attribute of the current SisypheColorTransfer
@@ -2111,6 +2339,8 @@ class SisypheColorTransfer(object):
         self._alphatransfer.RemoveAllPoints()
         self._gradienttransfer.RemoveAllPoints()
 
+    @cython.ccall
+    @cython.returns(object)
     def copy(self) -> SisypheColorTransfer:
         """
         Copy of the current SisypheColorTransfer instance (deep copy).
@@ -2127,6 +2357,8 @@ class SisypheColorTransfer(object):
         buff._gradienttransfer.DeepCopy(self._gradienttransfer)
         return buff
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFrom(self, buff: SisypheColorTransfer) -> None:
         """
         Copy SisypheColorTransfer attributes to the current SisypheColorTransfer instance (deep copy).
@@ -2159,6 +2391,8 @@ class SisypheColorTransfer(object):
                 'alpha': self.copyToList('alpha'),
                 'gradient': self.copyToList('gradient')}
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromDict(self, cdict: dict[str, list[list[float]]]) -> None:
         """
         Set all three transfer functions of the current SisypheColorTransfer instance from a dict parameter.
@@ -2177,6 +2411,8 @@ class SisypheColorTransfer(object):
             self.copyFromList(cdict['gradient'], 'gradient')
         else: raise TypeError('parameter type {} is not dict.'.format(type(cdict)))
 
+    @cython.ccall
+    @cython.returns(list[list[cython.double]])
     def copyToList(self, code: str) -> list[list[float]]:
         """
         Copy one of the three transfer functions of the current SisypheColorTransfer instance to a list.
@@ -2194,6 +2430,7 @@ class SisypheColorTransfer(object):
             - if code is 'gradient', list[list[float, float]] scalar value and alpha components
         """
         clist = list()
+        i: cython.int
         if code == 'color':
             for i in range(0, self._colortransfer.GetSize()):
                 clist.append(self.getColorTransferElement(i))
@@ -2207,6 +2444,8 @@ class SisypheColorTransfer(object):
         # noinspection PyUnreachableCode
         return clist
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromList(self, clist: list | ndarray, code: str) -> None:
         """
         Set one of the three transfer functions of the current SisypheColorTransfer instance from a list or a
@@ -2222,6 +2461,7 @@ class SisypheColorTransfer(object):
             - if code is 'gradient', list[list[float, float]] scalar value and alpha components
         """
         if isinstance(clist, (list, ndarray)):
+            i: cython.int
             if code == 'color':
                 self._colortransfer.RemoveAllPoints()
                 for i in range(0, len(clist)):
@@ -2237,6 +2477,8 @@ class SisypheColorTransfer(object):
             else: raise ValueError('{} invalid parameter value.'.format(code))
         else: raise TypeError('parameter type {} is not list.'.format(type(clist)))
 
+    @cython.ccall
+    @cython.returns(ndarray)
     def copyToNumpy(self, code: str) -> ndarray:
         """
         Copy a transfer function of the current SisypheColorTransfer instance to a numpy.ndarray.
@@ -2255,6 +2497,8 @@ class SisypheColorTransfer(object):
         """
         return array(self.copyToList(code))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromNumpy(self, cnp: ndarray, code: str) -> None:
         """
         Set one of the three transfer functions of the current SisypheColorTransfer instance from a list or a
@@ -2271,6 +2515,8 @@ class SisypheColorTransfer(object):
         """
         self.copyFromList(cnp, code)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isSameColorTransfer(self, buff: SisypheColorTransfer) -> bool:
         """
         Check whether the color transfer function of the parameter is identical to that of the current
@@ -2287,6 +2533,7 @@ class SisypheColorTransfer(object):
             True if color transfer functions are identical
         """
         if isinstance(buff, SisypheColorTransfer):
+            i: cython.int
             for i in range(0, self._colortransfer.GetSize()):
                 vrgb1 = self.getColorTransferElement(i)
                 vrgb2 = buff.getColorTransferElement(i)
@@ -2295,6 +2542,8 @@ class SisypheColorTransfer(object):
             return True
         else: return False
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isSameAlphaTransfer(self, buff: SisypheColorTransfer) -> bool:
         """
         Check whether the alpha transfer function of the parameter is identical to that of the current
@@ -2311,6 +2560,7 @@ class SisypheColorTransfer(object):
             True if alpha transfer functions are identical
         """
         if isinstance(buff, SisypheColorTransfer):
+            i: cython.int
             for i in range(0, self._alphatransfer.GetSize()):
                 va1 = self.getAlphaTransferElement(i)
                 va2 = buff.getAlphaTransferElement(i)
@@ -2319,6 +2569,8 @@ class SisypheColorTransfer(object):
             return True
         else: return False
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isSameGradientTransfer(self, buff: SisypheColorTransfer) -> bool:
         """
         Check whether the gradient transfer function of the parameter is identical to that of the current
@@ -2335,6 +2587,7 @@ class SisypheColorTransfer(object):
             True if gradient transfer functions are identical
         """
         if isinstance(buff, SisypheColorTransfer):
+            i: cython.int
             for i in range(0, self._gradienttransfer.GetSize()):
                 va1 = self.getGradientTransferElement(i)
                 va2 = buff.getGradientTransferElement(i)
@@ -2343,6 +2596,8 @@ class SisypheColorTransfer(object):
             return True
         else: return False
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def hasColorElement(self,
                         v: float | None = None,
                         r: float | None = None,
@@ -2373,11 +2628,14 @@ class SisypheColorTransfer(object):
         """
         if vrgb is None:
             vrgb = [v, r, g, b]
+        i: cython.int
         for i in range(0, self._colortransfer.GetSize()):
             vrgb1 = self.getColorTransferElement(i)
             if vrgb == vrgb1: return i
         return None
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def hasAlphaElement(self,
                         v: float | None = None,
                         a: float | None = None,
@@ -2401,11 +2659,14 @@ class SisypheColorTransfer(object):
             index of the item in the alpha transfer function table, None if not in the table.
         """
         if va is None: va = [v, a]
+        i: cython.int
         for i in range(0, self._alphatransfer.GetSize()):
             va1 = self.getAlphaTransferElement(i)
             if va == va1: return i
         return None
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def hasGradientElement(self,
                            v: float | None = None,
                            a: float | None = None,
@@ -2429,11 +2690,14 @@ class SisypheColorTransfer(object):
             index of the item in the gradient transfer function table, None if not in the table.
         """
         if va is None: va = [v, a]
+        i: cython.int
         for i in range(0, self._gradienttransfer.GetSize()):
             va1 = self.getGradientTransferElement(i)
             if va == va1: return i
         return None
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def hasColorTransferValue(self, v: float) -> int | None:
         """
         Check whether the scalar value v is in the color transfer function of the current SisypheColorTransfer instance.
@@ -2448,11 +2712,14 @@ class SisypheColorTransfer(object):
         int | None
             index of the scalar value in the color transfer function table, None if not in the table.
         """
+        i: cython.int
         for i in range(0, self._colortransfer.GetSize()):
             vrgb = self.getColorTransferElement(i)
             if v == vrgb[0]: return i
         return None
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def hasAlphaTransferValue(self, v: float) -> int | None:
         """
         Check whether the scalar value v is in the alpha transfer function of the current SisypheColorTransfer instance.
@@ -2467,11 +2734,14 @@ class SisypheColorTransfer(object):
         int | None
             index of the scalar value in the alpha transfer function table, None if not in the table.
         """
+        i: cython.int
         for i in range(0, self._alphatransfer.GetSize()):
             va = self.getAlphaTransferElement(i)
             if v == va[0]: return i
         return None
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def hasGradientTransferValue(self, v: float) -> int | None:
         """
         Check whether the scalar value v is in the gradient transfer function of the current SisypheColorTransfer
@@ -2487,11 +2757,14 @@ class SisypheColorTransfer(object):
         int | None
             index of the scalar value in the gradient transfer function table, None if not in the table.
         """
+        i: cython.int
         for i in range(0, self._gradienttransfer.GetSize()):
             va = self.getGradientTransferElement(i)
             if v == va[0]: return i
         return None
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getValueFromColor(self,
                           r: float | None = None,
                           g: float | None = None,
@@ -2518,11 +2791,14 @@ class SisypheColorTransfer(object):
         """
         if rgb is None:
             rgb = [r, g, b]
+        i: cython.int
         for i in range(0, self._colortransfer.GetSize()):
             vrgb1 = self.getColorTransferElement(i)
             if vrgb1[1:4] == rgb: return vrgb1[0]  # value
         return None
 
+    @cython.ccall
+    @cython.returns(list[cython.double])
     def getColorFromValue(self, v: float, interpol: bool = True) -> list[float] | None:
         """
         Get color from scalar value in the color transfer function table of the current SisypheColorTransfer instance.
@@ -2542,11 +2818,14 @@ class SisypheColorTransfer(object):
         if interpol:
             return list(self._colortransfer.GetColor(v))
         else:
+            i: cython.int
             for i in range(0, self._colortransfer.GetSize()):
                 vrgb = self.getColorTransferElement(i)
                 if vrgb[0] == v: return vrgb[1:4]  # r, g, b
             return None
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getValueFromAlpha(self, a: float) -> float | None:
         """
         Get scalar value from alpha in the alpha transfer function table of the current SisypheColorTransfer instance.
@@ -2561,11 +2840,14 @@ class SisypheColorTransfer(object):
         float | None
             scalar value in the alpha transfer function table, None if not in the table.
         """
+        i: cython.int
         for i in range(0, self._alphatransfer.GetSize()):
             va1 = self.getAlphaTransferElement(i)
             if va1[1] == a: return va1[0]  # value
         return None
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getAlphaFromValue(self, v: float, interpol: bool = True) -> float | None:
         """
         Get alpha from scalar value in the alpha transfer function table of the current SisypheColorTransfer instance.
@@ -2585,11 +2867,14 @@ class SisypheColorTransfer(object):
         if interpol:
             return self._alphatransfer.GetValue(v)
         else:
+            i: cython.int
             for i in range(0, self._alphatransfer.GetSize()):
                 va = self.getAlphaTransferElement(i)
                 if va[0] == v: return va[1]  # a
             return None
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getGradientValueFromAlpha(self, a: float) -> float | None:
         """
         Get gradient value from alpha in the gradient transfer function table of the current SisypheColorTransfer
@@ -2605,11 +2890,14 @@ class SisypheColorTransfer(object):
         float | None
             gradient value in the alpha transfer function table, None if not in the table.
         """
+        i: cython.int
         for i in range(0, self._gradienttransfer.GetSize()):
             va1 = self.getGradientTransferElement(i)
             if va1[1] == a: return va1[0]  # value
         return None
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getAlphaFromGradientValue(self, v: float, interpol: bool = True) -> float | None:
         """
         Get alpha from gradient value in the gradient transfer function table of the current SisypheColorTransfer
@@ -2630,11 +2918,14 @@ class SisypheColorTransfer(object):
         if interpol:
             return self._gradienttransfer.GetValue(v)
         else:
+            i: cython.int
             for i in range(0, self._gradienttransfer.GetSize()):
                 va = self.getGradientTransferElement(i)
                 if va[0] == v: return va[1]  # g
             return None
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isEqual(self, buff: SisypheColorTransfer) -> bool:
         """
         Check whether all three transfer functions of the parameter are identical to those of the current
@@ -2656,6 +2947,8 @@ class SisypheColorTransfer(object):
                    self.isSameGradientTransfer(buff)
         else: return False
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double])
     def getRange(self) -> tuple[float, float]:
         """
         Get scalar values range in the image array.
@@ -2667,6 +2960,8 @@ class SisypheColorTransfer(object):
         """
         return self._colortransfer.GetRange()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToXML(self, filename: str) -> None:
         """
         Save current SisypheColorTransfer instance attributes to XML file (.xtfer).
@@ -2687,6 +2982,8 @@ class SisypheColorTransfer(object):
         item = doc.createTextNode(str(self._ID))
         node.appendChild(item)
         root.appendChild(node)
+        i: cython.int
+        j: cython.int
         # color transfer
         if self._colortransfer.GetSize() > 0:
             color = doc.createElement('colortransfer')
@@ -2734,6 +3031,8 @@ class SisypheColorTransfer(object):
         finally:
             f.close()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
         """
         Load current SisypheColorTransfer instance attributes from XML file (.xtfer).
@@ -2752,6 +3051,7 @@ class SisypheColorTransfer(object):
             if root.nodeName == SisypheColorTransfer._FILEEXT[1:] and root.getAttribute('version') == '1.0':
                 self.clear()
                 node = root.firstChild
+                j: cython.int
                 while node:
                     # get ID
                     if node.nodeName == 'ID':

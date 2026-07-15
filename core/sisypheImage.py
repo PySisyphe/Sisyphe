@@ -203,6 +203,9 @@ numpyToVtkImageData(np: numpy.ndarray) -> vtk.vtkImageData
 simpleITKtoVTK(img: SimpleITK.Image) -> vtk.vtkImageData
 """
 
+
+@cython.ccall
+@cython.returns(object)
 def numpyToVtkImageData(np: ndarray) -> vtkImageData:
     """
     numpy ndarray to vtk.vtkImageData conversion.
@@ -230,6 +233,8 @@ def numpyToVtkImageData(np: ndarray) -> vtkImageData:
     img.GetPointData().SetScalars(data)
     return img
 
+@cython.ccall
+@cython.returns(object)
 def simpleITKToVTK(img: sitkImage) -> vtkImageData:
     """
     SimpleITK.Image to vtk.vtkImageData conversion.
@@ -254,7 +259,6 @@ def simpleITKToVTK(img: sitkImage) -> vtkImageData:
         return vtkimg
     else: raise TypeError('parameter type {} is not SimpleITK image.'.format(type(img)))
 
-
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -269,6 +273,7 @@ tupleFloat3 = tuple[float, float, float]
 vectorInt3 = list[int] | tupleInt3
 vectorFloat3 = list[float] | tupleFloat3
 
+@cython.cclass
 class SisypheImage(object):
     """
     Description
@@ -306,6 +311,14 @@ class SisypheImage(object):
     Last revision: 25/06/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
+
+    # Cython static attribute types
+
+    _sitk_image: sitkImage | None
+    _itk_image: object
+    _vtk_image: vtkImageData | None
+    _numpy_array: ndarray | None
+    _attr: dict
 
     # Special methods
 
@@ -384,6 +397,7 @@ class SisypheImage(object):
                 self._sitk_image.SetOrigin(origin)
                 self._sitk_image.SetDirection(direction)
                 self._updateImages()
+
     """
     Private attributes
 
@@ -393,6 +407,7 @@ class SisypheImage(object):
     _numpy_array    ndarray
     _attr           dict[str, Any]
     """
+
     def __str__(self) -> str:
         """
         Special overloaded method called by the built-in str() python function.
@@ -1029,6 +1044,8 @@ class SisypheImage(object):
 
     # Private methods
 
+    @cython.cfunc
+    @cython.returns(object)
     def _toSimpleITK(self, img: ANTsImage | ndarray | int | float) -> sitkImage | int | float:
         if isinstance(img, ANTsImage): img = img.view().T
         if isinstance(img, ndarray):
@@ -1036,11 +1053,15 @@ class SisypheImage(object):
             img.SetSpacing(self.getSpacing())
         return img
 
+    @cython.cfunc
+    @cython.returns(cython.void)
     def _updateImages(self) -> None:
         self._updateNumpyFromSITKImage()
         self._updateITKImageFromNumpy()
         self._updateVTKImageFromNumpy()
 
+    @cython.cfunc
+    @cython.returns(cython.void)
     def _updateNumpyFromSITKImage(self) -> None:
         # GetArrayViewFromImage() return default numpy array shape (z, y, x)
         buff = sitkGetArrayViewFromImage(self._sitk_image)
@@ -1049,6 +1070,8 @@ class SisypheImage(object):
         self._numpy_array.data = buff.data
         self._numpy_array = self._numpy_array.T  # default shape (z, y, x)
 
+    @cython.cfunc
+    @cython.returns(cython.void)
     def _updateVTKImageFromNumpy(self) -> None:
         # default numpy array shape (z, y, x)
         buff = self._numpy_array.view(ndarray)
@@ -1070,22 +1093,29 @@ class SisypheImage(object):
                                         self._sitk_image.GetNumberOfComponentsPerPixel())
         self._vtk_image.GetPointData().SetScalars(data)
 
+    @cython.cfunc
+    @cython.returns(cython.void)
     def _updateITKImageFromNumpy(self) -> None:
         if isITKSupportedStdType(self.getDatatype()) and self.getNumberOfComponentsPerPixel() == 1:
             # GetImageViewFromArray() array parameter must have default shape (z, y, x)
             self._itk_image = itkGetImageViewFromArray(self._numpy_array)
+            # noinspection PyUnresolvedReferences
             self._itk_image.SetOrigin(self._sitk_image.GetOrigin())
+            # noinspection PyUnresolvedReferences
             self._itk_image.SetSpacing(self._sitk_image.GetSpacing())
             d = array(self._sitk_image.GetDirection())
             if d.size == 4: d = d.reshape(2, 2)
             elif d.size == 9: d = d.reshape(3, 3)
             buff = itkGetMatrixFromArray(d)
+            # noinspection PyUnresolvedReferences
             self._itk_image.SetDirection(buff)
         else:
             self._itk_image = None
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasITKImage(self) -> bool:
         """
         Check whether itk.Image attribute is available.
@@ -1097,6 +1127,8 @@ class SisypheImage(object):
         """
         return self._itk_image is not None
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def allocate(self, matrix: vectorInt3, datatype: str) -> None:
         """
         Initialize image buffer.
@@ -1115,6 +1147,8 @@ class SisypheImage(object):
             else: raise ValueError('string parameter is not a correct datatype.')
         else: raise TypeError('matrix parameter is not a list of 3 int.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromSITKImage(self, img: sitkImage) -> None:
         """
         Copy a SimpleITK image buffer to the current SisypheImage instance. Image buffer is not shared between
@@ -1133,6 +1167,8 @@ class SisypheImage(object):
             self._updateImages()
         else: raise TypeError('parameter type {} is not SimpleITK.'.format(type(img)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromVTKImage(self, img: vtkImageData) -> None:
         """
         Copy a VTKImageData buffer to the current SisypheImage instance. Image buffer is not shared between
@@ -1152,6 +1188,8 @@ class SisypheImage(object):
             self._updateImages()
         else: raise TypeError('parameter type {} is not vtkImageData class.'.format(type(img)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromITKImage(self, img: itkImage) -> None:
         """
         Copy an ITKImage buffer to the current SisypheImage instance. Image buffer is not shared between ITKImage
@@ -1171,6 +1209,8 @@ class SisypheImage(object):
             self._updateImages()
         else: raise TypeError('parameter type {} is not itkImage class or itktype is not supported.'.format(type(img)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromANTSImage(self, img: ANTsImage) -> None:
         """
         Copy an ANTsImage buffer to the current SisypheImage instance. Image buffer is not shared between ANTsImage
@@ -1192,6 +1232,8 @@ class SisypheImage(object):
             self.setDirections()
         else: raise TypeError('parameter type {} is not ANTsImage class.'.format(type(img)))
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromNumpyArray(self,
                            img: ndarray,
                            spacing: vectorFloat3 = (1.0, 1.0, 1.0),
@@ -1242,6 +1284,8 @@ class SisypheImage(object):
 
     # < Revision 08/12/2025
     # add copyToPillowImage method
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromPillowImage(self, img: pilImage, slc: int, orient: int = 0) -> None:
         """
         Copy a Pillow image to the current SisypheImage instance.
@@ -1262,7 +1306,9 @@ class SisypheImage(object):
         elif orient == 2: self.getNumpy()[:,:,slc] = img
     # Revision 08/12/2025
 
-    def copyFromNibabelImage(self, img: Nifti1Image):
+    @cython.ccall
+    @cython.returns(cython.void)
+    def copyFromNibabelImage(self, img: Nifti1Image) -> None:
         """
         Copy a Nifti1Image to the current SisypheImage instance.
         Image buffer is not shared between Nifti1Image and SisypheImage instances (deep copy).
@@ -1277,6 +1323,8 @@ class SisypheImage(object):
                                 spacing=hdr.get_zooms(),
                                 defaultshape=False)
 
+    @cython.ccall
+    @cython.returns(object)
     def copyToSITKImage(self) -> sitkImage:
         """
         SimpleITK image copy of the current SisypheImage instance. Image buffer is not shared between SimpleITK image
@@ -1294,6 +1342,8 @@ class SisypheImage(object):
             # Revision 13/06/2025 >
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(object)
     def copyToVTKImage(self) -> vtkImageData:
         """
         VTKImageData copy of the current SisypheImage instance. Image buffer is not shared between VTKImageData and
@@ -1310,6 +1360,8 @@ class SisypheImage(object):
             return buff
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(object)
     def copyToITKImage(self) -> itkImage:
         """
         ITKImage copy of the current SisypheImage instance. Image buffer is not shared between ITKImage and
@@ -1330,6 +1382,8 @@ class SisypheImage(object):
             return buff
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(object)
     def copyToANTSImage(self, dtype: str = '', direction: bool = False) -> ANTsImage:
         """
         ANTsImage copy of the current SisypheImage instance. Image buffer is not shared between ANTsImage and
@@ -1376,6 +1430,8 @@ class SisypheImage(object):
             return img
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(ndarray)
     def copyToNumpyArray(self, defaultshape: bool = True) -> ndarray:
         """
         Numpy array copy of the current SisypheImage instance. Image buffer is not shared between numpy array and
@@ -1415,6 +1471,8 @@ class SisypheImage(object):
             else: raise AttributeError('Invalid number of dimensions.')
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(object)
     def copyToNibabelImage(self) -> Nifti1Image:
         """
         Nibabel Nifti1Image copy of the current SisypheImage instance. Image buffer is not shared between Nifti1Image
@@ -1432,6 +1490,8 @@ class SisypheImage(object):
 
     # < Revision 08/12/2025
     # add copyToPillowImage method
+    @cython.ccall
+    @cython.returns(object)
     def copyToPillowImage(self,
                           slc: int,
                           orient: int = 0,
@@ -1476,6 +1536,8 @@ class SisypheImage(object):
         return pimg.transpose(Transpose.ROTATE_180)
     # Revision 08/12/2025
 
+    @cython.ccall
+    @cython.returns(tuple)
     def cast(self, datatype: str) -> tuple[SisypheImage, float, float]:  # recode with SimpleITK Clamp
         """
         SisypheImage copy of the current SisypheImage instance with a new datatype.
@@ -1531,6 +1593,8 @@ class SisypheImage(object):
                     return img, slope, vmin
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(object)
     def copy(self) -> SisypheImage:
         """
         SisypheImage copy of the current SisypheImage instance.
@@ -1543,6 +1607,8 @@ class SisypheImage(object):
         if not self.isEmpty(): return SisypheImage(self._sitk_image)
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(object)
     def copyComponent(self, c: int = 0) -> SisypheImage:
         """
         Extract single-component SisypheImage from the current multi-component SisypheImage instance.
@@ -1568,6 +1634,8 @@ class SisypheImage(object):
             else: raise ValueError('Image has only one component.')
         else: raise AttributeError('Image is empty.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getSITKImage(self) -> sitkImage:
         """
         SimpleITK view (pointer) of the current SisypheImage instance. Image buffer is shared between SimpleITK image
@@ -1581,6 +1649,8 @@ class SisypheImage(object):
         if not self.isEmpty(): return self._sitk_image
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSITKImage(self, img: sitkImage) -> None:
         """
         Shallow copy of a SimpleITK Image to the current SisypheImage instance. Image buffer is shared between
@@ -1596,6 +1666,8 @@ class SisypheImage(object):
             self._updateImages()
         else: raise TypeError('parameter type {} is not sitkImage.'.format(type(img)))
 
+    @cython.ccall
+    @cython.returns(object)
     def getVTKImage(self) -> vtkImageData:
         """
         VTKImageData view (pointer) of the current SisypheImage. Image buffer is shared between VTKImageData and
@@ -1609,6 +1681,8 @@ class SisypheImage(object):
         if not self.isEmpty(): return self._vtk_image
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getITKImage(self) -> itkImage:
         """
         ITKImage view (pointer) of the current SisypheImage. Image buffer is shared between ITKImage and current
@@ -1622,6 +1696,8 @@ class SisypheImage(object):
         if not self.isEmpty(): return self._itk_image
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(ndarray)
     def getNumpy(self, defaultshape: bool = True) -> ndarray:
         """
         Numpy array view (pointer) of the current SisypheImage instance. Image buffer is shared between numpy array
@@ -1662,6 +1738,8 @@ class SisypheImage(object):
             else: raise AttributeError('Invalid number of dimensions.')
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(tuple[cython.int, cython.int, cython.int])
     def getSize(self) -> vectorInt3:
         """
         Get image size, i.e. voxel count in each dimension.
@@ -1678,7 +1756,9 @@ class SisypheImage(object):
         if len(r) == 2: r = (r[0], r[1], 1)
         return r
 
-    def hasSameSize(self, img: SisypheImage | vtkImageData | ANTsImage | sitkImage | ndarray | vectorInt3):
+    @cython.ccall
+    @cython.returns(cython.bint)
+    def hasSameSize(self, img: SisypheImage | vtkImageData | ANTsImage | sitkImage | ndarray | vectorInt3) -> bool:
         """
         Compare size between the current SisypheImage instance and other image.
 
@@ -1701,6 +1781,8 @@ class SisypheImage(object):
         elif isinstance(img, list | tuple): s = tuple(img)
         return s == self.getSize()
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getWidth(self) -> int:
         """
         Get image size in x.
@@ -1715,6 +1797,8 @@ class SisypheImage(object):
             if 'size' in self._attr: return self._attr['size'][0]
             else: return 0
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getHeight(self) -> int:
         """
         Get image size in y.
@@ -1729,6 +1813,8 @@ class SisypheImage(object):
             if 'size' in self._attr: return self._attr['size'][1]
             else: return 0
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getDepth(self) -> int:
         """
         Get image size in z.
@@ -1745,6 +1831,8 @@ class SisypheImage(object):
         if r == 0: r = 1
         return r
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getSpacing(self) -> vectorFloat3:
         """
         Get voxel size (mm) in each dimension.
@@ -1762,7 +1850,9 @@ class SisypheImage(object):
         elif len(r) == 4: r = r[:3]
         return r
 
-    def hasSameSpacing(self, img: SisypheImage | listImages | vectorFloat3, decimals: int = 2):
+    @cython.ccall
+    @cython.returns(cython.bint)
+    def hasSameSpacing(self, img: SisypheImage | listImages | vectorFloat3, decimals: int = 2) -> bool:
         """
         Compare spacing between the current SisypheImage instance and other image.
 
@@ -1790,6 +1880,8 @@ class SisypheImage(object):
         # noinspection PyTypeChecker
         return all(s1 == s2)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSpacing(self, sx: float, sy: float, sz: float) -> None:
         """
         Set voxel size (mm) in each dimension.
@@ -1806,8 +1898,11 @@ class SisypheImage(object):
         self._sitk_image.SetSpacing((sx, sy, sz))
         self._vtk_image.SetSpacing(sx, sy, sz)
         if self.hasITKImage():
+            # noinspection PyUnresolvedReferences
             self._itk_image.SetSpacing((sx, sy, sz))
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getVoxelVolume(self) -> float:
         """
         Get voxel volume in mm3.
@@ -1820,6 +1915,8 @@ class SisypheImage(object):
         sx, sy, sz = self.getSpacing()
         return sx * sy * sz
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getNumberOfVoxels(self) -> int:
         """
         Get voxel count in the array.
@@ -1832,6 +1929,8 @@ class SisypheImage(object):
         s = self.getSize()
         return s[0] * s[1] * s[2]
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getNumberOfVoxelsInXYPlane(self) -> int:
         """
         Get voxel count in axial slice.
@@ -1844,6 +1943,8 @@ class SisypheImage(object):
         s = self.getSize()
         return s[0] * s[1]
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getNumberOfVoxelsInXZPlane(self) -> int:
         """
         Get voxel count in coronal slice.
@@ -1856,6 +1957,8 @@ class SisypheImage(object):
         s = self.getSize()
         return s[0] * s[2]
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getNumberOfVoxelsInYZPlane(self) -> int:
         """
         Get voxel count in sagittal slice.
@@ -1868,6 +1971,8 @@ class SisypheImage(object):
         s = self.getSize()
         return s[1] * s[2]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isIsotropic(self, tol: float = 2.0) -> bool:
         """
         Check whether voxel is isotropic, i.e. same spacing in each dimension.
@@ -1892,6 +1997,8 @@ class SisypheImage(object):
             # Revision 9/10/2024 >
         else: raise TypeError('parameter type {} is not float.'.format(type(tol)))
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isAnisotropic(self, tol: float = 2.0) -> bool:
         """
         Check whether voxel is anisotropic, i.e. not same spacing in each dimension
@@ -1909,6 +2016,8 @@ class SisypheImage(object):
         """
         return not self.isIsotropic(tol)
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isThickAnisotropic(self, tol: float = 2.0, thickness: float = 3.0) -> bool:
         """
         Check if the voxel is anisotropic and thicker than a given slice thickness in mm.
@@ -1933,6 +2042,8 @@ class SisypheImage(object):
         return (s[2] / s[0]) > tol and s[2] >= thickness
         # Revision 20/02/2025 >
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getNative2DOrientation(self) -> int:
         """
         Get code of the native orientation (0 3D, 1 axial, 2 coronal, 3 sagittal).
@@ -1947,6 +2058,8 @@ class SisypheImage(object):
             return 3 - s.index(max(s))
         else: return 0  # Unspecified or 3D
 
+    @cython.ccall
+    @cython.returns(tuple)
     def getNative2DOrientationAsString(self) -> tuple[str, str | None]:
         """
         Get the native orientation as str.
@@ -1963,6 +2076,8 @@ class SisypheImage(object):
         elif r == 2: return '2D', 'Coronal'
         else: return '2D', 'Sagittal'
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getCenter(self) -> vectorFloat3:
         """
         Get center of the volume as world coordinates.
@@ -1979,6 +2094,8 @@ class SisypheImage(object):
                 (d[2] - 1) * s[2] * 0.5)
         # return tuple([(d[i] - 1) * s[i] * 0.5 for i in range(3)])
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getFieldOfView(self, decimals: int | None = None) -> tupleFloat3:
         """
         Get field of view of the volume.
@@ -2007,6 +2124,8 @@ class SisypheImage(object):
                     matrix[1] * spacing[1],
                     matrix[2] * spacing[2])
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasSameFieldOfView(self, img: SisypheImage | vtkImageData | ANTsImage | sitkImage | vectorFloat3, decimals: int = 2) -> bool:
         """
         Compare field of view between current SisypheImage instance and other image.
@@ -2049,6 +2168,8 @@ class SisypheImage(object):
         return all(space1 == space2)
         # Revision 19/09/2024 >
 
+    @cython.ccall
+    @cython.returns(str)
     def getDatatype(self) -> str:
         """
         Get image datatype as numpy datatype (i.e. 'uint8', 'int8', 'uint16', 'int16', 'int32', 'uint32', 'int64',
@@ -2064,6 +2185,8 @@ class SisypheImage(object):
             if 'datatype' in self._attr: return self._attr['datatype']
             else: return 'None'
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isIntegerDatatype(self) -> bool:
         """
         Check whether datatype is integer ('uint8', 'int8', 'uint16', 'int16', 'uint32', 'int32', 'uint64' or 'int64').
@@ -2075,6 +2198,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() in getIntStdDatatypes()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isUInt8Datatype(self) -> bool:
         """
         Check whether datatype is uint8.
@@ -2086,6 +2211,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getIntStdDatatypes()[0]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isInt8Datatype(self) -> bool:
         """
         Check whether datatype is int8.
@@ -2097,6 +2224,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getIntStdDatatypes()[1]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isUInt16Datatype(self) -> bool:
         """
         Check whether datatype is uint16.
@@ -2108,6 +2237,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getIntStdDatatypes()[2]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isInt16Datatype(self) -> bool:
         """
         Check whether datatype is int16.
@@ -2119,6 +2250,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getIntStdDatatypes()[3]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isUInt32Datatype(self) -> bool:
         """
         Check whether datatype is uint32.
@@ -2130,6 +2263,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getIntStdDatatypes()[4]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isInt32Datatype(self) -> bool:
         """
         Check whether datatype is int32.
@@ -2141,6 +2276,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getIntStdDatatypes()[5]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isUInt64Datatype(self) -> bool:
         """
         Check whether datatype is uint64.
@@ -2152,6 +2289,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getIntStdDatatypes()[6]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isInt64Datatype(self) -> bool:
         """
         Check whether datatype is int64.
@@ -2163,6 +2302,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getIntStdDatatypes()[7]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFloatDatatype(self) -> bool:
         """
         Check whether datatype is float ('float32' or 'float64').
@@ -2174,6 +2315,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() in getFloatStdDatatypes()
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFloat32Datatype(self) -> bool:
         """
         Check whether datatype is float32.
@@ -2185,6 +2328,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getFloatStdDatatypes()[0]
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isFloat64Datatype(self) -> bool:
         """
         Check whether datatype is float64.
@@ -2196,6 +2341,8 @@ class SisypheImage(object):
         """
         return self.getDatatype() == getFloatStdDatatypes()[1]
 
+    @cython.ccall
+    @cython.returns(object)
     def getDatatypeAs(self, lib: str = 'sitk') -> str | int | None:
         """
         Get datatype with the library format of ANTs, SimpleITK, ITK or VTK.
@@ -2221,6 +2368,8 @@ class SisypheImage(object):
             # Revision 17/11/2024 >
         else: raise ValueError('parameter {} is not a valid library name.'.format(lib))
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getNumberOfComponentsPerPixel(self) -> int:
         """
         Get number of components. Array element of single component image is a scalar, array element of multi-component
@@ -2236,6 +2385,8 @@ class SisypheImage(object):
             if 'components' in self._attr: return self._attr['components']
             else: return 0
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isMulticomponent(self) -> bool:
         """
         Check whether image is multicomponent (array element is a vector and not a scalar value).
@@ -2247,6 +2398,8 @@ class SisypheImage(object):
         """
         return self._sitk_image.GetNumberOfComponentsPerPixel() > 1
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getNumberOfDimensions(self) -> int:
         """
         Get number of dimensions.
@@ -2264,6 +2417,8 @@ class SisypheImage(object):
                 else: return 3
             else: return 0
 
+    @cython.ccall
+    @cython.returns(tuple)
     def getDirections(self) -> tuple[float, ...]:
         """
         Get vectors of image axes in RAS+ coordinates system.
@@ -2292,6 +2447,8 @@ class SisypheImage(object):
         if len(r) == 4: r = (r[0], r[1], 0.0, r[2], r[3], 0.0, 0.0, 0.0, 1.0)
         return r
 
+    @cython.ccall
+    @cython.returns(object)
     def getFirstVectorDirection(self) -> vectorFloat3:
         """
         Get first direction vector, x image axis in RAS+ coordinates system.
@@ -2319,6 +2476,8 @@ class SisypheImage(object):
             if 'directions' in self._attr: return self._attr['directions'][0:3]
             else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(object)
     def getSecondVectorDirection(self) -> vectorFloat3:
         """
         Get second direction vector, y image axis in RAS+ coordinates system.
@@ -2345,6 +2504,8 @@ class SisypheImage(object):
             if 'directions' in self._attr: return self._attr['directions'][3:6]
             else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(object)
     def getThirdVectorDirection(self) -> vectorFloat3:
         """
         Get third direction vector, z image axis in RAS+ coordinates system.
@@ -2371,6 +2532,8 @@ class SisypheImage(object):
             if 'directions' in self._attr: return self._attr['directions'][6:]
             else: return 0.0, 0.0, 0.0
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDirections(self, direction: list | tuple = tuple(getRegularDirections())) -> None:
         """
         Set vectors of image axes in RAS+ coordinates system. PySisyphe uses RAS+ world coordinates system convention
@@ -2402,8 +2565,11 @@ class SisypheImage(object):
                 if d.size == 4: d = d.reshape(2, 2)
                 elif d.size == 9: d = d.reshape(3, 3)
                 buff = itkGetMatrixFromArray(d)
+                # noinspection PyUnresolvedReferences
                 self._itk_image.SetDirection(buff)
 
+    @cython.ccall
+    @cython.returns(object)
     def getMemorySize(self, rep: str = 'B') -> int | float:
         """
         Get the memory size of the current SisypheImage instance.
@@ -2433,12 +2599,16 @@ class SisypheImage(object):
             else: raise ValueError('invalid rep parameter.')
         else: return 0.0
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setDefaultOrigin(self) -> None:
         """
         Set geometrical reference origin coordinates to (0.0, 0.0, 0.0).
         """
         self.setOrigin()
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setOrigin(self, origin: vectorFloat3 = (0.0, 0.0, 0.0)) -> None:
         """
         Set geometrical reference origin coordinates.
@@ -2457,15 +2627,20 @@ class SisypheImage(object):
             # < Revision 15/04/2023
             # self._vtk_image.SetOrigin(origin)
             if self.hasITKImage():
+                # noinspection PyUnresolvedReferences
                 self._itk_image.SetOrigin(origin)
             # Revision 15/04/2023 >
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setOriginToCenter(self) -> None:
         """
         Set geometrical reference origin coordinates to image center.
         """
         self.setOrigin(self.getCenter())
 
+    @cython.ccall
+    @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getOrigin(self) -> vectorFloat3:
         """
         Get geometrical reference origin coordinates.
@@ -2482,6 +2657,8 @@ class SisypheImage(object):
         if len(r) == 2: r = (r[0], r[1], 0.0)
         return r
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isDefaultOrigin(self) -> bool:
         """
         Check whether geometrical reference origin is (0.0, 0.0, 0.0).
@@ -2495,6 +2672,8 @@ class SisypheImage(object):
 
     #  < Revision 21/02/2025
     # add hasSameOrigin method
+    @cython.ccall
+    @cython.returns(cython.bint)
     def hasSameOrigin(self, origin: vectorFloat3 | SisypheImage | vtkImageData | ANTsImage | sitkImage | str) -> bool:
         """
         Compare origin between the current SisypheImage instance and other image.
@@ -2530,6 +2709,8 @@ class SisypheImage(object):
         return r
     #  Revision 21/02/2025 >
 
+    @cython.ccall
+    @cython.returns(object)
     def getWorldCoordinatesFromVoxelCoordinates(self, p: vectorFloat3) -> vectorFloat3:
         """
         Convert voxel grid coordinates to world coordinates.
@@ -2546,6 +2727,8 @@ class SisypheImage(object):
         """
         return self._sitk_image.TransformIndexToPhysicalPoint(p)
 
+    @cython.ccall
+    @cython.returns(object)
     def getVoxelCoordinatesFromWorldCoordinates(self, p: vectorFloat3) -> vectorFloat3:
         """
         Convert world coordinates to voxel grid coordinates.
@@ -2564,6 +2747,8 @@ class SisypheImage(object):
 
     # < Revision 07/11/2025
     # add getValueAtContiuousIndex method
+    @cython.ccall
+    @cython.returns(cython.double)
     def getValueAtContinuousIndex(self,
                                   p: vectorFloat3 | ndarray,
                                   world: bool = True,
@@ -2602,6 +2787,8 @@ class SisypheImage(object):
 
     # < Revision 26/10/2024
     # add fillWith method
+    @cython.ccall
+    @cython.returns(cython.void)
     def fillWith(self, v: float = 0.0) -> None:
         """
         Fill the entire image with a given value.
@@ -2617,6 +2804,8 @@ class SisypheImage(object):
 
     # < Revision 19/01/2026
     # add clearSlices method
+    @cython.ccall
+    @cython.returns(cython.void)
     def fillSlicesWith(self, sl: int | list[int] | slice, v: float = 0.0, orient: int = 0) -> None:
         """
         Fill slices of the current SisypheImage instance with a given value.
@@ -2648,6 +2837,8 @@ class SisypheImage(object):
         else: raise TypeError('sl parameter type {} is not int, list[int] or slice.'.format(type(sl)))
     # Revision 19/01/2026 >
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isEmpty(self) -> bool:
         """
         Check whether image buffer is allocated.
@@ -2659,6 +2850,8 @@ class SisypheImage(object):
         """
         return self._sitk_image is None
 
+    @cython.ccall
+    @cython.returns(cython.bint)
     def isEmptyArray(self) -> bool:
         """
         Check whether image is empty i.e. all scalar values in the image array are 0.0.
@@ -2672,6 +2865,8 @@ class SisypheImage(object):
 
     # < Revision 02/01/2025
     # add list[int] and tuple[int, ...] to index type hinting
+    @cython.ccall
+    @cython.returns(cython.bint)
     def sliceIsEmpty(self, index: int | list[int] | tuple[int, ...], orient: int) -> bool:
         """
         Check whether slices are empty i.e. all scalar values in slices are 0.0.
@@ -2712,6 +2907,8 @@ class SisypheImage(object):
             return True
     # Revision 02/01/2025 >
 
+    @cython.ccall
+    @cython.returns(object)
     def getMask(self,
                 algo: str = 'huang',
                 morpho: str = '',
@@ -2858,6 +3055,8 @@ class SisypheImage(object):
         return SisypheImage(img)
 
     # < Revision 20/05/2026
+    @cython.ccall
+    @cython.returns(object)
     def getThresholdingMask(self,
                             threshold: float = 0.5,
                             op: str = '>',
@@ -2917,6 +3116,8 @@ class SisypheImage(object):
 
     # < Revision 23/10/2024
     # add getROI method
+    @cython.ccall
+    @cython.returns(object)
     def getROI(self,
                threshold: float = 0.5,
                op: str = '>',
@@ -2986,6 +3187,8 @@ class SisypheImage(object):
         return roi
     # Revision 23/10/2024>
 
+    @cython.ccall
+    @cython.returns(object)
     def getMask2(self,
                  algo: str = 'huang',
                  morphoiter: int = 2,
@@ -3142,6 +3345,8 @@ class SisypheImage(object):
             else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
         return SisypheImage(img)
 
+    @cython.ccall
+    @cython.returns(object)
     def getMaskROI(self,
                    algo: str = 'huang',
                    morpho: str = '',
@@ -3269,6 +3474,8 @@ class SisypheImage(object):
         # Revision 25/12/2025 >
         return SisypheROI(img)
 
+    @cython.ccall
+    @cython.returns(object)
     def getMaskROI2(self,
                     algo: str = 'huang',
                     morphoiter: int = 2,
@@ -3418,6 +3625,8 @@ class SisypheImage(object):
 
     # < Revision 14/01/2025
     # add replaceNanInfValues method
+    @cython.ccall
+    @cython.returns(cython.void)
     def replaceNanInfValues(self, nan: float = 0.0, posinf: float = 0.0, neginf: float = 0.0) -> None:
         """
         Replace NaN and Inf values with a given value (default 0.0).
@@ -3439,6 +3648,8 @@ class SisypheImage(object):
     # Revision 14/01/2025 >
 
     # < Revision 03/06/2025
+    @cython.ccall
+    @cython.returns(object)
     def getRelabeled(self, cross: dict[int, int]) -> SisypheImage:
         """
         Get a relabeled SisypheImage of the current SisypheImage instance.
@@ -3468,6 +3679,8 @@ class SisypheImage(object):
 
     # < Revision 19/11/2024
     # add getNonZeroMask method
+    @cython.ccall
+    @cython.returns(object)
     def getNonZeroMask(self, c: int | None = 0) -> SisypheImage:
         """
         Calc SisypheImage mask of non-zero voxels of the current SisypheImage instance.
@@ -3503,6 +3716,8 @@ class SisypheImage(object):
 
     # < Revision 17/10/2024
     # add getCentroid method
+    @cython.ccall
+    @cython.returns(tuple)
     def getCentroid(self, binary: bool = False, ref: str = 'world', c: int | None = 0) -> tuple[float, ...]:
         """
         Get centroid of the image as world coordinates.
@@ -3543,6 +3758,8 @@ class SisypheImage(object):
         return tuple(p.tolist())
     # Revision 17/10/2024 >
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getBackgroundThreshold(self, algo: str = 'mean', c: int | None = 0) -> float:
         """
         Calc threshold to segment background.
@@ -3597,7 +3814,9 @@ class SisypheImage(object):
     # < Revision 29/07/2024
     # add getCrop method
     # noinspection PyTypeChecker
-    def getCrop(self, c: tuple | list | ndarray, ) -> SisypheImage:
+    @cython.ccall
+    @cython.returns(object)
+    def getCrop(self, c: tuple | list | ndarray) -> SisypheImage:
         """
         Get a cropped image of the current SisypheVolume instance.
 
@@ -3645,6 +3864,8 @@ class SisypheImage(object):
     # < Revision 29/07/2024
     # add getBoundingBox method
     # noinspection PyTypeChecker
+    @cython.ccall
+    @cython.returns(ndarray)
     def getBoundingBox(self, threshold: float = 0.0, margin: int = 0, blobs: bool = False) -> ndarray:
         """
         Get the bounding box a thresholded image of the current SisypheVolume instance.
@@ -3705,6 +3926,8 @@ class SisypheImage(object):
     # < Revision 29/07/2024
     # add getLocalMaxima method
     # noinspection PyTypeChecker
+    @cython.ccall
+    @cython.returns(ndarray)
     def getLocalMaxima(self, threshold: float) -> ndarray:
         """
         Get the local maxima of the current SisypheVolume instance.
@@ -4078,6 +4301,8 @@ class SisypheImage(object):
     # < Revision 04/09/2024
     # add headSurface method
     # noinspection PyTypeChecker
+    @cython.ccall
+    @cython.returns(dict)
     def sliceHeadSurface(self, orient: str = 'e') -> dict[str, list]:
         """
         Get head surface (number of pixels) in each slice of the current SisypheImage instance.
@@ -4134,6 +4359,8 @@ class SisypheImage(object):
     # < Revision 04/10/2024
     # add removeNeckSlices method
     # noinspection PyTypeChecker
+    @cython.ccall
+    @cython.returns(object)
     def removeNeckSlices(self, f: float = 1.8) -> SisypheImage:
         """
         Get a new SisypheImage instance, cropped in z. Most sagittal MRI scans have extensive and useless inferior
@@ -4164,6 +4391,8 @@ class SisypheImage(object):
 
     # < Revision 19/01/2026
     # add getReorientRotations method
+    @cython.ccall
+    @cython.returns(tuple)
     def getReorient(self, f: float = 1.8) -> tuple[float, tuple[float, float, float]]:
         """
         Get the z-axis rotations to automatically reorient the current SisypheImage instance.
@@ -4208,6 +4437,8 @@ class SisypheImage(object):
 
     # < Revision 08/09/2024
     #  add noiseEstimate method
+    @cython.ccall
+    @cython.returns(cython.double)
     def noiseEstimate(self) -> float:
         """
         Estimator of the (Gaussian) noise standard deviation.
@@ -4224,6 +4455,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(object)
     def getMean(self,
                 mask: str | SisypheImage | SisypheBinaryImage | None = None,
                 c: int | None = 0) -> float | list[float]:
@@ -4284,6 +4517,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(object)
     def getMedian(self,
                   mask: str | SisypheImage | SisypheBinaryImage | None = None,
                   c: int | None = 0) -> float | list[float]:
@@ -4344,6 +4579,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(object)
     def getStd(self,
                mask: str | SisypheImage | SisypheBinaryImage | None = None,
                c: int | None = 0) -> float | list[float]:
@@ -4404,6 +4641,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(object)
     def getMin(self,
                nonzero: bool = False,
                c: int | None = 0) -> float | list[float]:
@@ -4454,6 +4693,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(object)
     def getMax(self,
                mask: str | SisypheImage | SisypheBinaryImage | None = None,
                c: int | None = 0) -> float | list[float]:
@@ -4513,6 +4754,8 @@ class SisypheImage(object):
             else: return r
     # Revision 16/12/2024 >
 
+    @cython.ccall
+    @cython.returns(cython.double)
     def getArgmax(self,
                   mask: str | SisypheImage | SisypheBinaryImage | None = None) -> tuple[int, ...] | list[tuple[int, ...]]:
         """
@@ -4580,6 +4823,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(cython.double)
     def getRange(self,
                  mask: str | SisypheImage | SisypheBinaryImage | None = None,
                  c: int | None = 0) -> tuple[float, float] | list[tuple[float, float]]:
@@ -4641,6 +4886,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(cython.double)
     def getPercentile(self,
                       perc: int | float = 25, mask: str | SisypheImage | SisypheBinaryImage | None = None,
                       c: int | None = 0) -> float | list[float]:
@@ -4703,6 +4950,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(cython.double)
     def getKurtosis(self,
                     mask: str | SisypheImage | SisypheBinaryImage | None = None,
                     c: int | None = 0) -> float | list[float]:
@@ -4763,6 +5012,8 @@ class SisypheImage(object):
 
     # < Revision 16/12/2024
     #  multi-component management
+    @cython.ccall
+    @cython.returns(cython.double)
     def getSkewness(self,
                     mask: str | SisypheImage | SisypheBinaryImage | None = None,
                     c: int | None = 0) -> float | list[float]:
@@ -4824,6 +5075,8 @@ class SisypheImage(object):
     # Revision 16/12/2024 >
 
     # noinspection PyShadowingBuiltins
+    @cython.ccall
+    @cython.returns(tuple)
     def getHistogram(self,
                      mask: str | SisypheImage | SisypheBinaryImage | None = None,
                      bins: int = 100,
@@ -4878,6 +5131,8 @@ class SisypheImage(object):
         # Revision 23/11/2025 >
         # Revision 04/03/2025 >
 
+    @cython.ccall
+    @cython.returns(dict)
     def getStatistics(self, mask: str | SisypheImage | SisypheBinaryImage | None = None, c: int = 0) -> dict[str, float]:
         """
         Get descriptive statistics of image. Calculation is performed on the entire image (mask parameter = None) or
@@ -4935,6 +5190,8 @@ class SisypheImage(object):
         r['skewness'] = skew(img)
         return r
 
+    @cython.ccall
+    @cython.returns(cython.int)
     def getNumberOfNonZero(self, c: int = 0) -> int:
         """
         Get number of non-zero in image.
@@ -4957,6 +5214,8 @@ class SisypheImage(object):
         return len(img[img != 0])
         # Revision 27/11/2024 >
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentMean(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get mean of each vector in a multicomponent image. Process all components or a subset selected by indices.
@@ -4992,6 +5251,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentStd(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get standard deviation of each vector in a multicomponent image.
@@ -5027,6 +5288,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentMin(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get minimum of each vector in a multicomponent image.
@@ -5063,6 +5326,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentMax(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get maximum of each vector in a multicomponent image.
@@ -5101,6 +5366,8 @@ class SisypheImage(object):
 
     # < Revision 17/12/2024
     # add getComponentRange method
+    @cython.ccall
+    @cython.returns(object)
     def getComponentRange(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get range (max - min) of each vector in a multicomponent image.
@@ -5141,6 +5408,8 @@ class SisypheImage(object):
         else: raise AttributeError('single component image.')
     # Revision 17/12/2024 >
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentMedian(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get median of each vector in a multicomponent image.
@@ -5176,6 +5445,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentPercentile(self, perc: int = 25, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get percentile of each vector in a multicomponent image.
@@ -5213,6 +5484,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentKurtosis(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get kurtosis of each vector in a multicomponent image.
@@ -5248,6 +5521,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentSkewness(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get skewness of each vector in a multicomponent image.
@@ -5283,6 +5558,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentArgmax(self) -> SisypheImage:
         """
         Get the component index of the highest scalar value of each vector in a multicomponent image.
@@ -5298,6 +5575,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentArgmin(self, nonzero: bool = False) -> SisypheImage:
         """
         Get the component index of the lowest scalar value of each vector in a multicomponent image.
@@ -5325,6 +5604,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentNumberOfNonZero(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get the number of non-zero values for each vector in a multicomponent image.
@@ -5360,6 +5641,8 @@ class SisypheImage(object):
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
 
+    @cython.ccall
+    @cython.returns(object)
     def getComponentAllZero(self, c: list[int] | tuple[int, ...] | slice | None = None) -> SisypheImage:
         """
         Get vectors whose values are all zero in a multicomponent image.
@@ -5401,6 +5684,8 @@ class SisypheImage(object):
 
     # < Revision 15/09/2024
     # add flip method
+    @cython.ccall
+    @cython.returns(cython.void)
     def flip(self, axis: list[bool]) -> None:
         """
         Flip the current SisypheImage instance.
@@ -5419,6 +5704,8 @@ class SisypheImage(object):
     # < Revision 15/09/2024
     # add flip method
     # noinspection PyTypeChecker
+    @cython.ccall
+    @cython.returns(object)
     def getFlip(self, axis: list[bool]) -> SisypheImage:
         """
         Get a flipped copy of the current SisypheImage instance.
@@ -5441,6 +5728,8 @@ class SisypheImage(object):
 
     # < Revision 20/10/2024
     # add standardizeIntensity method, not yet tested
+    @cython.ccall
+    @cython.returns(cython.void)
     def standardizeIntensity(self, method: str = 'norm') -> None:
         """
         Intensity normalization of the current SisypheImage instance.
@@ -5470,6 +5759,8 @@ class SisypheImage(object):
     # < Revision 20/10/2024
     # add getStandardizeIntensity method, not yet tested
     # noinspection PyTypeChecker
+    @cython.ccall
+    @cython.returns(object)
     def getStandardizeIntensity(self, method: str = 'norm') -> SisypheImage:
         """
         Get an intensity normalized copy of the current SisypheImage instance.
@@ -5503,6 +5794,8 @@ class SisypheImage(object):
 
     # < Revision 20/10/2024
     # add truncateIntensity method, not yet tested
+    @cython.ccall
+    @cython.returns(cython.void)
     def truncateIntensity(self,
                           centile: int = 1,
                           outputrange: tuple[float, float] | None = None,
@@ -5548,6 +5841,8 @@ class SisypheImage(object):
     # < Revision 20/10/2024
     # add getTruncateIntensity method, not yet tested
     # noinspection PyTypeChecker
+    @cython.ccall
+    @cython.returns(object)
     def getTruncateIntensity(self,
                              centile: int = 1,
                              outputrange: tuple[float, float] | None = None,
@@ -5597,6 +5892,8 @@ class SisypheImage(object):
 
     # IO public methods
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToNIFTI(self, filename: str, compress: bool = False) -> None:
         """
         Save the current SisypheImage instance to a Nifti (.nii) file.
@@ -5614,6 +5911,8 @@ class SisypheImage(object):
             self._sitk_image.SetDirection(getRegularDirections())
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToNRRD(self, filename: str) -> None:
         """
         Save the current SisypheImage instance to a Nrrd (.nrrd) file.
@@ -5629,6 +5928,8 @@ class SisypheImage(object):
             self._sitk_image.SetDirection(getRegularDirections())
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToMINC(self, filename: str) -> None:
         """
         Save the current SisypheImage instance to a Minc (.minc) file.
@@ -5644,6 +5945,8 @@ class SisypheImage(object):
             self._sitk_image.SetDirection(getRegularDirections())
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToVTK(self, filename: str) -> None:
         """
         Save the current SisypheImage instance to a vtk (.vtk) file.
@@ -5659,6 +5962,8 @@ class SisypheImage(object):
             self._sitk_image.SetDirection(getRegularDirections())
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToJSON(self, filename: str) -> None:
         """
         Save the current SisypheImage instance to a JSON (.json) file.
@@ -5672,6 +5977,8 @@ class SisypheImage(object):
             writeToJSON(self._sitk_image, filename)
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def saveToNumpy(self, filename: str) -> None:
         """
         Save the current SisypheImage instance to a numpy (.npy) file.
@@ -5685,6 +5992,8 @@ class SisypheImage(object):
             writeToNumpy(self._sitk_image, filename)
         else: raise ValueError('SisypheImage array is empty.')
 
+    @cython.ccall
+    @cython.returns(dict)
     def loadFromSisyphe(self, filename: str) -> dict:
         """
         Load the current SisypheImage instance from an old Sisyphe (.vol) file.
@@ -5713,6 +6022,8 @@ class SisypheImage(object):
         self.setOrigin()
         return hdr
 
+    @cython.ccall
+    @cython.returns(dict)
     def loadFromBrainVoyagerVMR(self, filename: str) -> dict:
         """
         Load the current SisypheImage instance from a BrainVoyager (.vmr) file.
@@ -5728,6 +6039,8 @@ class SisypheImage(object):
         self.setOrigin()
         return hdr
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromFreeSurferMGH(self, filename: str) -> None:
         """
         Load the current SisypheImage instance from a FreeSurfer MGH (.mgh, .mgz) file.
@@ -5740,6 +6053,8 @@ class SisypheImage(object):
         img = readFromFreeSurferMGH(filename)
         self.setSITKImage(img)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromNIFTI(self, filename: str, reorient: bool = True) -> None:
         """
         Load the current SisypheImage instance from a Nifti (.nii) file.
@@ -5823,6 +6138,8 @@ class SisypheImage(object):
         # Revision 17/07/2024>
         self.setOrigin(origin)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromNRRD(self, filename: str) -> None:
         """
         Load the current SisypheImage instance from a Nrrd (.nrrd) file.
@@ -5851,6 +6168,8 @@ class SisypheImage(object):
         img.SetDirection(getRegularDirections())
         self.setSITKImage(img)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromMINC(self, filename: str) -> None:
         """
         Load the current SisypheImage instance from a Minc (.minc) file.
@@ -5879,6 +6198,8 @@ class SisypheImage(object):
         img.SetDirection(getRegularDirections())
         self.setSITKImage(img)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromVTK(self, filename: str) -> None:
         """
         Load the current SisypheImage instance from a VTK (.vtk) file.
@@ -5907,6 +6228,8 @@ class SisypheImage(object):
         img.SetDirection(getRegularDirections())
         self.setSITKImage(img)
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def loadFromNumpy(self, filename: str) -> None:
         """
         Load the current SisypheImage instance from a numpy (.npy) file.
@@ -5919,7 +6242,7 @@ class SisypheImage(object):
         self.setSITKImage(readFromNumpy(filename))
         self.setOrigin()
 
-
+@cython.cclass
 class SisypheBinaryImage(SisypheImage):
     """
     Description
@@ -6071,6 +6394,8 @@ class SisypheBinaryImage(SisypheImage):
 
     # Public methods
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromSITKImage(self, img: sitkImage) -> None:
         """
         Copy SimpleITK image buffer to current instance.
@@ -6086,6 +6411,8 @@ class SisypheBinaryImage(SisypheImage):
             else: raise TypeError('SimpleITK image parameter datatype is not uint8.')
         else: raise TypeError('image parameter is not SimpleITK image class.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromVTKImage(self, img: vtkImageData) -> None:
         """
         Copy VTK image buffer to current instance.
@@ -6102,6 +6429,8 @@ class SisypheBinaryImage(SisypheImage):
             else: raise TypeError('VTK image parameter datatype is not uint8.')
         else: raise TypeError('image parameter is not VTK image class.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromITKImage(self, img: itkImage) -> None:
         """
         Copy ITK image buffer to current instance.
@@ -6115,6 +6444,8 @@ class SisypheBinaryImage(SisypheImage):
             super().copyFromITKImage(img)
         else: raise TypeError('image parameter datatype is not uint8 ITK image class.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromANTSImage(self, img: ANTsImage) -> None:
         """
         Copy ANTs image buffer to current instance.
@@ -6130,12 +6461,14 @@ class SisypheBinaryImage(SisypheImage):
             else: raise TypeError('ANTs image parameter datatype is not uint8.')
         else: raise TypeError('image parameter is not ANTs Image class.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def copyFromNumpyArray(self,
                            img: ndarray,
                            spacing: vectorFloat3 = (1.0, 1.0, 1.0),
                            origin: vectorFloat3 = (0.0, 0.0, 0.0),
                            direction: tuple | list = tuple(getRegularDirections()),
-                           defaultshape: bool = True):
+                           defaultshape: bool = True) -> None:
         """
         Copy Numpy array buffer to current instance.
 
@@ -6158,6 +6491,8 @@ class SisypheBinaryImage(SisypheImage):
             else: raise TypeError('image parameter datatype is not uint8.')
         else: raise TypeError('parameter is not ndarray class.')
 
+    @cython.ccall
+    @cython.returns(cython.void)
     def setSITKImage(self, img: sitkImage) -> None:
         """
         Shallow copy of a SimpleITK Image to the SimpleITK Image attribute of the current SisypheImage instance.
