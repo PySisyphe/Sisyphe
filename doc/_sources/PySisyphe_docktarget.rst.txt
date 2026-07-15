@@ -49,6 +49,18 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 
 	Click **OK** to validate positions and display the new Trajectory in the view widget.
 
+|targets|
+	Left-click to show a dialog box to add equidistant targets along the selected trajectory. The targets are added based on the target extremity of the selected trajectory.
+
+	- Use the **Target Count** spinbox to set the number of targets to create (1 to 30).
+	- Use the **First target spacing from extremity** spinbox to set the distance of the first target from the target extremity of the selected trajectory (-10 to +10 mm) .
+	- Use the **Spacing Between Targets** spinbox to set the distance between targets (1.0 to 10.0 mm).
+	- Toggle the **Target Properties** button to edit the display settings that will be applied to all targets (see :ref:`target settings details <target-section-settings>`).
+
+	A list of electrodes is displayed above with the following fields: *manufacturer*, *model* code, contact *size* in mm, contact *spacing* in mm and number of *contacts*. Double-click on an electrode to fill in the **First target spacing from extremity** and **First target spacing from extremity** fields with this electrode geometry.
+
+	Click **OK** to add targets in the view widget.
+
 |save|
 	Left-click show a dialog box to save all Target(s)/Trajectory(ies) of the list in a PySisyphe tools file (.xtools).
 
@@ -63,6 +75,8 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 
 |view|
 	Left-click to show/hide all Target(s)/Trajectory(ies) of the list.
+
+.. _target-section-settings:
 
 |settings|
 	Left-click to show a dialog to edit Target/Trajectory properties:
@@ -268,4 +282,6 @@ Double-click a Target/Trajectory tool to set the cursor position on the target a
 .. |settings| image:: /GUI/dock/settings.png
    :scale: 50 %
 .. |labels| image:: /GUI/dock/labels.png
+   :scale: 50 %
+.. |targets| image:: /GUI/dock/targets.png
    :scale: 50 %

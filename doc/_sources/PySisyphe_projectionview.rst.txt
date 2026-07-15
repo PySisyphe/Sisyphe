@@ -106,7 +106,7 @@ Projection view widget includes a vertical icon bar to the left:
 	Left-click to display a menu to add an interactive tool.
 
 	- **Distance**, used to measure the distance in mm between two points. Left-click in the view widget to position the two endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.
-	- **Orthogonal distances**, used to measure two orthogonal distances in mm. Left-click in the view widget to position the four endpoints. Left-press and drag to move the endpoints. Right-click on distance label to display popup menu to select color or delete tool.
+	- **Orthogonal distances**, used to measure two orthogonal distances in mm. Left-click in the view widget to position the four endpoints. Left-press and drag to move the endpoints. Left-press and drag to move a line. Left-click and drag the point where the lines intersect to move the tool. Right-click on distance label to display popup menu to select color or delete tool.
 	- **Angle**, used to measure angle in degrees between two lines. Left-click in the view widget to position the three endpoints. Left-press and drag to move the endpoints. Right-click on angle label to display popup menu to select color or delete tool.
 	- **Remove all**, remove all tools.
 

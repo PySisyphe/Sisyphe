@@ -16,8 +16,9 @@ Registration menu
 - :ref:`menu-section-align`
 - :ref:`menu-section-eddy`
 - :ref:`menu-section-resample`
-- :ref:`menu-section-asym`
+- :ref:`menu-section-fieldinv`
 - :ref:`menu-section-jacob`
+- :ref:`menu-section-asym`
 
 .. _menu-section-stereo:
 
@@ -456,6 +457,49 @@ Left-click **Execute** button to resample moving volume with the current geometr
 
 Left-click **Cancel** button to close dialog box without resampling.
 
+.. _menu-section-fieldinv:
+
+Displacement field inversion
+----------------------------
+
+The purpose of this menu is to compute the inverse of a displacement field. If the input displacement field was mapping coordinates from a space A into a space B, the output of this filter will map coordinates from the space B into the space A.
+
+The method used for computing the inverse displacement field is to subsample the input field using a regular grid and create Kerned-Base Spline in which the reference landmarks are the coordinates of the deformed point and the target landmarks are the negative of the displacement vectors. The kernel-base spline is then used for regularly sampling the output space and recover vector values for every single pixel ((see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1InverseDisplacementFieldImageFilter.html>`_).
+
+The **Displacement field inversion** dialog box is displayed.
+
+Select the displacement field volumes with the :ref:`widgets-section-multi-file` widget at the top.
+
+Select the volumes used to define output space with the :ref:`widgets-section-multi-file` widget located below.
+
+Toggle **Settings** button to show/hide parameters:
+
+- Set the **Subsampling factor** (8 to 64). The subsampling factor used for the regular grid of the input field will determine the number of landmarks in the KernelBased spline, and therefore it will have a dramatic effect on both the precision of output displacement field and the computational time required for the filter to complete the estimation. A large subsampling factor will result in few landmarks in the KernelBased spline, therefore on fast computation and low precision. A small subsampling factor will result in a large number of landmarks in the KernelBased spline, therefore a large memory consumption, long computation time and high precision for the inverse estimation.
+- Inverted displacement fields are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Inversion** button to compute the inverse of the displacement field(s).
+
+Left-click **Cancel** button to close dialog box without processing.
+
+.. _menu-section-jacob:
+
+Displacement field jacobian determinant
+---------------------------------------
+
+The purpose of this menu is to calculate Jacobian determinant volume from a displacement field. The scalar values in this image represent volume ratios. A value less than 1.0 indicates local deflation at the current voxel coordinate. Conversely, a value greater than 1.0 indicates local inflation at the current voxel coordinate (see `SimpleITK <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1DisplacementFieldJacobianDeterminantFilter.html>`_).
+
+The **Jacobian determinant of displacement field** dialog box is displayed.
+
+Select the displacement field volumes with the :ref:`widgets-section-multi-file` widget at the top.
+
+Toggle **Displacement field jacobian determinant** button to show/hide parameter:
+
+- Jacobian determinant volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
+
+Left-click **Execute** button to calculate Jacobian determinant volumes.
+
+Left-click **Cancel** button to close dialog box without processing.
+
 .. _menu-section-asym:
 
 Asymmetry displacement field
@@ -492,25 +536,6 @@ Toggle **Displacement field jacobian determinant** button to show/hide parameter
 - Jacobian determinant volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
 
 Left-click **Execute** button to run asymmetry analysis.
-
-Left-click **Cancel** button to close dialog box without processing.
-
-.. _menu-section-jacob:
-
-Displacement field jacobian determinant
----------------------------------------
-
-The purpose of this menu is to calculate Jacobian determinant volume from a displacement field. The scalar values in this image represent volume ratios. A value less than 1.0 indicates local deflation at the current voxel coordinate. Conversely, a value greater than 1.0 indicates local inflation at the current voxel coordinate.
-
-The **Jacobian determinant of displacement field** dialog box is displayed.
-
-Select the displacement field volumes with the :ref:`widgets-section-multi-file` widget at the top.
-
-Toggle **Displacement field jacobian determinant** button to show/hide parameter:
-
-- Jacobian determinant volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **prefix** and **suffix** parameters.
-
-Left-click **Execute** button to calculate Jacobian determinant volumes.
 
 Left-click **Cancel** button to close dialog box without processing.
 

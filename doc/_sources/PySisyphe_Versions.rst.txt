@@ -22,6 +22,7 @@ Version history
 - :ref:`build20-04-2026`
 - :ref:`build30-05-2026`
 - :ref:`build20-06-2026`
+- :ref:`build30-09-2026`
 
 .. _version-increment-rules:
 
@@ -5875,7 +5876,7 @@ version 0.92.10, build 30/05/2026
 
 .. _build20-06-2026:
 
-version 0.96.15, build 20/06/2026
+version 0.96.24, build 20/06/2026
 ---------------------------------
 
 - **updated html documentation**
@@ -5897,11 +5898,19 @@ version 0.96.15, build 20/06/2026
 	- PySisyphe_browser.rst
 	- rebuild sphinx documentation
 
+- **new files**
+
+	- /gui/lightroi/targets.png
+	- /gui/darkroi/targets.png
+	- /doc/_images/targets.png
+	- /settings/electrodes.xml
+
 - **updated files**
 
 	- /settings/functions.xml
 	- /settings/tooltips.xml
 	- /settings/settings.xml
+	- /settings/dialogs.xml
 	- /gui/darkicons/hide.png
 	- /gui/lighticons/hide.png
 
@@ -5978,7 +5987,8 @@ version 0.96.15, build 20/06/2026
 	- core.sisypheVolume
 	- core.sisypheFudicialBox
 	- core.sisypheROI
-	- core.sisypheDownload 
+	- core.sisypheDownload
+	- lib.mega.mega
 	- processing.capturedStdoutProcessing
 	- gui.dialogDeepSegmentation
 	- gui.dialogSettings
@@ -5987,6 +5997,8 @@ version 0.96.15, build 20/06/2026
 	- gui.dialogVolumeAttributes
 	- gui.dialogPatient
 	- gui.dialogDicomQuery
+	- gui.dialogTarget
+	- gui.dialogDownload
 	- gui.windowSisyphe
 	- widgets.imageWidgets
 	- widgets.toolBarThumbnail
@@ -5999,12 +6011,22 @@ version 0.96.15, build 20/06/2026
 	- widgets.LUTWidgets
 	- widgets.basicWidgets
 	- widgets.fileBrowserWidget
+	- widgets.attributesWidgets
 
-- **updated function**
+- **updated functions**
 
 	- core.sisypheDownload.installFromHost
 
 		- replace copy by copy2
+		- remove try/except downloadFromHost(urls, temp, wait=wait)
+
+	- core.sisypheDownload.downloadFromHost
+
+		- remove try/except filename = mega.download_url(url, dest_path=dst)
+
+	- core.sisypheDownload.updatePySisyphe
+
+		-bug fix, replace filename = join(dst, 'settings/host.xml') by filename = abspath(join(dst, 'settings', 'host.xml'))
 	
 - **new classes**
 
@@ -6015,6 +6037,10 @@ version 0.96.15, build 20/06/2026
 	- gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation
 
 		- dialog for deep learning metastasis segmentation using RLK-Unet model
+
+	- gui.dialogTarget.DialogTargetsAlongTrajectory
+
+		- dialog to create equidistant targets along a trajectory
 
 - **updated classes**
 
@@ -6038,6 +6064,10 @@ version 0.96.15, build 20/06/2026
 	- core.sisypheROI.SisypheROIDraw
 
 		- update popRedoLIFO() method
+
+	- lib.mega.mega.Mega
+
+		- update _download_file() method
 
 	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation
 
@@ -6065,6 +6095,10 @@ version 0.96.15, build 20/06/2026
 
 		- update __init__() method
 
+	- gui.dialogDownload.DialogDownload
+
+		- update download() method
+
 	- gui.windowSisyphe.WindowSisyphe
 
 		- new metastasisSegmentation() method
@@ -6077,6 +6111,7 @@ version 0.96.15, build 20/06/2026
 		- update _initFileMenu() method
 		- update _initFunctionsMenu() method
 		- update join() method
+		- update checkUpdate() method
 
 	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
 
@@ -6156,6 +6191,14 @@ version 0.96.15, build 20/06/2026
 		- new _userFolder() method
 		- new _templateFolder() method
 
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- new targets() method
+		- update __init__() method
+		- update setIconSize()
+		- update properties() method
+		- update remove() method
+
 - **new methods**
 
 	- core.sisypheVolume.SîsypheVolume.getPrefixes()
@@ -6212,6 +6255,11 @@ version 0.96.15, build 20/06/2026
 	
 		- select template folder
 
+	- widgets.attributesWidgets.ListToolAttributesWidget.targets()
+
+		- method called by self._target buttons clicked event
+		- add targets along a trajectory
+
 - **updated classes**
 
 	- core.sisypheRecent.SisypheRecent.append()
@@ -6231,6 +6279,10 @@ version 0.96.15, build 20/06/2026
 
 		- bug fix, replace self._roi.getNumpy[:, :, item[1]] = buff by self._roi.getNumpy()[:, :, item[1]] = buff
 
+	- lib.mega.mega.Mega._download_file()
+
+		- fix file_size overflow error
+
 	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation.execute()
 
 		- bug fix, size and spacing tuple to list conversion
@@ -6242,6 +6294,10 @@ version 0.96.15, build 20/06/2026
 	- gui.dialogStatResult.DialogResult
 
 		- bug fix, line 1456, force origin to (98.0, 134.0, 72.0) if ICBM152 ID
+
+	- gui.dialogDownload.DialogDownload.download()
+
+		- add try/except downloadFromHost(url, path, info=k, wait=wait)
 
 	- gui.windowSisyphe.WindowSisyphe._initSegmentationMenu()
 
@@ -6283,6 +6339,10 @@ version 0.96.15, build 20/06/2026
 	- gui.windowSisyphe.WindowSisyphe.join()
 
 		- create 3D volume from 2D multicomponent
+
+	- gui.windowSisyphe.WindowSisyphe.checkUpdate()
+
+		- add try/except updatePySisyphe(wait)
 
 	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()
 
@@ -6382,3 +6442,364 @@ version 0.96.15, build 20/06/2026
 	- widgets.fileBrowserWidget.FileBrowserWidget._popupFiles()
 
 		- add self.actions['explorer'] to popup menu
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.properties()
+
+		- bugfix, add widget.updateSettingsFromAttributes()
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+
+		- add self._targets button
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.setIconSize()
+
+		- add self._targets.setIconSize(QSize(size - 8, size - 8))
+        - add self._targets.setFixedSize(size, size)
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.properties()
+
+		- add 'TextTarget' and 'TextEntry' editing
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.remove()
+
+		- bug fix, remove super().remove() from the loop (for tool in tools:)
+
+.. _build30-09-2026:
+
+version 0.99.16, build 30/09/2026
+---------------------------------
+
+- **new platform support**
+	
+	- add support for Linux Ubuntu 26.04 LTS
+	- new PyInstaller stand alone frozen version for Linux Ubuntu 26.04 LTS platform
+	- updated modules for linux platform (see platform == 'linux' in source)
+
+		- PySisyphe
+		- gui.windowSisyphe
+		- gui.dialogAlgebra
+		- gui.dialogAtlasLabeling
+		- gui.dialogDataset
+		- gui.dialogDicomImport
+		- gui.dialogDicomQuery
+		- gui.dialogDiffusionBundle
+		- gui.dialogDiffusionGradients
+		- gui.dialogDiffusionModel
+		- gui.dialogExport
+		- gui.dialogFiducialBox
+		- gui.dialogFileSelection
+		- gui.dialogFontProperties
+		- gui.dialogFromXml
+		- gui.dialogGenericResults
+		- gui.dialogImport
+		- gui.dialogJacobian
+		- gui.dialogLutEdit
+		- gui.dialogLutSettings
+		- gui.dialogManualRegistration
+		- gui.dialogOldSisypheImport
+		- gui.dialogPatient
+		- gui.dialogRegistration
+		- gui.dialogReorient
+		- gui.dialogSegmentation
+		- gui.dialogRealignment
+		- gui.dialogSettings
+		- gui.dialogSplash
+		- gui.dialogStatContrast
+		- gui.dialogStatModel
+		- gui.dialogStatResult
+		- gui.dialogTarget
+		- gui.dialogThreshold
+		- gui.dialogTimeSeries
+		- gui.dialogTransferSettings
+		- gui.dialogWait
+		- gui.dialogWorkflow
+		- gui.dialogXmlDicom
+		- widgets.abstractViewWidget
+		- widgets.databaseWidget
+		- widgets.iconBarViewWidgets
+		- widgets.selectFileWidgets
+	
+
+- **updated html documentation**
+	
+	- PySisyphe_Versions.rst
+	- PySisyphe_Registration.rst
+	- PySisyphe_sliceview.rst
+	- PySisyphe_orthogonalview.rst
+	- PySisyphe_synchronizedview.rst
+	- PySisyphe_projectionview.rst
+	- PySisyphe_multicomponentview.rst
+	- PySisyphe_overview.rst
+	- PySisyphe_installation.rst
+	- PySisyphe_dockroitools.rst
+	- rebuild sphinx documentation
+
+- **updated cython annotations**
+
+	- core.sisypheROI.SisypheROIDraw
+
+		- cdef class conversion
+
+- **new cython annotations**
+
+	- core.sisypheImageAttributes.SisypheIdentity
+	- core.sisypheImageAttributes.SisypheAcquisition
+	- core.sisypheImageAttributes.SisypheDisplay
+	- core.sisypheImageAttributes.SisypheACPC
+	- core.sisypheLUT.SisypheLut
+	- core.sisypheLUT.SisypheColorTransfer
+	- core.sisypheSettings.SisypheSettings
+
+		- cdef class conversion
+
+- **updated cython compiled module**
+
+	- core.sisypheROI
+
+- **updated files**
+
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+
+- **updated modules**
+
+	- core.sisypheImage
+	- core.sisypheVolume
+	- core.sisypheROI
+	- core.sisypheTransform
+	- gui.dialogRegistration
+	- gui.dialogWait
+	- gui.dialogResample
+	- gui.windowSisyphe
+	- widgets.abstractViewWidget
+	- widgets.sliceViewWidgets
+	- widgets.attributesWidgets
+	- widgets.tabToolsWidgets
+	- widgets.iconBarWidgets
+
+- **new class**
+
+	- gui.dialogResample.DialogDisplacementFieldInversion
+
+		- dialog for displacement field inversion
+
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+	- core.sisypheVolume.SisypheVolume
+
+		- update __add__() method
+		- update __sub__() method
+		- update __mul__() method
+		- update __div__() method
+		- update __floordiv__() method
+		- update __truediv__() method
+		- update __radd__() method
+		- update __rsub__() method
+		- update __rmul__() method
+		- update __rdiv__() method
+		- update __rfloordiv__() method
+		- update __rtruediv__() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- new applySlopeIntercept() method	
+		- update _updateRange() method
+
+	- core.sisypheROI.SisypheROIDraw
+
+		- update getDrawThresholdedRectangleFillHoles() method
+		- update setROI() method
+		- update clearClipboard() method
+		- update __init__() method
+		- update _calcBrush() method
+		- update solidBrush() method
+		- update thresholdBrush() method
+		- update solid3DBrush() method
+		- update setBrushType() method
+
+	- core.sisypheTransform.SisypheTransform
+
+		- new getInverseSITKDisplacementFieldTransform() method
+		- new getInverseSITKDisplacementFieldSITKImage() method
+		- new getInverseDisplacementField() method
+		- update saveDisplacementField() method
+
+	- gui.dialogRegistration.DialogRegistration
+
+		- update execute() method
+
+	- gui.dialogWait.DialogWaitRegistration
+
+		- new fieldinv() method
+		- update setAntsRegistrationProgress() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- new fieldinv() method
+		- update _initRegistrationMenu() method
+
+	- widgets.abstractViewWidget
+
+		- new getNoActionFlag() method
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget
+
+		- update ROISelectionChanged pyqtsignal
+
+			- add object parameter (vtkImageData | None)
+
+		- update _updateSliceROI() method
+		- update synchroniseROISelectionChanged() method
+		- update setActiveROI() method
+		- update _onMouseMoveEvent() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update targets() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- update brush() method
+
+	- widgets.iconBarWidgets.IconBarWidget
+
+		- update setActionButtonAvailability() method
+
+- **new methods**
+
+	- core.sisypheVolume.SisypheVolume.applySlopeIntercept()
+
+		- returns (self * self._slope) + self._intercept
+
+	- core.sisypheTransform.SisypheTransform.getInverseSITKDisplacementFieldTransform()
+
+		- get the inverse displacement field transform
+
+	- core.sisypheTransform.SisypheTransform.getInverseSITKDisplacementFieldSITKImage()
+
+		- get the inverse displacement field as a SimpleITK image
+
+	- core.sisypheTransform.SisypheTransform.getInverseDisplacementField()
+
+		- get the inverse displacement field as a PySisyphe volume
+
+	- gui.dialogWait.DialogWaitRegistration.fieldinv()
+
+		- displacement field inversion processing
+
+	- widgets.abstractViewWidget.getNoActionFlag()
+
+		- check if the current mouse action is 'No action'
+
+- **updated methods**
+
+	- core.sisypheImage.SisypheImage.__add__()
+	- core.sisypheImage.SisypheImage.__sub__()
+	- core.sisypheImage.SisypheImage.__mul__()
+	- core.sisypheImage.SisypheImage.__div__()
+	- core.sisypheImage.SisypheImage.__floordiv__()
+	- core.sisypheImage.SisypheImage.__truediv__()
+	- core.sisypheImage.SisypheImage.__radd__()
+	- core.sisypheImage.SisypheImage.__rsub__()
+	- core.sisypheImage.SisypheImage.__rmul__()
+	- core.sisypheImage.SisypheImage.__rdiv__()
+	- core.sisypheImage.SisypheImage.__rfloordiv__()
+	- core.sisypheImage.SisypheImage.__rtruediv__()
+	- core.sisypheVolume.SisypheVolume.__add__()
+	- core.sisypheVolume.SisypheVolume.__sub__()
+	- core.sisypheVolume.SisypheVolume.__mul__()
+	- core.sisypheVolume.SisypheVolume.__div__()
+	- core.sisypheVolume.SisypheVolume.__floordiv__()
+	- core.sisypheVolume.SisypheVolume.__truediv__()
+	- core.sisypheVolume.SisypheVolume.__radd__()
+	- core.sisypheVolume.SisypheVolume.__rsub__()
+	- core.sisypheVolume.SisypheVolume.__rmul__()
+	- core.sisypheVolume.SisypheVolume.__rdiv__()
+	- core.sisypheVolume.SisypheVolume.__rfloordiv__()
+	- core.sisypheVolume.SisypheVolume.__rtruediv__()
+
+		- bug fix, cast to sitkFloat64 if the data types do not match
+
+	- core.sisypheVolume.SisypheVolume._updateRange()
+
+		- bug fix, remove nan/inf values
+
+	- core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleFillHoles()
+
+		- bug fix, replace self._dtrfillholes = v by return self._dtrfillholes
+
+	- core.sisypheROI.SisypheROIDraw.setROI()
+
+		- bug fix, replace if self.hasVolume by if self.hasVolume()
+
+	- core.sisypheROI.SisypheROIDraw.clearClipboard()
+
+		- remove line del self._clipboard (cython error: Cannot delete C attribute)
+
+	- core.sisypheROI.SisypheROIDraw.__init__()
+
+		- add self._ibrush ndarray attribute (binary not of brush)
+
+	- core.sisypheROI.SisypheROIDraw._calcBrush()
+
+		- self._ibrush processing (binary not of brush)
+
+	- core.sisypheROI.SisypheROIDraw.solidBrush()
+	- core.sisypheROI.SisypheROIDraw.thresholdBrush()
+	- core.sisypheROI.SisypheROIDraw.solid3DBrush()
+	- core.sisypheROI.SisypheROIDraw.setBrushType()
+
+		- code optimization
+
+	- core.sisypheROI.SisypheROIDraw.setBrushType()
+
+		- bug fix, replace if 0 <= brushtype < 3 by if 0 <= brushtype < 4
+
+	- core.sisypheTransform.SisypheTransform.saveDisplacementField()
+
+		- add origin parameter
+		- set displacement field origin
+
+	- gui.dialogRegistration.DialogRegistration.execute()
+
+		- bug fix, line 898, replace f.setTransform(trf) by f.setTransform(t)
+		- bug fix, line 910, replace afield = trf.getDisplacementField() by afield = t.getDisplacementField()
+		- replace t.saveDisplacementField(filename) by t.saveDisplacementField(filename, mvol.getOrigin())
+		- add logger
+
+	- gui.dialogWait.DialogWaitRegistration.setAntsRegistrationProgress()
+
+		- replace nlevels = len(self._multir[0]) by nlevels = len(self._stages)
+
+	- gui.windowSisyphe.WindowSisyphe._initRegistrationMenu()
+
+		- add displacement field inversion menu (QAction self._action['inv'])
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget.synchroniseROISelectionChanged()
+
+		- add blended parameter
+		- only call self.setActiveROI(r, blended, signal=False)
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._updateSliceROI()	
+	- widgets.sliceViewWidgets.SliceROIViewWidget.setActiveROI()
+
+		- change blended parameter type from int to vtkImageData
+		- add blended = self._slicerois.GetMapper().GetInput() after self.updateROIAttributes(blended, signal=False)
+		- blend image of non-active SisypheROI is processed only one time (not in synchronized views)
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onMouseMoveEvent()
+
+		- bug fix, priority to Zoom, Move and Level actions
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.targets()
+
+		- bug fix, replace i by j in p = [p0[i] + r[i] for i in range(len(p0))]
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.brush()
+
+		- disable Zoom/Move/Level actions when the brush mode is enabled
+
+	- widgets.iconBarWidgets.IconBarWidget.setActionButtonAvailability()
+
+		- replace if not v: self._icons['actions'].setVisible(v) by self._icons['actions'].setVisible(v)
