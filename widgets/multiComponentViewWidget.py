@@ -23,6 +23,8 @@ from os.path import exists
 from os.path import dirname
 from os.path import splitext
 
+import cython
+
 from matplotlib.figure import Figure
 # noinspection PyUnresolvedReferences
 from matplotlib.figure import Axes
@@ -172,6 +174,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         """
         Initializes the 3x3 grid of SliceViewWidget instances.
         """
+        i: cython.int
         for i in range(9):
             w = SliceViewWidget(parent=self)
             w.setName('MultiComponentViewWidget view#{}'.format(i))
@@ -183,6 +186,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         Initializes specific QAction instances for each view widget and connects them to their respective slots.
         This includes actions for view arrangement, chart visibility, and curve management.
         """
+        i: cython.int
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
             w.synchronisationOn()
@@ -281,18 +285,24 @@ class MultiComponentViewWidget(MultiViewWidget):
         """
         Initializes synchronization signal connections between view widgets.
         """
+        i: cython.int
+        j: cython.int
         for i in range(9):
             w1 = self.getViewWidgetAt(i // 3, i % 3)
             w1.synchronisationOn()
+            # noinspection PyUnresolvedReferences
             w1.CursorPositionChanged.connect(self._cursorPositionChanged)
             for j in range(9):
                 if j != i:
                     w2 = self.getViewWidgetAt(j // 3, j % 3)
+                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
                     w1.CameraPositionChanged.connect(w2.synchroniseCameraPositionChanged)
+                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
                     # w1.OpacityChanged.connect(w2.synchronisedOpacityChanged)
                     w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
+                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
 
     def _cursorPositionChanged(self) -> None:
@@ -398,6 +408,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             elif 0 <= first < n - 8: self._first = first
             else: self._first = 0
             first, last = self._first, min(self._first + 9, n)
+            i: cython.int
             for i in range(first, last):
                 c = i - first
                 component = self._multi.copyComponent(i)
@@ -435,6 +446,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             self._multi = volume
             if n < 10: first, last = 0, n
             else: first, last = self._first, min(self._first + 9, n)
+            i: cython.int
             for i in range(first, last):
                 c = i - first
                 component = volume.copyComponent(i)
@@ -552,6 +564,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         """
         self._canvas.setMinimumHeight(self.height() // 3)
         self._canvas.setVisible(v)
+        i: cython.int
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
             w.getAction()['showchart'].setChecked(v)
@@ -587,6 +600,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         ydata = list()
         v = self._multi.copyComponent(0)
         mask = v.getMask2()
+        i: cython.int
         for i in range(n):
             ydata.append(self._multi.getMean(mask, i))
         self._axe.plot(xdata, ydata, 'o-', label='Mean signal')
@@ -728,6 +742,7 @@ class MultiComponentViewWidget(MultiViewWidget):
                 if n > 0:
                     lines = list()
                     labels = list()
+                    i: cython.int
                     for i in range(n):
                         lines.append(self._axe.lines[i].get_ydata())
                         labels.append(self._axe.lines[i].get_label())
@@ -790,6 +805,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             if self.getRows() == self.getCols() == 2:
                 self.swapViewWidgets(1, 1, 1, 0)
                 self.swapViewWidgets(1, 1, 0, 2)
+        i: cython.int
         for i in range(9):
             a = i // 3
             b = i % 3
@@ -918,6 +934,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         """
         Show the 'Number of views' menu in all slice view popups.
         """
+        i: cython.int
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
             w.getPopup().actions()[2].setVisible(True)
@@ -926,6 +943,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         """
         Hide the 'Number of views' menu in all slice view popups.
         """
+        i: cython.int
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
             w.getPopup().actions()[2].setVisible(False)

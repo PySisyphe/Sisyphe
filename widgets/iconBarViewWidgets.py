@@ -15,6 +15,8 @@ from os.path import join
 from os.path import dirname
 from os.path import abspath
 
+import cython
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
@@ -126,7 +128,7 @@ class IconBarWidget(QWidget):
     QWidget -> IconBarWidget
 
     Creation: 17/04/2022
-    Last revision: 04/05/2026
+    Last revision: 10/07/2026
     """
 
     _BTSIZE: int = 40    # default button size
@@ -304,7 +306,8 @@ class IconBarWidget(QWidget):
 
         self._bar = QFrame(self)
         # < Revision 14/03/2025
-        if platform == 'win32':
+        # if platform == 'win32':
+        if platform == 'win32' or platform == 'linux':
             self._bar.setObjectName('IconBar')
             self._bar.setStyleSheet('QFrame#IconBar { background-color: #000000; border-color: #000000; } '
                                     'QToolTip#IconBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
@@ -637,6 +640,7 @@ class IconBarWidget(QWidget):
                 action.setChecked(n == 0)
                 self._isoMenu.addAction(action)
                 if view.hasOverlay():
+                    i: cython.int
                     for i in range(view.getOverlayCount()):
                         name = view.getOverlayFromIndex(i).getName()
                         if name == '': name = 'Overlay volume #{}'.format(i)
@@ -741,6 +745,8 @@ class IconBarWidget(QWidget):
                     if 'grid' in self._icons: self._icons['grid'].setVisible(False)
                     # Revision 19/11/2025 >
             else:
+                i: cython.int
+                j: cython.int
                 for i in range(0, self._widget.getRows()):
                     for j in range(0, self._widget.getCols()):
                         action = self._widget[i, j].getAction()['expand']
@@ -774,6 +780,8 @@ class IconBarWidget(QWidget):
         """
         Connects the 'expand' action of each sub-widget to the expand button.
         """
+        i: cython.int
+        j: cython.int
         for i in range(0, self._widget.getRows()):
             for j in range(0, self._widget.getCols()):
                 try:
@@ -1651,7 +1659,10 @@ class IconBarWidget(QWidget):
         """
         if isinstance(v, bool):
             self._visibilityflags['actions'] = v
-            if not v: self._icons['actions'].setVisible(v)
+            # < Revision 10/07/2026
+            # if not v: self._icons['actions'].setVisible(v)
+            self._icons['actions'].setVisible(v)
+            # Revision 10/07/2026 >
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setToolButtonAvailability(self, v: bool) -> None:
@@ -3815,6 +3826,7 @@ class IconBarViewWidgetCollection(QObject):
         # else: return None
         n = self.count()
         if n > 0:
+            i: cython.int
             for i in range(n):
                 if self[i].hasVolume():
                     return self[i].getVolume()

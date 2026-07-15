@@ -20,6 +20,8 @@ from os.path import join
 from os.path import exists
 from os.path import dirname
 
+import cython
+
 from platform import system
 
 from tempfile import gettempdir
@@ -702,6 +704,8 @@ class MultiViewWidget(QWidget):
         """
         if isinstance(widget, AbstractViewWidget):
             expand = widget.getAction()['expand'].isChecked()
+            i: cython.int
+            j: cython.int
             for i in range(self._rows):
                 for j in range(self._cols):
                     # noinspection PyNoneFunctionAssignment
@@ -723,6 +727,8 @@ class MultiViewWidget(QWidget):
         bool
             True if a view is expanded, False otherwise.
         """
+        i: cython.int
+        j: cython.int
         for i in range(self._rows):
             for j in range(self._cols):
                 # noinspection PyUnresolvedReferences
@@ -738,6 +744,8 @@ class MultiViewWidget(QWidget):
         AbstractViewWidget | None
             expanded view widget, or None if no view is expanded.
         """
+        i: cython.int
+        j: cython.int
         for i in range(self._rows):
             for j in range(self._cols):
                 # noinspection PyNoneFunctionAssignment
@@ -870,6 +878,8 @@ class MultiViewWidget(QWidget):
         """
         if isinstance(name, str):
             if isinstance(v, bool):
+                i: cython.int
+                j: cython.int
                 for i in range(0, self._rows):
                     for j in range(0, self._cols):
                         action = self._views[i, j].getAction()
@@ -905,6 +915,8 @@ class MultiViewWidget(QWidget):
         """
         Enable rounding of cross-shaped cursor coordinates to the nearest voxel for all view widgets.
         """
+        i: cython.int
+        j: cython.int
         for i in range(0, self._rows):
             for j in range(0, self._cols):
                 self._views[i, j].setRoundedCursorCoordinatesEnabled()
@@ -913,6 +925,8 @@ class MultiViewWidget(QWidget):
         """
         Disable rounding of cross-shaped cursor coordinates for all view widgets.
         """
+        i: cython.int
+        j: cython.int
         for i in range(0, self._rows):
             for j in range(0, self._cols):
                 self._views[i, j].setRoundedCursorCoordinatesDisabled()
@@ -965,6 +979,8 @@ class MultiViewWidget(QWidget):
             True if alignment is enabled, False if disabled, or None if no applicable views exist.
         """
         if len(self._views) > 0:
+            i: cython.int
+            j: cython.int
             for i in range(0, self._rows):
                 for j in range(0, self._cols):
                     # noinspection PyNoneFunctionAssignment
@@ -978,6 +994,8 @@ class MultiViewWidget(QWidget):
         Trigger a render update for all view widgets in the grid.
         """
         if len(self._views) > 0:
+            i: cython.int
+            j: cython.int
             for i in range(0, self._rows):
                 for j in range(0, self._cols):
                     # noinspection PyNoneFunctionAssignment
@@ -1142,6 +1160,7 @@ class MultiViewWidget(QWidget):
                             imglist.append(img)
                     n = len(imglist)
                     if n > 0:
+                        i: cython.int
                         # Shape correction
                         s = list(imglist[0].shape)
                         for i in range(1, n):
@@ -1191,6 +1210,7 @@ class MultiViewWidget(QWidget):
                         imglist.append(img)
                 n = len(imglist)
                 if n > 0:
+                    i: cython.int
                     # Shape correction
                     s = list(imglist[0].shape)
                     for i in range(1, n):
@@ -1274,6 +1294,7 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
         """
         Initializes the 1x3 grid of SliceOverlayViewWidget instances.
         """
+        i: cython.int
         for i in range(3):
             widget = SliceOverlayViewWidget()
             self.setViewWidget(0, i, widget)
@@ -1289,6 +1310,8 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
         """
         Initializes synchronization signal connections between view widgets.
         """
+        i: cython.int
+        j: cython.int
         for i in range(3):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
@@ -1601,6 +1624,7 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
         """
         Initializes the 1x3 grid of SliceRegistrationViewWidget instances.
         """
+        i: cython.int
         for i in range(3):
             widget = SliceRegistrationViewWidget()
             self.setViewWidget(0, i, widget)
@@ -1620,6 +1644,8 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
         Initializes synchronization signal connections between view widgets.
         """
         super()._initSynchronisationSignalConnect()
+        i: cython.int
+        j: cython.int
         for i in range(3):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
@@ -1710,6 +1736,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Initializes the 1x3 grid of SliceReorientViewWidget instances.
         """
+        i: cython.int
         for i in range(3):
             widget = SliceReorientViewWidget()
             self.setViewWidget(0, i, widget)
@@ -1725,6 +1752,8 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Initializes synchronization signal connections between view widgets.
         """
+        i: cython.int
+        j: cython.int
         for i in range(3):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
@@ -1761,6 +1790,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Enable translation interaction mode for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].translationsEnabled()
 
@@ -1768,6 +1798,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Disnable translation interaction mode for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].translationsDisabled()
 
@@ -1775,6 +1806,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Enable rotation interaction mode for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].rotationsEnabled()
 
@@ -1782,6 +1814,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Disable rotation interaction mode for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].rotationsDisabled()
 
@@ -1789,6 +1822,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Enable rotation around the x-axis for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].rotationXEnabled()
 
@@ -1796,6 +1830,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Disable rotation around the x-axis for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].rotationXDisabled()
 
@@ -1803,6 +1838,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Enable rotation around the y-axis for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].rotationYEnabled()
 
@@ -1810,6 +1846,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Disable rotation around the y-axis for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].rotationYDisabled()
 
@@ -1817,6 +1854,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Enable rotation around the z-axis for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].rotationZEnabled()
 
@@ -1824,6 +1862,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Disable rotation around the z-axis for all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].rotationZDisabled()
 
@@ -1837,6 +1876,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
             True to show the FOV box, False to hide it.
         """
         if isinstance(v, bool):
+            i: cython.int
             for i in range(3):
                 self[0, i].setFOVBoxVisibility(v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
@@ -1861,6 +1901,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         rgb : list[float] | tuple[float, float, float]
             RGB color values (0.0-1.0).
         """
+        i: cython.int
         for i in range(3):
             self[0, i].setResliceCursorColor(rgb)
 
@@ -1885,6 +1926,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
             opacity value (0.0-1.0).
         """
         if isinstance(v, float):
+            i: cython.int
             for i in range(3):
                 self[0, i].setResliceCursorOpacity(v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
@@ -1910,6 +1952,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
             line width in pixels.
         """
         if isinstance(v, float):
+            i: cython.int
             for i in range(3):
                 self[0, i].setResliceCursorLineWidth(v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
@@ -1934,6 +1977,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         rgb : list[float] | tuple[float, float, float]
             RGB color values (0.0-1.0).
         """
+        i: cython.int
         for i in range(3):
             self[0, i].setFovBoxColor(rgb)
 
@@ -1963,6 +2007,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
             If the `v` parameter is not a float.
         """
         if isinstance(v, float):
+            i: cython.int
             for i in range(3):
                 self[0, i].setFovBoxOpacity(v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
@@ -1993,6 +2038,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
             If the `v` parameter is not a float.
         """
         if isinstance(v, float):
+            i: cython.int
             for i in range(3):
                 self[0, i].setFovBoxLineWidth(v)
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
@@ -2012,6 +2058,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Enable slice navigation (scrolling) in all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].setSliceNavigationEnabled()
 
@@ -2019,6 +2066,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         """
         Disable slice navigation (scrolling) in all three reorient view widgets.
         """
+        i: cython.int
         for i in range(3):
             self[0, i].setSliceNavigationDisabled()
 
@@ -2084,6 +2132,8 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
         Initializes the 2x2 grid of 3 SliceTrajectoryViewWidget instances and 1 VolumeViewWidget instance.
         """
         meshes = None
+        i: cython.int
+        j: cython.int
         for i in range(2):
             for j in range(2):
                 if i == 0 and j == 0:
@@ -2106,6 +2156,8 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
         """
         Initializes synchronization signal connections between view widgets.
         """
+        i: cython.int
+        j: cython.int
         for i in range(4):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 2, i % 2)
@@ -2488,6 +2540,8 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
         Initializes the 2x2 grid of 3 SliceTrajectoryViewWidget instances and 1 VolumeViewWidget instance.
         """
         meshes = None
+        i: cython.int
+        j: cython.int
         for i in range(2):
             for j in range(2):
                 if i == 0 and j == 0:
@@ -2513,6 +2567,8 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
         Initializes synchronization signal connections between view widgets.
         """
         super()._initSynchronisationSignalConnect()
+        i: cython.int
+        j: cython.int
         for i in range(4):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 2, i % 2)
@@ -2648,6 +2704,7 @@ class GridViewWidget(MultiViewWidget):
         """
         Initializes the 3x3 grid of SliceROIViewWidget instances.
         """
+        i: cython.int
         for i in range(9):
             if i == 0:
                 if rois is not None and draw is not None: w = SliceROIViewWidget(rois=rois, draw=draw)
@@ -2666,6 +2723,7 @@ class GridViewWidget(MultiViewWidget):
         - orientation ('axial', 'coronal', 'sagittal')
         - number of views ('1x1', '1x2', '1x3', '2x2', '2x3', '3x3')
         """
+        i: cython.int
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
@@ -2734,6 +2792,8 @@ class GridViewWidget(MultiViewWidget):
         """
         Initializes synchronization signal connections between view widgets.
         """
+        i: cython.int
+        j: cython.int
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 3, i % 3)
@@ -2796,6 +2856,7 @@ class GridViewWidget(MultiViewWidget):
             volume to display.
         """
         if isinstance(volume, SisypheVolume):
+            i: cython.int
             for i in range(0, 9):
                 self[i // 3, i % 3].setVolume(volume)
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(volume)))
@@ -2813,6 +2874,7 @@ class GridViewWidget(MultiViewWidget):
             new volume to display.
         """
         if self.hasVolume():
+            i: cython.int
             for i in range(0, 9):
                 self[i // 3, i % 3].replaceVolume(volume)
     # Revision 14/10/2024 >
@@ -2821,6 +2883,7 @@ class GridViewWidget(MultiViewWidget):
         """
         Remove the currently displayed SisypheVolume from all view widgets in the grid.
         """
+        i: cython.int
         for i in range(0, 9):
             self[i // 3, i % 3].removeVolume()
 
@@ -2857,6 +2920,7 @@ class GridViewWidget(MultiViewWidget):
         model : SegmentAnything
             Segment Anything (MedSAM) pre-trained model
         """
+        i: cython.int
         for i in range(0, 9):
             self[i // 3, i % 3].setSamModel(model)
     # Revision 26/02/2026 >
@@ -2913,6 +2977,7 @@ class GridViewWidget(MultiViewWidget):
             if self.getRows() == self.getCols() == 2:
                 self.swapViewWidgets(1, 1, 1, 0)
                 self.swapViewWidgets(1, 1, 0, 2)
+        i: cython.int
         for i in range(9):
             a = i // 3
             b = i % 3
@@ -3033,6 +3098,7 @@ class GridViewWidget(MultiViewWidget):
         """
         Show the 'Number of views' submenu in the popup menu for all view widgets.
         """
+        i: cython.int
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
@@ -3043,6 +3109,7 @@ class GridViewWidget(MultiViewWidget):
         """
         Hide the 'Number of views' submenu in the popup menu for all view widgets.
         """
+        i: cython.int
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
@@ -3111,7 +3178,7 @@ class MultiSliceGridViewWidget(GridViewWidget):
         """
 
         super().__init__(rois, draw, parent)
-
+        i: cython.int
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
@@ -3135,6 +3202,7 @@ class MultiSliceGridViewWidget(GridViewWidget):
         AbstractViewWidget | None
             first visible view widget, or None if no views are visible.
         """
+        i: cython.int
         for i in range(9):
             r = i // 3
             c = i % 3
@@ -3152,6 +3220,7 @@ class MultiSliceGridViewWidget(GridViewWidget):
         AbstractViewWidget | None
             last visible view widget, or None if no views are visible.
         """
+        i: cython.int
         for i in range(8, -1, -1):
             r = i // 3
             c = i % 3
@@ -3199,6 +3268,7 @@ class MultiSliceGridViewWidget(GridViewWidget):
         """
         if isinstance(volume, SisypheVolume):
             if self.hasVolume():
+                i: cython.int
                 for i in range(0, 9):
                     self[i // 3, i % 3].addOverlay(volume, alpha)
             else: raise ValueError('reference volume must be set before overlay.')
@@ -3251,6 +3321,7 @@ class MultiSliceGridViewWidget(GridViewWidget):
         o : int | SisypheVolume
             overlay to remove, by index or instance.
         """
+        i: cython.int
         for i in range(0, 9):
             self[i // 3, i % 3].removeOverlay(o)
 
@@ -3258,6 +3329,7 @@ class MultiSliceGridViewWidget(GridViewWidget):
         """
         Remove all overlays from all view widgets.
         """
+        i: cython.int
         for i in range(0, 9):
             self[i // 3, i % 3].removeAllOverlays()
 
@@ -3329,7 +3401,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
             parent widget (default None).
         """
         super().__init__(rois, draw, parent)
-
+        i: cython.int
         for i in range(9):
             # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
@@ -3375,6 +3447,9 @@ class SynchronisedGridViewWidget(GridViewWidget):
         #             else: view.setVisible(False)
         #         n += 1
         if nbv > 0:
+            i: cython.int
+            r: cython.int
+            c: cython.int
             for i in range(nbv):
                 for r in range(self.getRows()):
                     for c in range(self.getCols()):
@@ -3401,6 +3476,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
             reference SisypheVolume to display.
         """
         super().setVolume(volume)
+        i: cython.int
         for i in range(9):
             r = i // 3
             c = i % 3
@@ -3420,6 +3496,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
         """
         if isinstance(volume, SisypheVolume):
             if self.hasVolume():
+                i: cython.int
                 for i in range(0, 9):
                     self[i // 3, i % 3].addOverlay(volume, 1.0)
                 self._updateVisibleViews()
@@ -3437,6 +3514,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
         """
         if isinstance(v, SisypheVolume):
             if self.hasVolume():
+                i: cython.int
                 for i in range(0, 9):
                     self[i // 3, i % 3].removeOverlay(v)
                 self._updateVisibleViews()
@@ -3449,6 +3527,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
         """
         if self.hasVolume():
             if self.hasOverlay():
+                i: cython.int
                 for i in range(0, 9):
                     self[i // 3, i % 3].removeAllOverlays()
                 self._updateVisibleViews()

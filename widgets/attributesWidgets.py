@@ -21,6 +21,8 @@ from os.path import basename
 from os.path import splitext
 from os.path import abspath
 
+import cython
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QPoint
@@ -2620,6 +2622,7 @@ class ListAttributesWidget(QWidget):
     def _getItemFromWidget(self, widget: ItemAttributesWidget) -> QListWidgetItem | None:
         n = self._list.count()
         if n > 0:
+            i: cython.int
             for i in range(n):
                 item = self._list.item(i)
                 w = self._list.itemWidget(item)
@@ -2629,6 +2632,7 @@ class ListAttributesWidget(QWidget):
     def _notAlreadyInList(self, item: SisypheROI | SisypheMesh | HandleWidget | LineWidget) -> bool:
         n = self._list.count()
         if n > 0:
+            i: cython.int
             for i in range(0, n):
                 listitem = self._list.item(i)
                 citem = self._list.itemWidget(listitem).getItem()
@@ -2747,12 +2751,14 @@ class ListAttributesWidget(QWidget):
     # Revision 02/11/2024 >
 
     def checkAll(self) -> None:
+        i: cython.int
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
             widget.setChecked(True)
 
     def uncheckAll(self) -> None:
+        i: cython.int
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
@@ -2760,6 +2766,7 @@ class ListAttributesWidget(QWidget):
 
     def getChecked(self) -> list[ItemAttributesWidget]:
         widgets = list()
+        i: cython.int
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
@@ -2769,6 +2776,7 @@ class ListAttributesWidget(QWidget):
     # < Revision 20/11/2025
     def getCheckedIndex(self) -> int:
         index = list()
+        i: cython.int
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
@@ -2781,6 +2789,7 @@ class ListAttributesWidget(QWidget):
             n = self._list.count()
             if n > 0:
                 self.setEnabled(False)
+                i: cython.int
                 for i in range(n-1, -1, -1):
                     listitem = self._list.item(i)
                     widget = self._list.itemWidget(listitem)
@@ -2799,6 +2808,7 @@ class ListAttributesWidget(QWidget):
         n = self._list.count()
         if n > 0:
             self.setEnabled(False)
+            i: cython.int
             for i in range(n - 1, -1, -1):
                 listitem = self._list.item(i)
                 widget = self._list.itemWidget(listitem)
@@ -2832,6 +2842,7 @@ class ListAttributesWidget(QWidget):
                 if n > 1:
                     wait.setProgressRange(0, n)
                     wait.setProgressVisibility(True)
+                    i: cython.int
                     for i in range(0, n):
                         attritem = self._list.item(i)
                         witem = self._list.itemWidget(attritem)
@@ -3114,6 +3125,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     def getCheckedROI(self) -> list[SisypheROI]:
         rois = list()
+        i: cython.int
         for i in range(0, self._list.count()):
             widget = self._list.itemWidget(self._list.item(i))
             if widget.isChecked():
@@ -3766,6 +3778,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
+                    i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
@@ -4138,6 +4151,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
             self._oactions.append(action)
             n = view.getOverlayCount()
             if n > 0:
+                i: cython.int
                 for i in range(n):
                     ovl = view.getOverlayFromIndex(i)
                     action = QAction(ovl.getName())
@@ -4198,6 +4212,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     def getCheckedMesh(self) -> list[SisypheMesh]:
         meshes = list()
+        i: cython.int
         for i in range(0, self._list.count()):
             widget = self._list.itemWidget(self._list.item(i))
             if widget.isChecked():
@@ -5161,6 +5176,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
+                    i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
@@ -5372,6 +5388,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
     # noinspection PyUnusedLocal
     def _synchroniseToolColorChanged(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget):
         if not self.isEmpty():
+            i: cython.int
             for i in range(self.count()):
                 if self.getTool(i).getName() == tool.getName():
                     w = self.getWidget(i)
@@ -5382,6 +5399,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
     # noinspection PyUnusedLocal
     def _synchroniseToolRemoved(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget, removeall: bool):
         if not self.isEmpty() and tool is not None:
+            i: cython.int
             for i in range(self.count()):
                 if self.getTool(i).getName() == tool.getName():
                     w = self.getWidget(i)
@@ -5398,6 +5416,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
     def _updateTargets(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget) -> None:
         if self.hasViewCollection():
             if len(self._collection) > 0:
+                i: cython.int
                 for i in range(len(self._list)):
                     w = self.getWidget(i)
                     itool = w.getTool()
@@ -5446,6 +5465,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     def getCheckedTool(self) -> list[HandleWidget | LineWidget]:
         tools = list()
+        i: cython.int
         for i in range(0, self._list.count()):
             widget = self._list.itemWidget(self._list.item(i))
             if widget.isChecked():
@@ -5945,6 +5965,10 @@ class ListToolAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
+                    i: cython.int
+                    j: cython.int
+                    subi: cython.int
+                    subj: cython.int
                     wait = DialogWait()
                     wait.open()
                     wait.setInformationText('Compute coordinates and distances...')
@@ -6288,6 +6312,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
+                    i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
@@ -6299,6 +6324,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
+                    i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
                         widget.setLock(self._lock.getLockStateIcon())
@@ -6442,10 +6468,15 @@ class ListToolAttributesWidget(ListAttributesWidget):
                 c = 1
                 l = first
                 p0 = tool.getPosition2()
+                i: cython.int
+                j: cython.int
                 for i in range(n):
                     if i > 0: l += inter
                     r = tool.getVector(l)
-                    p = [p0[i] + r[i] for i in range(len(p0))]
+                    # < Revision 28/06/2026
+                    # p = [p0[i] + r[i] for i in range(len(p0))]
+                    p = [p0[j] + r[j] for j in range(len(p0))]
+                    # Revision 28/06/2026 >
                     item = view.addTarget(p)
                     name = '#{}'.format(i + c)
                     while name in self._collection:
@@ -6995,6 +7026,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     def getCheckedBundle(self) -> list[SisypheStreamlines]:
         bundles = list()
+        i: cython.int
         for i in range(0, self._list.count()):
             widget = self._list.itemWidget(self._list.item(i))
             if widget.isChecked():
@@ -7079,6 +7111,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.count() < self.getMaxCount():
                 sl = list()
+                i: cython.int
                 for i in range(len(widgets)):
                     sl.append(widgets[i].getStreamlines())
                 widget = self._addItem(self._getNewName('union#1'))
@@ -7241,6 +7274,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 wait.setProgressRange(0, n)
                 wait.setProgressVisibility(n > 1)
                 QApplication.processEvents()
+                i: cython.int
                 for i in range(self.count()):
                     w = self.getWidget(i)
                     sl = w.getStreamlines()
@@ -7684,6 +7718,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                                    text='Clustering has failed, there is only one '
                                                         'cluster which is the same as the processed bundle.')
                                     else:
+                                        i: cython.int
                                         for i in range(n):
                                             if self.count() < self.getMaxCount():
                                                 self.duplicateBundle(w, bdls[i], wait)
@@ -7981,6 +8016,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         unit = ''
                     else: raise ValueError('Invalid statistics mode')
                     self._statdialog.newDescriptiveStatisticsTab(labels, data, title, scrshot=self._scrsht, units=unit)
+                    i: cython.int
                     for i in range(len(labels)):
                         self._statdialog.newHistogramTab(data[i], label='{} {}'.format(labels[i], title), scrshot=self._scrsht, units=unit)
                     wait.close()
@@ -8082,6 +8118,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.hasViewCollection():
                 if len(self._collection) > 0:
+                    i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())

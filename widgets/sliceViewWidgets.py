@@ -23,6 +23,8 @@ from os.path import basename
 from os.path import splitext
 from os.path import abspath
 
+import cython
+
 from math import pow
 from math import sqrt
 from math import atan2
@@ -2115,6 +2117,7 @@ class SliceViewWidget(AbstractViewWidget):
                 camera = self._renderer.GetActiveCamera()
                 f0 = list(camera.GetFocalPoint())
                 try:
+                    i: cython.int
                     for i in range(0, n-1):
                         # Display current slice
                         f = list(camera.GetFocalPoint())
@@ -2170,7 +2173,7 @@ class SliceViewWidget(AbstractViewWidget):
         obj : vtkObject
             VTK object that triggered the event.
         evt_name : str
-            name of the event 'MouseWheelBackwardEvent).
+            name of the event 'MouseWheelBackwardEvent'.
         """
         super()._onWheelBackwardEvent(obj, evt_name)
         if self.hasVolume():
@@ -3912,6 +3915,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
             if len(self._group_menuOverlayVoxel.actions()) > 1:
                 if action.text() == 'No': self.setVolumeColorbar()
                 else:
+                    i: cython.int
                     for i, item in enumerate(self._group_menuOverlayVoxel.actions()):
                         if item.text() == action.text():
                             self.setOverlayColorbar(i - 1)
@@ -4346,6 +4350,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
             self._ovl.clear()
         # Remove overlay vtkImageSlices
         if len(self._ovlslices) > 0:
+            i: cython.int
             for i in range(len(self._ovlslices)-1, -1, -1):
                 slc = self._ovlslices[i]
                 if self._stack.HasImage(slc):
@@ -4820,6 +4825,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
         if isinstance(t, tuple):
             n = self.getOverlayCount()
             if index is None:
+                i: cython.int
                 for i in range(n):
                     if self._ovl[i].hasSameFieldOfView(self._ovl[0]):
                         self._ovlslices[i].SetPosition(t[0], t[1], t[2])
@@ -4886,6 +4892,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
             n = self.getOverlayCount()
             if index is None:
                 if not deg: r = (degrees(r[0]), degrees(r[1]), degrees(r[2]))
+                i: cython.int
                 for i in range(n):
                     if self._ovl[i].hasSameFieldOfView(self._ovl[0]):
                         self._ovlslices[i].SetOrientation(r[0], r[1], r[2])
@@ -5280,6 +5287,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
         if len(iso) > 0:
             n = len(iso)
             self._isocontour.SetNumberOfContours(n)
+            i: cython.int
             for i in range(n):
                 self._isocontour.SetValue(i, iso[i])
             if signal:
@@ -5358,6 +5366,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
         r = list()
         n = self._isocontour.GetNumberOfContours()
         if n > 0:
+            i: cython.int
             for i in range(n):
                 r.append(self._isocontour.GetValue(i))
         return r
@@ -6572,7 +6581,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceROIViewWidget
 
     Creation: 12/04/2022
-    Last revision: 10/03/2026
+    Last revision: 10/07/2026
     """
 
     # Custom Qt signals
@@ -7245,7 +7254,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             pre-blended image to use, for synchronization purposes (default None).
         """
         if self._slicerois is not None:
-            # delete previous non active rois vtkImageSlice (self._slicerois)
+            # delete previous non-active rois vtkImageSlice (self._slicerois)
             if self._stack.HasImage(self._slicerois):
                 self._stack.RemoveImage(self._slicerois)
             del self._slicerois
@@ -9772,6 +9781,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         if self._selectbox.GetVisibility():
             pts = list()
+            i: cython.int
             for i in range(self._bbox.GetPoints().GetNumberOfPoints()-1):
                 p = self._bbox.GetPoints().GetPoint(i)
                 p = list(self._getWorldFromDisplay(p[0], p[1]))
@@ -9808,6 +9818,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         if self._selectbox.GetVisibility():
             pts = list()
+            i: cython.int
             for i in range(self._bbox.GetPoints().GetNumberOfPoints()-1):
                 p = self._bbox.GetPoints().GetPoint(i)
                 p = list(self._getWorldFromDisplay(p[0], p[1]))
@@ -9865,6 +9876,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 try:
                     # bounding box
                     pts = list()
+                    i: cython.int
                     for i in range(self._bbox.GetPoints().GetNumberOfPoints() - 1):
                         p = self._bbox.GetPoints().GetPoint(i)
                         p = list(self._getWorldFromDisplay(p[0], p[1]))
@@ -10068,8 +10080,17 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         if self.hasROI() and self.getROIVisibility():
             interactorstyle = self._window.GetInteractorStyle()
+            # < Revision 10/07/2026
+            k = self._interactor.GetKeySym()
+            if k in ('Control_L', 'Shift_L', 'Alt_L') or self.getZoomFlag() \
+                    or self.getMoveFlag() or self.getLevelFlag():
+                if self._brushFlag0 is None:
+                    self._brushFlag0 = self.getBrushFlag()
+                    self._brush.SetVisibility(False)
+                super()._onMouseMoveEvent(obj, evt_name)
+            # Revision 10/07/2026 >
             # < Revision 26/02/2026
-            if self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag() or self.getSamFlag():
+            elif self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag() or self.getSamFlag():
                 # < Revision 05/03/2026
                 # if interactorstyle.GetButton() == 1:
                 if interactorstyle.GetButton() in (1, 3):
@@ -10091,39 +10112,41 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 return
             # Revision 26/02/2026 >
             elif self.getBrushFlag() > 0:
-                k = self._interactor.GetKeySym()
-                if k in ('Control_L', 'Shift_L', 'Alt_L') or self.getZoomFlag() \
-                        or self.getMoveFlag() or self.getLevelFlag():
-                    if self._brushFlag0 is None:
-                        self._brushFlag0 = self.getBrushFlag()
-                        self._brush.SetVisibility(False)
-                    super()._onMouseMoveEvent(obj, evt_name)
-                else:
-                    self._brush.SetVisibility(True)
-                    if not self._timer.isActive(): self._timer.start()
-                    last = interactorstyle.GetLastPos()
-                    p = list(self._getWorldFromDisplay(last[0], last[1]))
-                    f = self._renderer.GetActiveCamera().GetFocalPoint()
-                    d = 2 - self._orient
-                    if self._orient == 1: p[d] = f[d] + 1.0
-                    else: p[d] = f[d] - 1.0
-                    self._brush.SetPosition(p)
-                    if interactorstyle.GetButton() != 0:
-                        p[d] = f[d]
-                        p = self._getWorldToMatrixCoordinate(p)
-                        if self._window.GetInteractorStyle().GetButton() == 1:
-                            self._draw.brush(p[0], p[1], p[2], self._orient)
-                        elif self._window.GetInteractorStyle().GetButton() == 3:
-                            self._draw.erase(p[0], p[1], p[2], self._orient)
-                        self._roimapper.GetInput().Modified()
-                        # < Revision 14/11/2025
-                        # self.ROIModified.emit(self)
-                        # no synchronization to speed up 2D brush control
-                        if self.getBrushFlag() not in (1, 2):
-                            # noinspection PyUnresolvedReferences
-                            self.ROIModified.emit(self)
-                        # Revision 14/11/2025 >
-                    self._renderwindow.Render()
+                # < Revision 10/07/2026
+                # k = self._interactor.GetKeySym()
+                # if k in ('Control_L', 'Shift_L', 'Alt_L') or self.getZoomFlag() \
+                #         or self.getMoveFlag() or self.getLevelFlag():
+                #     if self._brushFlag0 is None:
+                #         self._brushFlag0 = self.getBrushFlag()
+                #         self._brush.SetVisibility(False)
+                #     super()._onMouseMoveEvent(obj, evt_name)
+                # else:
+                # Revision 10/07/2026 >
+                self._brush.SetVisibility(True)
+                if not self._timer.isActive(): self._timer.start()
+                last = interactorstyle.GetLastPos()
+                p = list(self._getWorldFromDisplay(last[0], last[1]))
+                f = self._renderer.GetActiveCamera().GetFocalPoint()
+                d = 2 - self._orient
+                if self._orient == 1: p[d] = f[d] + 1.0
+                else: p[d] = f[d] - 1.0
+                self._brush.SetPosition(p)
+                if interactorstyle.GetButton() != 0:
+                    p[d] = f[d]
+                    p = self._getWorldToMatrixCoordinate(p)
+                    if self._window.GetInteractorStyle().GetButton() == 1:
+                        self._draw.brush(p[0], p[1], p[2], self._orient)
+                    elif self._window.GetInteractorStyle().GetButton() == 3:
+                        self._draw.erase(p[0], p[1], p[2], self._orient)
+                    self._roimapper.GetInput().Modified()
+                    # < Revision 14/11/2025
+                    # self.ROIModified.emit(self)
+                    # no synchronization to speed up 2D brush control
+                    if self.getBrushFlag() not in (1, 2):
+                        # noinspection PyUnresolvedReferences
+                        self.ROIModified.emit(self)
+                    # Revision 14/11/2025 >
+                self._renderwindow.Render()
         else: super()._onMouseMoveEvent(obj, evt_name)
 
     def _onLeftPressEvent(self, obj: vtkObject, evt_name: str) -> None:

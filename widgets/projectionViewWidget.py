@@ -13,6 +13,8 @@ from typing import Optional
 from os.path import join
 from os.path import exists
 
+import cython
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QPoint
 from PyQt5.QtWidgets import QAction
@@ -1155,6 +1157,8 @@ class MultiProjectionViewWidget(MultiViewWidget):
         widgets. Connects signals for zoom, camera position, opacity, render updates, and other view method calls to
         ensure coordinated behavior across all views in the grid.
         """
+        i: cython.int
+        j: cython.int
         for i in range(8):
             w1 = self.getViewWidgetAt(i // 4, i % 4)
             w1.synchronisationOn()

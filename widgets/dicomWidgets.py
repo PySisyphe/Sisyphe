@@ -22,6 +22,8 @@ from os.path import exists
 from os.path import isfile
 from os.path import basename
 
+import cython
+
 from glob import glob
 
 from datetime import datetime
@@ -1177,6 +1179,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
         n = self.model().rowCount()
         if n > 0:
             r = list()
+            i: cython.int
             for i in range(n):
                 # noinspection PyUnresolvedReferences
                 items = self.model().item(i)
@@ -1198,6 +1201,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
         n = self.model().rowCount()
         if n > 0:
             r = list()
+            i: cython.int
             for i in range(n):
                 # noinspection PyUnresolvedReferences
                 if self.model().item(i, 4):
@@ -1554,6 +1558,7 @@ class DicomFilesTreeWidget(QTreeWidget):
         if isinstance(item, QTreeWidgetItem):
             checkstate = item.checkState(0)
             if item.childCount() > 0:
+                i: cython.int
                 for i in range(item.childCount()):
                     item.child(i).setCheckState(0, checkstate)
                     if item.childCount() > 0: self._onToggleCheckbox(item.child(i))
@@ -1697,15 +1702,22 @@ class DicomFilesTreeWidget(QTreeWidget):
                     elif len(item['index']) > 1:
                         r = list(zip(item['index'], item['files'], item['loc']))
                         r.sort()
-                        item['index'] = [i[0] for i in r]
-                        item['files'] = [i[1] for i in r]
-                        item['loc'] = [i[2] for i in r]
+                        # < Revision 30/06/2026
+                        # cython crashes when using i, which is declared later in the source code as cython.int
+                        # item['index'] = [i[0] for i in r]
+                        # item['files'] = [i[1] for i in r]
+                        # item['loc'] = [i[2] for i in r]
+                        item['index'] = [v[0] for v in r]
+                        item['files'] = [v[1] for v in r]
+                        item['loc'] = [v[2] for v in r]
+                        # Revision 30/06/2026 >
                         # < Revision 01/07/2025
                         # Subseries extraction
                         if item['loc'][0] is not None:
                             r = len(item['loc']) / len(set(item['loc']))
                             # Duplicate slice location in acquisition number if r > 1
                             if r > 1.0:
+                                i: cython.int
                                 # try to extract subseries
                                 if r.is_integer():
                                     wait.setInformationText('Extracting {} subseries...'.format(acqn))
@@ -1767,6 +1779,8 @@ class DicomFilesTreeWidget(QTreeWidget):
                 item.setCheckState(0, Qt.Checked)
                 acq = list(self._dict[series]['acq'].keys())
                 if len(acq) > 0:
+                    j: cython.int
+                    k: cython.int
                     # < Revision 20/06/2025
                     if isinstance(acq[0], int): acq.sort()
                     elif isinstance(acq[0], tuple): acq.sort(key=lambda vi: vi[1])
@@ -1899,6 +1913,7 @@ class DicomFilesTreeWidget(QTreeWidget):
         """
         c = 0
         n = self.topLevelItemCount()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -1915,6 +1930,8 @@ class DicomFilesTreeWidget(QTreeWidget):
         """
         c = 0
         ns = self.topLevelItemCount()
+        i: cython.int
+        j: cython.int
         for i in range(ns):
             sitem = self.topLevelItem(i)
             na = sitem.childCount()
@@ -2027,6 +2044,7 @@ class DicomFilesTreeWidget(QTreeWidget):
                 self._filter = v[v.find('.'):]
                 path = self._path
                 self._path = list()
+                i: cython.int
                 for i in range(len(path)):
                     if i == 0: self.setPath(path[i])
                     else: self.addPath(path[i])
@@ -2115,6 +2133,7 @@ class DicomFilesTreeWidget(QTreeWidget):
         dict
         """
         r = dict()
+        j: cython.int
         if isinstance(tag, BaseTag):
             if series in self._dict:
                 for i in self._dict[series]['acq']:
@@ -2144,6 +2163,7 @@ class DicomFilesTreeWidget(QTreeWidget):
         """
         Uncheck all items in the tree.
         """
+        i: cython.int
         for i in range(self.topLevelItemCount()):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2566,6 +2586,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                         for d in data:
                             item = QTreeWidgetItem([str(d.tag), d.keyword, d.VR, str(d.VM), str(d.value)])
                             root.addChild(item)
+            i: cython.int
             for i in range(4):
                 self.resizeColumnToContents(i)
 
@@ -2574,6 +2595,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         Check all items in the tree.
         """
         n = self.topLevelItemCount()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2584,6 +2606,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         Uncheck all items in the tree.
         """
         n = self.topLevelItemCount()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2621,6 +2644,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         n = self.topLevelItemCount()
         keys = self._dcm.getKeywords()
         skeys = list()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2646,6 +2670,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         """
         n = self.topLevelItemCount()
         skeys = list()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2671,6 +2696,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         """
         n = self.topLevelItemCount()
         skeys = list()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2696,6 +2722,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         """
         n = self.topLevelItemCount()
         skeys = list()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2721,6 +2748,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         """
         n = self.topLevelItemCount()
         skeys = list()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2765,6 +2793,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         """
         n = self.topLevelItemCount()
         skeys = list()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences
@@ -2785,6 +2814,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         """
         n = self.topLevelItemCount()
         skeys = list()
+        i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
             # noinspection PyUnresolvedReferences

@@ -21,6 +21,8 @@ from os.path import exists
 from os.path import dirname
 from os.path import splitext
 
+import cython
+
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
@@ -219,6 +221,7 @@ class SheetWidget(QWidget):
             hlabels = [str(v) for v in list(self._sheet.columns)]
             hlabels.insert(0, '')
             self._tree.setHeaderLabels(hlabels)
+            j: cython.int
             for j in range(self._tree.headerItem().columnCount()):
                 # noinspection PyUnresolvedReferences
                 self._tree.headerItem().setTextAlignment(j, Qt.AlignCenter)

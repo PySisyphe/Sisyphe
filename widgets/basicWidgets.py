@@ -88,9 +88,9 @@ function
 def messageBox(parent: QWidget | None = None,
                title: str = '',
                text: str = '',
-               icon: int = QMessageBox.Warning,
-               buttons: int = QMessageBox.Ok,
-               default: int = QMessageBox.Ok) -> int:
+               icon: int | QMessageBox.Icon = QMessageBox.Warning,
+               buttons: QMessageBox.StandardButtons = QMessageBox.Ok,
+               default: QMessageBox.StandardButton = QMessageBox.Ok) -> int:
     """
     Description
     ~~~~~~~~~~~
@@ -101,29 +101,37 @@ def messageBox(parent: QWidget | None = None,
     Parameters
     ~~~~~~~~~~~
     parent: QWidget | None
-    title: str
-    text: str
-    icon: int
-        QMessageBox.NoIcon, QMessageBox.Information, QMessageBox.Warning, QMessageBox.Critical, QMessageBox.Question
-    buttons: int
+    title: str (optional)
+        default ''
+    text: str (optional)
+        default ''
+    icon: int | QMessageBox.Icon (optional)
+        QMessageBox.NoIcon (0), QMessageBox.Information (1), QMessageBox.Warning (2), QMessageBox.Critical (3),
+        QMessageBox.Question (4) (default QMessageBox.Warning)
+    buttons: QMessageBox.StandardButtons (optional)
         QMessageBox.Ok | QMessageBox.Save | QMessageBox.Cancel | QMessageBox.Close | QMessageBox.Discard |
         QMessageBox.Apply | QMessageBox.Reset | QMessageBox.RestoreDefaults | QMessageBox.Help | QMessageBox.SaveAll |
         QMessageBox.Yes | QMessageBox.YesToAll | QMessageBox.No | QMessageBox.NoToAll | QMessageBox.Abort |
-        QMessageBox.Retry | QMessageBox.Ignore | QMessageBox.NoButton
-    default: int
+        QMessageBox.Retry | QMessageBox.Ignore | QMessageBox.NoButton (default QMessageBox.Ok)
+    default: QMessageBox.StandardButton (optional)
+        QMessageBox.Ok | QMessageBox.Save | QMessageBox.Cancel | QMessageBox.Close | QMessageBox.Discard |
+        QMessageBox.Apply | QMessageBox.Reset | QMessageBox.RestoreDefaults | QMessageBox.Help | QMessageBox.SaveAll |
+        QMessageBox.Yes | QMessageBox.YesToAll | QMessageBox.No | QMessageBox.NoToAll | QMessageBox.Abort |
+        QMessageBox.Retry | QMessageBox.Ignore | QMessageBox.NoButton (default QMessageBox.Ok)
 
     Returns
     ~~~~~~~
     int
     """
-    msgbox = QMessageBox(parent)
-    msgbox.setWindowTitle(title)
-    # noinspection PyTypeChecker
-    msgbox.setIcon(icon)
-    msgbox.setText(text)
-    # noinspection PyTypeChecker
+    # < Revision 30/06/2026
+    # msgbox = QMessageBox(parent)
+    # msgbox.setWindowTitle(title)
+    # msgbox.setIcon(icon)
+    # msgbox.setText(text)
+    if isinstance(icon, int): icon = QMessageBox.Icon(icon)
+    msgbox = QMessageBox(icon, title, text, parent=parent)
+    # Revision 30/06/2026 >
     msgbox.setStandardButtons(buttons)
-    # noinspection PyTypeChecker
     msgbox.setDefaultButton(default)
     if platform == 'win32':
         try: __main__.updateWindowTitleBarColor(msgbox)

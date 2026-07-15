@@ -17,6 +17,8 @@ from os.path import dirname
 from os.path import abspath
 from os.path import expanduser
 
+import cython
+
 from datetime import date
 from datetime import datetime
 
@@ -246,6 +248,7 @@ class SettingsWidget(QWidget):
                 # for c in label:
                 #     if c.isupper(): r += ' {}'.format(c)
                 #     else: r += c
+                i: cython.int
                 for i in range(len(label) - 1):
                     c0 = label[i]
                     c1 = label[i + 1]
@@ -1055,6 +1058,7 @@ class SettingsWidget(QWidget):
                 d = list()
                 current = self._parameters[parameter].currentIndex()
                 d.append(self._parameters[parameter].currentText())
+                i: cython.int
                 for i in range(self._parameters[parameter].count()):
                     if i != current: d.append(self._parameters[parameter].itemText(i))
                 return d
@@ -1148,6 +1152,7 @@ class SettingsWidget(QWidget):
         elif isinstance(widget, FileSelectionWidget): widget.open(v)
         elif isinstance(widget, FilesSelectionWidget): widget.add(v)
         elif isinstance(widget, list):
+            i: cython.int
             # vartype lbool
             if isinstance(widget[0], QComboBox):
                 if isinstance(v, str): v = v.split(' ')
@@ -1178,6 +1183,8 @@ class SettingsWidget(QWidget):
         ws = self._parameters[parameter]
         if isinstance(ws, list): ws = ws[0]
         lyout = self._settingsbox.layout()
+        # noinspection PyUnresolvedReferences
+        i: cython.int
         # noinspection PyUnresolvedReferences
         for i in range(lyout.rowCount()):
             # noinspection PyUnresolvedReferences

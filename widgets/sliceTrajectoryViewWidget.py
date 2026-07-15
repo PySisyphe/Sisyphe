@@ -14,6 +14,8 @@ from typing import Any
 from math import pow
 from math import sqrt
 
+import cython
+
 from numpy import ndarray
 
 from PyQt5.QtCore import Qt
@@ -373,6 +375,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 if d[0] < self._step: d[0] = 0.0
                 if d[1] < self._step: d[1] = 0.0
                 legend = self._target.getLegend()
+                i: cython.int
                 for i in range(2):
                     txt += '\nDistance from slice to {} {} {:.1f} mm'.format(self._target.getName(),
                                                                              legend[i], d[i])

@@ -27,6 +27,8 @@ from os.path import basename
 from os.path import splitext
 from os.path import split
 
+import cython
+
 from glob import glob
 
 from numpy import max
@@ -132,6 +134,7 @@ def drawLutToQImage(lut: SisypheLut | Colormap | ListedColormap | LinearSegmente
     painter = QPainter(imglut)
     pen = QPen()
     pen.setWidth(1)
+    i: cython.int
     if isinstance(lut, SisypheLut):
         for i in range(256):
             pen.setColor(QColor(int(lut[i][0]*255), int(lut[i][1]*255), int(lut[i][2]*255), 255))
@@ -165,6 +168,7 @@ def drawLutToPixmap(lut: SisypheLut | Colormap | ListedColormap | LinearSegmente
     painter = QPainter(imglut)
     pen = QPen()
     pen.setWidth(1)
+    i: cython.int
     if isinstance(lut, SisypheLut):
         for i in range(256):
             pen.setColor(QColor(int(lut[i][0]*255), int(lut[i][1]*255), int(lut[i][2]*255), 255))
@@ -778,9 +782,9 @@ class LutWidget(QWidget):
             if isinstance(self._view, viewtypes): self._view.updateRender()
             else: raise TypeError('View widget type {} is not supported.'.format(type(self._view)))
 
-    # Qt events
+    # Matplolib events
 
-    def _onMouseClickEvent(self, event) -> None:
+    def _onMouseClickEvent(self, event: MouseEvent) -> None:
         """
         Handles mouse clicks on the histogram to initiate window/level dragging.
         """
@@ -816,7 +820,7 @@ class LutWidget(QWidget):
                     self._canvas.setCursor(self._cursor)
                 self._xpos = float(event.xdata)
 
-    def _onMouseMoveEvent(self, event) -> None:
+    def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         """
         Handles mouse movement to adjust the window/level based on the drag operation.
         """
@@ -889,7 +893,7 @@ class LutWidget(QWidget):
                     self._canvas.setCursor(self._cursor)
 
     # noinspection PyUnusedLocal
-    def _onMouseReleaseEvent(self, event) -> None:
+    def _onMouseReleaseEvent(self, event: MouseEvent) -> None:
         """
         Handles mouse release to end the drag operation.
         """
@@ -899,6 +903,8 @@ class LutWidget(QWidget):
         self._on_move_span_flag = False
         self._on_move_left_span_flag = False
         self._on_move_right_span_flag = False
+
+    # Qt events
 
     def _onRangeChangedEvent(self) -> None:
         """
@@ -1008,7 +1014,7 @@ class LutWidget(QWidget):
         """
         return self._volume is not None
 
-    def getDisplay(self):
+    def getDisplay(self) -> SisypheDisplay:
         """
         Get the SisypheDisplay attribute of the associated Sisyphevolume.
 
@@ -1563,6 +1569,7 @@ class LutEditWidget(QWidget):
         # Create rgb dict from points and rgb lists
         rgbdict = {}
         red, green, blue = [], [], []
+        i: cython.int
         for i, c in enumerate(self._rgblist):
             red.append([self._xlist[i] / 255, c[0], c[0]])
             green.append([self._xlist[i] / 255, c[1], c[1]])
@@ -1611,7 +1618,7 @@ class LutEditWidget(QWidget):
         """
         self._onMenuSave()
 
-    # Matplotlib event
+    # Matplotlib events
 
     def _onMouseClickEvent(self, event: MouseEvent) -> None:
         """
@@ -1724,6 +1731,7 @@ class LutEditWidget(QWidget):
             color = colorDialog(title='Select color')
             # Revision 18/03/2025 >
             if color is not None:
+                index: cython.int
                 for index, x in enumerate(self._xlist):
                     if self._xpos < x:
                         self._xlist.insert(index, self._xpos)
@@ -1852,7 +1860,7 @@ class ColorTransferWidget(LutEditWidget):
 
     def __init__(self,
                  volume: SisypheVolume,
-                 view:  VolumeViewWidget | None = None,
+                 view: VolumeViewWidget | None = None,
                  transfer: SisypheColorTransfer | None = None,
                  size: int = 512,
                  parent: QWidget | None = None) -> None:
@@ -1915,6 +1923,7 @@ class ColorTransferWidget(LutEditWidget):
         r = self._volume.display.getRange()
         w = r[1] - r[0]
         self._transfer.clearColorTransfer()
+        i: cython.int
         for i in range(0, len(self._rgblist)):
             vrgb = [r[0] + self._xlist[i] / 255 * w] + self._rgblist[i]
             self._transfer.addColorTransferElement(vrgb=vrgb)
@@ -1936,6 +1945,7 @@ class ColorTransferWidget(LutEditWidget):
         self._rgblist = []
         rmin, rmax = self._transfer.getRange()
         r = rmax - rmin
+        i: cython.int
         for i in range(0, self._transfer.getColorTransferSize()):
             vrgb = self._transfer.getColorTransferElement(i)
             self._xlist.append((vrgb[0] - rmin) / r * 255)
@@ -2048,7 +2058,7 @@ class ColorTransferWidget(LutEditWidget):
             # noinspection PyUnresolvedReferences
             self.colorTransferChanged.emit()
 
-    # Matplotlib events
+    # Matplotlib event
 
     def _onMouseReleaseEvent(self, event: MouseEvent) -> None:
         """
@@ -2428,6 +2438,7 @@ class AlphaTransferWidget(QWidget):
 
         # Text
 
+        i: cython.int
         for i in range(0, len(self._xlist)):
             if self._volume.getDatatype() in getIntStdDatatypes():
                 v1 = str(int(self._xlist[i]))
@@ -2453,6 +2464,7 @@ class AlphaTransferWidget(QWidget):
             self._scatter.set_facecolors(self._clist)
         else:
             self._scatter.set_facecolor('brown')
+        i: cython.int
         for i in range(0, len(self._xlist)):
             if self._volume.getDatatype() in getIntStdDatatypes():
                 v1 = str(int(self._xlist[i]))
@@ -2479,6 +2491,7 @@ class AlphaTransferWidget(QWidget):
         Updates the alpha transfer function in the SisypheColorTransfer object.
         """
         self._transfer.clearAlphaTransfer()
+        i: cython.int
         for i in range(0, len(self._xlist)):
             va = [self._xlist[i], self._ylist[i] / self._h]
             self._transfer.addAlphaTransferElement(va=va)
@@ -2490,6 +2503,7 @@ class AlphaTransferWidget(QWidget):
         Updates the gradient transfer function in the SisypheColorTransfer object.
         """
         self._transfer.clearGradientTransfer()
+        i: cython.int
         for i in range(0, len(self._xlist)):
             va = [self._xlist[i], self._ylist[i] / self._h]
             self._transfer.addGradientTransferElement(va=va)
@@ -2517,6 +2531,7 @@ class AlphaTransferWidget(QWidget):
         self._xlist = []
         self._ylist = []
         self._clist = []
+        i: cython.int
         for i in range(0, self._transfer.getAlphaTransferSize()):
             av = self._transfer.getAlphaTransferElement(i)
             self._xlist.append(av[0])
@@ -2530,6 +2545,7 @@ class AlphaTransferWidget(QWidget):
         self._xlist = []
         self._ylist = []
         self._clist = []
+        i: cython.int
         for i in range(0, self._transfer.getGradientTransferSize()):
             av = self._transfer.getGradientTransferElement(i)
             self._xlist.append(av[0])
@@ -2779,6 +2795,7 @@ class AlphaTransferWidget(QWidget):
         """
         Handles adding a new control point.
         """
+        index: cython.int
         for index, x in enumerate(self._xlist):
             if self._xpos < x:
                 self._xlist.insert(index, self._xpos)
@@ -3315,6 +3332,7 @@ class ComboBoxLut(QComboBox):
         """
         pathname = self._setPath(pathname)
         filelist = []
+        i: cython.int
         for i in getLutExt():
             ext = '*' + i
             filelist += glob(join(pathname, ext))
@@ -3661,6 +3679,7 @@ class PopupMenuLut(QMenu):
         """
         pathname = self._setPath(pathname)
         filelist = []
+        i: cython.int
         for i in getLutExt():
             ext = '*' + i
             filelist += glob(join(pathname, ext))

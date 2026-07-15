@@ -26,6 +26,8 @@ from os.path import abspath
 from os.path import isdir
 from os.path import expanduser
 
+import cython
+
 from io import BytesIO
 
 import subprocess
@@ -149,7 +151,7 @@ class LineEditDelegate(QStyledItemDelegate):
         # noinspection PyUnresolvedReferences
         editor.setText(model.data(index, Qt.EditRole))
 
-    def setModelData(self, editor: QWidget, model: QAbstractItemModel | None, index: QModelIndex) -> None:
+    def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex) -> None:
         model = index.model()
         # noinspection PyUnresolvedReferences
         model.setData(index, editor.text(), Qt.EditRole)
@@ -159,10 +161,13 @@ class PandasTableModel(QStandardItemModel):
 
     # Special method
 
-    def __init__(self, data: DataFrame, editable: bool = False, parent: QObject | None = None) -> None:
+    def __init__(self,
+                 data: DataFrame,
+                 editable: bool = False,
+                 parent: QObject | None = None) -> None:
         QStandardItemModel.__init__(self, parent)
-        self._data = data
-        self._editflag = editable
+        self._data: DataFrame = data
+        self._editflag: bool = editable
         for col in data.columns:
             data_col = [QStandardItem("{}".format(x)) for x in data[col].values]
             self.appendColumn(data_col)
@@ -195,7 +200,7 @@ class PandasTableModel(QStandardItemModel):
     def hasDataFrame(self) -> bool:
         return self._data is not None
 
-    def flags(self, index: QModelIndex):
+    def flags(self, index: QModelIndex) -> int:
         if self._editflag:
             # noinspection PyUnresolvedReferences
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
@@ -207,7 +212,7 @@ class PandasTableModel(QStandardItemModel):
     def setData(self,
                 index: QModelIndex,
                 value: QVariant,
-                role: int = Qt.EditRole):
+                role: int = Qt.EditRole) -> bool | None:
         # noinspection PyInconsistentReturns
         if role == Qt.EditRole:
             self._data[self._data.columns[index.column()]][self._data.index[index.row()]] = value
@@ -216,7 +221,7 @@ class PandasTableModel(QStandardItemModel):
     # noinspection PyUnresolvedReferences
     def data(self,
              index: QModelIndex,
-             role: int = Qt.DisplayRole):
+             role: int = Qt.DisplayRole) -> str | None:
         # noinspection PyInconsistentReturns
         if index.isValid():
             if role == Qt.DisplayRole or role == Qt.EditRole:
@@ -229,7 +234,7 @@ class PandasTableModel(QStandardItemModel):
 
 class FileFilterProxyModel(QSortFilterProxyModel):
 
-    def __init__(self, parent: QObject | None = None):
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._rootpath = None
 
@@ -255,11 +260,11 @@ class FileFilterProxyModel(QSortFilterProxyModel):
             if self._rootpath.startswith(path): return True
         return False
 
-    def filePath(self, index) -> str:
+    def filePath(self, index: QModelIndex) -> str:
         # noinspection PyUnresolvedReferences
         return self.sourceModel().filePath(self.mapToSource(index))
 
-    def fileName(self, index) -> str:
+    def fileName(self, index: QModelIndex) -> str:
         # noinspection PyUnresolvedReferences
         return self.sourceModel().fileName(self.mapToSource(index))
 
@@ -316,7 +321,7 @@ class FileDragDropTreeView(QTreeView):
 # new IconProvider class
 class IconProvider(QFileIconProvider):
 
-    def icon(self, fileInfo: QFileInfo):
+    def icon(self, fileInfo: QFileInfo) -> QIcon:
         import darkdetect
         if darkdetect.isDark(): icondir = 'darkroi'
         else: icondir = 'lightroi'
@@ -381,10 +386,10 @@ class FileBrowserWidget(QWidget):
         self._layout.setSpacing(0)
         self.setLayout(self._layout)
 
-        self._currentfile = ''
-        self._mainWindow = None
-        self._cutflag = False
-        self._copyflag = False
+        self._currentfile: str = ''
+        self._mainWindow: WindowSisyphe | None = None
+        self._cutflag: bool = False
+        self._copyflag: bool = False
         self._clipboard: list[str] | None = None
         self._popupindex: list[QModelIndex] | None = None
 
@@ -750,7 +755,7 @@ class FileBrowserWidget(QWidget):
                        text: bool = False,
                        table: bool = False,
                        image: bool = False,
-                       source: bool = False):
+                       source: bool = False)  -> None:
         self._preview.setTabVisible(0, text)
         self._preview.setTabVisible(1, table)
         self._preview.setTabVisible(2, image)
@@ -759,7 +764,7 @@ class FileBrowserWidget(QWidget):
         # Revision 12/02/2026 >
 
     # noinspection PyUnusedLocal
-    def _currentChanged(self, current: QModelIndex, previous: QModelIndex):
+    def _currentChanged(self, current: QModelIndex, previous: QModelIndex) -> None:
         self._fileClicked(current)
 
     def _dirClicked(self, index: QModelIndex) -> None:
@@ -1157,6 +1162,7 @@ class FileBrowserWidget(QWidget):
                 self._tabVisibility()
                 return
             lines = ''
+            i: cython.int
             for i in range(doc.page_count):
                 page = doc.load_page(i)
                 lines += page.get_text()
@@ -1366,12 +1372,12 @@ class FileBrowserWidget(QWidget):
                 self._mainWindow.addVolume(v)
                 wait.close()
 
-    def _openExplorer(self):
+    def _openExplorer(self) -> None:
         folder = abspath(self._filemodel1.filePath(self._treedir.currentIndex()))
         if sys.platform == 'win32': subprocess.Popen('explorer "{}"'.format(folder))
         elif sys.platform == 'darwin': subprocess.call(["open", folder])
 
-    def _userFolder(self):
+    def _userFolder(self) -> None:
         folder = abspath(join(expanduser('~'), '.PySisyphe'))
         index = self._filemodel1.index(folder, 0)
         self._treedir.expand(index)
@@ -1379,7 +1385,7 @@ class FileBrowserWidget(QWidget):
         self._dirClicked(index)
         self._treedir.scrollTo(index)
 
-    def _templateFolder(self):
+    def _templateFolder(self) -> None:
         import Sisyphe
         folder = abspath(join(dirname(Sisyphe.__file__), 'templates'))
         index = self._filemodel1.index(folder, 0)
@@ -1506,6 +1512,7 @@ class FileBrowserWidget(QWidget):
             n = 0
             r = dict()
             lines = self._textpreview.toPlainText().split('\n')
+            i: cython.int
             for line in lines:
                 buff: list[float | str] = line.split(sep)
                 nc = len(buff)
@@ -1716,6 +1723,7 @@ class FileBrowserWidget(QWidget):
             if isinstance(ocr, list):
                 n = len(ocr)
                 if n > 0:
+                    i: cython.int
                     for i in range(n):
                         lines += str(ocr[i][1]) + '\n'
                 self._tabVisibility(text=True, image=True)
@@ -1731,13 +1739,13 @@ class FileBrowserWidget(QWidget):
             if flag: remove(png)
             wait.close()
 
-    def _renameInTreeFolders(self):
+    def _renameInTreeFolders(self) -> None:
         if self._popupindex:
             # noinspection PyTypeChecker
             self._treedir.edit(self._popupindex[0])
             self._popupindex = None
 
-    def _renameInListFiles(self):
+    def _renameInListFiles(self) -> None:
         if self._popupindex:
             # noinspection PyTypeChecker
             self._listfiles.edit(self._popupindex[0])
@@ -1835,6 +1843,7 @@ class FileBrowserWidget(QWidget):
             self._popupindex = [self._treedir.selectedIndexes()[0]]
         if self._clipboard:
             dst = self._filemodel1.filePath(self._popupindex[0])
+            i: cython.int
             for i in range(len(self._clipboard)):
                 # noinspection PyTypeChecker
                 src: str = self._clipboard[i]
@@ -1859,7 +1868,7 @@ class FileBrowserWidget(QWidget):
 
     # Public methods
 
-    def initSplitterSize(self):
+    def initSplitterSize(self) -> None:
         width = self._splitter.size().width()
         # noinspection PyTypeChecker
         self._splitter.setSizes([int(width*(4/16)), int(width*(4/16)), width - int(width*(8/16))])
@@ -1871,7 +1880,7 @@ class FileBrowserWidget(QWidget):
             self._bttableconsole.setVisible(True)
             self._btcolumnconsole.setVisible(True)
 
-    def getMainWindow(self) -> WindowSisyphe:
+    def getMainWindow(self) -> WindowSisyphe | None:
         return self._mainWindow
 
     def hasMainWindow(self) -> bool:

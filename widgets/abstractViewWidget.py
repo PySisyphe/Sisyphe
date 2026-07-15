@@ -20,6 +20,8 @@ from os.path import split
 from os.path import exists
 from os.path import splitext
 
+import cython
+
 from tempfile import gettempdir
 
 from math import sqrt
@@ -129,7 +131,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 02/05/2026
+    Last Revision: 10/07/2026
     """
 
     _DEFAULTZOOM: int = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -172,10 +174,11 @@ class AbstractViewWidget(QFrame):
         self._frame = True
         self._menuflag = True
         self._tooltipstr = ''
-        # < Revision 10/03/2025
-        if platform == 'win32':
+        # < Revision 09/07/2026
+        # if platform == 'win32':
+        if platform == 'win32' or platform == 'linux':
             self.setStyleSheet('border-color: #000000')
-        # Revision 10/03/2025 >
+        # Revision 09/07/2026 >
 
         # Init VTK window and interactor
 
@@ -1308,7 +1311,8 @@ class AbstractViewWidget(QFrame):
             Global screen coordinates.
         """
         # < Revision 14/03/2025
-        if platform == 'darwin':
+        # if platform == 'darwin':
+        if platform == 'darwin' or platform == 'linux':
             scale = 1.0
             xs = int(x / scale)
             ys = int((self._renderwindow.GetSize()[1] - y - 1) / scale)
@@ -1556,7 +1560,7 @@ class AbstractViewWidget(QFrame):
 
     def synchroniseZoomChanged(self, obj: QWidget, z: float) -> None:
         """
-        Method of synchronisation between AbstractViewWidget instances.
+        Method of synchronization between AbstractViewWidget instances.
         This method is called by ZoomChanged PyQt signal.
         It is responsible for synchronizing zoom factor between AbstractViewWidget instances.
 
@@ -1873,7 +1877,8 @@ class AbstractViewWidget(QFrame):
         # < Revision 16/03/2025
         # noinspection PyTypeChecker
         self.setFrameShape(QFrame.Box)
-        if platform == 'win32': self.setStyleSheet('border-color: #FFFFFF')
+        # if platform == 'win32':
+        if platform == 'win32' or platform == 'linux': self.setStyleSheet('border-color: #FFFFFF')
         # Revision 16/03/2025 >
         if signal:
             # noinspection PyUnresolvedReferences
@@ -1886,7 +1891,9 @@ class AbstractViewWidget(QFrame):
         # < Revision 16/03/2025
         # noinspection PyTypeChecker
         self.setFrameShape(QFrame.NoFrame)
-        if platform == 'win32': self.setStyleSheet('border-color: #000000')
+        # if platform == 'win32':
+        if platform == 'win32' or platform == 'linux':
+            self.setStyleSheet('border-color: #000000')
         # Revision 16/03/2025 >
 
     def setName(self, name: str) -> None:
@@ -2296,6 +2303,19 @@ class AbstractViewWidget(QFrame):
         if signal:
             # noinspection PyUnresolvedReferences
             self.ViewMethodCalled.emit(self, 'setNoActionFlag', None)
+
+    # < Revision 10/07/2026
+    def getNoActionFlag(self) -> bool:
+        """
+        Check if the current mouse action is 'No action'.
+
+        Returns
+        -------
+        bool
+            True if the no action flag is set, False otherwise.
+        """
+        return self._action['noflag'].isChecked()
+    # Revision 10/07/2026 >
 
     def setZoomFlag(self, signal: bool = True) -> None:
         """
@@ -4531,6 +4551,7 @@ class AbstractViewWidget(QFrame):
         """
         n = self._tools.count()
         if n > 0:
+            i: cython.int
             for i in range(n-1, -1, -1):
                 if isinstance(self._tools[i], (DistanceWidget, OrthogonalDistanceWidget, AngleWidget)):
                     # noinspection PyTypeChecker

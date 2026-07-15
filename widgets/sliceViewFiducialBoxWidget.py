@@ -11,6 +11,8 @@ from typing import Any
 
 from sys import platform
 
+import cython
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMenu
 
@@ -87,6 +89,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
         except: fsize = 10
         # Revision 05/09/2025 >
         self._dialog = None
+        i: cython.int
         for i in range(10):
             self.addTarget(p=[0, 0, 0], name='', signal=False)
             tool = self.getTool(i)
@@ -113,6 +116,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             sz = self._volume.getSpacing()[2]
             z = round(self._getFocalDepth() // sz)
             errors = self._fid.getErrors()
+            i: cython.int
             for i in range(self._fid.getMarkersCount()):
                 tool = self.getTool(i)
                 if z in self._fid:
@@ -128,6 +132,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             sz = self._volume.getSpacing()[2]
             z = round(self._getFocalDepth() // sz)
             if z in self._fid:
+                i: cython.int
                 for i in range(self._fid.getMarkersCount()):
                     tool = self.getTool(i)
                     p = tool.getPosition()
@@ -235,6 +240,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             fig1 = self._dialog.getFigure(1)
             # Global error
             data = list()
+            i: cython.int
             errors = self._fid.getErrors()
             for k in errors:
                 for i in range(self._fid.getMarkersCount()):

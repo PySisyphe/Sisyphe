@@ -19,6 +19,8 @@ from os.path import dirname
 from os.path import splitext
 from os.path import abspath
 
+import cython
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QMimeData
@@ -135,6 +137,8 @@ class ScreenshotsGridWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self._table.setAttribute(Qt.WA_TransparentForMouseEvents)
         # Revision 26/04/2025 >
+        i: cython.int
+        j: cython.int
         for i in range(0, self._ROWS):
             for j in range(0, self._COLS):
                 self._pixmaps.append(None)
@@ -313,6 +317,8 @@ class ScreenshotsGridWidget(QWidget):
     # Private methods
 
     def _updateSize(self) -> None:
+        i: cython.int
+        j: cython.int
         c = 297 / 210  # A4 ratio
         if self.isPortraitOrientation():
             h = self._boxtable.height()
@@ -355,6 +361,8 @@ class ScreenshotsGridWidget(QWidget):
 
     def _updateCells(self, rows: int, cols: int) -> None:
         pixmaps = list()
+        i: cython.int
+        j: cython.int
         for i in range(0, self._rows):
             for j in range(0, self._columns):
                 pixmaps.append(self._getPixmap(i, j))
@@ -451,6 +459,8 @@ class ScreenshotsGridWidget(QWidget):
     def setWhiteBackground(self) -> None:
         self._background = 1
         si, sj = self.getSelection()
+        i: cython.int
+        j: cython.int
         for i in range(0, self._ROWS):
             for j in range(0, self._COLS):
                 w = self._table.cellWidget(i, j)
@@ -462,6 +472,8 @@ class ScreenshotsGridWidget(QWidget):
     def setBlackBackground(self) -> None:
         self._background = 0
         si, sj = self.getSelection()
+        i: cython.int
+        j: cython.int
         for i in range(0, self._ROWS):
             for j in range(0, self._COLS):
                 w = self._table.cellWidget(i, j)
@@ -475,6 +487,7 @@ class ScreenshotsGridWidget(QWidget):
     def setRows(self, rows: int) -> None:
         if isinstance(rows, int):
             if rows < 6:
+                i: cython.int
                 for i in range(0, self._ROWS-1):
                     if i < rows: self._table.showRow(i)
                     else: self._table.hideRow(i)
@@ -485,6 +498,7 @@ class ScreenshotsGridWidget(QWidget):
     def setCols(self, cols: int) -> None:
         if isinstance(cols, int):
             if cols < 6:
+                i: cython.int
                 for i in range(0, self._COLS-1):
                     if i < cols: self._table.showColumn(i)
                     else: self._table.hideColumn(i)
@@ -494,6 +508,7 @@ class ScreenshotsGridWidget(QWidget):
 
     # noinspection PyUnusedLocal
     def setGridSize(self, rows: int, cols: int) -> None:
+        i: cython.int
         if isinstance(rows, int):
             if rows < 6:
                 for i in range(0, self._ROWS-1):
@@ -642,6 +657,7 @@ class ScreenshotsGridWidget(QWidget):
         self._setPixmapToSelection(None)
 
     def clearAll(self) -> None:
+        i: cython.int
         for i in range(0, len(self._pixmaps)):
             self._pixmaps[i] = None
             c = i // self._ROWS
@@ -651,6 +667,8 @@ class ScreenshotsGridWidget(QWidget):
 
     def createHtml(self, filepath: str = '', dpi: int = 100) -> str:
         if isinstance(filepath, str):
+            i: cython.int
+            j: cython.int
             if not exists(filepath): filepath = getcwd()
             # A4 Portrait 8.3" x 11.7"
             # Calc image size
@@ -735,6 +753,8 @@ class ScreenshotsGridWidget(QWidget):
                 if self._backg.currentIndex() == 0:
                     # noinspection PyUnresolvedReferences
                     painter.fillRect(50, 50, wp, hp, Qt.black)
+                i: cython.int
+                j: cython.int
                 for i in range(0, self._rows):
                     for j in range(0, self._columns):
                         idx = self._getIndex(i, j)
@@ -795,6 +815,8 @@ class ScreenshotsGridWidget(QWidget):
         if self._backg.currentIndex() == 0:
             # noinspection PyUnresolvedReferences
             painter.fillRect(0, 0, wp, hp, Qt.black)
+        i: cython.int
+        j: cython.int
         for i in range(0, self._rows):
             for j in range(0, self._columns):
                 idx = self._getIndex(i, j)

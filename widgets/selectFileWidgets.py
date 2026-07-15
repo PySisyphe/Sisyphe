@@ -28,6 +28,8 @@ from os.path import exists
 from os.path import split
 from os.path import splitext
 
+import cython
+
 from glob import glob
 
 from numpy import array
@@ -1092,7 +1094,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FileSelectionWidget
 
-    Last revision: 24/02/2026
+    Last revision: 09/07/2026
     """
 
     # Custom Qt Signal
@@ -1144,10 +1146,13 @@ class FileSelectionWidget(QWidget, SelectionFilter):
         self._clear = IconLabel(join(self.getDefaultIconDirectory(), 'cross.png'))
         # Revision 04/04/2025 >
 
-        if platform == 'win32':
+        # < Revision 09/07/2026
+        # if platform == 'win32':
+        if platform == 'win32' or platform == 'linux':
             self._current.setFixedSize(QSize(32, 32))
             self._open.setFixedSize(QSize(32, 32))
             self._clear.setFixedSize(QSize(32, 32))
+        # Revision 09/07/2026 >
         elif platform == 'darwin':
             self._current.setFixedSize(QSize(24, 24))
             self._open.setFixedSize(QSize(24, 24))
@@ -1206,6 +1211,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
                 self.open(v.getFilename())
             elif n > 1:
                 self._menuThumbnail.clear()
+                i: cython.int
                 for i in range(n):
                     v = self._thumbnail.getVolumeFromIndex(i)
                     action = self._menuThumbnail.addAction(v.getBasename())
@@ -2537,6 +2543,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 menu.setWindowFlag(Qt.FramelessWindowHint, True)
                 # noinspection PyUnresolvedReferences
                 menu.setAttribute(Qt.WA_TranslucentBackground, True)
+                i: cython.int
                 for i in range(n):
                     v = self._thumbnail.getVolumeFromIndex(i)
                     action = menu.addAction(v.getBasename())
@@ -2565,6 +2572,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             n = self._thumbnail.getWidgetsCount()
             wait = DialogWait(progress=True, progressmin=0, progressmax=n, cancel=True)
             wait.open()
+            i: cython.int
             for i in range(n):
                 filename = self._thumbnail.getVolumeFromIndex(i).getFilename()
                 wait.incCurrentProgressValue()
@@ -3029,6 +3037,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         n = self._list.count()
         if n > 0:
             filenames = list()
+            i: cython.int
             for i in range(n):
                 filenames.append(self._list.item(i).data(256))
         return filenames
@@ -3063,6 +3072,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         if not self._checkbox: return self.getFilenames()
         else:
             r = list()
+            i: cython.int
             for i in range(self._list.count()):
                 if self._list.item(i).checkState() > 0: r.append(self._list.item(i).data(256))
             return r
@@ -3080,6 +3090,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         if not self._checkbox: return list(range(self._list.count()))
         else:
             r = list()
+            i: cython.int
             for i in range(self._list.count()):
                 if self._list.item(i).checkState() > 0: r.append(i)
             return r
@@ -3097,6 +3108,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         if not self._checkbox: return [True] * self._list.count()
         else:
             r = list()
+            i: cython.int
             for i in range(self._list.count()):
                 r.append(self._list.item(i).checkState() > 0)
             return r
@@ -3258,6 +3270,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 chdir(directory)
                 directories = [directory]
                 sub = glob(join(directory, '**'))
+                i: cython.int
                 for i in range(len(sub)-1, -1, -1):
                     if not isdir(sub[i]): del sub[i]
                 if len(sub) > 0:
@@ -4919,6 +4932,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
                 menu.setWindowFlag(Qt.FramelessWindowHint, True)
                 # noinspection PyUnresolvedReferences
                 menu.setAttribute(Qt.WA_TranslucentBackground, True)
+                i: cython.int
                 for i in range(n):
                     v = self._thumbnail.getVolumeFromIndex(i)
                     action = menu.addAction(v.getBasename())
@@ -4947,6 +4961,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             n = self._thumbnail.getWidgetsCount()
             wait = DialogWait(progress=True, progressmin=0, progressmax=n, cancel=True)
             wait.open()
+            i: cython.int
             for i in range(n):
                 filename = self._thumbnail.getVolumeFromIndex(i).getFilename()
                 wait.incCurrentProgressValue()
@@ -4973,6 +4988,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
 
     def _initItemParameterWidgets(self, item: QTreeWidgetItem) -> None:
         if len(self._parameters) > 0:
+            i: cython.int
             for i, name in enumerate(self._parameters):
                 param = self._parameters[name]
                 if param['dtype'] == 'int':
@@ -5073,6 +5089,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
                     dtype = self._parameters[name]['dtype']
                     idx = list(self._parameters.keys()).index(name) + 1
                     if values.ndim > 1: values = values[0, ...]
+                    i: cython.int
                     for i in range(self._list.topLevelItemCount()):
                         if i < values.shape[0]:
                             w = self._list.itemWidget(self._list.topLevelItem(i), idx)
@@ -5173,6 +5190,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             # < Revision 09/04/2026
             self._list.header().show()
             # Revision 09/04/2026 >
+            i: cython.int
             for i in range(1, len(hdr)):
                 self._list.header().setSectionResizeMode(i, QHeaderView.Interactive)
             if self._load.menu() is not None: self._load.menu().clear()
@@ -5252,6 +5270,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             # < Revision 09/04/2026
             self._list.header().show()
             # Revision 09/04/2026 >
+            i: cython.int
             for i in range(1, len(hdr)):
                 self._list.header().setSectionResizeMode(i, QHeaderView.Interactive)
             if self._load.menu() is not None: self._load.menu().clear()
@@ -5371,6 +5390,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         if name in self._parameters:
             idx = list(self._parameters.keys()).index(name) + 1
             r = list()
+            i: cython.int
             for i in range(self._list.topLevelItemCount()):
                 w = self._list.itemWidget(self._list.topLevelItem(i), idx)
                 widget = w.layout().itemAt(0).widget()
@@ -5818,6 +5838,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         n = self._list.topLevelItemCount()
         if n > 0:
             filenames = list()
+            i: cython.int
             for i in range(n):
                 filenames.append(self._list.topLevelItem(i).data(0, 256))
         return filenames
@@ -5852,6 +5873,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         if not self._checkbox: return self.getFilenames()
         else:
             r = list()
+            i: cython.int
             for i in range(self._list.topLevelItemCount()):
                 if self._list.topLevelItem(i).checkState(0) > 0:
                     r.append(self._list.topLevelItem(i).data(0, 256))
@@ -5870,6 +5892,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         if not self._checkbox: return list(range(self._list.topLevelItemCount()))
         else:
             r = list()
+            i: cython.int
             for i in range(self._list.topLevelItemCount()):
                 if self._list.topLevelItem(i).checkState(0) > 0: r.append(i)
             return r
@@ -5887,6 +5910,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         if not self._checkbox: return [True] * self._list.topLevelItemCount()
         else:
             r = list()
+            i: cython.int
             for i in range(self._list.topLevelItemCount()):
                 r.append(self._list.topLevelItem(i).checkState(0) > 0)
             return r
@@ -6048,6 +6072,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
                 chdir(directory)
                 directories = [directory]
                 sub = glob(join(directory, '**'))
+                i: cython.int
                 for i in range(len(sub)-1, -1, -1):
                     if not isdir(sub[i]): del sub[i]
                 if len(sub) > 0:
@@ -7926,6 +7951,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
             - dictionary specifying which widgets should filter for SisypheVolumes.
             - expected format: {'single': list[bool] | None, 'multiple': list[bool] | None}
         """
+        i: cython.int
         if len(self._single) > 0:
             if 'single' in filters:
                 flt = filters['single']
@@ -7957,6 +7983,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
             - dictionary specifying sequence filters for single and multiple widgets.
             - expected format: {'single': list[str] | None, 'multiple': list[str] | None}
         """
+        i: cython.int
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -8011,6 +8038,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
             - dictionary specifying sequence filters for single and multiple widgets.
             - expected format: {'single': list[str] | None, 'multiple': list[str] | None}
         """
+        i: cython.int
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -8065,6 +8093,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
             - dictionary specifying suffix filters for single and multiple widgets.
             - expected format: {'single': list[str] | None, 'multiple': list[str] | None}
         """
+        i: cython.int
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -8119,6 +8148,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
             - dictionary specifying prefix filters for single and multiple widgets.
             - expected format: {'single': list[str], 'multiple': list[str] | None}
         """
+        i: cython.int
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:
@@ -8173,6 +8203,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
             - dictionary specifying filename substring filters for single and multiple widgets.
             - expected format: {'single': list[str] | None, 'multiple': list[str] | None}
         """
+        i: cython.int
         if isinstance(filters, dict):
             if len(self._single) > 0:
                 if 'single' in filters:

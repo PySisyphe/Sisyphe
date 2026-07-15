@@ -19,6 +19,8 @@ from os.path import dirname
 from os.path import basename
 from os.path import splitext
 
+import cython
+
 from pathlib import Path
 
 from PyQt5.QtCore import Qt
@@ -317,6 +319,7 @@ class TabROIListWidget(TabWidget):
                             n = len(rois)
                             if n > 1:
                                 name = 'Union {}'.format(rois[0].getName())
+                                i: cython.int
                                 for i in range(1, n): name += ' {}'.format(rois[i].getName())
                                 self._list.new(name)
                                 wait = DialogWait()
@@ -349,6 +352,7 @@ class TabROIListWidget(TabWidget):
                             n = len(rois)
                             if n > 1:
                                 name = 'Intersection {}'.format(rois[0].getName())
+                                i: cython.int
                                 for i in range(1, n): name += ' {}'.format(rois[i].getName())
                                 self._list.new(name)
                                 wait = DialogWait()
@@ -382,6 +386,7 @@ class TabROIListWidget(TabWidget):
                             n = len(rois)
                             if n > 1:
                                 name = 'SymmDiff {}'.format(rois[0].getName())
+                                i: cython.int
                                 for i in range(1, n): name += ' {}'.format(rois[i].getName())
                                 self._list.new(name)
                                 wait = DialogWait()
@@ -418,6 +423,7 @@ class TabROIListWidget(TabWidget):
                             n = len(rois)
                             if n > 0:
                                 name = '{} Diff'.format(rois[0].getName())
+                                i: cython.int
                                 for i in range(1, n): name += ' {}'.format(rois[i].getName())
                                 self._list.new(name)
                                 wait = DialogWait()
@@ -469,7 +475,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 10/03/2026
+    Last revision: 10/07/2026
     """
 
     # Special method
@@ -1362,6 +1368,7 @@ class TabROIToolsWidget(TabWidget):
             buff = tree
             submenu = self._menuGemini
             if n2 > 1:
+                i: cython.int
                 for i in range(-n2, -1):
                     submenu = buff[p[i]][1]
                     buff = buff[p[i]][0]
@@ -1737,9 +1744,25 @@ class TabROIToolsWidget(TabWidget):
             if self._views.getBrushFlag() > 0:
                 self._btn['dummy'].setChecked(True)
                 self._views.setNoROIFlag()
+                # < Revision 10/07/2026
+                for widget in self._views:
+                    if isinstance(widget, (IconBarMultiSliceGridViewWidget,
+                                           IconBarSynchronisedGridViewWidget)):
+                        widget.setActionButtonAvailability(True)
+                # Revision 10/07/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Brush tool unselected')
             else:
                 self._views.setBrushROIFlag(self._brushtype.currentIndex())
+                # < Revision 10/07/2026
+                for widget in self._views:
+                    if isinstance(widget, (IconBarMultiSliceGridViewWidget,
+                                           IconBarSynchronisedGridViewWidget)):
+                        sliceview = widget().getFirstSliceViewWidget()
+                        if sliceview is not None:
+                            if not sliceview.getNoActionFlag():
+                                sliceview.setNoActionFlag(True)
+                        widget.setActionButtonAvailability(False)
+                # Revision 10/07/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Brush tool selected')
             # < Revision 05/05/2026
             self._lastaction = None

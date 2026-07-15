@@ -17,6 +17,8 @@ from os.path import basename
 from os.path import splitext
 from os.path import abspath
 
+import cython
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
@@ -169,6 +171,7 @@ class ToolBarThumbnail(QToolBar):
             self.setFixedHeight(self._size + 8)
             n = self.getWidgetsCount()
             if n > 0:
+                i: cython.int
                 for i in range(n):
                     widget = self.getWidgetFromIndex(i)
                     widget.setSize(s)
@@ -202,6 +205,7 @@ class ToolBarThumbnail(QToolBar):
     def updateWidgets(self) -> None:
         if not self.isEmpty():
             # for i in range(0, len(self._actions)):
+            i: cython.int
             for i in range(0, len(self.actions())):
                 # widget = self._actions[i].defaultWidget()
                 # noinspection PyUnresolvedReferences
@@ -222,6 +226,7 @@ class ToolBarThumbnail(QToolBar):
     def getSelectedIndex(self) -> int:
         if not self.isEmpty():
             # for i in range(0, len(self._actions)):
+            i: cython.int
             for i in range(0, len(self.actions())):
                 # if self._actions[i].defaultWidget().isChecked(): return i
                 # noinspection PyUnresolvedReferences
@@ -348,6 +353,7 @@ class ToolBarThumbnail(QToolBar):
         if isinstance(vol, SisypheVolume):
             if not self.isEmpty():
                 # for i in range(0, len(self._actions)):
+                i: cython.int
                 for i in range(0, len(self.actions())):
                     # if self._actions[i].defaultWidget().getVolume().getArrayID() == vol.getArrayID(): return i
                     # noinspection PyUnresolvedReferences
@@ -396,6 +402,7 @@ class ToolBarThumbnail(QToolBar):
     def removeAllOverlays(self) -> None:
         n = self.getWidgetsCount()
         if n > 0:
+            i: cython.int
             for i in range(n):
                 self.getWidgetFromIndex(i).getActions()['overlay'].setChecked(False)
                 self.getWidgetFromIndex(i).setDown(False)
@@ -535,6 +542,7 @@ class ToolBarThumbnail(QToolBar):
     def saveAll(self) -> None:
         if not self.isEmpty():
             # for i in range(len(self._actions)):
+            i: cython.int
             for i in range(len(self.actions())):
                 v = self.getVolumeFromIndex(i)
                 v.save()

@@ -82,7 +82,7 @@ class DatabaseWidget(QWidget):
 
     QWidget -> DatabaseWidget
 
-    Last revision: 18/02/2026
+    Last revision: 09/07/2026
     """
 
     # Class methods
@@ -277,6 +277,12 @@ class DatabaseWidget(QWidget):
             self._buttonFileManager = QPushButton('Finder')
             self._buttonFileManager.setToolTip('Open current patient folder in Finder.')
             self._buttonFileManager.setToolTip('Remove selected volume from database.')
+        # < Revision 08/07/2026
+        elif platform == 'linux':
+            self._buttonFileManager = QPushButton('Nautilus Files')
+            self._buttonFileManager.setToolTip('Open current patient folder in Nautilus Files.')
+            self._buttonFileManager.setToolTip('Remove selected volume from database.')
+        # Revision 08/07/2026 >
         # Revision 28/05/2025 >
         self._buttonBackup = QPushButton('Database backup')
         self._buttonBackup.setToolTip('Backup database to a folder.')
@@ -760,7 +766,7 @@ class DatabaseWidget(QWidget):
             folder = join(self._db.getDatabasePath(), self._getFolderFromItem(selected[0]))
             # if platform == 'win32': subprocess.Popen('explorer /select,"{}"'.format(folder))
             if platform == 'win32': subprocess.Popen('explorer "{}"'.format(folder))
-            elif platform == 'darwin':
+            elif platform == 'darwin' or platform == 'linux':
                 folder = '~' + folder
                 subprocess.call(["open", folder])
         else:

@@ -25,6 +25,8 @@ from os.path import splitext
 # noinspection PyUnusedImports
 from os.path import basename
 
+import cython
+
 from pathlib import Path
 
 import types
@@ -156,6 +158,8 @@ class RichJupyterWidget2(RichJupyterWidget):
         nb = self._previous_prompt_obj.number + 1
         buff = self.input_buffer.split(' \'')
         buff2 = list()
+        i: cython.int
+        j: cython.int
         for i in range(len(buff)):
             sbuff = buff[i].split('\'')
             if len(sbuff) == 1:

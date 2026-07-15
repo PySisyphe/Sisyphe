@@ -20,6 +20,8 @@ from os.path import dirname
 from os.path import abspath
 from os.path import splitext
 
+import cython
+
 from time import perf_counter
 
 from numpy import ndarray as np_ndarray
@@ -1339,6 +1341,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             wait.progressVisibilityOn()
             if self._logger is not None: self._logger.info('Split {}'.format(self._multi.getBasename()))
             fix = len(str(n))
+            i: cython.int
             for i in range(n):
                 try:
                     vol = self._multi.copyComponent(i)
@@ -1564,6 +1567,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             overlays = self.getThumbnailToolbar().getOverlays()
                             n = len(overlays)
                             if n > 0:
+                                i: cython.int
                                 for i in range(n):
                                     # noinspection PyUnresolvedReferences
                                     self._views['slices'].addOverlay(overlays[i])
@@ -1690,6 +1694,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             overlays = self.getThumbnailToolbar().getOverlays()
                             n = len(overlays)
                             if n > 0:
+                                i: cython.int
                                 for i in range(n):
                                     # noinspection PyUnresolvedReferences
                                     self._views['orthogonal'].addOverlay(overlays[i])
@@ -1825,6 +1830,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             overlays = self.getThumbnailToolbar().getOverlays()
                             n = len(overlays)
                             if n > 0:
+                                i: cython.int
                                 for i in range(n):
                                     # noinspection PyUnresolvedReferences
                                     self._views['synchronised'].addOverlay(overlays[i])
