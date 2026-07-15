@@ -125,7 +125,7 @@ class DialogFileSelection(QDialog):
         # Init default dialog buttons
 
         lyout = QHBoxLayout()
-        if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
         lyout.setContentsMargins(0, 0, 0, 0)
         # noinspection PyUnresolvedReferences
@@ -216,7 +216,7 @@ class DialogMultiFileSelection(QDialog):
         # Init default dialog buttons
 
         lyout = QHBoxLayout()
-        if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': lyout.setContentsMargins(10, 10, 10, 10)
         else: lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(10)
         # noinspection PyUnresolvedReferences
@@ -426,7 +426,7 @@ class DialogFilesSelection(QDialog):
         # Init default dialog buttons
 
         lyout = QHBoxLayout()
-        if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': lyout.setContentsMargins(10, 10, 10, 10)
         else: lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(10)
         # noinspection PyUnresolvedReferences

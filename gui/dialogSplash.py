@@ -424,7 +424,7 @@ class DialogSplash(QDialog):
         self._layout.addLayout(layout)
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         elif sys.platform == 'darwin': layout.setContentsMargins(0, 0, 0, 0)
         layout.addStretch()
         layout.addWidget(self._exit)
@@ -438,6 +438,9 @@ class DialogSplash(QDialog):
             # noinspection PyUnresolvedReferences
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
         elif sys.platform == 'darwin':
+            # noinspection PyTypeChecker,PyUnresolvedReferences
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+        elif sys.platform == 'linux':
             # noinspection PyTypeChecker,PyUnresolvedReferences
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
         # noinspection PyTypeChecker,PyUnresolvedReferences

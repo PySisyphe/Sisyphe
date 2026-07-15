@@ -185,7 +185,7 @@ class DialogDiffusionModel(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -586,7 +586,7 @@ class DialogALPS(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)

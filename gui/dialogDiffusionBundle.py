@@ -142,7 +142,7 @@ class DialogBundleROISelection(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._exit = QPushButton('Close')
@@ -383,7 +383,7 @@ class DialogStreamlinesROISelection(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')

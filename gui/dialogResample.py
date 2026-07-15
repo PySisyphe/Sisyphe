@@ -12,6 +12,7 @@ from os import getcwd
 from os import chdir
 
 from os.path import exists
+from os.path import join
 from os.path import dirname
 from os.path import basename
 from os.path import abspath
@@ -47,6 +48,7 @@ from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.core.sisypheTransform import SisypheTransform
 from Sisyphe.core.sisypheTransform import SisypheTransforms
 from Sisyphe.core.sisypheTransform import SisypheApplyTransform
+from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
 from Sisyphe.widgets.basicWidgets import MenuPushButton
@@ -55,13 +57,15 @@ from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import FunctionSettingsWidget
 from Sisyphe.gui.dialogWait import DialogWait
 
-__all__ = ['DialogResample']
+__all__ = ['DialogResample',
+           'DialogDisplacementFieldInversion']
 
 """
 Class hierarchy
 ~~~~~~~~~~~~~~~
 
     - QDialog -> DialogResample
+    - QDialog -> DialogDisplacementFieldInversion
 """
 
 
@@ -925,3 +929,169 @@ class DialogResample(QDialog):
         self._rotz.setValue(0.0)
         self._ftrf = SisypheTransform()
         self._updateVisible(False)
+
+
+class DialogDisplacementFieldInversion(QDialog):
+    """
+    DialogDisplacementFieldInversion
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog for displacement field inversion.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogDisplacementFieldInversion
+
+    Creation: 02/07/2026
+    Last revision: 02/07/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle('Displacement field inversion')
+        # noinspection PyUnresolvedReferences
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self.setLayout(self._layout)
+
+        # Init widgets
+
+        self._fields = FilesSelectionWidget(parent=self)
+        self._fields.setTextLabel('Displacement field(s)')
+        self._fields.filterSameSequence(SisypheAcquisition.FIELD)
+        self._fields.filterSisypheVolume()
+        self._fields.filterMultiComponent()
+        self._fields.setMinimumHeight(300)
+        self._fields.FieldChanged.connect(self._updateFiles)
+        self._fields.FieldCleared.connect(self._updateFiles)
+        self._layout.addWidget(self._fields)
+
+        self._refs = FilesSelectionWidget(parent=self)
+        self._refs.setTextLabel('Volume(s) used for output space')
+        self._refs.filterSisypheVolume()
+        self._refs.setMinimumHeight(300)
+        self._refs.FieldChanged.connect(self._updateFiles)
+        self._refs.FieldCleared.connect(self._updateFiles)
+        self._layout.addWidget(self._refs)
+
+        self._settings = FunctionSettingsWidget('DisplacementFieldInversion')
+        self._layout.addWidget(self._settings)
+
+        # Init default dialog buttons
+
+        layout = QHBoxLayout()
+        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
+        layout.setDirection(QHBoxLayout.RightToLeft)
+        cancel = QPushButton('Cancel')
+        cancel.setFixedWidth(100)
+        cancel.setDefault(True)
+        cancel.setAutoDefault(True)
+        self._execute = QPushButton('Inversion')
+        self._execute.setToolTip('Displacement field inversion processing')
+        self._execute.setEnabled(False)
+        layout.addWidget(self._execute)
+        layout.addWidget(cancel)
+        layout.addStretch()
+        self._layout.addLayout(layout)
+
+        # Qt Signals
+
+        # noinspection PyUnresolvedReferences
+        cancel.clicked.connect(self.reject)
+        # noinspection PyUnresolvedReferences
+        self._execute.clicked.connect(self.execute)
+
+        # < Revision 11/06/2025
+        self.adjustSize()
+        screen = QApplication.primaryScreen().geometry()
+        self._fields.setMinimumWidth(int(screen.width() * 0.33))
+        self.setModal(True)
+
+    # Private method
+
+    # noinspection PyUnusedLocal
+    def _center(self, widget):
+        self.move(self.screen().availableGeometry().center() - self.rect().center())
+        QApplication.processEvents()
+
+    def _updateFiles(self):
+        n1 = self._fields.filenamesCount()
+        n2 = self._refs.filenamesCount()
+        if n1 >= n2 > 0: self._execute.setEnabled(True)
+        else: self._execute.setEnabled(False)
+
+    # Public method
+
+    def getFileSelectionWidget(self):
+        return [self._fields,
+                self._refs]
+
+    def execute(self):
+        n1 = self._fields.filenamesCount()
+        n2 = self._refs.filenamesCount()
+        if n1 >= n2 > 0:
+            wait = DialogWait()
+            wait.setInformationText('Displacement field inversion...')
+            wait.open()
+            fields = self._fields.getFilenames()
+            refs = self._refs.getFilenames()
+            trf = SisypheTransform()
+            sub = self._settings.getParameterValue('Subsampling')
+            prefix = self._settings.getParameterValue('Prefix')
+            suffix = self._settings.getParameterValue('Suffix')
+            if not sub: sub = 16
+            for i in range(n1):
+                self._fields.clearSelection()
+                self._fields.setSelectionTo(i)
+                self._refs.clearSelection()
+                self._refs.setSelectionTo(i)
+                field = SisypheVolume()
+                field.load(fields[i])
+                trf.setSITKDisplacementFieldImage(field)
+                wait.addInformationText(field.getBasename())
+                ref = SisypheVolume()
+                ref.load(refs[i])
+                ifield = trf.getInverseDisplacementField(ref.getSize(), ref.getSpacing(), sub=sub, wait=wait)
+                ifield.setID(ref.getID())
+                filename = field.getBasename()
+                if 'field' in filename:
+                    buff = ''
+                    if suffix != '': buff = suffix
+                    if prefix != '': buff = prefix
+                    if buff == '': buff = 'fieldinv'
+                    filename = filename.replace('field', buff)
+                    filename = abspath(join(ref.getDirname(), filename))
+                    ifield.setFilename(filename)
+                else:
+                    ifield.setFilename(fields[i])
+                    ifield.setFilenamePrefix(prefix)
+                    ifield.setFilenameSuffix(suffix)
+                ifield.save()
+                wait.setInformationText('Save {}...'.format(ifield.getBasename()))
+                wait.addInformationText('')
+            wait.close()
+            """       
+            Exit  
+            """
+            r = messageBox(self,
+                           title=self.windowTitle(),
+                           text='Would like to perform additional displacement field inversion ?',
+                           icon=QMessageBox.Question,
+                           buttons=QMessageBox.Yes | QMessageBox.No,
+                           default=QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self._fields.clearAll()
+                self._refs.clearAll()
+            else: self.accept()

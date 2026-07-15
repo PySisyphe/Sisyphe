@@ -1517,8 +1517,6 @@ class DialogQSMMapping(QDialog):
             wait.open()
             te = self._select.getParameterValues('EchoTime')
             field = self._select.getParameterValues('MagneticFieldStrength')
-            print(te)
-            print(field)
             for i in range(n):
                 if te[i] == '0.0':
                     wait.close()

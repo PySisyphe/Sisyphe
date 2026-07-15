@@ -132,7 +132,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 16/06/2026
+    Last revision: 09/07/2026
     """
 
     # Class constants
@@ -354,7 +354,10 @@ class WindowSisyphe(QMainWindow):
         self._menu = dict()
         self._menuView = list()
         self._menubar = QMenuBar(parent=self)
-        if platform == 'win32':
+        # < Revision 09/07/2026
+        # if platform == 'win32':
+        if platform == 'win32' or platform == 'linux':
+        # Revision 09/07/2026 >
             self.setMenuBar(self._menubar)
             # self._menubar.setStyleSheet('spacing: 20')
         self._menubar.setNativeMenuBar(True)
@@ -363,7 +366,7 @@ class WindowSisyphe(QMainWindow):
         self.hideViewWidgets()
         # Revision 16/10/2024 >
 
-        # Tool bar
+        # Toolbar
 
         if platform == 'darwin':
             self.setStyleSheet('QToolBar { border-style: none; } '
@@ -1179,7 +1182,8 @@ class WindowSisyphe(QMainWindow):
                 Eddy current correction
                 Resample
                 --
-                Displacement Field Jacobian Determinant
+                Displacement field inversion
+                Displacement field jacobian determinant
                 Asymmetry displacement field
         """
         # Icons
@@ -1232,9 +1236,11 @@ class WindowSisyphe(QMainWindow):
         self._action['resample'] = self._menu['reg'].addAction('Resample...')
 
         self._menu['reg'].addSeparator()
-        self._action['asym'] = self._menu['reg'].addAction(icasym, 'Asymmetry displacement field...')
+        # < Revision 02/07/2026
+        self._action['inv'] = self._menu['reg'].addAction('Displacement field inversion...')
+        # Revision 02/07/2026 >
         self._action['jac'] = self._menu['reg'].addAction(icjac, 'Displacement field jacobian determinant...')
-        # self._action['inv'] = self._menu['reg'].addAction('Displacement field inversion...')
+        self._action['asym'] = self._menu['reg'].addAction(icasym, 'Asymmetry displacement field...')
 
         # Connect
 
@@ -1255,7 +1261,9 @@ class WindowSisyphe(QMainWindow):
         self._action['resample'].triggered.connect(self.resample)
         self._action['asym'].triggered.connect(self.asymmetry)
         self._action['jac'].triggered.connect(self.jacobian)
-        # self._action['inv'].triggered.connect(self.fieldinv)
+        # < Revision 02/07/2026
+        self._action['inv'].triggered.connect(self.fieldinv)
+        # Revision 02/07/2026 >
 
     def _initSegmentationMenu(self) -> None:
         """
@@ -2108,7 +2116,7 @@ class WindowSisyphe(QMainWindow):
             folder = join(self.getMainDirectory(), 'templates')
             if platform == 'win32':
                 subprocess.Popen('explorer "{}"'.format(folder))
-            elif platform == 'darwin':
+            elif platform == 'darwin' or platform == 'linux':
                 folder = '~' + folder
                 subprocess.call(["open", folder])
         # Revision 17/06/2025 >
@@ -2117,7 +2125,7 @@ class WindowSisyphe(QMainWindow):
         folder = self.getUserDirectory()
         if platform == 'win32':
             subprocess.Popen('explorer "{}"'.format(folder))
-        elif platform == 'darwin':
+        elif platform == 'darwin' or platform == 'linux':
             # < Revision 15/10/20215
             # folder = '~' + folder
             # Revision 15/10/20215 >
@@ -2127,14 +2135,14 @@ class WindowSisyphe(QMainWindow):
         folder = abspath(join(self.getMainDirectory(),'templates'))
         if platform == 'win32':
             subprocess.Popen('explorer "{}"'.format(folder))
-        elif platform == 'darwin':
+        elif platform == 'darwin' or platform == 'linux':
             subprocess.call(["open", folder])
 
     def _openPluginsFolder(self) -> None:
         folder = abspath(join(self.getMainDirectory(),'plugins'))
         if platform == 'win32':
             subprocess.Popen('explorer "{}"'.format(folder))
-        elif platform == 'darwin':
+        elif platform == 'darwin' or platform == 'linux':
             subprocess.call(["open", folder])
 
     def _openStruct(self, action: QAction | None) -> None:
@@ -5964,9 +5972,23 @@ class WindowSisyphe(QMainWindow):
             messageBox(self, 'Asymmetry displacement field dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
-    # to do
     def fieldinv(self):
-        pass
+        from Sisyphe.gui.dialogResample import DialogDisplacementFieldInversion
+        # < Revision 16/04/2025
+        # self._dialog = DialogResample(parent=self)
+        self._dialog = DialogDisplacementFieldInversion()
+        # Revision 16/04/2025 >
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        w = self._dialog.getFileSelectionWidget()
+        w[0].setToolbarThumbnail(self._thumbnail)
+        w[1].setToolbarThumbnail(self._thumbnail)
+        try:
+            self._tabHelp.setPage('PySisyphe_Registration.html', 'menu-section-fieldinv')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogResample.DialogDisplacementFieldInversion]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Displacement field inversion dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # Segmentation methods called from main menu
 

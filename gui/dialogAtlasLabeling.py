@@ -179,7 +179,7 @@ class DialogAtlasLabeling(QDialog):
         # Main
 
         btlyout = QHBoxLayout()
-        if platform == 'win32': btlyout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': btlyout.setContentsMargins(10, 10, 10, 10)
         btlyout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         btlyout.setDirection(QHBoxLayout.RightToLeft)

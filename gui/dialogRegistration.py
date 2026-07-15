@@ -21,6 +21,8 @@ from os.path import abspath
 from os.path import exists
 from os.path import isfile
 
+import logging
+
 from Sisyphe.processing.capturedStdoutProcessing import ProcessRegistration
 from multiprocessing import Queue
 
@@ -63,6 +65,7 @@ from Sisyphe.core.sisypheTransform import SisypheApplyTransform
 from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.core.sisypheSettings import SisypheFunctionsSettings
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
+from Sisyphe.core.sisypheConstants import addPrefixSuffixToFilename
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
@@ -104,7 +107,7 @@ class DialogRegistration(QDialog):
 
     QDialog -> DialogRegistration
 
-    Last revision: 16/05/2026
+    Last revision: 02/07/2026
     """
     # Class method
 
@@ -176,7 +179,7 @@ class DialogRegistration(QDialog):
         # Init QLayout
 
         self._layout = QVBoxLayout()
-        if platform == 'win32': self._layout.setContentsMargins(10, 0, 10, 0)
+        if platform == 'win32' or platform == 'linux': self._layout.setContentsMargins(10, 0, 10, 0)
         # < Revision 17/07/2025
         elif platform == 'darwin': self._layout.setContentsMargins(0, 10, 0, 0)
         # Revision 17/07/2025 >
@@ -248,7 +251,7 @@ class DialogRegistration(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -387,6 +390,9 @@ class DialogRegistration(QDialog):
     # Revision 13/02/2025 >
 
     def execute(self):
+        # < Revision 02/07/2026
+        logger = logging.getLogger(__name__)
+        # Revision 02/07/2026 >
         if self._fixedSelect.isEnabled() and self._movingSelect.isEnabled(): self.hide()
         self._wait.open()
         """
@@ -401,8 +407,10 @@ class DialogRegistration(QDialog):
         mvol = SisypheVolume()
         self._wait.setInformationText('Load fixed volume...')
         fvol.load(self._fixedSelect.getFilename())
+        loggertxt = '\tFixed volume: {}\n'.format(fvol.getBasename())
         self._wait.setInformationText('Load moving volume...')
         mvol.load(self._movingSelect.getFilename())
+        loggertxt += '\tMoving volume: {}\n'.format(mvol.getBasename())
         # Store volume origins
         # noinspection PyUnusedLocal
         forigin = fvol.getOrigin()
@@ -458,6 +466,7 @@ class DialogRegistration(QDialog):
         self._trf.setIdentity()
         c = self._settings.getParameterValue('Estimation')[0][0]
         if c == 'F':
+            loggertxt += '\tFOV center alignment\n'
             if not fvol.hasSameFieldOfView(mvol):
                 self._wait.setInformationText('FOV center alignment...')
                 f = CenteredTransformInitializerFilter()
@@ -468,6 +477,7 @@ class DialogRegistration(QDialog):
                 self._trf.setSITKTransform(trf)
         elif c == 'C':
             self._wait.setInformationText('Center of mass alignment...')
+            loggertxt += '\tCenter of mass alignment\n'
             f = CenteredTransformInitializerFilter()
             f.MomentsOn()
             img1 = Cast(fvol.getSITKImage(), sitkFloat32)
@@ -536,6 +546,8 @@ class DialogRegistration(QDialog):
             if self._reg == 'Transform':
                 if algo in ('AntsAffine', 'AntsFastAffine'): self._reg = 'Affine'
                 else: self._reg = 'DisplacementField'
+            loggertxt += '\tRegistration type {}\n'.format(self._reg)
+            loggertxt += '\tRegistration algorithm {}\n'.format(algo)
             self._convergence = 1e-6
             if self._reg == 'Rigid':
                 self._stages = ['Rigid']
@@ -785,6 +797,10 @@ class DialogRegistration(QDialog):
             self._wait.setMultiResolutionIterations(self._iters)
             self._wait.setProgressByLevel(self._progbylevel)
             self._wait.setConvergenceThreshold(self._convergence)
+            # < Revision 02/07/2026
+            for i in range(len(self._stages)):
+                loggertxt += '\t\tStage {} {} iterations {}\n'.format(i, self._stages[i], self._iters[i])
+            # Revision 02/07/2026 >
             """
             Set custom parameters        
             """
@@ -793,13 +809,17 @@ class DialogRegistration(QDialog):
             if m == 'CC': metric.append('CC')
             elif m == 'MS': metric.append('meansquares')
             else: metric.append('mattes')
+            loggertxt += '\tLinear metric {}\n'.format(m)
             m = self._settings.getParameterValue('NonLinearMetric')[0]
             if m == 'CC': metric.append('CC')
             elif m == 'MS': metric.append('meansquares')
             elif m == 'DEMONS': metric.append('demons')
             else: metric.append('mattes')
+            loggertxt += '\tNon linear metric {}\n'.format(m)
             sampling = self._settings.getParameterValue('SamplingRate')
             if sampling is None: sampling = 0.2
+            loggertxt += '\tSampling {}'.format(sampling)
+            logger.info(loggertxt)
             """      
             Registration
             """
@@ -839,6 +859,9 @@ class DialogRegistration(QDialog):
                 self._trf.setANTSTransform(read_transform(trf))
                 # Set center of rotation to default (0.0, 0.0, 0.0)
                 self._trf = self._trf.getEquivalentTransformWithNewCenterOfRotation([0.0, 0.0, 0.0])
+                # < Revision 01/07/2026
+                otrf = self._trf.copy()
+                # Revision 01/07/2026 >
                 # Remove temporary ants affine transform
                 if exists(trf): remove(trf)
                 if self._reg == 'DisplacementField':
@@ -884,6 +907,7 @@ class DialogRegistration(QDialog):
                         if fld is not None:
                             if exists(fld):
                                 if self._settings.getParameterValue('Inverse'):
+                                    self._wait.setInformationText('Save inverse displacement field...')
                                     # Open diffeomorphic displacement field
                                     dfield = SisypheVolume()
                                     dfield.loadFromNIFTI(fld, reorient=False)
@@ -895,24 +919,44 @@ class DialogRegistration(QDialog):
                                     t.setIdentity()
                                     t.setAttributesFromFixedVolume(mvol)
                                     f = SisypheApplyTransform()
-                                    f.setTransform(trf)
+                                    # < Revision 01/07/2026
+                                    # f.setTransform(trf)
+                                    f.setTransform(t)
+                                    # Revision 01/07/2026 >
                                     f.setMoving(dfield)
                                     dfield = f.execute(dfield)
                                     # Convert affine transform to affine displacement field
-                                    if not self._trf.isIdentity():
-                                        t = self._trf.copy()
+                                    # < Revision 01/07/2026
+                                    # if not self._trf.isIdentity():
+                                    if not otrf.isIdentity():
+                                        # t = self._trf.copy()
+                                        t = otrf.copy()
                                         t.setID(mvol)
                                         t.setAttributesFromFixedVolume(mvol)
                                         t.affineToDisplacementField(inverse=True)
-                                        afield = trf.getDisplacementField()
+                                        # afield = trf.getDisplacementField()
+                                        afield = t.getDisplacementField()
                                         # Final displacement field = affine + diffeomorphic displacement fields
                                         field = afield + dfield
                                         field.acquisition.setSequenceToDisplacementField()
+                                    # Revision 01/07/2026 >
                                     else: field = dfield
                                     t.copyFromDisplacementFieldImage(field)
                                     # Save displacement field image
                                     t.setID(mvol)
-                                    t.saveDisplacementField(fvol.getFilename())
+                                    # < Revision 01/07/2026
+                                    if self.windowTitle()[0] == 'I':
+                                        prefix = self._resamplesettings.getParameterValue('NormalizationPrefix')
+                                        suffix = self._resamplesettings.getParameterValue('NormalizationSuffix')
+                                    else:
+                                        prefix = self._resamplesettings.getParameterValue('Prefix')
+                                        suffix = self._resamplesettings.getParameterValue('Suffix')
+                                    filename = addPrefixSuffixToFilename(mvol.getFilename(), prefix, suffix)
+                                    # < Revision 02/07/2026
+                                    # t.saveDisplacementField(filename)
+                                    t.saveDisplacementField(filename)
+                                    # Revision 02/07/2026 >
+                                    # Revision 01/07/2026 >
                                 # Remove temporary ants inverse diffeomorphic displacement field
                                 remove(fld)
             """

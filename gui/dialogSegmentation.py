@@ -209,7 +209,7 @@ class DialogKMeansClustering(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -567,7 +567,7 @@ class DialogKMeansSegmentation(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -985,7 +985,7 @@ class DialogPriorBasedSegmentation(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -1769,7 +1769,7 @@ class DialogCorticalThickness(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -2065,7 +2065,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)

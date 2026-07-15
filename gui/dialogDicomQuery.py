@@ -240,7 +240,7 @@ class DialogDicomQueryRetrieve(QDialog):
         # Init default dialog buttons
 
         lyout3 = QHBoxLayout()
-        if platform == 'win32': lyout3.setContentsMargins(10, 10, 10, 10)
+        if platform == 'win32' or platform == 'linux': lyout3.setContentsMargins(10, 10, 10, 10)
         lyout3.setSpacing(10)
         # noinspection PyUnresolvedReferences
         lyout3.setDirection(QHBoxLayout.RightToLeft)

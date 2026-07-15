@@ -93,7 +93,7 @@ class DialogWait(QDialog):
 
     QWidget - > QDialog -> DialogWait
 
-    Last revision: 04/04/2026
+    Last revision: 09/07/2026
     """
 
     # Class method
@@ -164,7 +164,16 @@ class DialogWait(QDialog):
             except: pass
             self._layout = QVBoxLayout()
             self.setLayout(self._layout)
-        elif platform == 'darwin':
+        # < Revision 08/07/2026
+        # < Revision 09/07/2026
+        elif platform == 'linux':
+            # noinspection PyUnresolvedReferences
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            self._layout = QVBoxLayout()
+            self.setLayout(self._layout)
+        # Revision 09/07/2026 >
+        else:
+        # Revision 08/07/2026 >
             # < Revision 17/07/2025
             # bug fix darwin platform, to get a dialog box with rounded border
             # noinspection PyUnresolvedReferences
@@ -261,6 +270,10 @@ class DialogWait(QDialog):
         Increments the current iteration, updates the progress bar or info text, and checks for user abort.
         Raises UserAbortException if stopped.
         """
+        # < Revision 02/07/2026
+        if not self._progress.isVisible(): self._progress.setVisible(True)
+        if not self._abort.isVisible(): self._abort.setVisible(True)
+        # Revision 02/07/2026 >
         self._currentiter += 1
         if self.getProgressVisibility(): self._progress.setValue(self._currentiter)
         else: self._info.setText('{} iteration {}'.format(self._baseinfo, self._currentiter))
@@ -276,6 +289,10 @@ class DialogWait(QDialog):
         Updates the progress bar based on the filter's progress, and checks for user abort.
         Raises UserAbortException if stopped.
         """
+        # < Revision 02/07/2026
+        if not self._progress.isVisible(): self._progress.setVisible(True)
+        if not self._abort.isVisible(): self._abort.setVisible(True)
+        # Revision 02/07/2026 >
         self._progress.setValue(int(self._filter.GetProgress() * 100))
         QApplication.processEvents()
         if self._stopped:
@@ -295,7 +312,9 @@ class DialogWait(QDialog):
         Callback function for SimpleITK's sitkEndEvent.
         Currently does nothing.
         """
-        pass
+        self._progress.setVisible(False)
+        self._abort.setVisible(False)
+        QApplication.processEvents()
 
     def _center(self) -> None:
         """
@@ -891,7 +910,7 @@ class DialogWaitRegistration(DialogWait):
 
     QWidget - > QDialog -> DialogWait -> DialogWaitRegistration
 
-    Last revision: 31/01/2026
+    Last revision: 02/07/2026
     """
 
     # Special method
@@ -996,7 +1015,13 @@ class DialogWaitRegistration(DialogWait):
         if len(verbose) > 0:
             pstage = self._cstage
             plevel = self._clevel
-            nlevels = len(self._multir[0])
+            # < Revision 02/07/2026
+            # nlevels = len(self._multir[0])
+            if not self._cstage: levels = self._multir[0]
+            else: levels = self._multir[self._cstage]
+            nlevels = len(levels)
+            if levels[-1] == 1: nlevels -= 1
+            # Revision 02/07/2026 >
             for line in verbose:
                 sub = line[:5]
                 # < Revision 14/11/2024
@@ -1056,8 +1081,13 @@ class DialogWaitRegistration(DialogWait):
                         # self.setCurrentProgressValue(0)
                         # Revision 04/02/2026 >
                         self._clevel = None
-                        nlevels = len(self._multir[self._cstage])
-                        if self._multir[self._cstage][-1] == 1: nlevels -= 1
+                        # < Revision 02/07/2026
+                        # nlevels = len(self._multir[self._cstage])
+                        # if self._multir[self._cstage][-1] == 1: nlevels -= 1
+                        levels = self._multir[self._cstage]
+                        nlevels = len(levels)
+                        if levels[-1] == 1: nlevels -= 1
+                        # Revision 02/07/2026 >
             # Update information field
             if self._cstage is not None and self._clevel is not None:
                 if self._cstage != pstage or self._clevel != plevel:
