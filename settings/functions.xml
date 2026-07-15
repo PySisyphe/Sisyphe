@@ -357,6 +357,11 @@
 		<NormalizationPrefix vartype="str">icbm152</NormalizationPrefix>
 		<NormalizationSuffix vartype="str"/>
 	</Resample>
+	<DisplacementFieldInversion>
+		<Subsampling label="Subsamplig factor" varmax="64" varmin="8" vartype="int">16</Subsampling>
+		<Prefix vartype="str">fieldinv</Prefix>
+		<Suffix vartype="str"/>
+	</DisplacementFieldInversion>
 	<DisplacementFieldJacobianDeterminant>
 		<Prefix vartype="str">jac</Prefix>
 		<Suffix vartype="str"/>
