@@ -114,11 +114,7 @@ from PyQt5.QtGui import QPalette
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication
 
-if sys.platform == 'win32':
-    # noinspection PyUnresolvedReferences
-    import pywinstyles
-    # noinspection PyUnresolvedReferences
-    import qdarktheme
+if sys.platform == 'win32': import pywinstyles
 
 from vtk import vtkObject
 
@@ -342,9 +338,8 @@ if __name__ == "__main__":
     from Sisyphe.gui.windowSisyphe import WindowSisyphe
 
     # < Revision 22/07/2025
-    if sys.platform == 'win32': app = QApplication(sys.argv)
-    elif sys.platform == 'darwin': app = QApplicationEventHandler(sys.argv)
-    else: sys.exit(0)
+    if sys.platform == 'darwin': app = QApplicationEventHandler(sys.argv)
+    else: app = QApplication(sys.argv)  # win32 or linux
     # Revision 22/07/2025 >
 
     # < Revision 18/02/2025
@@ -366,6 +361,7 @@ if __name__ == "__main__":
         # noinspection PyUnresolvedReferences
         ctypes.windll.shcore.SetProcessDpiAwareness(2)
         # Set theme
+        import qdarktheme
         PALETTE = qdarktheme.load_palette('auto')
         c = ('background-color: {0}; '
              'border-color: {0}; '
@@ -396,6 +392,26 @@ if __name__ == "__main__":
         qss += ' QLabel#widthButton { margin: 0px; }'
         qss += ' QLabel#widthButton { margin: 0px; }'
         qdarktheme.setup_theme('auto', corner_shape='rounded', additional_qss=qss)
+    # < Revision 09/07/2026
+    elif sys.platform == 'linux':
+        import qdarktheme
+        PALETTE = qdarktheme.load_palette('auto')
+        c = ('background-color: {0}; '
+             'border-color: {0}; '
+             'border: 0px;').format(getBackgroundAsStr())
+        qss = 'QToolBar { ' + c + ' }'
+        c = ('border-color: {0}; '
+             'border: 0px; '
+             'spacing: 20px;').format(getBackgroundAsStr())
+        qss += ' QMenuBar { ' + c + ' }'
+        c = ('border-style: solid; '
+             'border-radius: 10px; '
+             'border-width: 1px; '
+             'border-color: {0};').format(getForegroundAsStr())
+        qss += ' QMenu { ' + c + ' }'
+        qss += ' QToolTip { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }'
+        qdarktheme.setup_theme('auto', corner_shape='rounded', additional_qss=qss)
+    # Revision 09/07/2026 >
     else:
         PALETTE = app.palette()
         # Qt bug fix, lost macOS style when button height > 30px
