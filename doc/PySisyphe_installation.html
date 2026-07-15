@@ -118,9 +118,12 @@
 </ul>
 <section id="from-binary-archive">
 <span id="install-section-from-binary"></span><h2>From binary archive<a class="headerlink" href="#from-binary-archive" title="Link to this heading"></a></h2>
-<p>Download the binary zip archive for MS Windows or MacOS Intel platforms from <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a>.
-There is no version for the Linux platform, as some of the modules required to run PySisyphe are not yet available on this operating system.</p>
+<p>Download the binary zip archive for MS Windows, MacOS or Linux Ubuntu platforms from <a class="reference external" href="https://github.com/PySisyphe/Sisyphe">https://github.com/PySisyphe/Sisyphe</a> (<a class="reference external" href="https://mega.nz/folder/Kt8hzbSa#AUkLH1WH0zoawYolT8Ep0w">PySisyphe binaries</a>).</p>
 <p>Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. We recommend copying it to the user directory. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.</p>
+<p>On the Linux Ubuntu platform, it is necessary to install the X11 xcb library from the terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libxcb-cursor0<span class="w"> </span>libxcb-icccm4<span class="w"> </span>libxcb-image0<span class="w"> </span>libxcb-keysyms1<span class="w"> </span>libxcb-render-util0<span class="w"> </span>libxcb-xinerama0<span class="w"> </span>libxcb-xinput0<span class="w"> </span>libxcb-randr0<span class="w"> </span>libxcb-shape0<span class="w"> </span>libxcb-xfixes0<span class="w"> </span>libxkbcommon-x11-0
+</pre></div>
+</div>
 <p><strong>PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.</strong></p>
 <p>On the Windows 11 platform, the terminal (i.e. the console) remains visible in the taskbar. If you would prefer it to be hidden, simply change the default terminal application.</p>
 <blockquote>
@@ -154,13 +157,30 @@ There is no version for the Linux platform, as some of the modules required to r
 <li><p>choose <strong>Dark</strong>.</p></li>
 </ul>
 </div></blockquote>
+<p>Enabling dark mode on Linux Ubuntu platform:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>click on the <strong>System Tray</strong> in the upper right corner and click the gear wheel icon to open settings,</p></li>
+<li><p>in the dialog box that opens, in the left side pane, scroll down and click on <strong>Appearance</strong>,</p></li>
+<li><p>in the center pane, in the <strong>Style section</strong>, click on <strong>Dark</strong>.</p></li>
+</ul>
+</div></blockquote>
 <p>Additional content, such as templates, atlases, samples, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select <strong>File &gt; Download Manager</strong>.</p>
 </section>
 <section id="from-source">
 <span id="install-section-from-source"></span><h2>From source<a class="headerlink" href="#from-source" title="Link to this heading"></a></h2>
 <p>If you plan to develop plugins, you will need to install PySisyphe from source.</p>
 <p>PySisyphe runs on Python version 3.12, download the last release with binary installer (3.12.10 release date: April 8, 2025) at <a class="reference external" href="https://www.python.org/downloads/release/python-31210/">https://www.python.org/downloads/release/python-31210/</a>, and install it.</p>
-<p>We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at <a class="reference external" href="https://www.jetbrains.com/fr-fr/pycharm/">https://www.jetbrains.com/fr-fr/pycharm/</a>, and install it. Run PyCharm IDE and create a new project (menu File -&gt; New project) with venv interpreter type and previously installed Python 3.10.11 or 3.12.10 version.</p>
+<p>Python 3.12 (version 3.12.13), gcc, and xcb must be installed from the terminal on the Linux Ubuntu platform:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>software-properties-common<span class="w"> </span>-y
+sudo<span class="w"> </span>add-apt-repository<span class="w"> </span>ppa:deadsnakes/ppa
+sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span>-y
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>python3.12<span class="w"> </span>python3.12-venv<span class="w"> </span>python3.12-dev
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>gcc<span class="w"> </span>build-essential
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libxcb-cursor0<span class="w"> </span>libxcb-icccm4<span class="w"> </span>libxcb-image0<span class="w"> </span>libxcb-keysyms1<span class="w"> </span>libxcb-render-util0<span class="w"> </span>libxcb-xinerama0<span class="w"> </span>libxcb-xinput0<span class="w"> </span>libxcb-randr0<span class="w"> </span>libxcb-shape0<span class="w"> </span>libxcb-xfixes0<span class="w"> </span>libxkbcommon-x11-0
+</pre></div>
+</div>
+<p>We recommend working with the PyCharm IDE development environment (JetBrains Distributions s.r.o., Czech Republic), download community edition at <a class="reference external" href="https://www.jetbrains.com/fr-fr/pycharm/">https://www.jetbrains.com/fr-fr/pycharm/</a>, and install it. Instead, use the App Center on the Ubuntu Linux platform. Run PyCharm IDE and create a new project (menu File -&gt; New project) with venv interpreter type and previously installed Python 3.12 version.</p>
 <ol class="arabic simple">
 <li><p>Download <a class="reference external" href="https://mega.nz/folder/G18X2IRQ#BRpA7_fcyHBIK66aZNyntA">PySisyphe source</a>.</p></li>
 <li><p>Unzip archive.</p></li>

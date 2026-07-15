@@ -98,6 +98,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-87-12-build-20-04-2026">version 0.87.12, build 20/04/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-92-10-build-30-05-2026">version 0.92.10, build 30/05/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-96-24-build-20-06-2026">version 0.96.24, build 20/06/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-99-16-build-30-09-2026">version 0.99.16, build 30/09/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -148,6 +149,7 @@
 <li><p><a class="reference internal" href="#build20-04-2026"><span class="std std-ref">version 0.87.12, build 20/04/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build30-05-2026"><span class="std std-ref">version 0.92.10, build 30/05/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-06-2026"><span class="std std-ref">version 0.96.24, build 20/06/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build30-09-2026"><span class="std std-ref">version 0.99.16, build 30/09/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -10187,6 +10189,511 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, remove super().remove() from the loop (for tool in tools:)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-0-99-16-build-30-09-2026">
+<span id="build30-09-2026"></span><h2>version 0.99.16, build 30/09/2026<a class="headerlink" href="#version-0-99-16-build-30-09-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>new platform support</strong></p>
+<blockquote>
+<div><ul>
+<li><p>add support for Linux Ubuntu 26.04 LTS</p></li>
+<li><p>new PyInstaller stand alone frozen version for Linux Ubuntu 26.04 LTS platform</p></li>
+<li><p>updated modules for linux platform (see platform == ‘linux’ in source)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>gui.dialogAlgebra</p></li>
+<li><p>gui.dialogAtlasLabeling</p></li>
+<li><p>gui.dialogDataset</p></li>
+<li><p>gui.dialogDicomImport</p></li>
+<li><p>gui.dialogDicomQuery</p></li>
+<li><p>gui.dialogDiffusionBundle</p></li>
+<li><p>gui.dialogDiffusionGradients</p></li>
+<li><p>gui.dialogDiffusionModel</p></li>
+<li><p>gui.dialogExport</p></li>
+<li><p>gui.dialogFiducialBox</p></li>
+<li><p>gui.dialogFileSelection</p></li>
+<li><p>gui.dialogFontProperties</p></li>
+<li><p>gui.dialogFromXml</p></li>
+<li><p>gui.dialogGenericResults</p></li>
+<li><p>gui.dialogImport</p></li>
+<li><p>gui.dialogJacobian</p></li>
+<li><p>gui.dialogLutEdit</p></li>
+<li><p>gui.dialogLutSettings</p></li>
+<li><p>gui.dialogManualRegistration</p></li>
+<li><p>gui.dialogOldSisypheImport</p></li>
+<li><p>gui.dialogPatient</p></li>
+<li><p>gui.dialogRegistration</p></li>
+<li><p>gui.dialogReorient</p></li>
+<li><p>gui.dialogSegmentation</p></li>
+<li><p>gui.dialogRealignment</p></li>
+<li><p>gui.dialogSettings</p></li>
+<li><p>gui.dialogSplash</p></li>
+<li><p>gui.dialogStatContrast</p></li>
+<li><p>gui.dialogStatModel</p></li>
+<li><p>gui.dialogStatResult</p></li>
+<li><p>gui.dialogTarget</p></li>
+<li><p>gui.dialogThreshold</p></li>
+<li><p>gui.dialogTimeSeries</p></li>
+<li><p>gui.dialogTransferSettings</p></li>
+<li><p>gui.dialogWait</p></li>
+<li><p>gui.dialogWorkflow</p></li>
+<li><p>gui.dialogXmlDicom</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.databaseWidget</p></li>
+<li><p>widgets.iconBarViewWidgets</p></li>
+<li><p>widgets.selectFileWidgets</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_Versions.rst</p></li>
+<li><p>PySisyphe_Registration.rst</p></li>
+<li><p>PySisyphe_sliceview.rst</p></li>
+<li><p>PySisyphe_orthogonalview.rst</p></li>
+<li><p>PySisyphe_synchronizedview.rst</p></li>
+<li><p>PySisyphe_projectionview.rst</p></li>
+<li><p>PySisyphe_multicomponentview.rst</p></li>
+<li><p>PySisyphe_overview.rst</p></li>
+<li><p>PySisyphe_installation.rst</p></li>
+<li><p>PySisyphe_dockroitools.rst</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated cython annotations</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheROI.SisypheROIDraw</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>cdef class conversion</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new cython annotations</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImageAttributes.SisypheIdentity</p></li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition</p></li>
+<li><p>core.sisypheImageAttributes.SisypheDisplay</p></li>
+<li><p>core.sisypheImageAttributes.SisypheACPC</p></li>
+<li><p>core.sisypheLUT.SisypheLut</p></li>
+<li><p>core.sisypheLUT.SisypheColorTransfer</p></li>
+<li><p>core.sisypheSettings.SisypheSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>cdef class conversion</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated cython compiled module</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheROI</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/settings/functions.xml</p></li>
+<li><p>/settings/tooltips.xml</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>core.sisypheROI</p></li>
+<li><p>core.sisypheTransform</p></li>
+<li><p>gui.dialogRegistration</p></li>
+<li><p>gui.dialogWait</p></li>
+<li><p>gui.dialogResample</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.tabToolsWidgets</p></li>
+<li><p>widgets.iconBarWidgets</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new class</strong></p>
+<blockquote>
+<div><ul>
+<li><p>gui.dialogResample.DialogDisplacementFieldInversion</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for displacement field inversion</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage</p></li>
+<li><p>core.sisypheVolume.SisypheVolume</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __add__() method</p></li>
+<li><p>update __sub__() method</p></li>
+<li><p>update __mul__() method</p></li>
+<li><p>update __div__() method</p></li>
+<li><p>update __floordiv__() method</p></li>
+<li><p>update __truediv__() method</p></li>
+<li><p>update __radd__() method</p></li>
+<li><p>update __rsub__() method</p></li>
+<li><p>update __rmul__() method</p></li>
+<li><p>update __rdiv__() method</p></li>
+<li><p>update __rfloordiv__() method</p></li>
+<li><p>update __rtruediv__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new applySlopeIntercept() method</p></li>
+<li><p>update _updateRange() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update getDrawThresholdedRectangleFillHoles() method</p></li>
+<li><p>update setROI() method</p></li>
+<li><p>update clearClipboard() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update _calcBrush() method</p></li>
+<li><p>update solidBrush() method</p></li>
+<li><p>update thresholdBrush() method</p></li>
+<li><p>update solid3DBrush() method</p></li>
+<li><p>update setBrushType() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheTransform</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getInverseSITKDisplacementFieldTransform() method</p></li>
+<li><p>new getInverseSITKDisplacementFieldSITKImage() method</p></li>
+<li><p>new getInverseDisplacementField() method</p></li>
+<li><p>update saveDisplacementField() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogRegistration.DialogRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogWait.DialogWaitRegistration</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new fieldinv() method</p></li>
+<li><p>update setAntsRegistrationProgress() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new fieldinv() method</p></li>
+<li><p>update _initRegistrationMenu() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getNoActionFlag() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget</p>
+<blockquote>
+<div><ul>
+<li><p>update ROISelectionChanged pyqtsignal</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add object parameter (vtkImageData | None)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>update _updateSliceROI() method</p></li>
+<li><p>update synchroniseROISelectionChanged() method</p></li>
+<li><p>update setActiveROI() method</p></li>
+<li><p>update _onMouseMoveEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update targets() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update brush() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setActionButtonAvailability() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheVolume.SisypheVolume.applySlopeIntercept()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>returns (self * self._slope) + self._intercept</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheTransform.getInverseSITKDisplacementFieldTransform()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get the inverse displacement field transform</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheTransform.getInverseSITKDisplacementFieldSITKImage()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get the inverse displacement field as a SimpleITK image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheTransform.getInverseDisplacementField()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get the inverse displacement field as a PySisyphe volume</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogWait.DialogWaitRegistration.fieldinv()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>displacement field inversion processing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.getNoActionFlag()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>check if the current mouse action is ‘No action’</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage.__add__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__sub__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__mul__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__div__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__floordiv__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__truediv__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__radd__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__rsub__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__rmul__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__rdiv__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__rfloordiv__()</p></li>
+<li><p>core.sisypheImage.SisypheImage.__rtruediv__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__add__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__sub__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__mul__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__div__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__floordiv__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__truediv__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__radd__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__rsub__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__rmul__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__rdiv__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__rfloordiv__()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.__rtruediv__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, cast to sitkFloat64 if the data types do not match</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume._updateRange()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, remove nan/inf values</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleFillHoles()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self._dtrfillholes = v by return self._dtrfillholes</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.setROI()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace if self.hasVolume by if self.hasVolume()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.clearClipboard()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove line del self._clipboard (cython error: Cannot delete C attribute)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._ibrush ndarray attribute (binary not of brush)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw._calcBrush()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._ibrush processing (binary not of brush)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.solidBrush()</p></li>
+<li><p>core.sisypheROI.SisypheROIDraw.thresholdBrush()</p></li>
+<li><p>core.sisypheROI.SisypheROIDraw.solid3DBrush()</p></li>
+<li><p>core.sisypheROI.SisypheROIDraw.setBrushType()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>code optimization</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.setBrushType()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace if 0 &lt;= brushtype &lt; 3 by if 0 &lt;= brushtype &lt; 4</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheTransform.saveDisplacementField()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add origin parameter</p></li>
+<li><p>set displacement field origin</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogRegistration.DialogRegistration.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, line 898, replace f.setTransform(trf) by f.setTransform(t)</p></li>
+<li><p>bug fix, line 910, replace afield = trf.getDisplacementField() by afield = t.getDisplacementField()</p></li>
+<li><p>replace t.saveDisplacementField(filename) by t.saveDisplacementField(filename, mvol.getOrigin())</p></li>
+<li><p>add logger</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogWait.DialogWaitRegistration.setAntsRegistrationProgress()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace nlevels = len(self._multir[0]) by nlevels = len(self._stages)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._initRegistrationMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add displacement field inversion menu (QAction self._action[‘inv’])</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget.synchroniseROISelectionChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add blended parameter</p></li>
+<li><p>only call self.setActiveROI(r, blended, signal=False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget._updateSliceROI()</p></li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget.setActiveROI()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change blended parameter type from int to vtkImageData</p></li>
+<li><p>add blended = self._slicerois.GetMapper().GetInput() after self.updateROIAttributes(blended, signal=False)</p></li>
+<li><p>blend image of non-active SisypheROI is processed only one time (not in synchronized views)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget._onMouseMoveEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, priority to Zoom, Move and Level actions</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.targets()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace i by j in p = [p0[i] + r[i] for i in range(len(p0))]</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.brush()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>disable Zoom/Move/Level actions when the brush mode is enabled</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarWidget.setActionButtonAvailability()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace if not v: self._icons[‘actions’].setVisible(v) by self._icons[‘actions’].setVisible(v)</p></li>
 </ul>
 </div></blockquote>
 </li>

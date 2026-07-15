@@ -84,8 +84,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#time-series-realignment">Time series realignment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#eddy-current-correction">Eddy current correction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#resample">Resample</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#asymmetry-displacement-field">Asymmetry displacement field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#displacement-field-inversion">Displacement field inversion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#displacement-field-jacobian-determinant">Displacement field jacobian determinant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#asymmetry-displacement-field">Asymmetry displacement field</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Segmentation.html">Segmentation menu</a></li>
@@ -139,8 +140,9 @@
 <li><p><a class="reference internal" href="#menu-section-align"><span class="std std-ref">Time series realignment</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-eddy"><span class="std std-ref">Eddy current correction</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-resample"><span class="std std-ref">Resample</span></a></p></li>
-<li><p><a class="reference internal" href="#menu-section-asym"><span class="std std-ref">Asymmetry displacement field</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-fieldinv"><span class="std std-ref">Displacement field inversion</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-jacob"><span class="std std-ref">Displacement field jacobian determinant</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-asym"><span class="std std-ref">Asymmetry displacement field</span></a></p></li>
 </ul>
 <section id="stereotactic-frame-detection">
 <span id="menu-section-stereo"></span><h2>Stereotactic frame detection<a class="headerlink" href="#stereotactic-frame-detection" title="Link to this heading"></a></h2>
@@ -184,7 +186,7 @@
 <li><p>Left-click <strong>Reset Transform</strong> to undo FOV translations and rotations.</p></li>
 <li><p>The cross-shaped cursor/rectangular box opacity, and line width can be customized using the last two widgets.</p></li>
 </ul>
-<p>Left-click <strong>Resample</strong> to resample the volume with the new FOV position and orientation. A file dialog box is displayed to choose the name of the saved file. By default, it’s the same as the original prefixed with “<a href="#id1"><span class="problematic" id="id2">r_</span></a>”.</p>
+<p>Left-click <strong>Resample</strong> to resample the volume with the new FOV position and orientation. A file dialog box is displayed to choose the name of the saved file. By default, it’s the same as the original prefixed with “<a href="#id2"><span class="problematic" id="id3">r_</span></a>”.</p>
 <p>Left-click <strong>Exit</strong> button to close dialog box.</p>
 </section>
 <section id="manual-registration">
@@ -206,7 +208,7 @@
 <li><p>Left-click <strong>Reset</strong> button to undo moving volume translations and rotations.</p></li>
 <li><p>Check <strong>Tooltip off</strong> to stop displaying tooltips in the view.</p></li>
 </ul>
-<p>Left-click <strong>Resample</strong> to resample the moving volume. A file dialog box is displayed to choose the name of the saved file. By default, it’s the same as the original prefixed with “<a href="#id3"><span class="problematic" id="id4">r_</span></a>”.</p>
+<p>Left-click <strong>Resample</strong> to resample the moving volume. A file dialog box is displayed to choose the name of the saved file. By default, it’s the same as the original prefixed with “<a href="#id4"><span class="problematic" id="id5">r_</span></a>”.</p>
 <p>Left-click <strong>Exit</strong> button to close dialog box.</p>
 </section>
 <section id="frame-based-registration">
@@ -476,6 +478,33 @@ Use the files selection widget below to select the <strong>Moving</strong> PySis
 <p>Left-click <strong>Execute</strong> button to resample moving volume with the current geometric transformation.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without resampling.</p>
 </section>
+<section id="displacement-field-inversion">
+<span id="menu-section-fieldinv"></span><h2>Displacement field inversion<a class="headerlink" href="#displacement-field-inversion" title="Link to this heading"></a></h2>
+<p>The purpose of this menu is to compute the inverse of a displacement field. If the input displacement field was mapping coordinates from a space A into a space B, the output of this filter will map coordinates from the space B into the space A.</p>
+<p>The method used for computing the inverse displacement field is to subsample the input field using a regular grid and create Kerned-Base Spline in which the reference landmarks are the coordinates of the deformed point and the target landmarks are the negative of the displacement vectors. The kernel-base spline is then used for regularly sampling the output space and recover vector values for every single pixel ((see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1InverseDisplacementFieldImageFilter.html">SimpleITK</a>).</p>
+<p>The <strong>Displacement field inversion</strong> dialog box is displayed.</p>
+<p>Select the displacement field volumes with the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top.</p>
+<p>Select the volumes used to define output space with the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located below.</p>
+<p>Toggle <strong>Settings</strong> button to show/hide parameters:</p>
+<ul class="simple">
+<li><p>Set the <strong>Subsampling factor</strong> (8 to 64). The subsampling factor used for the regular grid of the input field will determine the number of landmarks in the KernelBased spline, and therefore it will have a dramatic effect on both the precision of output displacement field and the computational time required for the filter to complete the estimation. A large subsampling factor will result in few landmarks in the KernelBased spline, therefore on fast computation and low precision. A small subsampling factor will result in a large number of landmarks in the KernelBased spline, therefore a large memory consumption, long computation time and high precision for the inverse estimation.</p></li>
+<li><p>Inverted displacement fields are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Inversion</strong> button to compute the inverse of the displacement field(s).</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
+<section id="displacement-field-jacobian-determinant">
+<span id="menu-section-jacob"></span><h2>Displacement field jacobian determinant<a class="headerlink" href="#displacement-field-jacobian-determinant" title="Link to this heading"></a></h2>
+<p>The purpose of this menu is to calculate Jacobian determinant volume from a displacement field. The scalar values in this image represent volume ratios. A value less than 1.0 indicates local deflation at the current voxel coordinate. Conversely, a value greater than 1.0 indicates local inflation at the current voxel coordinate (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1DisplacementFieldJacobianDeterminantFilter.html">SimpleITK</a>).</p>
+<p>The <strong>Jacobian determinant of displacement field</strong> dialog box is displayed.</p>
+<p>Select the displacement field volumes with the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top.</p>
+<p>Toggle <strong>Displacement field jacobian determinant</strong> button to show/hide parameter:</p>
+<ul class="simple">
+<li><p>Jacobian determinant volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to calculate Jacobian determinant volumes.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
+</section>
 <section id="asymmetry-displacement-field">
 <span id="menu-section-asym"></span><h2>Asymmetry displacement field<a class="headerlink" href="#asymmetry-displacement-field" title="Link to this heading"></a></h2>
 <p>The purpose of this menu is to perform the asymmetry analysis of a volume. This is achieved by performing a nonlinear coregistration of a volume with its symmetrical counterpart in the x-axis. The result is the Jacobian determinant image of the displacement field calculated from the coregistration. The scalar values in this image represent volume ratios. A value less than 1.0 indicates local deflation at the current voxel coordinate relative to the contralateral hemisphere. Conversely, a value greater than 1.0 indicates local inflation at the current voxel coordinate.</p>
@@ -508,18 +537,6 @@ Use the files selection widget below to select the <strong>Moving</strong> PySis
 <p>Toggle <strong>Displacement field jacobian determinant</strong> button to show/hide parameters:
 - Jacobian determinant volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p>
 <p>Left-click <strong>Execute</strong> button to run asymmetry analysis.</p>
-<p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
-</section>
-<section id="displacement-field-jacobian-determinant">
-<span id="menu-section-jacob"></span><h2>Displacement field jacobian determinant<a class="headerlink" href="#displacement-field-jacobian-determinant" title="Link to this heading"></a></h2>
-<p>The purpose of this menu is to calculate Jacobian determinant volume from a displacement field. The scalar values in this image represent volume ratios. A value less than 1.0 indicates local deflation at the current voxel coordinate. Conversely, a value greater than 1.0 indicates local inflation at the current voxel coordinate.</p>
-<p>The <strong>Jacobian determinant of displacement field</strong> dialog box is displayed.</p>
-<p>Select the displacement field volumes with the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top.</p>
-<p>Toggle <strong>Displacement field jacobian determinant</strong> button to show/hide parameter:</p>
-<ul class="simple">
-<li><p>Jacobian determinant volume is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
-</ul>
-<p>Left-click <strong>Execute</strong> button to calculate Jacobian determinant volumes.</p>
 <p>Left-click <strong>Cancel</strong> button to close dialog box without processing.</p>
 </section>
 </section>
