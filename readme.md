@@ -78,8 +78,34 @@ Direct link to binary archives:
 - Windows binary [PySisyphe 0.96.24 python 3.12 build 20-06-2026](https://mega.nz/file/j50xXT6Y#BBGUC2zSYHsBprDbgOo15dyhKNLQa5gsvlXvc4JXRD4)
 - MacOS 11+ intel binary [PySisyphe 0.96.24 python 3.10 build 20-06-2026](https://mega.nz/file/K5lWUB5T#PShqFfPlkWVTzVOZNRS4tJ6TRxkh1FKK_zRGVTaBjcE)
 - MacOS 11+ intel binary [PySisyphe 0.96.24 python 3.12 build 20-06-2026](https://mega.nz/file/7sE1jT4a#s8AX7yJWMMcN9FUMDGoxYoAjhB4gjMF2l5X2cwJU2B8)
+- Linux Ubuntu 26.4 LTS binary [PySisyphe 0.99.16 python 3.12 build 20-07-2026](https://mega.nz/file/nhFBnDiJ#yHig93TXxuM-exnOdcqBspdPu1KEN0TkHYvi54DtI9k)
 
 Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. **We recommend copying it to the user directory**. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
+
+On the Linux Ubuntu platform, install the X11 xcb library from the terminal:
+
+.. code-block:: bash
+
+	sudo apt install libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-randr0 libxcb-shape0 libxcb-xfixes0 libxkbcommon-x11-0
+
+Unzip the PySisyphe archive from the terminal:
+
+.. code-block:: bash
+
+	cd ~
+	unzip PySisyphe_release_cp312_x-xx-xx_xx-xx-20xx_linux_ubuntu_LTS26-04_amd64.zip
+
+Launch PySisyphe from the terminal:
+
+.. code-block:: bash
+
+	cd ~/PySisyphe
+	./PySisyphe
+
+Launch PySisyphe from the Nautilus file manager:
+
+	- double-click on PySisyphe executable in the ~/PySisyphe folder, or
+	- right-click on the PySisyphe executable, and select "Run" from the popup menu.
 
 **PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.**
 
