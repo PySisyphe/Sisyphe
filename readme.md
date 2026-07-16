@@ -84,20 +84,14 @@ Unzip the downloaded archive into the directory of your choice. The PySisyphe fo
 
 On the Linux Ubuntu platform, install the X11 xcb library from the terminal:
 
-.. code-block:: bash
-
 	sudo apt install libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-randr0 libxcb-shape0 libxcb-xfixes0 libxkbcommon-x11-0
 
 Unzip the PySisyphe archive from the terminal:
-
-.. code-block:: bash
 
 	cd ~
 	unzip PySisyphe_release_cp312_x-xx-xx_xx-xx-20xx_linux_ubuntu_LTS26-04_amd64.zip
 
 Launch PySisyphe from the terminal:
-
-.. code-block:: bash
 
 	cd ~/PySisyphe
 	./PySisyphe
