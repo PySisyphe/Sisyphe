@@ -4,7 +4,7 @@ Overview
 ========
 
 **PySisyphe** is a general purpose neuroimaging visualization and post-processing software.
-Versions for MS Windows and MacOS platforms are available.
+Versions for MS Windows, MacOS and Linux (Ubuntu 26.04 LTS) platforms are available.
 
 It supports advanced 2D and 3D visualization modes and a comprehensive collection of post-processing functions: filtering, texture analysis, co-registration, segmentation, fMRI analysis, time series analysis, perfusion and diffusion/tractography processing.
 
