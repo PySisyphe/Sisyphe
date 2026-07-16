@@ -22,7 +22,7 @@ Version history
 - :ref:`build20-04-2026`
 - :ref:`build30-05-2026`
 - :ref:`build20-06-2026`
-- :ref:`build30-09-2026`
+- :ref:`build20-07-2026`
 
 .. _version-increment-rules:
 
@@ -6464,9 +6464,9 @@ version 0.96.24, build 20/06/2026
 
 		- bug fix, remove super().remove() from the loop (for tool in tools:)
 
-.. _build30-09-2026:
+.. _build20-07-2026:
 
-version 0.99.16, build 30/09/2026
+version 0.99.16, build 20/07/2026
 ---------------------------------
 
 - **new platform support**

@@ -13,13 +13,32 @@ From binary archive
 
 Download the binary zip archive for MS Windows, MacOS or Linux Ubuntu platforms from https://github.com/PySisyphe/Sisyphe (`PySisyphe binaries <https://mega.nz/folder/Kt8hzbSa#AUkLH1WH0zoawYolT8Ep0w>`_).
 
-Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. We recommend copying it to the user directory. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
+Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. We recommend copying it to the user directory. To launch the software, double-click on PySisyphe.exe on Windows, PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
 
-On the Linux Ubuntu platform, it is necessary to install the X11 xcb library from the terminal:
+On the Linux Ubuntu platform, install the X11 xcb library from the terminal:
 
 .. code-block:: bash
 
 	sudo apt install libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-randr0 libxcb-shape0 libxcb-xfixes0 libxkbcommon-x11-0
+
+Unzip the PySisyphe archive from the terminal:
+
+.. code-block:: bash
+
+	cd ~
+	unzip PySisyphe_release_cp312_x-xx-xx_xx-xx-20xx_linux_ubuntu_LTS26-04_amd64.zip
+
+Launch PySisyphe from the terminal:
+
+.. code-block:: bash
+
+	cd ~/PySisyphe
+	./PySisyphe
+
+Launch PySisyphe from the Nautilus file manager:
+
+	- double-click on PySisyphe executable in the ~/PySisyphe folder, or
+	- right-click on the PySisyphe executable, and select "Run" from the popup menu.
 
 **PySisyphe may trigger false alerts from antivirus software, particularly on the Windows platform (e.g., Avast One). If this happens, be sure to add PySisyphe.exe to the list of trusted software.**
 
@@ -32,7 +51,6 @@ On the Windows 11 platform, the terminal (i.e. the console) remains visible in t
 	- under **Startup**, locate **Default terminal application**,
 	- set it to **Windows Console Host**,
 	- **save** changes.
-
 
 The PySisyphe graphical user interface has been optimized for dark mode, so we recommend using this mode for the best user experience.
 
@@ -89,6 +107,7 @@ We recommend working with the PyCharm IDE development environment (JetBrains Dis
 6. To install the python modules needed to work with PySisyphe, type at the command line: pip install -r requirements.txt
 
 Reinstall numpy package, to force version 1.26.4: pip install numpy==1.26.4.
+Ignore version conflict warnings. This has no effect on PySisyphe's operation.
 
 At this stage, all external and PySisyphe modules are installed for your own development.
 PySisyphe core (Sisyphe.core.<module name>) and widget (Sisyphe.widgets.<module name>) modules can be imported with: 
