@@ -75,7 +75,7 @@ Download
 
 Direct link to binary archives:
 - Windows x64 binary [PySisyphe 0.99.16 python 3.10 build 20-07-2026](https://mega.nz/file/Htc2hR4C#B7lrgB72e6x440SEPhNBPZUsHM4WEcFkFtAG130VD38)
-- Windows x64 binary [PySisyphe 0.99.16 python 3.12 build 20-07-2026](https://mega.nz/file/K9tgiS6L#I3lV6Z9sfRgKeQHLOQ7KrK5F8UkeTm0Esz-9R-PG1ZA)
+- Windows x64 binary [PySisyphe 1.01.14 python 3.12 build 20-07-2026](https://mega.nz/file/qoFkjC5A#aNasCmGt3dJ4agyoLKwjT4ZPLsRtWNjZwoogkNJGr6o)
 - MacOS 11+ x64 binary [PySisyphe 0.99.16 python 3.10 build 20-06-2026](https://mega.nz/file/jk0UwSyK#92Lvs-RnkXvrw3APZZ8W6Fg09y6dbW0qT14KvUOBPbY)
 - MacOS 11+ x64 binary [PySisyphe 0.99.16 python 3.12 build 20-06-2026](https://mega.nz/file/D5kEhA5R#yzHxCt499SUJDG-k5H_DqMXt3v5WxFRUFVCmfxNpyI0)
 - Linux Ubuntu 26.04 LTS x64 binary [PySisyphe 0.99.16 python 3.12 build 20-07-2026](https://mega.nz/file/70sESLQK#cFjqPsiWvV0LzmC4B4O-qb60Ih_IpieMipCmu-3n9zI)
