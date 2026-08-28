@@ -498,7 +498,10 @@ def saveBVec(filename: str,
     """
     if format == 'txtbyvec':
         filename = splitext(filename)[0] + '.bvec'
-        txt = ' '.join(['{0[0]} {0[1]} {0[2]}'.format(v) for v in bvec.values()])
+        # < Revision 23/07/2026
+        # txt = ' '.join(['{0[0]} {0[1]} {0[2]}'.format(v) for v in bvec.values()])
+        txt = ' '.join(['{0[0]} {0[1]} {0[2]}'.format(v) for v in bvec.values() if len(v) == 3])
+        # Revision 23/07/2026 >
         with open(filename, 'w') as f:
             f.write(txt)
     elif format == 'txtbydim':
@@ -506,7 +509,10 @@ def saveBVec(filename: str,
         values = list(bvec.values())
         with open(filename, 'w') as f:
             for i in range(3):
-                txt = ' '.join([str(v[i]) for v in values]) + '\n'
+                # < Revision 23/07/2026
+                # txt = ' '.join([str(v[i]) for v in values]) + '\n'
+                txt = ' '.join([str(v[i]) for v in values if len(v) == 3]) + '\n'
+                # Revision 23/07/2026 >
                 f.write(txt)
     elif format == 'xml':
         filename = splitext(filename)[0] + '.xbvec'
@@ -514,13 +520,23 @@ def saveBVec(filename: str,
         root = doc.createElement('xbvec')
         root.setAttribute('version', '1.0')
         doc.appendChild(root)
+        # < Revision 23/07/2026
+        if 'direction' in bvec: v = bvec['direction']
+        else: v = (1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
+        node = doc.createElement('direction')
+        root.appendChild(node)
+        v = [str(i) for i in v]
+        txt = doc.createTextNode(' '.join(v))
+        node.appendChild(txt)
+        # Revision 23/07/2026 >
         for k, v in bvec.items():
-            node = doc.createElement('bvector')
-            node.setAttribute('file', basename(k))
-            root.appendChild(node)
-            v = [str(i) for i in v]
-            txt = doc.createTextNode(' '.join(v))
-            node.appendChild(txt)
+            if k != 'direction':
+                node = doc.createElement('bvector')
+                node.setAttribute('file', basename(k))
+                root.appendChild(node)
+                v = [str(i) for i in v]
+                txt = doc.createTextNode(' '.join(v))
+                node.appendChild(txt)
         buffxml = doc.toprettyxml().encode()
         with open(filename, 'wb') as f:
             f.write(buffxml)
@@ -648,6 +664,12 @@ def loadBVec(filename: str,
                         v = node.firstChild.data
                         if v is None: v = [0.0, 0.0, 0.0]
                         r[node.getAttribute('file')] = [float(i) for i in v.split(' ')]
+                    # < Revision 23/07/2026
+                    elif node.nodeName == 'direction' and not numpy:
+                        v = node.firstChild.data
+                        if v is None: v = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+                        r['direction'] = [float(i) for i in v.split(' ')]
+                    # Revision 23/07/2026 >
                     node = node.nextSibling
             if numpy: r = array(list(r.values()))
             return r

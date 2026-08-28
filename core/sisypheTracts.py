@@ -44,6 +44,8 @@ from xml.dom import minidom
 from dipy.data import default_sphere
 # noinspection PyProtectedMember
 from dipy.data import small_sphere
+# noinspection PyProtectedMember
+# from dipy.data import get_sphere
 from dipy.io.streamline import load_tck
 from dipy.io.streamline import load_trk
 from dipy.io.streamline import load_vtk
@@ -103,7 +105,7 @@ from dipy.segment.metric import AveragePointwiseEuclideanMetric
 from dipy.core.gradients import gradient_table
 from dipy.core.gradients import GradientTable
 from dipy.core.gradients import reorient_bvecs
-from dipy.direction import peaks_from_model
+# from dipy.direction import peaks_from_model
 from dipy.reconst.dti import TensorModel
 from dipy.reconst.dti import TensorFit
 # < Revision 23/03/2026
@@ -135,6 +137,11 @@ from dipy.tracking.tracker import probabilistic_tracking
 from dipy.tracking.stopping_criterion import ActStoppingCriterion
 from dipy.tracking.stopping_criterion import BinaryStoppingCriterion
 from dipy.tracking.stopping_criterion import ThresholdStoppingCriterion
+# < Revision 31/07/2026
+from dipy.denoise.enhancement_kernel import EnhancementKernel
+from dipy.tracking.fbcmeasures import FBCMeasures
+# Revision 31/07/2026 >
+
 
 from Sisyphe.lib.dipy.streamline import cluster_confidence
 
@@ -189,8 +196,8 @@ from Sisyphe.core.sisypheROI import SisypheROI
 from Sisyphe.core.sisypheROI import SisypheROICollection
 from Sisyphe.core.sisypheMesh import SisypheMesh
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
-# from Sisyphe.lib.dipy.peaks import peaks_from_model
 from Sisyphe.gui.dialogWait import DialogWait
+from Sisyphe.lib.dipy.peaks import peaks_from_model
 
 # to avoid ImportError due to circular imports
 if TYPE_CHECKING:
@@ -3446,7 +3453,7 @@ class SisypheStreamlines(object):
     object -> SisypheStreamlines
 
     Creation: 26/10/2023
-    Last Revision: 19/06/2025
+    Last Revision: 25/08/2026
     """
 
     __slots__ = ['_index', '_ID', '_shape', '_spacing', '_bundles', '_streamlines',
@@ -5588,6 +5595,32 @@ class SisypheStreamlines(object):
             return stats
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
+    # < Revision 31/07/2026
+    # add bundleConherence method
+    def bundleCoherence(self) -> ndarray:
+        """
+        Computes the filter to bundle coherence (fcb). This index measures how coherent each fiber is with respect to
+        all the other fibers in the bundle. A spurious fiber is isolated from or poorly aligned with the bulk of the
+        tracks and is therefore unlikely to represent the underlying brain structure. Fibers with low coherence,
+        i.e., low fcb, can be classified as spurious. These outliers can be removed by thresholding on the fbc metric.
+
+        Returns
+        -------
+        numpy.ndarray
+            fiber to bundle coherence values
+        """
+        t = 1
+        D33 = 1.0
+        D44 = 0.02
+        k = EnhancementKernel(D33, D44, t)
+        # < Revision 25/08/2026
+        # fbc = FBCMeasures(self._streamlines, k)
+        fbc = FBCMeasures(self._streamlines, k, num_threads=-1)
+        # Revision 25/08/2026 >
+        rfbc = fbc.get_points_rfbc_thresholded(0, emphasis=0.01)[2]
+        return array(rfbc)
+    # Revision 31/07/2026 >
+
     def bundleClusterConfidence(self,
                                 mdf: int = 5,
                                 power: int = 1,
@@ -5618,7 +5651,7 @@ class SisypheStreamlines(object):
         Returns
         -------
         numpy.ndarray
-            cci
+            cci values
         """
         if bundle == 'all': bundle = self._bundles[0].getName()
         if bundle in self._bundles:
@@ -6120,6 +6153,57 @@ class SisypheStreamlines(object):
             r.appendTracts(tracts)
             return r, cci
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
+
+    # < Revision 25/08/2026
+    # add bundleFiberToBundleCoherenceFiltering method
+    def bundleFiberToBundleCoherenceFiltering(self,
+                                              fbcthreshold: float = 0.0125,
+                                              bundle: str = 'all') -> tuple[SisypheBundle, ndarray]:
+        """
+        Create a new bundle with streamlines of a bundle selected by a fiber to bundle coherence filtering.
+
+        Fiber to bundle coherence (FBC) measures how coherent each fiber is with respect to all the other fibers in
+        the bundle. A spurious fiber is isolated from or poorly aligned with the bulk of the tracks and is therefore
+        unlikely to represent the underlying brain structure. Fibers with low coherence, i.e., low FBC, can be
+        classified as spurious.
+
+        Reference: Improving Fiber Alignment in HARDI by Combining Contextual PDE Flow with Constrained Spherical
+        Deconvolution. Portegies J.M., Fick R.H.J., Sanguinetti G.R., Meesters P.L.S., Girard G., Duits R.
+        PLoS One 2015 Oct 14;10(10):e0138122. (https://pmc.ncbi.nlm.nih.gov/articles/PMC4605742/)
+
+        Parameters
+        ----------
+        fbcthreshold : float (optional)
+            FBC threshold used to select streamlines (between 0.0 and 1.0, default 0.0125)
+        bundle : str
+            bundle name or 'all' for all streamlines
+
+        Returns
+        -------
+        tuple[SisypheBundle, ndarray]
+            - SisypheBundle, indices of streamlines with fbc >= fbcthreshold
+            - ndarray, fbc values
+        """
+        if bundle == 'all': bundle = self._bundles[0].getName()
+        if bundle in self._bundles:
+            sl = self.getStreamlinesFromBundle(bundle)
+            t = 1
+            D33 = 1.0
+            D44 = 0.02
+            k = EnhancementKernel(D33, D44, t)
+            fbc = FBCMeasures(sl, k)
+            rfbc = fbc.get_points_rfbc_thresholded(0, emphasis=0.01)[2]
+            tracts = list()
+            bundle = self._bundles[bundle].getList()
+            # noinspection PyUnresolvedReferences
+            i: cython.int
+            for i in range(len(rfbc)):
+                if rfbc[i] >= fbcthreshold: tracts.append(bundle[i])
+            r = SisypheBundle()
+            r.appendTracts(tracts)
+            return r, rfbc
+        else: raise ValueError('{} invalid bundle name.'.format(bundle))
+    # Revision 25/08/2026 >
 
     def bundleMajorClusterCentroid(self, threshold: float = 10.0, bundle: str = 'all') -> Streamlines:
         """
@@ -7061,30 +7145,52 @@ class SisypheStreamlines(object):
             wait.setProgressRange(0, self.count() // 100)
         if mode == 'end': mode = 'either_end'
         elif mode not in ('any', 'all', 'end'): mode = 'any'
-        if tol is None or tol == 0.0: tol = sqrt((array(self._spacing) ** 2).sum())
+        if tol is None or tol == 0.0:
+            # < Revision 31/07/2026
+            # tol = sqrt((array(self._spacing) ** 2).sum())
+            tol = self._spacing[0] / 2.0
+            # Revision 31/07/2026 >
         if include is None: include = [True] * len(rois)
         # < Revision 03/04/2025
         incl: list = list()
         excl: list = list()
-        sp = array(self._spacing)
-        sp2 = sp / 2
+        # < Revision 31/07/2026
+        # sp = array(self._spacing)
+        sp2 = array(self._spacing) / 2
+        affine = diag(list(self._spacing) + [1.0])
+        density = [round(v / self._spacing[0]) for v in self._spacing]
         for i in range(rois.count()):
-            roi = rois[i].toIndexes(numpy=True)
-            roi = (roi * sp) + sp2
+            roi = seeds_from_mask(rois[i].getNumpy(defaultshape=False), affine=affine, density=density)
+            # roi = rois[i].toIndexes(numpy=True)
+            # roi = (roi * sp) + sp2
+            roi += sp2
             if include[i]: incl.append(roi)
             else: excl.append(roi)
+        # Revision 31/07/2026 >
         # noinspection PyUnresolvedReferences
         c: cython.int = 0
         r: list = list()
         for sl in self._streamlines:
             tag: bool = True
+            # < Revision 30/07/2026
+            if wait.getStopped(): break
+            # Revision 30/07/2026 >
             if len(excl) > 0:
                 for select in excl:
+                    # < Revision 30/07/2026
+                    QApplication.processEvents()
+                    # Revision 30/07/2026 >
                     if streamline_near_roi(sl, select, tol, mode=mode):
                         tag = False
                         break
+            # < Revision 30/07/2026
+            if wait.getStopped(): break
+            # Revision 30/07/2026 >
             if tag and len(incl) > 0:
                 for select in incl:
+                    # < Revision 30/07/2026
+                    QApplication.processEvents()
+                    # Revision 30/07/2026 >
                     if not streamline_near_roi(sl, select, tol, mode=mode):
                         tag = False
                         break
@@ -7187,13 +7293,57 @@ class SisypheStreamlines(object):
         r.setWholeBrainStatus(False)
         return r
 
+    # < Revision 31/07/2026
+    # add streamlinesFiberToBundleCoherenceFiltering method
+    def streamlinesFiberToBundleCoherenceFiltering(self,
+                                                   fbcthreshold: float = 0.0125) -> SisypheStreamlines | None:
+        """
+        Create a new bundle with streamlines selected by a fiber to bundle coherence filtering.
+
+        Fiber to bundle coherence (FBC) measures how coherent each fiber is with respect to all the other fibers in
+        the bundle. A spurious fiber is isolated from or poorly aligned with the bulk of the tracks and is therefore
+        unlikely to represent the underlying brain structure. Fibers with low coherence, i.e., low FBC, can be
+        classified as spurious.
+
+        Reference: Improving Fiber Alignment in HARDI by Combining Contextual PDE Flow with Constrained Spherical
+        Deconvolution. Portegies J.M., Fick R.H.J., Sanguinetti G.R., Meesters P.L.S., Girard G., Duits R.
+        PLoS One 2015 Oct 14;10(10):e0138122. (https://pmc.ncbi.nlm.nih.gov/articles/PMC4605742/)
+
+        Parameters
+        ----------
+        fbcthreshold : float (optional)
+            FBC threshold used to select streamlines (between 0.0 and 1.0, default 0.0125)
+
+        Returns
+        -------
+        SisypheStreamlines | None
+             selected streamlines
+        """
+        t = 1
+        D33 = 1.0
+        D44 = 0.02
+        k = EnhancementKernel(D33, D44, t)
+        fbc = FBCMeasures(self._streamlines, k)
+        rfbc = fbc.get_points_rfbc_thresholded(0, emphasis=0.01)[2]
+        slout = list()
+        for i in range(len(rfbc)):
+            if rfbc[i] >= fbcthreshold:
+                slout.append(self._streamlines[i])
+        if len(slout) > 0:
+            sl = SisypheStreamlines(Streamlines(slout))
+            sl.copyAttributesFrom(self)
+            sl.setWholeBrainStatus(False)
+            return sl
+        else: return None
+    # Revision 31/07/2026 >
+
     def streamlinesClusterConfidenceFiltering(self,
                                               mdf: int = 5,
                                               subsample: int = 12,
                                               power: int = 1,
                                               ccithreshold: float = 1.0) -> SisypheStreamlines | None:
         """
-        Create a new bundle with streamlines of a bundle selected by a clustering confidence algorithm. Computes the
+        Create a new bundle with streamlines selected by a clustering confidence algorithm. Computes the
         cluster confidence index (cci), which is an estimation of the support a set of streamlines gives to a
         particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to
         vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many
@@ -7228,7 +7378,8 @@ class SisypheStreamlines(object):
         # noinspection PyUnresolvedReferences
         i: cython.int
         for i in range(len(cci)):
-            if cci[i] >= ccithreshold: slout.append(self._streamlines[i])
+            if cci[i] >= ccithreshold:
+                slout.append(self._streamlines[i])
         if len(slout) > 0:
             sl = SisypheStreamlines(Streamlines(slout))
             sl.copyAttributesFrom(self)
@@ -7933,7 +8084,7 @@ class SisypheDiffusionModel(object):
     object -> SisypheDiffusionModel
 
     Creation: 27/10/2023
-    Last revisions: 11/07/2025
+    Last revisions: 28/07/2026
     """
 
     __slots__ = ['_bvals', '_bvecs', '_gtable', '_dwi', '_mask', '_mean', '_b0', '_ID', '_model', '_fmodel', '_spacing']
@@ -8190,7 +8341,8 @@ class SisypheDiffusionModel(object):
     def loadGradients(self,
                       bvalsfile: str,
                       bvecsfile: str,
-                      lpstoras: bool = False) -> None:
+                      lpstoras: bool = True,
+                      direction: ndarray = diag([1.0, 1.0, 1.0])) -> None:
         """
         Load gradient values/vectors attributes of the current SisypheDiffusionModel instance
         from text or XML files.
@@ -8201,8 +8353,10 @@ class SisypheDiffusionModel(object):
             gradients b values file name
         bvecsfile : str
             gradient direction vectors file name
-        lpstoras : bool
-            gradient reorientation if True, LPS+ (DICOM) to RAS+ conversion (flip x and y)
+        lpstoras : bool (optional)
+            gradient reorientation if True (default), LPS+ (DICOM) to RAS+ conversion (flip x and y)
+        direction : ndarray (optional)
+            image orientation matrix (default identity matrix) from dicom (0x020,0x037) ImageOrientationPatient field
         """
         if exists(bvalsfile):
             _, ext = splitext(bvalsfile)
@@ -8221,24 +8375,21 @@ class SisypheDiffusionModel(object):
                 bvecs = loadBVec(bvecsfile, format='xml', numpy=False)
                 filenames = list(bvecs.keys())
                 self.loadDWI(filenames)
+                # < Revision 27/07/2026
+                if 'direction' in bvecs:
+                    direction = array(bvecs['direction']).reshape(3,3)
+                    del bvecs['direction']
                 bvecs = array(list(bvecs.values()))
+                # Revision 27/07/2026 >
             else: raise IOError('invalid format {}.'.format(ext))
         else: raise IOError('no such file {}.'.format(basename(bvecsfile)))
-        # < Revision 08/04/2025
-        # LPS+ to RAS+ orientation conversion
-        if lpstoras:
-            t = diag([-1.0, -1.0, 1.0])
-            for i in range(bvecs.shape[0]):
-                v = bvecs[i]
-                v = t @ v
-                bvecs[i] = v
-        # Revision 08/04/2025 >
-        self.setGradients(bvals, bvecs)
+        self.setGradients(bvals, bvecs, lpstoras, direction)
 
     def setGradients(self,
                      bvals: ndarray,
                      bvecs: ndarray,
-                     lpstoras: bool = False) -> None:
+                     lpstoras: bool = True,
+                     direction: ndarray = diag([1.0, 1.0, 1.0])) -> None:
         """
         Set gradient values/vectors attributes of the current SisypheDiffusionModel instance
         from numpy.ndarray.
@@ -8249,8 +8400,10 @@ class SisypheDiffusionModel(object):
             gradients b values numpy.ndarray, shape(n, 1)
         bvecs : numpy.ndarray
             gradient direction vectors numpy.ndarray, shape(n, 3)
-        lpstoras : bool
-            gradient reorientation if True, LPS+ (DICOM) to RAS+ orientation convention (flip x and y)
+        lpstoras : bool (optional)
+            gradient reorientation if True (default), LPS+ (DICOM) to RAS+ orientation convention (flip x and y)
+        direction : ndarray (optional)
+            image orientation matrix (default identity matrix) from dicom (0x020,0x037) ImageOrientationPatient field
         """
         if bvecs.ndim != 2 or bvecs.shape[1] != 3:
             raise ValueError('invalid bvecs ndarray parameter shape.')
@@ -8262,11 +8415,15 @@ class SisypheDiffusionModel(object):
             raise ValueError('item count in bvals/bvecs and DWI image count is different.')
         # < Revision 08/04/2025
         # LPS+ to RAS+ orientation conversion
+        # & Image orientation correction
         if lpstoras:
             t = diag([-1.0, -1.0, 1.0])
             for i in range(bvecs.shape[0]):
                 v = bvecs[i]
-                v = t @ v
+                # < Revision 24/07/2026
+                # v = t @ v
+                v = t @ (direction.T @ v)
+                # Revision 24/07/2026 >
                 bvecs[i] = v
         # Revision 08/04/2025 >
         self._bvecs = bvecs
@@ -8777,7 +8934,11 @@ class SisypheDiffusionModel(object):
                     buff = node.firstChild.data
                     self._spacing = [float(v) for v in buff.split(' ')]
                 node = node.nextSibling
-            if bvals is not None and bvecs is not None: self.setGradients(bvals, bvecs)
+            if bvals is not None and bvecs is not None:
+                # < Revision 28/07/2026
+                # self.setGradients(bvals, bvecs)
+                self.setGradients(bvals, bvecs, lpstoras=False)
+                # Revision 28/07/2026 >
             # noinspection PyTypeChecker
             return attr
         else: raise IOError('XML file format is not supported.')
@@ -11428,7 +11589,7 @@ class SisypheTracking(object):
     object -> SisypheTracking
 
     Creation: 29/10/2023
-    Last revision: 03/07/2025
+    Last revision: 31/07/2026
     """
 
     __slots__ = ['_model', '_name', '_alg', '_density', '_seeds', '_stepsize', '_maxangle', '_npeaks',
@@ -11477,7 +11638,7 @@ class SisypheTracking(object):
     _stopping : ActStoppingCriterion | BinaryStoppingCriterion | ThresholdStoppingCriterion | None
     """
 
-    def __init__(self, model: SisypheDiffusionModel):
+    def __init__(self, model: SisypheDiffusionModel) -> None:
         """
         SisypheTracking instance constructor.
 
@@ -11542,7 +11703,7 @@ class SisypheTracking(object):
 
     # Public methods
 
-    def setBundleName(self, name: str):
+    def setBundleName(self, name: str) -> None:
         """
         Set the bundle name attribute of the current SisypheTracking instance.
 
@@ -11849,7 +12010,27 @@ class SisypheTracking(object):
         affine = diag(list(self._model.getSpacing()) + [1.0])
         return seeds_from_mask(self._seeds, affine, self._density)
 
-    def setNumberOfPeaks(self, v: int = 5):
+    # < Revision 24/07/2026
+    # add getSeedMask method
+    def getSeedMask(self) -> SisypheVolume:
+        """
+        Get mask of seeds from the current SisypheTracking instance.
+
+        Returns
+        -------
+        SisypheVolume
+            mask of seeds
+        """
+        if self._seeds is not None:
+            v = SisypheVolume()
+            v.copyFromNumpyArray(self._seeds, spacing=self._model.getSpacing(), defaultshape=False)
+            v.setID(self._model.getReferenceID())
+            v.acquisition.setSequenceToMask()
+            return v
+        else: raise AttributeError('Seed mask is not defined.')
+    # Revision 24/07/2026 >
+
+    def setNumberOfPeaks(self, v: int = 5) -> None:
         """
         Set the number of peaks attribute of the current SisypheTracking instance. Maximum number of odf peaks used by
         deterministic euler integration tracking algorithm.
@@ -11973,7 +12154,7 @@ class SisypheTracking(object):
         """
         sls = None
         affine = diag(list(self._model.getSpacing()) + [1.0])
-        seeds = seeds_from_mask(self._seeds, affine, density=self._density)
+        seeds = seeds_from_mask(self._seeds, affine=affine, density=self._density)
         l = int(self._minlength / self._stepsize)
         if l < 2: l = 2
         if wait is not None:
@@ -11985,45 +12166,58 @@ class SisypheTracking(object):
                 if isinstance(wait, DialogWait): wait.addInformationText('Peaks processing')
                 elif isinstance(wait, DictProxy): wait['msg'] = '{} tracking...\nPeaks processing'.format(self.getTrackingAlgorithmAsString())
             if isinstance(self._model, (SisypheDTIModel, SisypheDKIModel)):
+                # sphere = get_sphere(name='symmetric362')
+                sphere = small_sphere
                 peaks = peaks_from_model(model=self._model.getModel(),
                                          data=self._model.getDWI(),
-                                         sphere=small_sphere,
+                                         sphere=sphere,
                                          relative_peak_threshold=self._thresholdpeaks,
                                          min_separation_angle=self._anglepeaks,
                                          mask=self._model.getMask(),
-                                         sh_order_max=8,
-                                         sh_basis_type=None,
-                                         npeaks=2)
+                                         npeaks=2,
+                                         wait=wait)
             elif isinstance(self._model, (SisypheSHCSAModel, SisypheSHCSDModel)):
+                # sphere = get_sphere(name='symmetric362')
+                sphere = small_sphere
                 peaks = peaks_from_model(model=self._model.getModel(),
                                          data=self._model.getDWI(),
-                                         sphere=small_sphere,
+                                         sphere=sphere,
                                          relative_peak_threshold=self._thresholdpeaks,
                                          min_separation_angle=self._anglepeaks,
                                          mask=self._model.getMask(),
-                                         sh_order_max=8,
-                                         sh_basis_type=None,
-                                         npeaks=self._npeaks)
+                                         npeaks=self._npeaks,
+                                         wait=wait)
             elif isinstance(self._model, (SisypheDSIModel, SisypheDSIDModel)):
+                # sphere = get_sphere(name='repulsion724')
+                sphere = default_sphere
                 peaks = peaks_from_model(model=self._model.getModel(),
                                          data=self._model.getDWI(),
-                                         sphere=default_sphere,
+                                         sphere=sphere,
                                          relative_peak_threshold=self._thresholdpeaks,
                                          min_separation_angle=self._anglepeaks,
                                          mask=self._model.getMask(),
-                                         sh_order_max=8,
-                                         sh_basis_type=None,
-                                         npeaks=self._npeaks)
+                                         npeaks=self._npeaks,
+                                         wait=wait)
             else: raise TypeError('Invalid model type ({}).'.format(type(self._model)))
             if peaks is not None:
                 if wait is None:
+                    # < Revision 31/07/2026
+                    # sl = Streamlines(eudx_tracking(seeds,
+                    #                               self._stopping,
+                    #                               affine,
+                    #                               min_len=l,
+                    #                               step_size=self._stepsize,
+                    #                               max_angle=self._maxangle,
+                    #                               pam=peaks))
                     sl = Streamlines(eudx_tracking(seeds,
                                                    self._stopping,
                                                    affine,
                                                    min_len=l,
                                                    step_size=self._stepsize,
                                                    max_angle=self._maxangle,
-                                                   pam=peaks))
+                                                   pam=peaks,
+                                                   sphere=sphere))
+                    # Revision 31/07/2026 >
                 else:
                     # < Revision 03/07/2025
                     sl = None
@@ -12048,8 +12242,9 @@ class SisypheTracking(object):
                                                         affine,
                                                         min_len=l,
                                                         step_size=self._stepsize,
-                                                        max_angle=int(self._maxangle),
-                                                        pam=peaks))
+                                                        max_angle=self._maxangle,
+                                                        pam=peaks,
+                                                        sphere=sphere))
                         if sl is None: sl = bsl
                         else:
                             sl.extend(bsl)

@@ -308,7 +308,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 25/06/2026
+    Last revision: 30/07/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -423,7 +423,7 @@ class SisypheImage(object):
                '\tSpacing: {3[0]:.2f} {3[1]:.2f} {3[2]:.2f}\n' \
                '\tFOV: {4[0]:.1f} {4[1]:.1f} {4[2]:.1f}\n' \
                '\tOrigin: {5[0]:.1f} {5[1]:.1f} {5[2]:.1f}\n' \
-               '\tDirections:\n' \
+               '\tDirections (RAS+):\n' \
                '\t{6[0]:.1f} {6[1]:.1f} {6[2]:.1f}\n' \
                '\t{6[3]:.1f} {6[4]:.1f} {6[5]:.1f}\n' \
                '\t{6[6]:.1f} {6[7]:.1f} {6[8]:.1f}\n'.format(self.getDatatype(),
@@ -2053,14 +2053,14 @@ class SisypheImage(object):
         int
             code of the native orientation
         """
-        if self.isAnisotropic():
+        if self.isAnisotropic(1.5):
             s = self.getSpacing()
             return 3 - s.index(max(s))
         else: return 0  # Unspecified or 3D
 
     @cython.ccall
     @cython.returns(tuple)
-    def getNative2DOrientationAsString(self) -> tuple[str, str | None]:
+    def getNative2DOrientationAsString(self) -> tuple[str, str]:
         """
         Get the native orientation as str.
 
@@ -2071,7 +2071,18 @@ class SisypheImage(object):
             - second str, orientation 'Axial', 'Coronal' or 'Sagittal'
         """
         r = self.getNative2DOrientation()
-        if r == 0: return '3D', None
+        # < Revision 24/07/2026
+        # if r == 0: return '3D', none
+        if r == 0:
+            size = self.getSize()
+            if len(size) > 2:
+                if size[0] == size[1] == size[2]: return '3D', ''
+                elif size[0] == size[1]: return '3D', 'Axial'
+                elif size[0] == size[2]: return '3D', 'Coronal'
+                elif size[1] == size[2]: return '3D', 'Sagittal'
+                else: return '3D', ''
+            else: return 'Slice', ''
+        # Revision 24/07/2026 >
         elif r == 1: return '2D', 'Axial'
         elif r == 2: return '2D', 'Coronal'
         else: return '2D', 'Sagittal'
@@ -2422,6 +2433,7 @@ class SisypheImage(object):
     def getDirections(self) -> tuple[float, ...]:
         """
         Get vectors of image axes in RAS+ coordinates system.
+        Direction is represented by a matrix 3x3 passed as a 1D array in row-major form.
 
         PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy...) with origin to corner of the voxel:
 
@@ -2438,7 +2450,7 @@ class SisypheImage(object):
         Returns
         -------
         tuple[float, ...]
-            vectors of image axes
+            vectors of image axes in row-major form
         """
         if not self.isEmpty(): r = self._sitk_image.GetDirection()
         else:
@@ -2447,11 +2459,40 @@ class SisypheImage(object):
         if len(r) == 4: r = (r[0], r[1], 0.0, r[2], r[3], 0.0, 0.0, 0.0, 1.0)
         return r
 
+    # < Revision 22/07/2026
+    # add getDirectionMatrix method
     @cython.ccall
-    @cython.returns(object)
-    def getFirstVectorDirection(self) -> vectorFloat3:
+    @cython.returns(ndarray)
+    def getDirectionMatrix(self) -> ndarray:
+        """
+        Get matrix of image axes in RAS+ coordinates system.
+
+        PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy...) with origin to corner of the voxel:
+
+            - x, direction [1.0, 0.0, 0.0]: left(-) to right(+)
+            - y, direction [0.0, 1.0, 0.0]: posterior(-) to anterior(+)
+            - z, direction [0.0, 0.0, 1.0]: inferior(-) to superior(+)
+
+        Directions is a list of 9 float, 3 vectors of 3 floats:
+
+            - First vector, x-axis image direction, [1.0, 0.0, 0.0] (RAS+ default)
+            - Second vector, y-axis image direction, [0.0, 1.0, 0.0] (RAS+ default)
+            - Third vector, z-axis image direction, [0.0, 0.0, 1.0] (RAS+ default)
+
+        Returns
+        -------
+        ndarray
+            matrix of image axes
+        """
+        return array(self.getDirections()).reshape(3, 3)
+    # Revision 22/07/2026 >
+
+    @cython.ccall
+    @cython.returns(tuple)
+    def getFirstVectorDirection(self) -> tuple[float, float, float]:
         """
         Get first direction vector, x image axis in RAS+ coordinates system.
+        Direction is represented by a matrix 3x3 passed as a 1D array in row-major form.
 
         PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy...) with origin to corner of the voxel:
 
@@ -2471,16 +2512,26 @@ class SisypheImage(object):
             vector of the x-axis image
         """
         if not self.isEmpty():
-            return self._sitk_image.GetDirection()[0:3]
+            # < Revision 22/07/2026
+            # return self._sitk_image.GetDirection()[0:3]
+            m = self.getDirectionMatrix()
+            return tuple(m[:, 0])
+            # Revision 22/07/2026 >
         else:
-            if 'directions' in self._attr: return self._attr['directions'][0:3]
+            if 'directions' in self._attr:
+                # < Revision 22/07/2026
+                # return self._attr['directions'][0:3]
+                m = array(self._attr['directions']).reshape(3, 3)
+                return tuple(m[:, 0])
+                # Revision 22/07/2026 >
             else: return 0.0, 0.0, 0.0
 
     @cython.ccall
-    @cython.returns(object)
-    def getSecondVectorDirection(self) -> vectorFloat3:
+    @cython.returns(tuple)
+    def getSecondVectorDirection(self) -> tuple[float, float, float]:
         """
         Get second direction vector, y image axis in RAS+ coordinates system.
+        Direction is represented by a matrix 3x3 passed as a 1D array in row-major form.
 
         PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy...) with origin to corner of the voxel:
 
@@ -2499,16 +2550,27 @@ class SisypheImage(object):
         tuple[float, float, float]
             vector of the y-axis image
         """
-        if not self.isEmpty(): return self._sitk_image.GetDirection()[3:6]
+        if not self.isEmpty():
+            # < Revision 22/07/2026
+            # return self._sitk_image.GetDirection()[3:6]
+            m = self.getDirectionMatrix()
+            return tuple(m[:, 1])
+            # Revision 22/07/2026 >
         else:
-            if 'directions' in self._attr: return self._attr['directions'][3:6]
+            if 'directions' in self._attr:
+                # < Revision 22/07/2026
+                # return self._attr['directions'][3:6]
+                m = array(self._attr['directions']).reshape(3, 3)
+                return tuple(m[:, 1])
+                # Revision 22/07/2026 >
             else: return 0.0, 0.0, 0.0
 
     @cython.ccall
-    @cython.returns(object)
-    def getThirdVectorDirection(self) -> vectorFloat3:
+    @cython.returns(tuple)
+    def getThirdVectorDirection(self) -> tuple[float, float, float]:
         """
         Get third direction vector, z image axis in RAS+ coordinates system.
+        Direction is represented by a matrix 3x3 passed as a 1D array in row-major form.
 
         PySisyphe uses RAS+ world coordinates system convention (as MNI, Nibabel, Dipy...) with origin to corner of the voxel:
 
@@ -2527,9 +2589,19 @@ class SisypheImage(object):
         tuple[float, float, float]
             vector of the z-axis image
         """
-        if not self.isEmpty(): return self._sitk_image.GetDirection()[6:]
+        if not self.isEmpty():
+            # < Revision 22/07/2026
+            # return self._sitk_image.GetDirection()[6:]
+            m = self.getDirectionMatrix()
+            return tuple(m[:, 2])
+            # Revision 22/07/2026 >
         else:
-            if 'directions' in self._attr: return self._attr['directions'][6:]
+            if 'directions' in self._attr:
+                # < Revision 22/07/2026
+                # return self._attr['directions'][6:]
+                m = array(self._attr['directions']).reshape(3, 3)
+                return tuple(m[:, 1])
+                # Revision 22/07/2026 >
             else: return 0.0, 0.0, 0.0
 
     @cython.ccall
@@ -2537,7 +2609,8 @@ class SisypheImage(object):
     def setDirections(self, direction: list | tuple = tuple(getRegularDirections())) -> None:
         """
         Set vectors of image axes in RAS+ coordinates system. PySisyphe uses RAS+ world coordinates system convention
-        (as MNI, Nibabel, Dipy...) with origin to corner of the voxel.
+        (as MNI, Nibabel, Dipy...) with origin to corner of the voxel. Direction is represented by a matrix 3x3 passed
+        as a 1D array in row-major form.
 
             - x, direction [1.0, 0.0, 0.0]: left(-) to right(+)
             - y, direction [0.0, 1.0, 0.0]: posterior(-) to anterior(+)
@@ -2552,7 +2625,7 @@ class SisypheImage(object):
         Parameters
         ----------
         direction  tuple[float, ...]
-            9 elements, vectors of image axes
+            9 elements, vectors of image axes in row-major form
         """
         if not self.isEmpty():
             # < Revision 08/01/2026
@@ -5702,7 +5775,7 @@ class SisypheImage(object):
     # Revision 15/09/2024 >
 
     # < Revision 15/09/2024
-    # add flip method
+    # add getFlip method
     # noinspection PyTypeChecker
     @cython.ccall
     @cython.returns(object)
@@ -5725,6 +5798,401 @@ class SisypheImage(object):
             return SisypheImage(img)
         else: raise ValueError('Not implemented for multi-component images.')
     # Revision 15/09/2024 >
+
+    # < Revision 30/07/2026
+    # add getAbs method
+    @cython.ccall
+    @cython.returns(object)
+    def getAbs(self) -> SisypheImage:
+        """
+        Get the voxelwise abs() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import fabs
+        v = fabs(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSign method
+    @cython.ccall
+    @cython.returns(object)
+    def getSign(self) -> SisypheImage:
+        """
+        Get the voxelwise sign() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import sign
+        v = sign(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSqr method
+    @cython.ccall
+    @cython.returns(object)
+    def getSqr(self) -> SisypheImage:
+        """
+        Get the voxelwise square() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import square
+        v = square(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSqr method
+    @cython.ccall
+    @cython.returns(object)
+    def getSqrt(self) -> SisypheImage:
+        """
+        Get the voxelwise sqrt() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import sqrt
+        v = sqrt(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getExp method
+    @cython.ccall
+    @cython.returns(object)
+    def getExp(self) -> SisypheImage:
+        """
+        Get the voxelwise exp() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import exp
+        v = exp(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getExp2 method
+    @cython.ccall
+    @cython.returns(object)
+    def getExp2(self) -> SisypheImage:
+        """
+        Get the voxelwise exp2() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import exp2
+        v = exp2(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getLog method
+    @cython.ccall
+    @cython.returns(object)
+    def getLog(self) -> SisypheImage:
+        """
+        Get the voxelwise log() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import log
+        v = log(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getLog2 method
+    @cython.ccall
+    @cython.returns(object)
+    def getLog2(self) -> SisypheImage:
+        """
+        Get the voxelwise log2() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import log2
+        v = log2(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getLog10 method
+    @cython.ccall
+    @cython.returns(object)
+    def getLog10(self) -> SisypheImage:
+        """
+        Get the voxelwise log10() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import log10
+        v = log10(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSin method
+    @cython.ccall
+    @cython.returns(object)
+    def getSin(self) -> SisypheImage:
+        """
+        Get the voxelwise sin() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import sin
+        v = sin(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getCos method
+    @cython.ccall
+    @cython.returns(object)
+    def getCos(self) -> SisypheImage:
+        """
+        Get the voxelwise cos() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import cos
+        v = cos(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getTan method
+    @cython.ccall
+    @cython.returns(object)
+    def getTan(self) -> SisypheImage:
+        """
+        Get the voxelwise tan() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import tan
+        v = tan(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArcsin method
+    @cython.ccall
+    @cython.returns(object)
+    def getArcsin(self) -> SisypheImage:
+        """
+        Get the voxelwise arcsin() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import arcsin
+        v = arcsin(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArccos method
+    @cython.ccall
+    @cython.returns(object)
+    def getArccos(self) -> SisypheImage:
+        """
+        Get the voxelwise arccos() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import arccos
+        v = arccos(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArctan method
+    @cython.ccall
+    @cython.returns(object)
+    def getArctan(self) -> SisypheImage:
+        """
+        Get the voxelwise arctan() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import arctan
+        v = arctan(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSinh method
+    @cython.ccall
+    @cython.returns(object)
+    def getSinh(self) -> SisypheImage:
+        """
+        Get the voxelwise sinh() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import sinh
+        v = sinh(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getCosh method
+    @cython.ccall
+    @cython.returns(object)
+    def getCosh(self) -> SisypheImage:
+        """
+        Get the voxelwise cosh() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import cosh
+        v = cosh(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getTanh method
+    @cython.ccall
+    @cython.returns(object)
+    def getTanh(self) -> SisypheImage:
+        """
+        Get the voxelwise tanh() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import tanh
+        v = tanh(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArcsinh method
+    @cython.ccall
+    @cython.returns(object)
+    def getArcsinh(self) -> SisypheImage:
+        """
+        Get the voxelwise arcsinh() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import arcsinh
+        v = arcsinh(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArccosh method
+    @cython.ccall
+    @cython.returns(object)
+    def getArccosh(self) -> SisypheImage:
+        """
+        Get the voxelwise arccosh() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import arccosh
+        v = arccosh(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getRActanh method
+    @cython.ccall
+    @cython.returns(object)
+    def getArctanh(self) -> SisypheImage:
+        """
+        Get the voxelwise arctanh() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        from numpy import arctanh
+        v = arctanh(self._numpy_array)
+        return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getFloor method
+    @cython.ccall
+    @cython.returns(object)
+    def getFloor(self) -> SisypheImage:
+        """
+        Get the voxelwise floor() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        if self.isFloatDatatype:
+            from numpy import floor
+            v = floor(self._numpy_array)
+            return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+        else: return self
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getCeil method
+    @cython.ccall
+    @cython.returns(object)
+    def getCeil(self) -> SisypheImage:
+        """
+        Get the voxelwise ceil() of the current SisypheImage instance.
+
+        Returns
+        -------
+        SisypheImage
+        """
+        if self.isFloatDatatype:
+            from numpy import ceil
+            v = ceil(self._numpy_array)
+            return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
+        else: return self
+    # Revision 30/07/2026 >
 
     # < Revision 20/10/2024
     # add standardizeIntensity method, not yet tested

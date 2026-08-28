@@ -216,7 +216,7 @@ class SisypheVolume(SisypheImage):
     object -> SisypheImage -> SisypheVolume
 
     Creation: 04/02/2021
-    Last revisions: 25/06/2026
+    Last revisions: 30/07/2026
     """
     __slots__ = ['_ID', '_arrayID', '_filename', '_compression', '_identity', '_acquisition',
                  '_display', '_acpc', '_transforms', '_xdcm', '_slope', '_intercept', '_orientation']
@@ -493,11 +493,10 @@ class SisypheVolume(SisypheImage):
         buff: str = 'Array ID: {}\n'.format(self.getArrayID())
         buff += 'Transform ID: {}\n'.format(self.getID())
         buff += 'Filename: {}\n'.format(basename(self._filename))
+        buff += 'Native orientation: {}\n'.format(' '.join(self.getNative2DOrientationAsString()))
         buff += super().__str__()
-        buff += '\tOrientation: {}\n' \
-                '\tSlope: {}\n' \
-                '\tIntercept: {}\n'.format(self.getOrientationAsString(),
-                                           str(self._slope), str(self._intercept))
+        buff += '\tSlope: {}\n' \
+                '\tIntercept: {}\n'.format(str(self._slope), str(self._intercept))
         buff += str(self._identity)
         buff += str(self._acquisition)
         buff += str(self._display)
@@ -1449,6 +1448,20 @@ class SisypheVolume(SisypheImage):
             self._ID = ID
             self._transforms.setReferenceID(ID)
         else: raise TypeError('parameter type {} is not str or SisypheVolume.'.format(type(ID)))
+
+    # < Revision 28/07/2026
+    # add setDefaultID method
+    def setDefaultID(self) -> None:
+        """
+        Set the ID attribute of the current SisypheVolume instance to default (= Array ID).
+
+        There are two ID types:
+
+        - ID is a space ID, it is not unique, all volumes sharing a common space have the same ID. This attribute is used as key in the Sisyphe.core.sisypheTransform.SisypheTransforms instances
+        - Array ID, unique, calculated from scalar values (md5 algorithm). This cannot be edited.
+        """
+        self._ID = self._arrayID
+    # Revision 28/07/2026 >
 
     # < Revision 21/02/2025
     # add setICBM152ID method
@@ -3438,6 +3451,344 @@ class SisypheVolume(SisypheImage):
         if v.hasFilename(): v.setFilenamePrefix(prefix)
         return v
     # Revision 15/09/2024 >
+
+    # < Revision 30/07/2026
+    # add getAbs method
+    def getAbs(self) -> SisypheVolume:
+        """
+        Get the voxelwise abs() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getAbs())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSign method
+    def getSign(self) -> SisypheVolume:
+        """
+        Get the voxelwise sign() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getSign())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSqr method
+    def getSqr(self) -> SisypheVolume:
+        """
+        Get the voxelwise square() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getSqr())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSqr method
+    def getSqrt(self) -> SisypheVolume:
+        """
+        Get the voxelwise sqrt() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getSqrt())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getExp method
+    def getExp(self) -> SisypheVolume:
+        """
+        Get the voxelwise exp() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getExp())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getExp2 method
+    def getExp2(self) -> SisypheVolume:
+        """
+        Get the voxelwise exp2() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getExp2())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getLog method
+    def getLog(self) -> SisypheVolume:
+        """
+        Get the voxelwise log() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getLog())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getLog2 method
+    def getLog2(self) -> SisypheVolume:
+        """
+        Get the voxelwise log2() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getLog2())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getLog10 method
+    def getLog10(self) -> SisypheVolume:
+        """
+        Get the voxelwise log10() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getLog10())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSin method
+    def getSin(self) -> SisypheVolume:
+        """
+        Get the voxelwise sin() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getSin())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getCos method
+    def getCos(self) -> SisypheVolume:
+        """
+        Get the voxelwise cos() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getCos())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getTan method
+    def getTan(self) -> SisypheVolume:
+        """
+        Get the voxelwise tan() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getTan())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArcsin method
+    def getArcsin(self) -> SisypheVolume:
+        """
+        Get the voxelwise arcsin() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getArcsin())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArccos method
+    def getArccos(self) -> SisypheVolume:
+        """
+        Get the voxelwise arccos() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getArccos())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArctan method
+    def getArctan(self) -> SisypheVolume:
+        """
+        Get the voxelwise arctan() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getArctan())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getSinh method
+    def getSinh(self) -> SisypheVolume:
+        """
+        Get the voxelwise arcsinh() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getSinh())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getCosh method
+    def getCosh(self) -> SisypheVolume:
+        """
+        Get the voxelwise arccosh() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getCosh())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getTanh method
+    def getTanh(self) -> SisypheVolume:
+        """
+        Get the voxelwise arctanh() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getTanh())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArcsinh method
+    def getArcsinh(self) -> SisypheVolume:
+        """
+        Get the voxelwise arcsinh() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getArcsinh())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArccosh method
+    def getArccosh(self) -> SisypheVolume:
+        v = SisypheVolume(super().getArccosh())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getArctanh method
+    def getArctanh(self) -> SisypheVolume:
+        """
+        Get the voxelwise arccosh() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getArctanh())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getFloor method
+    def getFloor(self) -> SisypheVolume:
+        """
+        Get the voxelwise floor() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getFloor())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
+
+    # < Revision 30/07/2026
+    # add getCeil method
+    def getCeil(self) -> SisypheVolume:
+        """
+        Get the voxelwise ceil() of the current SisypheVolume instance.
+
+        Returns
+        -------
+        SisypheVolume
+        """
+        v = SisypheVolume(super().getCeil())
+        self.copyAttributesTo(v, display=False)
+        return v
+    # Revision 30/07/2026 >
 
     # < Revision 20/10/2024
     # add getStandardizeIntensity method, not yet tested

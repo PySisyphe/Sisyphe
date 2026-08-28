@@ -1177,7 +1177,7 @@ class SisypheROI(SisypheBinaryImage):
         optionally gzipped.
 
         Parameters
-        ---------
+        ----------
         v : bool
             compression is enabled if True
         """

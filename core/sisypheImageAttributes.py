@@ -1481,11 +1481,10 @@ class SisypheAcquisition(object):
          """
         txt = 'Acquisition:\n' \
               '\tModality: {}\n' \
-              '\tType: {}\n' \
               '\tSequence: {}\n' \
               '\tFrame: {}\n' \
               '\tUnit: {}\n' \
-              '\tDate of scan: {}\n'.format(self.getModality(True), self._type, self._sequence,
+              '\tDate of scan: {}\n'.format(self.getModality(True), self._sequence,
                                             self.getFrameAsString(), self._unit, self.getDateOfScan(True))
         if self.isStatisticalMap():
             txt += '\tDegrees of freedom: {}\n' \

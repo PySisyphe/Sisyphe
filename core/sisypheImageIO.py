@@ -356,26 +356,40 @@ def flipImageToVTKDirectionConvention(img: sitkImage) -> sitkImage:
     if isinstance(img, sitkImage):
         f = [False, False, False]
         d = np_array(img.GetDirection()).reshape(3, 3).round()
-        m = abs(d).argmax(axis=1)
+        # < Revision 21/07/2026
+        # m = abs(d).argmax(axis=1)
+        m = abs(d).argmax(axis=0)
+        # Revision 21/07/2026 >
         for i in range(3):
             # x dimension
             # flip if x direction (1 0 0)
             # x direction becomes (-1 0 0)
             if m[i] == 0:
-                if d[i, 0] == 1.0:
-                    f[i] = True
+                # < Revision 21/07/2026
+                # if d[i, 0] == 1.0:
+                # f[i] = True
+                if i == 2: f[i] = bool(d[0, i] == -1.0)
+                else: f[i] = bool(d[0, i] == 1.0)
+                # Revision 21/07/2026 >
             # y dimension
             # flip if y direction (0 1 0)
             # y direction becomes (0 -1 0)
             elif m[i] == 1:
-                if d[i, 1] == 1.0:
-                    f[i] = True
+                # < Revision 21/07/2026
+                # if d[i, 1] == 1.0:
+                # f[i] = True
+                if i == 2: f[i] = bool(d[1, i] == -1.0)
+                f[i] = bool(d[1, i] == 1.0)
+                # Revision 21/07/2026 >
             # z dimension
             # flip if direction (0 0 -1)
             # z direction becomes (0 0 1)
             else:
-                if d[i, 2] == -1.0:
-                    f[i] = True
+                # < Revision 21/07/2026
+                # if d[i, 2] == -1.0:
+                # f[i] = True
+                f[i] = bool(d[2, i] == -1.0)
+                # Revision 21/07/2026 >
         if any(f):
             img = sitkFlip(img, f)
         if QApplication.instance() is not None: QApplication.processEvents()
@@ -402,10 +416,17 @@ def convertImageToAxialOrientation(img: sitkImage) -> tuple[sitkImage, list[int]
     """
     if isinstance(img, sitkImage):
         d = np_array(img.GetDirection()).reshape(3, 3).round()
-        m = abs(d).argmax(axis=1)
-        m = [int(i) for i in list(m)]
+        # < Revision 21/07/2026
+        # m = abs(d).argmax(axis=1)
+        m = list(abs(d).argmax(axis=0))
+        # Revision 21/07/2026 >
+        # m = [int(i) for i in list(m)]
         if m != [0, 1, 2]:
+            # < Revision 21/07/2026
+            # img = sitkPermuteAxes(img, m)
+            m = [m.index(i) for i in range(3)]
             img = sitkPermuteAxes(img, m)
+            # Revision 21/07/2026 >
         if QApplication.instance() is not None: QApplication.processEvents()
         return img, m
     else: raise TypeError('image parameter type {} is not SimpleITK image class.'.format(type(img)))
@@ -1051,6 +1072,9 @@ def readFromDicomFilenames(filenames: list[str]) -> sitkImage:
     """
     if isinstance(filenames, list):
         r = sitkImageSeriesReader()
+        # < Revision 22/07/2026
+        r.MetaDataDictionaryArrayUpdateOn()
+        # Revision 22/07/2026 >
         r.SetFileNames(filenames)
         img = r.Execute()
         s = img.GetSize()
