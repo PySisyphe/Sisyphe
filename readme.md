@@ -41,7 +41,7 @@ List of available post-processings:
 - Time series realignment
 - Eddy current correction
 - Asymmetry analysis
-- Resampling
+- Resampling (volume, ROI, mesh, streamlines, target/trajectory tools)
 - KMeans segmentation
 - Prior-based tissue segmentation (gray matter, white matter, cerebro-spinal fluid)
 - Registration-based segmentation
