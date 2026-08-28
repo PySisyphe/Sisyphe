@@ -27,6 +27,7 @@ from multiprocessing import Process
 from time import time
 
 from numpy import array
+from numpy import eye
 from numpy import diag
 from numpy import copy
 from numpy import pad
@@ -1316,6 +1317,8 @@ class ProcessDeepMeningiomaSegmentation(Process):
     # Public methods
 
     def run(self):
+        pass
+        """
         from Sisyphe.lib.ams.brainer import standardize_numpy
         from Sisyphe.lib.ams.brainer import to_blocks_numpy
         x = standardize_numpy(self._t1)
@@ -1330,6 +1333,7 @@ class ProcessDeepMeningiomaSegmentation(Process):
         from Sisyphe.lib.ams.brainer import from_blocks_numpy
         seg = from_blocks_numpy(y, (256, 256, 256))
         self._result.put(seg)
+        """
 
 
 class ProcessDeepMetastasisSegmentation(Process):
@@ -1614,7 +1618,7 @@ class ProcessDiffusionModel(Process):
 
     Process -> ProcessDiffusionModel
 
-    Last revision: 14/04/2026
+    Last revision: 28/07/2026
     """
 
     # Special method
@@ -1636,8 +1640,11 @@ class ProcessDiffusionModel(Process):
     _mng        dict[str]
     _result     Queue
     """
-
-    def __init__(self, bval, bvec, model, method, order, maps, corr, algo, niter, size, save, mng, queue):
+    # < Revision 28/07/2026
+    # replace parameter corr with corr1
+    # add parameter corr2
+    def __init__(self, bval, bvec, model, method, order, maps,
+                 corr1, corr2, algo, niter, size, save, mng, queue):
         Process.__init__(self)
         self._fbval = bval
         self._fbvec = bvec
@@ -1645,13 +1652,17 @@ class ProcessDiffusionModel(Process):
         self._method = method
         self._order = order
         self._maps = maps
-        self._corr = corr
+        # < Revision 28/07/2026
+        self._corr1 = corr1
+        self._corr2 = corr2
+        # Revision 28/07/2026 >
         self._save = save
         self._algo = algo
         self._niter = niter
         self._size = size
         self._mng = mng
         self._result = queue
+    # Revision 28/07/2026 >
 
     # Public methods
 
@@ -1673,7 +1684,17 @@ class ProcessDiffusionModel(Process):
         if exists(self._fbvec):
             try:
                 from Sisyphe.core.sisypheDicom import loadBVec
-                bvecs = loadBVec(self._fbvec, format='xml', numpy=True)
+                # < Revision 27/07/2026
+                bvecs = loadBVec(self._fbvec, format='xml', numpy=False)
+                if 'direction' in bvecs:
+                    direction = array(bvecs['direction']).reshape(3, 3)
+                    del bvecs['direction']
+                else: direction = eye(3)
+                # < Revision 28/07/2026
+                if not self._corr2: direction = eye(3)
+                # Revision 28/07/2026 >
+                bvecs = array(list(bvecs.values()))
+                # Revision 27/07/2026 >
             except:
                 self._result.put('{} format is invalid.'.format(basename(self._fbvec)))
                 self.terminate()
@@ -1803,9 +1824,8 @@ class ProcessDiffusionModel(Process):
         if nd < ndim:
             self._result.put('Not enough diffusion-weighted images for the {} model (at least {}).'.format(self._model, ndim))
             self.terminate()
-        print(self._corr)
         # noinspection PyUnboundLocalVariable
-        model.setGradients(bvals, bvecs, lpstoras=self._corr)
+        model.setGradients(bvals, bvecs, lpstoras=self._corr1, direction=direction)
         model.setDWI(vols)
         # Mask processing
         self._mng['msg'] = 'mask processing...'
@@ -1954,6 +1974,22 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setSequence('PRINCIPAL')
                 v.setID(model.getReferenceID())
                 v.save()
+                # < Revision 30/07/2026
+                # components
+                suf = ('X', 'Y', 'Z')
+                lut = ('grdred', 'grdgreen', 'grdblue')
+                for i in range(len(lut)):
+                    vc = v.copyComponent(i)
+                    vc = vc.getAbs()
+                    vc.setFilename(filename)
+                    suffix = 'PRINCIPAL {}'.format(suf[i])
+                    vc.setFilenameSuffix(suffix)
+                    vc.acquisition.setModalityToOT()
+                    vc.acquisition.setSequence(suffix)
+                    vc.display.setLUT(lut[i])
+                    vc.setID(model.getReferenceID())
+                    vc.save()
+                # Revision 30/07/2026 >
             if evl:
                 self._mng['msg'] = 'Save diffusion tensor eigen values...'
                 v = model.getEigenValues()
@@ -2033,6 +2069,8 @@ class ProcessDiffusionTracking(Process):
     ~~~~~~~~~~~
 
     Process -> ProcessDiffusionTracking
+
+    Last revision: 24/07/2026
     """
 
     # Special method
@@ -2077,7 +2115,6 @@ class ProcessDiffusionTracking(Process):
     # Public methods
 
     def run(self):
-
         self._mng['msg'] = 'Open model {}...'.format(basename(self._model))
         from Sisyphe.core.sisypheTracts import SisypheDiffusionModel
         try: model = SisypheDiffusionModel.openModel(self._model, False, True, self._mng)
@@ -2126,6 +2163,13 @@ class ProcessDiffusionTracking(Process):
             else:
                 self._result.put('Invalid ROI size {}.'.format(rois[0].getSize()))
                 self.terminate()
+        # < Revision 24/07/2026
+        # Save seed mask
+        v = track.getSeedMask()
+        v.setFilename(self._model)
+        v.setFilenameSuffix('seed_mask')
+        v.save()
+        # Revision 24/07/2026 >
         if self._stopping['algo'] == 'FA/GFA':
             if self._stopping['threshold'] is None: self._stopping['threshold'] = 0.1
             track.setStoppingCriterionToFAThreshold(self._stopping['threshold'])

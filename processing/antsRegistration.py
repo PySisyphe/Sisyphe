@@ -154,7 +154,7 @@ class ProcessRegistration(Process):
             else:
                 self._result.put(r['fwdtransforms'][1])  # Affine trf
                 self._result.put(r['fwdtransforms'][0])  # Displacement field image
-                self._result.put(r['invtransforms'][1])  # Displacement field image
+                self._result.put(r['invtransforms'][1])  # Inverse displacement field image
                 # Remove temporary ants inverse affine transform
                 if exists(r['invtransforms'][0]):
                     if r['invtransforms'][0] != r['fwdtransforms'][1]:
