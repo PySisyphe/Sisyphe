@@ -46,7 +46,7 @@ List of available post-processings:
 - Prior-based tissue segmentation (gray matter, white matter, cerebro-spinal fluid)
 - Registration-based segmentation
 - Cortical thickness map
-- Deep learning segmentation (skull striping, hippocampus, medial temporal lobe, tumor, T1 hypo-intensity lesions, white matter hyper-intensities)
+- Deep learning segmentation (skull striping, focal cortical dysplasia, hippocampus, JHU MNI atlas parcellation, medial temporal lobe, T2*/SWI microbleeds, tissue segmentation GM/WM/CSF, tumor, T1 hypo-intensity lesions, white matter hyper-intensities)
 - fMRI analysis (model, contrast, conjunction...)
 - Time series analysis (ICA)
 - Quantitative MR: B0 map, B1 map, T1 map, T2/T2* map, T2' map, MTR map, QSM
