@@ -50,8 +50,7 @@ List of available post-processings:
 - fMRI analysis (model, contrast, conjunction...)
 - Time series analysis (ICA)
 - Quantitative MR: B0 map, B1 map, T1 map, T2/T2* map, T2' map, MTR map, QSM map
-- ASL DSC map
-- Dynamic susceptibility contrast MR perfusion maps
+- ASL DSC perfusion map, dynamic susceptibility contrast MR perfusion maps
 - Diffusion/tracking visualization and analysis tools (DTI, FWDTI, DKI, RUMBA, SHCSA, SHCSD, DSI, DSID models)
 
 The most common neuroimaging formats are imported/exported: DICOM (including RTSTRUCT and RTDOSE), Nifti, Nrrd, Minc, Brainvoyager, FreeSurfer, Vtk, Numpy.
