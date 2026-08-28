@@ -164,8 +164,8 @@
 <li><p><strong>Reduction metric</strong> combobox, to choose the reduction distance metric.</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><strong>mdf</strong>, minimum average Direct-Flip distance.</p></li>
-<li><p><strong>mam</strong>, mean average minimum distance.</p></li>
+<li><p><strong>mdf</strong>, minimum average Direct-Flip distance, it computes both the direct and flipped average Euclidean distances between corresponding points and takes the minimum value.</p></li>
+<li><p><strong>mam</strong>, mean average minimum distance, it calculates the average of the minimum Euclidean distances between points on two separate streamlines.</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -223,18 +223,32 @@
 <p>Left-click on a streamline in the orthogonal slice view to select it, and use the mouse wheel to move the cursor along its trajectory. To adjust the cursor sphere radius, left-click <a class="reference internal" href="_images/cursor.png"><img alt="cursor" src="_images/cursor.png" style="width: 32.0px; height: 32.0px;" /></a> in the icon bar.</p>
 <p>Left-click on a slice plane to select it, and use the mouse wheel to move it.</p>
 </dd>
-<dt><a class="reference internal" href="_images/filter.png"><img alt="filter" src="_images/filter.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to displays a settings dialog box to filter a bundle. Create a new bundle with streamlines of a bundle selected by a clustering confidence algorithm. Computes the cluster confidence index (cci), which is an estimation of the support a set of streamlines gives to a particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many streamlines voting for them. These outliers are removed by thresholding on the cci metric (see <a class="reference external" href="https://docs.dipy.org/stable/reference/dipy.tracking.html#cluster-confidence">Dipy Cluster_Confidence function</a>).</p>
+</dl>
+<p><a class="reference internal" href="_images/filter.png"><img alt="filter" src="_images/filter.png" style="width: 32.0px; height: 32.0px;" /></a></p>
+<blockquote>
+<div><p>Left-click shows a menu for selecting the filtering method: <strong>Cluster confidence</strong> or <strong>Fiber to bundle coherence</strong></p>
+<p><strong>1. Cluster confidence</strong></p>
+<p>It shows a dialog box for creating a new bundle with streamlines from a selected bundle, which is chosen by a clustering confidence algorithm. The cluster confidence index (cci) is an estimation of the support a set of streamlines gives to a particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many streamlines voting for them. These outliers are removed by thresholding on the cci metric (see <a class="reference external" href="https://docs.dipy.org/stable/reference/dipy.tracking.html#cluster-confidence">Dipy Cluster_Confidence function</a>).</p>
 <p>Dialog box options:</p>
 <ul class="simple">
 <li><p><strong>Minimal length</strong>, to set a length criterion for selecting streamlines of the bundle (in mm). No length selection by default (0.0).</p></li>
-<li><p><strong>Maximum MDF distance</strong>, maximum MDF distance (minimum average Direct-Flip distance in mm) that will be considered a “supporting” streamline and included in cci calculation (default 5 mm).</p></li>
-<li><p><strong>Cluster confidence threshold</strong></p></li>
+<li><p><strong>Maximum MDF distance</strong>, maximum MDF distance (minimum average Direct-Flip distance in mm) that will be considered a “supporting” streamline and included in cci calculation (default 5 mm). Minimum average Direct-Flip (MDF) computes both the direct and flipped average Euclidean distances between corresponding points and takes the minimum value.</p></li>
+<li><p><strong>Cluster confidence threshold</strong>, the Cluster Confidence Index (cci) evaluates the anatomical support of a streamline by counting the number of other nearby fibers. A fiber is considered nearby when its MDF distance exceeds a threshold (Maximum MDF). Descriptive <a class="reference internal" href="#tracking-section-statistics"><span class="std std-ref">statistics</span></a> can be calculated for the cluster confidence index to determine the threshold value.</p></li>
 <li><p><strong>Power</strong>, power to which the MDF distance for each streamline will be raised to determine how much it contributes to the cci. High values of power make the contribution value degrade much faster. e.g., a streamline with 5 mm MDF similarity contributes 1/5 to the cci if power is 1, but only contributes 1/5^2 = 1/25 if power is 2 (default 1).</p></li>
 <li><p><strong>Streamline sampling</strong>, bundle streamlines are subsampled with a fixed number of points.</p></li>
 <li><p><strong>Replace current bundle</strong></p></li>
 </ul>
-<p>A new filtered bundle is added to the list after processing with a default name, or replaces the original bundle if the <strong>Replace current bundle</strong> is checked.</p>
-</dd>
+<p><strong>2. Fiber to bundle coherence</strong></p>
+<p>It shows a dialog box for creating a new bundle with streamlines from a selected bundle, which is chosen by a fiber to bundle conherence algorithm. The fiber to bundle coherence (FBC) index is a measure used to quantify how well an individual fiber aligns with the other fibers belonging to the same bundle. It is a local measure of fiber consistency: a fiber receives a high score when its local orientation (i.e. angle between the local tangent directions of the two fibers) is similar to the orientations of nearby fibers in the same bundle, and a low score when it is an outlier (see <a class="reference external" href="https://docs.dipy.org/stable/examples_built/contextual_enhancement/fiber_to_bundle_coherence.html">Dipy fiber_to_bundle_coherence</a>). <strong>FCB processing is computationally intensive and proportional to the fiber count. It may take longer than 10 minutes.</strong></p>
+<p>Dialog box options:</p>
+<ul class="simple">
+<li><p><strong>Minimal length</strong>, to set a length criterion for selecting streamlines of the bundle (in mm). No length selection by default (0.0).</p></li>
+<li><p><strong>Fiber to bundle coherence</strong> threshold, default 0.0125. Descriptive <a class="reference internal" href="#tracking-section-statistics"><span class="std std-ref">statistics</span></a> can be calculated for the FCB index to determine the threshold value.</p></li>
+<li><p><strong>Replace current bundle</strong></p></li>
+</ul>
+<p>After processing, a new filtered bundle is added to the list with a default name. If the <strong>Replace current bundle</strong> option is selected, the new bundle replaces the original bundle.</p>
+</div></blockquote>
+<dl>
 <dt><a class="reference internal" href="_images/cluster.png"><img alt="cluster" src="_images/cluster.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a bundle clustering settings dialog box with the following options (see <a class="reference external" href="https://docs.dipy.org/stable/reference/dipy.segment.html#dipy.segment.clustering.QuickBundles">Dipy QuickBundles class</a>):</p>
 <ul class="simple">
 <li><p><strong>Metric</strong>, metric used for clustering: <strong>Average pointwise euclidean distance</strong>, <strong>Center of mass euclidean distance</strong>, <strong>mid-point euclidean distance</strong>, <strong>Length</strong>, <strong>Angle between vector endpoints</strong></p></li>
@@ -251,12 +265,35 @@
 </ul>
 <p>New centroid(s) is(are) added to the list after processing with default name(s).</p>
 </dd>
+</dl>
+<dl id="tracking-section-statistics">
 <dt><a class="reference internal" href="_images/statistics.png"><img alt="statistics" src="_images/statistics.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>To get statistics about checked bundle(s). Left-click shows a menu:</p>
 <ul class="simple">
 <li><p><strong>Cluster confidence statistics…</strong></p></li>
+</ul>
+<p>The cluster confidence index (cci) is an estimation of the support a set of streamlines gives to a particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many streamlines voting for them. These outliers are removed by thresholding on the cci metric (see <a class="reference external" href="https://docs.dipy.org/stable/reference/dipy.tracking.html#cluster-confidence">Dipy Cluster_Confidence function</a>).</p>
+<ul class="simple">
+<li><p><strong>Fiber to bundle coherence statistics…</strong></p></li>
+</ul>
+<p>The fiber to bundle coherence (FBC) index is a measure used to quantify how well an individual fiber aligns with the other fibers belonging to the same bundle. It is a local measure of fiber consistency: a fiber receives a high score when its local orientation (i.e. angle between the local tangent directions of the two fibers) is similar to the orientations of nearby fibers in the same bundle, and a low score when it is an outlier (see <a class="reference external" href="https://docs.dipy.org/stable/examples_built/contextual_enhancement/fiber_to_bundle_coherence.html">Dipy fiber_to_bundle_coherence</a>). FCB processing is computationally intensive and proportional to the fiber count. It may take longer than 10 minutes.</p>
+<ul class="simple">
 <li><p><strong>Length statistics…</strong></p></li>
 <li><p><strong>Mean curvature statistics…</strong></p></li>
+</ul>
+<p>The curvature c(t) at the position t along a streamline s is c(t) = norm(s’(t) x s’’(t)) / norm(s’(t)) ^ 3</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>s’(t) first derivative of s at the position t</p></li>
+<li><p>s’’(t) second derivative of s at the position t</p></li>
+<li><p>norm euclidean norm</p></li>
+<li><p>x cross product</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
 <li><p><strong>Cosine distance between end vectors statistics…</strong></p></li>
+</ul>
+<p>The cosine distance between two vector A and B is (A.B) / (norm(A) . norm(B))</p>
+<ul class="simple">
 <li><p><strong>Euclidean distance between end points statistics…</strong></p></li>
 </ul>
 <p>The statistics dialog box is occupied by a tabbed stack widget with two tabs:</p>

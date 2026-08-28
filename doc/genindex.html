@@ -255,10 +255,10 @@
         <li><a href="API2/api_widgets_single_view.html#Sisyphe.widgets.sliceViewWidgets.SliceROIViewWidget.addROI">(Sisyphe.widgets.sliceViewWidgets.SliceROIViewWidget method)</a>
 </li>
       </ul></li>
-      <li><a href="API/api_dicom.html#Sisyphe.core.sisypheDicom.ImportFromRTDose.addRTDoseFilename">addRTDoseFilename() (Sisyphe.core.sisypheDicom.ImportFromRTDose method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/api_dicom.html#Sisyphe.core.sisypheDicom.ImportFromRTDose.addRTDoseFilename">addRTDoseFilename() (Sisyphe.core.sisypheDicom.ImportFromRTDose method)</a>
+</li>
       <li><a href="API/api_dicom.html#Sisyphe.core.sisypheDicom.ImportFromRTStruct.addRTStructFilename">addRTStructFilename() (Sisyphe.core.sisypheDicom.ImportFromRTStruct method)</a>
 </li>
       <li><a href="API2/api_dialog_wait.html#Sisyphe.gui.dialogWait.DialogWait.addSimpleITKFilterIterationCommand">addSimpleITKFilterIterationCommand() (Sisyphe.gui.dialogWait.DialogWait method)</a>
@@ -343,15 +343,11 @@
 </li>
       <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.appendVolumeToLIFO">appendVolumeToLIFO() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
 </li>
-      <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.appendXSliceToLIFO">appendXSliceToLIFO() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
-</li>
-      <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.appendYSliceToLIFO">appendYSliceToLIFO() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
-</li>
-      <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.appendZSliceToLIFO">appendZSliceToLIFO() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
-</li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.applyAtlasTransformToStreamlines">applyAtlasTransformToStreamlines() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
       <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.applyInverseToPoint">applyInverseToPoint() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
+</li>
+      <li><a href="API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume.applySlopeIntercept">applySlopeIntercept() (Sisyphe.core.sisypheVolume.SisypheVolume method)</a>
 </li>
       <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.applyToPoint">applyToPoint() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
 </li>
@@ -431,9 +427,11 @@
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleClusterConfidenceStatistics">bundleClusterConfidenceStatistics() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
+      <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleClustering">bundleClustering() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleClustering">bundleClustering() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
+      <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleCoherence">bundleCoherence() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleCosineDistanceBetweenEndVectors">bundleCosineDistanceBetweenEndVectors() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
@@ -442,6 +440,8 @@
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleEuclideanDistanceBetweenEndPoints">bundleEuclideanDistanceBetweenEndPoints() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleFastClustering">bundleFastClustering() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
+</li>
+      <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleFiberToBundleCoherenceFiltering">bundleFiberToBundleCoherenceFiltering() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.bundleFromBundleModel">bundleFromBundleModel() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
@@ -2993,6 +2993,12 @@
 </li>
       <li><a href="API/api_constants.html#Sisyphe.core.sisypheConstants.getIntStdDatatypes">getIntStdDatatypes() (in module Sisyphe.core.sisypheConstants)</a>
 </li>
+      <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.getInverseDisplacementField">getInverseDisplacementField() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
+</li>
+      <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.getInverseSITKDisplacementFieldSITKImage">getInverseSITKDisplacementFieldSITKImage() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
+</li>
+      <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.getInverseSITKDisplacementFieldTransform">getInverseSITKDisplacementFieldTransform() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
+</li>
       <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.getInverseSITKTransform">getInverseSITKTransform() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
 </li>
       <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.getInverseTransform">getInverseTransform() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
@@ -3215,10 +3221,10 @@
         <li><a href="API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume.getMaskROI2">(Sisyphe.core.sisypheVolume.SisypheVolume method)</a>
 </li>
       </ul></li>
-      <li><a href="API2/api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.LutEditWidget.getMatplotlibLut">getMatplotlibLut() (Sisyphe.widgets.LUTWidgets.LutEditWidget method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API2/api_widgets_lut.html#Sisyphe.widgets.LUTWidgets.LutEditWidget.getMatplotlibLut">getMatplotlibLut() (Sisyphe.widgets.LUTWidgets.LutEditWidget method)</a>
+</li>
       <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.getMatrixColumn">getMatrixColumn() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
 </li>
       <li><a href="API/api_transform.html#Sisyphe.core.sisypheTransform.SisypheTransform.getMatrixDiagonal">getMatrixDiagonal() (Sisyphe.core.sisypheTransform.SisypheTransform method)</a>
@@ -3424,6 +3430,8 @@
       <li><a href="API/api_imageattributes.html#Sisyphe.core.sisypheImageAttributes.SisypheAcquisition.getNMSequences">getNMSequences() (Sisyphe.core.sisypheImageAttributes.SisypheAcquisition class method)</a>
 </li>
       <li><a href="API/api_dicom.html#Sisyphe.core.sisypheDicom.DicomUIDGenerator.getNMSOPClassUID">getNMSOPClassUID() (Sisyphe.core.sisypheDicom.DicomUIDGenerator class method)</a>
+</li>
+      <li><a href="API2/api_widgets_single_view.html#Sisyphe.widgets.abstractViewWidget.AbstractViewWidget.getNoActionFlag">getNoActionFlag() (Sisyphe.widgets.abstractViewWidget.AbstractViewWidget method)</a>
 </li>
       <li><a href="API/api_image.html#Sisyphe.core.sisypheImage.SisypheImage.getNonZeroMask">getNonZeroMask() (Sisyphe.core.sisypheImage.SisypheImage method)</a>
 
@@ -4128,6 +4136,8 @@
       <li><a href="API/api_settings.html#Sisyphe.core.sisypheSettings.SisypheSettings.getSectionsList">getSectionsList() (Sisyphe.core.sisypheSettings.SisypheSettings method)</a>
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTracking.getSeedCountPerVoxel">getSeedCountPerVoxel() (Sisyphe.core.sisypheTracts.SisypheTracking method)</a>
+</li>
+      <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTracking.getSeedMask">getSeedMask() (Sisyphe.core.sisypheTracts.SisypheTracking method)</a>
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTracking.getSeeds">getSeeds() (Sisyphe.core.sisypheTracts.SisypheTracking method)</a>
 </li>
@@ -10388,10 +10398,6 @@
 </li>
       <li><a href="API2/api_widgets_single_view.html#Sisyphe.widgets.sliceViewWidgets.SliceViewWidget">SliceViewWidget (class in Sisyphe.widgets.sliceViewWidgets)</a>
 </li>
-      <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.solid3DBrush">solid3DBrush() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
-</li>
-      <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.solidBrush">solidBrush() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
-</li>
       <li><a href="API/api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMeshCollection.sort">sort() (Sisyphe.core.sisypheMesh.SisypheMeshCollection method)</a>
 
       <ul>
@@ -10437,6 +10443,8 @@
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.streamlinesClusterConfidenceFiltering">streamlinesClusterConfidenceFiltering() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.streamlinesClustering">streamlinesClustering() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
+</li>
+      <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.streamlinesFiberToBundleCoherenceFiltering">streamlinesFiberToBundleCoherenceFiltering() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
       <li><a href="API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheStreamlines.streamlinesFromAtlas">streamlinesFromAtlas() (Sisyphe.core.sisypheTracts.SisypheStreamlines method)</a>
 </li>
@@ -10568,10 +10576,6 @@
 </li>
       <li><a href="API/api_statistics.html#Sisyphe.core.sisypheStatistics.tFieldExpectedVoxels">tFieldExpectedVoxels() (in module Sisyphe.core.sisypheStatistics)</a>
 </li>
-      <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.threshold3DBrush">threshold3DBrush() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
-</li>
-      <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.thresholdBrush">thresholdBrush() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
-</li>
       <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.thresholding">thresholding() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
 </li>
       <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROIDraw.thresholdingBlob">thresholdingBlob() (Sisyphe.core.sisypheROI.SisypheROIDraw method)</a>
@@ -10598,10 +10602,10 @@
 </li>
       <li><a href="API2/api_widgets_multiple_view.html#Sisyphe.widgets.multiViewWidgets.MultiViewWidget.toggleDisplay">toggleDisplay() (Sisyphe.widgets.multiViewWidgets.MultiViewWidget method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API2/api_widgets_settings.html#Sisyphe.widgets.functionsSettingsWidget.SettingsWidget.toggleSettingsVisibility">toggleSettingsVisibility() (Sisyphe.widgets.functionsSettingsWidget.SettingsWidget method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROI.toIndexes">toIndexes() (Sisyphe.core.sisypheROI.SisypheROI method)</a>
 </li>
       <li><a href="API/api_roi.html#Sisyphe.core.sisypheROI.SisypheROICollection.toLabelVolume">toLabelVolume() (Sisyphe.core.sisypheROI.SisypheROICollection method)</a>

@@ -99,6 +99,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-92-10-build-30-05-2026">version 0.92.10, build 30/05/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-96-24-build-20-06-2026">version 0.96.24, build 20/06/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-99-16-build-20-07-2026">version 0.99.16, build 20/07/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-01-14-build-20-09-2026">version 1.01.14, build 20/09/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -150,6 +151,7 @@
 <li><p><a class="reference internal" href="#build30-05-2026"><span class="std std-ref">version 0.92.10, build 30/05/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-06-2026"><span class="std std-ref">version 0.96.24, build 20/06/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-07-2026"><span class="std std-ref">version 0.99.16, build 20/07/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-09-2026"><span class="std std-ref">version 1.01.14, build 20/09/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -379,7 +381,7 @@
 <li><p>gui.dialogGenericResults.DialogGenericResults._getDataFrame()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace n by space of the dataFrame header row</p></li>
+<li><p>replace n with space of the dataFrame header row</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1196,7 +1198,7 @@
 <li><p>gui.dialogStatResult.DialogResult.setMap()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 1393, replace .setCursorOpacity(0.25) by .setLineOpacity(0.25)</p></li>
+<li><p>bug fix, line 1393, replace .setCursorOpacity(0.25) with .setLineOpacity(0.25)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1708,7 +1710,7 @@
 <li><p>widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2.setMoveOverlayOff()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 2530, replace widget.setMoveOverlayOff() by widget.setMoveOverlayFlag(False)</p></li>
+<li><p>bug fix, line 2530, replace widget.setMoveOverlayOff() with widget.setMoveOverlayFlag(False)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -1917,7 +1919,7 @@
 <li><p>core.sisypheImage.SisypheImage.getMin()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, lines 4042 &amp; 4055, returns std and not min, replace std(img) by img.min()</p></li>
+<li><p>bug fix, lines 4042 &amp; 4055, returns std and not min, replace std(img) with img.min()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2001,8 +2003,8 @@
 <li><p>widgets.abstractViewWidget.AbstractViewWidget._updateToolMenu()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, lines 1441, replace isinstance(tool, HandleWidget) by tool.GetObjectName() == ‘HandleWidget’</p></li>
-<li><p>bug fix, lines 1448, replace isinstance(tool, LineWidget) by tool.GetObjectName() == ‘LineWidget’</p></li>
+<li><p>bug fix, lines 1441, replace isinstance(tool, HandleWidget) with tool.GetObjectName() == ‘HandleWidget’</p></li>
+<li><p>bug fix, lines 1448, replace isinstance(tool, LineWidget) with tool.GetObjectName() == ‘LineWidget’</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2077,7 +2079,7 @@
 <li><p>gui.dialogSkullStripping.DialogSkullStripping.function()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 202, replace copyFromNumpyArray(mask) by copyFromNumpyArray(mask, spacing=s, defaultshape=False)</p></li>
+<li><p>bug fix, line 202, replace copyFromNumpyArray(mask) with copyFromNumpyArray(mask, spacing=s, defaultshape=False)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2683,7 +2685,7 @@
 <li><p>widgets.functionsSettingsWidget.SettingsWidget.__init__()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 345, replace self._button.clicked.connect(self.toggleSettingsVisibility) by self._button.clicked.connect(lambda _: self.toggleSettingsVisibility(True))</p></li>
+<li><p>line 345, replace self._button.clicked.connect(self.toggleSettingsVisibility) with self._button.clicked.connect(lambda _: self.toggleSettingsVisibility(True))</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -2976,7 +2978,7 @@
 <li><p>version.isNewerThan()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 100, replace &lt; by &gt; between current[2] and version[2]</p></li>
+<li><p>bug fix, line 100, replace &lt; with &gt; between current[2] and version[2]</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3487,7 +3489,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>add objstep parameter</p></li>
-<li><p>replace morphological operator iteration by the size of the structuring element</p></li>
+<li><p>replace morphological operator iteration with the size of the structuring element</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -3744,7 +3746,7 @@
 <li><p>gui.dialogDatatype.DialogEditID.execute()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 446, replace self._files.clear() by self._files.clearall()</p></li>
+<li><p>line 446, replace self._files.clear() with self._files.clearall()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -4581,7 +4583,7 @@
 <li><p>core.sisypheFiducialBox.SisypheFiducialBox._firstSliceSearch()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 562, replace minf &lt; buff[i] or buff[i] &gt; msup by buff[i] &lt; minf or buff[i] &gt; msup</p></li>
+<li><p>bug fix, line 562, replace minf &lt; buff[i] or buff[i] &gt; msup with buff[i] &lt; minf or buff[i] &gt; msup</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -4619,7 +4621,7 @@
 <li><p>widgets.sliceViewWidgets.SliceRegistrationViewWidget.getRegistrationBoxMaskArea()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 6311, replace ‘unit8’ by ‘uint8’</p></li>
+<li><p>bug fix, line 6311, replace ‘unit8’ with ‘uint8’</p></li>
 <li><p>bug fix, line 6322, add v.setFilename(self._volume.getFilename())</p></li>
 </ul>
 </div></blockquote>
@@ -4627,14 +4629,14 @@
 <li><p>widgets.attributesWidgets.ListToolAttributesWidget.duplicate()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, lines 5529,5569 &amp; 5599, replace addTrajectory(p1, p2, name) by addTrajectory(p1, p2, name=name)</p></li>
+<li><p>bug fix, lines 5529,5569 &amp; 5599, replace addTrajectory(p1, p2, name) with addTrajectory(p1, p2, name=name)</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.attributesWidgets.ItemToolAttributesWidget._nameChanged()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 1444, replace self._item.setName(self._name.getEditText()) by self._item.setName(name)</p></li>
+<li><p>bug fix, line 1444, replace self._item.setName(self._name.getEditText()) with self._item.setName(name)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -4711,7 +4713,7 @@
 <li><p>dialog.dialogSegmentation.DialogPriorBasedSegmentation.execute()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 1425, replace grey by gray</p></li>
+<li><p>line 1425, replace grey with gray</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -5031,7 +5033,7 @@
 <li><p>widgets.attributesWidgets.ListROIAttributesWidget.saveVTK()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace item by roi</p></li>
+<li><p>bug fix, replace item with roi</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -5135,7 +5137,7 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p>replace splash.close() by splash.hide()</p></li>
+<li><p>replace splash.close() with splash.hide()</p></li>
 <li><p>rebuild frozen version (pyinstaller)</p></li>
 </ul>
 </div></blockquote>
@@ -5233,7 +5235,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, cast to reference image datatype</p></li>
-<li><p>line 973, replace copyPropertiesFrom by copyAttributesFrom</p></li>
+<li><p>line 973, replace copyPropertiesFrom with copyAttributesFrom</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -5748,7 +5750,7 @@
 <li><p>widgets.multiViewWidgets.MultiViewWidget.setOverlayColorBar()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace volume colorbar by overlay color</p></li>
+<li><p>replace volume colorbar with overlay color</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -5869,14 +5871,14 @@
 <li><p>core.sisypheStatistics.SisypheDesign.addHRFBoxCarModelToCondition()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 3518, replace if ‘ ‘.join(name[1:]) == cond by if name[-1] == cond</p></li>
+<li><p>line 3518, replace if ‘ ‘.join(name[1:]) == cond with if name[-1] == cond</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>core.sisypheStatistics.SisypheDesign.addHighPassToCondition()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 3563, replace if ‘ ‘.join(name[1:]) == cond by if name[-1] == cond</p></li>
+<li><p>line 3563, replace if ‘ ‘.join(name[1:]) == cond with if name[-1] == cond</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -5923,14 +5925,14 @@
 <li><p>core.sisypheMesh.SisypheMesh.setDefaultFilename()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 635, replace self._name != ‘’: self.setDefaultName() by self._name == ‘’: self.setDefaultName()</p></li>
+<li><p>bug fix, line 635, replace self._name != ‘’: self.setDefaultName() with self._name == ‘’: self.setDefaultName()</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>core.sisypheMesh.SisypheMesh.createFromROI()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 2522, replace self.setDirname(roi.getDirname()) by self.saveAs(roi.getFilename())</p></li>
+<li><p>bug fix, line 2522, replace self.setDirname(roi.getDirname()) with self.saveAs(roi.getFilename())</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -5966,21 +5968,21 @@
 <li><p>gui.dialogFileSelection.DialogFileSelection.__init__()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 133, replace ok by self._ok, cancel by self._cancel</p></li>
+<li><p>line 133, replace ok with self._ok, cancel with self._cancel</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>gui.dialogFileSelection.DialogMultiFileSelection.__init__()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 224, replace ok by self._ok, cancel by self._cancel</p></li>
+<li><p>line 224, replace ok with self._ok, cancel with self._cancel</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>gui.dialogFileSelection.DialogFilesSelection.__init__()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 434, replace ok by self._ok, cancel by self._cancel</p></li>
+<li><p>line 434, replace ok with self._ok, cancel with self._cancel</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -5994,8 +5996,8 @@
 <li><p>gui.dialogWorkflow.WorkflowItem.setFilenames()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>line 968, replace setMoving(input1) by setMoving(input1, editable=False)</p></li>
-<li><p>line 968, replace setFixed(input1) by setFixed(input1, editable=False)</p></li>
+<li><p>line 968, replace setMoving(input1) with setMoving(input1, editable=False)</p></li>
+<li><p>line 968, replace setFixed(input1) with setFixed(input1, editable=False)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -6003,7 +6005,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>lines 164, 194, 587, 626, 665 and 704, add self._dialog._cancel.setFixedWidth(100)</p></li>
-<li><p>bug fix, line 268, replace k1 != ‘Radius’ by k1 not in (‘Radius’, ‘Batch’)</p></li>
+<li><p>bug fix, line 268, replace k1 != ‘Radius’ with k1 not in (‘Radius’, ‘Batch’)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -6264,7 +6266,7 @@
 <li><p>widgets.selectFileWidgets.FileSelectionWidget.open()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 2032, replace getDicomExt().append(‘’) by getDicomExt()</p></li>
+<li><p>bug fix, line 2032, replace getDicomExt().append(‘’) with getDicomExt()</p></li>
 <li><p>line 2056, new self._refxtools filter management</p></li>
 </ul>
 </div></blockquote>
@@ -6272,8 +6274,8 @@
 <li><p>widgets.selectFileWidgets.FilesSelectionWidget.add()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 4001, replace getDicomExt().append(‘’) by getDicomExt()</p></li>
-<li><p>bug fix, lines 3793, 3916 &amp; 4118, replace QFileDialog.getOpenFileName by QFileDialog.getOpenFileNames</p></li>
+<li><p>bug fix, line 4001, replace getDicomExt().append(‘’) with getDicomExt()</p></li>
+<li><p>bug fix, lines 3793, 3916 &amp; 4118, replace QFileDialog.getOpenFileName with QFileDialog.getOpenFileNames</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8006,7 +8008,7 @@
 <li><p>core.sisypheTracts.SisypheSHCSDModel.computeFitting()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace sh_order parameter name by sh_order_max</p></li>
+<li><p>replace sh_order parameter name with sh_order_max</p></li>
 <li><p>new parameter name since dipy v1.9</p></li>
 <li><p>required for dipy migration from version 1.11.0 to 1.12.0</p></li>
 </ul>
@@ -8015,7 +8017,7 @@
 <li><p>core.sisypheImageAttributes.SisypheAcquisition.getLBSequences()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, return replace tuple(cls._LBSEQUENCE) by return cls._LBSEQUENCE,</p></li>
+<li><p>bug fix, replace return tuple(cls._LBSEQUENCE) with return cls._LBSEQUENCE,</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8038,14 +8040,14 @@
 <div><ul class="simple">
 <li><p>pydicom bug: some DataElements have empty keywords</p></li>
 <li><p>work around the pydicom bug, detect empty keyword and create it from DataElement.name</p></li>
-<li><p>work around the pydicom bug, replace keyword by tag to extract DataElement from DataSet</p></li>
+<li><p>work around the pydicom bug, replace keyword with tag to extract DataElement from DataSet</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>core.sisypheVolume.SisypheVolumeCollection.remove()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix for int value type, line 4930, replace self.pop(self.index(value)) by self.pop(value)</p></li>
+<li><p>bug fix for int value type, line 4930, replace self.pop(self.index(value)) with self.pop(value)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8066,7 +8068,7 @@
 <li><p>core.sisypheROI.SisypheROICollection.toLabelVolume()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace roi = roi + self[i].getSITKImage() * i by roi = roi + self[i].getSITKImage() * (i + 1)</p></li>
+<li><p>bug fix, replace roi = roi + self[i].getSITKImage() * i with roi = roi + self[i].getSITKImage() * (i + 1)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8120,14 +8122,14 @@
 <li><p>gui.windowSisyphe.WindowSisyphe._openModel()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 2024, replace basename(filename)[0] by splitext(basename(filename))[0]</p></li>
+<li><p>bug fix, line 2024, replace basename(filename)[0] with splitext(basename(filename))[0]</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>gui.dialogStatContrast.DialogContrast.__init__()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 206, replace self._cfactors.addItem(‘Main factor’) by self._cfactors.addItem(‘Main’)</p></li>
+<li><p>bug fix, line 206, replace self._cfactors.addItem(‘Main factor’) with self._cfactors.addItem(‘Main’)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8276,35 +8278,35 @@
 <li><p>widgets.LUTWidgets.LutWidget._get_span_left()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()</p></li>
+<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] with self._span.get_x()</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.LUTWidgets.LutWidget._get_span_right()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()</p></li>
+<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] with self._span.get_x() + self._span.get_width()</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.LUTWidgets.LutWidget._set_span_left()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace span left update with self._span.set_x(x)</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.LUTWidgets.LutWidget._set_span_right()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())</p></li>
+<li><p>matplotlib migration to 3.10.8, replace span right update with self._span.set_width(x - self._span.get_x())</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.LUTWidgets.LutWidget._draw()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+<li><p>replace self._canvas.draw() with self._canvas.draw_idle()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8312,7 +8314,7 @@
 <li><p>widgets.LUTWidgets.LutEditWidget._onMouseMoveEvent()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+<li><p>replace self._canvas.draw() with self._canvas.draw_idle()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8325,7 +8327,7 @@
 <li><p>widgets.LUTWidgets.AlphaTransferWidget._onMenuClear()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+<li><p>replace self._canvas.draw() with self._canvas.draw_idle()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8334,14 +8336,14 @@
 <li><p>widgets.LUTWidgets.ComboBoxLut._addInternalLut()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) with lut = colormaps[name].resampled(256)</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.LUTWidgets.PopupMenuLut.getCurrentAsMatplotlibColormap()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) with lut = colormaps[name].resampled(256)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8350,8 +8352,8 @@
 <li><p>widgets.imageWidgets.ImagePreviewWidget.setLut()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace self._lut = get_cmap(lut, 256) by self._lut = colormaps[lut].resampled(256)</p></li>
-<li><p>matplotlib migration to 3.10.8, replace self._lut = get_cmap(‘gray’, 256) by self._lut = colormaps[‘gray’].resampled(256)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace self._lut = get_cmap(lut, 256) with self._lut = colormaps[lut].resampled(256)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace self._lut = get_cmap(‘gray’, 256) with self._lut = colormaps[‘gray’].resampled(256)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8360,16 +8362,16 @@
 <li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.cleanChart()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+<li><p>replace self._canvas.draw() with self._canvas.draw_idle()</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.updateSpan()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace left span update by self._span.set_x(self._first)</p></li>
-<li><p>matplotlib migration to 3.10.8, replace right span update by self._span.set_width(last - self._first)</p></li>
-<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+<li><p>matplotlib migration to 3.10.8, replace left span update with self._span.set_x(self._first)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace right span update with self._span.set_width(last - self._first)</p></li>
+<li><p>replace self._canvas.draw() with self._canvas.draw_idle()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8377,7 +8379,7 @@
 <li><p>widgets.sheetWidget.SheetChartWidget.properties()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+<li><p>replace self._canvas.draw() with self._canvas.draw_idle()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8385,35 +8387,35 @@
 <li><p>widgets.thresholdWidget.ThresholdViewWidget._onMouseMoveEvent()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace self._canvas.draw() by self._canvas.draw_idle()</p></li>
+<li><p>replace self._canvas.draw() with self._canvas.draw_idle()</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.thresholdWidget.ThresholdViewWidget._get_span_left()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()</p></li>
+<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] with self._span.get_x()</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.thresholdWidget.ThresholdViewWidget._get_span_right()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()</p></li>
+<li><p>matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] with self._span.get_x() + self._span.get_width()</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.thresholdWidget.ThresholdViewWidget._set_span_left()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)</p></li>
+<li><p>matplotlib migration to 3.10.8, replace span left update with self._span.set_x(x)</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>widgets.thresholdWidget.ThresholdViewWidget._set_span_right()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())</p></li>
+<li><p>matplotlib migration to 3.10.8, replace span right update with self._span.set_width(x - self._span.get_x())</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8421,7 +8423,7 @@
 <li><p>widgets.selectFileWidgets.FilesSelectionWidget.copySelectionTo()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace widget by widget._list</p></li>
+<li><p>bug fix, replace widget with widget._list</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8443,7 +8445,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, support for mosaics with dimensions other than 8 x 8</p></li>
-<li><p>line 1023, replace mosaic = ((v // 8) + 1) * 8 by mosaic = (int(sqrt(v)) + 1) ** 2</p></li>
+<li><p>line 1023, replace mosaic = ((v // 8) + 1) * 8 with mosaic = (int(sqrt(v)) + 1) ** 2</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -8458,7 +8460,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>add attribute ‘component’ for ‘vol’ node, to define single or multicomponent xvol selection</p></li>
-<li><p>bug fix, line 755, replace data = abspath(join(base, data)) by if base != ‘’: data = abspath(join(base, data))</p></li>
+<li><p>bug fix, line 755, replace data = abspath(join(base, data)) with if base != ‘’: data = abspath(join(base, data))</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9045,7 +9047,7 @@
 <li><p>gui.dialogDeepSegmentation.DialogDeepAtlasParcellation.execute()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace self._volumeSelect.clear() by self._volumeSelect.clearall()</p></li>
+<li><p>bug fix, replace self._volumeSelect.clear() with self._volumeSelect.clearall()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9059,7 +9061,7 @@
 <li><p>gui.dialogDicomDataset.DialogDicomDataset.setFilename()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace self._files.add(filename) by self._files.add(filename, signal=False)</p></li>
+<li><p>replace self._files.add(filename) with self._files.add(filename, signal=False)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9258,7 +9260,7 @@
 <li><p>widgets.fileBrowserWidget.FileBrowserWidget._open()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace self._mainWindow_openWorkflow(action) by self._mainWindow._openWorkflow(action)</p></li>
+<li><p>bug fix, replace self._mainWindow_openWorkflow(action) with self._mainWindow._openWorkflow(action)</p></li>
 <li><p>open the dataset of dicom file</p></li>
 <li><p>open the dataset of .xdcm file</p></li>
 </ul>
@@ -9267,8 +9269,8 @@
 <li><p>widgets.fileBrowserWidget.FileBrowserWidget._dirClicked()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace srcindex = self._filemodel2.setRootPath(path) by srcindex = self._filemodel2.index(path)</p></li>
-<li><p>this result in a dramatic improvement in the widget’s responsiveness (end of lags)</p></li>
+<li><p>replace srcindex = self._filemodel2.setRootPath(path) with srcindex = self._filemodel2.index(path)</p></li>
+<li><p>this result in a dramatic improvement in the widget’s responsiveness</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -9459,7 +9461,7 @@
 <li><p>core.sisypheDownload.installFromHost</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace copy by copy2</p></li>
+<li><p>replace copy with copy2</p></li>
 <li><p>remove try/except downloadFromHost(urls, temp, wait=wait)</p></li>
 </ul>
 </div></blockquote>
@@ -9473,7 +9475,7 @@
 </li>
 <li><p>core.sisypheDownload.updatePySisyphe</p>
 <blockquote>
-<div><p>-bug fix, replace filename = join(dst, ‘settings/host.xml’) by filename = abspath(join(dst, ‘settings’, ‘host.xml’))</p>
+<div><p>-bug fix, replace filename = join(dst, ‘settings/host.xml’) with filename = abspath(join(dst, ‘settings’, ‘host.xml’))</p>
 </div></blockquote>
 </li>
 </ul>
@@ -9883,7 +9885,7 @@
 <li><p>core.sisypheROI.SisypheROIDraw.popRedoLIFO()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace self._roi.getNumpy[:, :, item[1]] = buff by self._roi.getNumpy()[:, :, item[1]] = buff</p></li>
+<li><p>bug fix, replace self._roi.getNumpy[:, :, item[1]] = buff with self._roi.getNumpy()[:, :, item[1]] = buff</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -10095,7 +10097,7 @@
 <li><p>widgets.attributeWidgets.ListMeshAttributesWidget.saveXMLVTK()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, remove item and replace item by mesh</p></li>
+<li><p>bug fix, remove item and replace item with mesh</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -10570,14 +10572,14 @@
 <li><p>core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleFillHoles()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace self._dtrfillholes = v by return self._dtrfillholes</p></li>
+<li><p>bug fix, replace self._dtrfillholes = v with return self._dtrfillholes</p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p>core.sisypheROI.SisypheROIDraw.setROI()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace if self.hasVolume by if self.hasVolume()</p></li>
+<li><p>bug fix, replace if self.hasVolume with if self.hasVolume()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -10615,7 +10617,7 @@
 <li><p>core.sisypheROI.SisypheROIDraw.setBrushType()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace if 0 &lt;= brushtype &lt; 3 by if 0 &lt;= brushtype &lt; 4</p></li>
+<li><p>bug fix, replace if 0 &lt;= brushtype &lt; 3 with if 0 &lt;= brushtype &lt; 4</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -10630,9 +10632,9 @@
 <li><p>gui.dialogRegistration.DialogRegistration.execute()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, line 898, replace f.setTransform(trf) by f.setTransform(t)</p></li>
-<li><p>bug fix, line 910, replace afield = trf.getDisplacementField() by afield = t.getDisplacementField()</p></li>
-<li><p>replace t.saveDisplacementField(filename) by t.saveDisplacementField(filename, mvol.getOrigin())</p></li>
+<li><p>bug fix, line 898, replace f.setTransform(trf) with f.setTransform(t)</p></li>
+<li><p>bug fix, line 910, replace afield = trf.getDisplacementField() with afield = t.getDisplacementField()</p></li>
+<li><p>replace t.saveDisplacementField(filename) with t.saveDisplacementField(filename, mvol.getOrigin())</p></li>
 <li><p>add logger</p></li>
 </ul>
 </div></blockquote>
@@ -10640,7 +10642,7 @@
 <li><p>gui.dialogWait.DialogWaitRegistration.setAntsRegistrationProgress()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace nlevels = len(self._multir[0]) by nlevels = len(self._stages)</p></li>
+<li><p>replace nlevels = len(self._multir[0]) with nlevels = len(self._stages)</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -10679,7 +10681,7 @@
 <li><p>widgets.attributesWidgets.ListToolAttributesWidget.targets()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>bug fix, replace i by j in p = [p0[i] + r[i] for i in range(len(p0))]</p></li>
+<li><p>bug fix, replace i with j in p = [p0[i] + r[i] for i in range(len(p0))]</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -10693,7 +10695,932 @@
 <li><p>widgets.iconBarWidgets.IconBarWidget.setActionButtonAvailability()</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>replace if not v: self._icons[‘actions’].setVisible(v) by self._icons[‘actions’].setVisible(v)</p></li>
+<li><p>replace if not v: self._icons[‘actions’].setVisible(v) with self._icons[‘actions’].setVisible(v)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-1-01-14-build-20-09-2026">
+<span id="build20-09-2026"></span><h2>version 1.01.14, build 20/09/2026<a class="headerlink" href="#version-1-01-14-build-20-09-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_Versions.rst</p></li>
+<li><p>PySisyphe_Diffusion.rst</p></li>
+<li><p>PySisyphe_docktracking.rst</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated file</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/settings/functions.xml</p></li>
+<li><p>/settings/tooltips.xml</p></li>
+<li><p>/gui/lut/grdblue.xlut</p></li>
+<li><p>/gui/lut/grdgreen.xlut</p></li>
+<li><p>/gui/lut/grdred.xlut</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new module</strong></p>
+<blockquote>
+<div><ul>
+<li><p>lib.dipy.peaks</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dipy fork of the dipy.direction.peaks module</p></li>
+<li><p>add wait parameter to peaks_from_model() function for progress bar management</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>core.sisypheImageAttributes</p></li>
+<li><p>core.sisypheImageIO</p></li>
+<li><p>core.sisypheDicom</p></li>
+<li><p>core.sisypheTracts</p></li>
+<li><p>gui.dialogDicomImport</p></li>
+<li><p>gui.dialogDiffusionGradients</p></li>
+<li><p>gui.dialogDiffusionModel</p></li>
+<li><p>gui.dialogDiffusionBundle</p></li>
+<li><p>gui.dialogDiffusionTracking</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>processing.capturedStdoutProcessing</p></li>
+<li><p>widgets.toolbarThumbnail</p></li>
+<li><p>widgets.dicomWidgets</p></li>
+<li><p>widgets.imageWidgets</p></li>
+<li><p>widgets.multiComponentViewWidget</p></li>
+<li><p>widgets.tabToolsWidgets</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated functions</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImageIO.flipImageToVTKDirectionConvention()</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>bug fix</dt><dd><ul>
+<li><p>replace m = abs(d).argmax(axis=1) with m = abs(d).argmax(axis=0)</p></li>
+<li><p>replace d[i, 0] with d[0, i]</p></li>
+<li><p>replace d[i, 1] with d[1, i]</p></li>
+<li><p>replace d[i, 2] with d[2, i]</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageIO.convertImageToAxialOrientation()</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>bug fix</dt><dd><ul>
+<li><p>replace m = abs(d).argmax(axis=1) with m = abs(d).argmax(axis=0)</p></li>
+<li><p>add m = [m.index(i) for i in range(3)]</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageIO.readFromDicomFilenames()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add r.MetaDataDictionaryArrayUpdateOn()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDicom.saveBVec()</p></li>
+<li><p>core.sisypheDicom.loadBVec()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>management of the ‘direction’ key</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDicomImport.DialogDicomImport</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getDirectionsMatrix() method</p></li>
+<li><p>new getAbs() method</p></li>
+<li><p>new getSign() method</p></li>
+<li><p>update getFirstVectorDirection() method</p></li>
+<li><p>update getSecondVectorDirection() method</p></li>
+<li><p>update getThirdVectorDirection() method</p></li>
+<li><p>update getNative2DOrientation() method</p></li>
+<li><p>update getNative2DOrientationAsString() method</p></li>
+<li><p>update __str__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getAbs() method</p></li>
+<li><p>new getSign() method</p></li>
+<li><p>update __str__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __str__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheDiffusionModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update loadGradients() method</p></li>
+<li><p>update setGradients() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheTracking</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getSeedMask() method</p></li>
+<li><p>update computeTracking() method</p></li>
+<li><p>update parseXML() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheStreamlines</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new bundleCoherence() method</p></li>
+<li><p>new bundleFiberToBundleCoherenceFiltering() method</p></li>
+<li><p>new streamlinesFiberToBundleCoherenceFiltering() method</p></li>
+<li><p>update streamlinesRoiSelection() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDicomImport.DialogDicomImport</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update convert() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionGradients.DialogDiffusionGradients</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update save() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _updateBVals() method</p></li>
+<li><p>update _updateBVecs() method</p></li>
+<li><p>update _bvalsCleared() method</p></li>
+<li><p>update _bvecsCleared() method</p></li>
+<li><p>update multiExecute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionBundle.DialogStreamlinesROISelection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionBundle.DialogBundleFilteringSelection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionBundle.DialogStreamlinesFiltering</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new setAlgorithm() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionTracking.DialogDiffusionTracking</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _algoChanged() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update loadNifti() method</p></li>
+<li><p>update loadMinc() method</p></li>
+<li><p>update loadNrrd() method</p></li>
+<li><p>update loadVtk() method</p></li>
+<li><p>update loadSis() method</p></li>
+<li><p>update loadVmr() method</p></li>
+<li><p>update loadMgh() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDiffusionModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update run() metod</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.toolbarThumbnail.ToolBarThumbnail</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update addVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomFilesTreeWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _pathToDict() method</p></li>
+<li><p>update _verifySliceOrder() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheImageViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update displayInMultiComponentView() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update updateLut() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabTrackingWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _clearTractogram() method</p></li>
+<li><p>update dissection() method</p></li>
+<li><p>update atlas() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update open() method</p></li>
+<li><p>update saveDicomRT() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update addRoi() method</p></li>
+<li><p>update duplicate() method</p></li>
+<li><p>update addOverlay() method</p></li>
+<li><p>update filter() method</p></li>
+<li><p>update dilate() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update open() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new filterbcf() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update open() method</p></li>
+<li><p>update dissection() method</p></li>
+<li><p>update interactive() method</p></li>
+<li><p>update filter() method</p></li>
+<li><p>rename filter() method to filtercc()</p></li>
+<li><p>update cluster() method</p></li>
+<li><p>update centroid() method</p></li>
+<li><p>update toROI() method</p></li>
+<li><p>update toMesh() method</p></li>
+<li><p>update duplicate() method</p></li>
+<li><p>update dropEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new _updateToolTip() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new enterEvent() method</p></li>
+<li><p>update _colorChanged() method</p></li>
+<li><p>update _opacityChanged() method</p></li>
+<li><p>update _nameChanged() method</p></li>
+<li><p>update _updateSettingsFromItem() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _clearTransform() method</p></li>
+<li><p>update _move() method</p></li>
+<li><p>update _colorChanged() method</p></li>
+<li><p>update _opacityChanged() method</p></li>
+<li><p>update _nameChanged() method</p></li>
+<li><p>update _updateSettingsFromItem() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new enterEvent() method</p></li>
+<li><p>update _colorChanged() method</p></li>
+<li><p>update _opacityChanged() method</p></li>
+<li><p>update _nameChanged() method</p></li>
+<li><p>update _updateSettingsFromItem() method</p></li>
+<li><p>update properties() method</p></li>
+<li><p>update target() method</p></li>
+<li><p>update length() method</p></li>
+<li><p>update moving() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new enterEvent() method</p></li>
+<li><p>_opacityChanged() method</p></li>
+<li><p>_nameChanged() method</p></li>
+<li><p>_widthChanged() method</p></li>
+<li><p>_editColor() method</p></li>
+<li><p>_updateSettingsFromItem() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage.getAbs()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSign()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSqr()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSqrt()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getExp()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getExp2()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getLog()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getLog2()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getLog10()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSin()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getCos()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getTan()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArcsin()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArccos()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArctan()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSinh()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getCosh()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getTanh()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArcsinh()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArccosh()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArctanh()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getFloor()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getCeil()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get a new SisypheImage calculated using a numpy function</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getDirectionsMatrix()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get matrix of image axes in RAS+ coordinates system</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.getAbs()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getSign()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getSqr()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getSqrt()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getExp()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getExp2()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getLog()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getLog2()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getLog10()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getSin()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getCos()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getTan()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getArcsin()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getArccos()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getArctan()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getSinh()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getCosh()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getTanh()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getArcsinh()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getArccosh()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getArctanh()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getFloor()</p></li>
+<li><p>core.sisypheVolume.SisypheVolume.getCeil()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get a new SisypheVolume calculated using a numpy function</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.setDefaultID()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set ID to default (= Array ID)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheTracking.getSeedMask()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get seed mask</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheStreamlines.bundleCoherence()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>streamlines fiber to bundle coherence</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheStreamlines.bundleFiberToBundleCoherenceFiltering()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>streamlines selection by a fiber to bundle coherence filtering</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheStreamlines.streamlinesFiberToBundleCoherenceFiltering()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>streamlines selection by a fiber to bundle coherence filtering</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionBundle.DialogStreamlinesFiltering.setAlgorithm()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>show/hide parameters based on algorithm (cluster confidence or fiber to bundle coherence)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget._updateToolTip()</p></li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget._updateToolTip()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget._updateToolTip()</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget._updateToolTip()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>method to update tooltip str</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget.enterEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>call method to update tooltip str</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.enterEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>call method to update tooltip str</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget.enterEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>call method to update tooltip str</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.filterbcf()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>fiber to bundle coherence filtering</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage.getFirstVectorDirection()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSecondVectorDirection()</p></li>
+<li><p>core.sisypheImage.SisypheImage.getThirdVectorDirection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, returns columns rather than rows from the direction matrix</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getNative2DOrientation()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self.isAnisotropic() with self.isAnisotropic(1.5)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getNative2DOrientationAsString()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace return value with tuple[str, str]</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.__str__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace ‘tDirections:n’ with ‘tDirections (RAS+):n’</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.__str__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update native orientation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove orientation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheDiffusionModel.loadGradients()</p></li>
+<li><p>core.sisypheTracts.SisypheDiffusionModel.setGradients()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add direction parameter</p></li>
+<li><p>direction correction of gradients</p></li>
+<li><p>replace v = t &#64; v with v = t &#64; (direction.T &#64; v)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheTracking.computeTracking()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait parameter to peaks_from_model()</p></li>
+<li><p>bug fix, related to dipy upgrade, line 12071, add sphere parameter to eudx_tracking()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheTracking.parseXML()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self.setGradients(bvals, bvecs) with self.setGradients(bvals, bvecs, lpstoras=False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTracts.SisypheStreamlines.streamlinesRoiSelection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace tol = sqrt((array(self._spacing) ** 2).sum()) with tol = self._spacing[0] / 2.0</p></li>
+<li><p>use seeds_from_mask() function instead of to_indexes()</p></li>
+<li><p>take into account anisotropic voxel (density paramter used by seeds_from_mask function)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDicomImport.DialogDicomImport.convert()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add suffix number if save name exists (no file overwriting)</p></li>
+<li><p>add direction in bvec dict</p></li>
+<li><p>copy direction if mosaic</p></li>
+<li><p>replace saveBVec(bsavename, bvec, format=’txt’) with saveBVec(bsavename, bvec, format=’txtbyvec’)</p></li>
+<li><p>add vol.setDefaultID()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionGradients.DialogDiffusionGradients.save()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save direction (default or calculate from xdcm file)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel._updateBVals()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add if ‘direction’ in v2: del v2[‘direction’]</p></li>
+<li><p>bug fix, add if not self._bvals.isEmpty():</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel._updateBVecs()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add if ‘direction’ in v1: del v1[‘direction’]</p></li>
+<li><p>bug fix, add if not self._bvecs.isEmpty():</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel._bvalsCleared()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>clear bvecs</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel._bvecsCleared()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>clear bvals</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel.multiExecute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add direction correction of gradient vectors</p></li>
+<li><p>save principal x, y and z volumes</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionBundle.DialogStreamlinesROISelection.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>change to the dialog box design</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionBundle.DialogBundleFilteringSelection</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._settings.setParameterVisibility(‘FCB’, False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionTracking.DialogDiffusionTracking._algoChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bg fix, display deterministic Euler EuDX fields</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.loadNifti()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.loadMinc()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.loadNrrd()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.loadVtk()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.loadSis()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.loadVmr()</p></li>
+<li><p>gui.windowSisyphe.WindowSisyphe.loadMgh()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.hide() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDiffusionModel.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace corr parameter with corr1</p></li>
+<li><p>add parameter corr2 for direction correction</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDiffusionModel.run()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add direction correction of gradient vectors</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.toolbarThumbnail.ToolBarThumbnail.addVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace if vol.hasFilename: with if vol.hasFilename():</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace glob(join(self._path[-1], flt), recursive=True) with glob(join(abspath(self._path[-1]), flt), recursive=True)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.dicomWidgets.DicomFilesTreeWidget._verifySliceOrder()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace ImagePositionPatient (0x0020, 0x0032) with SliceLocation (0x0020, 0x1041) to sort dicom files</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheImageViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace s[0] != s[1]: aspect = s[1] / s[2] with s[0] != s[1]: aspect = s[1] / s[0]</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInMultiComponentView()</p>
+<blockquote>
+<div><p>– bug fix, replace if self._action[‘components’].isChecked() with self._action[‘multi’].isChecked()</p>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.updateLut()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, add if self._views[k].hasVolume():</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabTrackingWidget._clearTractogram()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, add self._file.clear(signal=False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabTrackingWidget.dissection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.close() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabTrackingWidget.atlas()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>move wait.close() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget.open()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.hide() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListROIAttributesWidget.saveDicomRT()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.close() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.addRoi()</p></li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.dilate()</p></li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.erode()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.hide() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.duplicate()</p></li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.addOverlay()</p></li>
+<li><p>widgets.attributesWidgets.ListMeshAttributesWidget.filter()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.close() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.open()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.hide() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.open()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.dissection()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.filter()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.cluster()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.toROI()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.toMesh()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.dropEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.hide() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.interactive()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.centroid()</p></li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.duplicate()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait.close() before displaying messageBox</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListBundleAttributesWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add QMenu (self._popupFilter) to filter button (self._filter)</p></li>
+<li><p>add QAction self._action[‘filter1’] to QMenu self._popupFilter</p></li>
+<li><p>add QAction self._action[‘filter2’] to QMenu self._popupFilter</p></li>
+<li><p>add self._action[‘filter1’].triggered.connect(self.filtercc)</p></li>
+<li><p>add self._action[‘filter2’].triggered.connect(self.filterbcf)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget._colorChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget._opacityChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget._nameChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemROIAttributesWidget._updateSettingsFromItem()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._updateToolTip()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget._clearTransform()</p></li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget._move()</p></li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget._colorChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget._opacityChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget._nameChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemMeshAttributesWidget._updateSettingsFromItem()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._updateToolTip()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget._colorChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget._opacityChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget._nameChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget._updateSettingsFromItem()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.properties()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.target()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.length()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.moving()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._updateToolTip()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget._opacityChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget._nameChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget._widthChanged()</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget._editColor()</p></li>
+<li><p>widgets.attributesWidgets.ItemBundleAttributesWidget._updateSettingsFromItem()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._updateToolTip()</p></li>
 </ul>
 </div></blockquote>
 </li>

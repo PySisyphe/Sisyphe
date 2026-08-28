@@ -79,9 +79,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#diffusion-model">Diffusion model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diffusion-analysis-along-perivascular-space">Diffusion analysis along perivascular space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tractogram-generation">tractogram generation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#roi-based-streamlines-selection">ROI based streamlines selection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#filter-based-streamlines-selection">Filter based streamlines selection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#template-based-streamlines-selection">Template based streamlines selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#roi-based-streamline-selection">ROI based streamline selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filter-based-streamline-selection">Filter based streamline selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#template-based-streamline-selection">Template based streamline selection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#density-map">Density map</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#path-length-map">Path length map</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#connectivity-matrix">Connectivity matrix</a></li>
@@ -129,9 +129,9 @@
 <li><p><a class="reference internal" href="#menu-section-tractogram"><span class="std std-ref">tractogram generation</span></a></p></li>
 <li><dl class="simple">
 <dt>Bundle &gt;</dt><dd><ul>
-<li><p><a class="reference internal" href="#menu-section-roisel"><span class="std std-ref">ROI based streamlines selection</span></a></p></li>
-<li><p><a class="reference internal" href="#menu-section-filtersel"><span class="std std-ref">Filter based streamlines selection</span></a></p></li>
-<li><p><a class="reference internal" href="#menu-section-templatesel"><span class="std std-ref">Template based streamlines selection</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-roisel"><span class="std std-ref">ROI based streamline selection</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-filtersel"><span class="std std-ref">Filter based streamline selection</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-templatesel"><span class="std std-ref">Template based streamline selection</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-density"><span class="std std-ref">Density map</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-path"><span class="std std-ref">Path length map</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-connectivity"><span class="std std-ref">Connectivity matrix</span></a></p></li>
@@ -239,7 +239,8 @@
 </dd>
 </dl>
 </li>
-<li><p>Check the <strong>Gradient orientation conversion</strong> option to take into account orientation convention discrepancies between PySisyphe (RAS+) and Dicom (LPS+).</p></li>
+<li><p>Check the <strong>Orientation correction</strong> option to take into account orientation convention discrepancies between PySisyphe (RAS+) and Dicom (LPS+).</p></li>
+<li><p>Check the <strong>Direction correction</strong> option to adjust the gradient vectors according to the image orientation using the DICOM (0x020, 0x037) “ImageOrientationPatient” field.</p></li>
 <li><p>Check the <strong>Save model</strong> option to save the fitted model to a PySisyphe diffusion model XML file (.xmodel).</p></li>
 </ul>
 <p>Toggle <strong>DTI model…</strong> button to show/hide DTI parameters:</p>
@@ -385,8 +386,8 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
 <p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
-<section id="roi-based-streamlines-selection">
-<span id="menu-section-roisel"></span><h2>ROI based streamlines selection<a class="headerlink" href="#roi-based-streamlines-selection" title="Link to this heading"></a></h2>
+<section id="roi-based-streamline-selection">
+<span id="menu-section-roisel"></span><h2>ROI based streamline selection<a class="headerlink" href="#roi-based-streamline-selection" title="Link to this heading"></a></h2>
 <p>This menu is used to perform virtual dissection (i.e. streamline selection) of a tractogram using inclusion ROI(s). PySisyphe uses the <a class="reference external" href="https://docs.dipy.org/dev/examples_built/streamline_analysis/streamline_tools.html">Dipy</a> library implemenentation.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget a the top to select a PySisyphe XML <strong>Tractogram</strong> file (.xtracts). This file is calculated from the <a class="reference internal" href="#menu-section-tractogram"><span class="std std-ref">tractogram generation</span></a> menu.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget, under the previous, to select the PySisyphe ROI(s) (.xroi) used for virtual dissection.</p>
@@ -408,16 +409,16 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
 <p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
-<section id="filter-based-streamlines-selection">
-<span id="menu-section-filtersel"></span><h2>Filter based streamlines selection<a class="headerlink" href="#filter-based-streamlines-selection" title="Link to this heading"></a></h2>
+<section id="filter-based-streamline-selection">
+<span id="menu-section-filtersel"></span><h2>Filter based streamline selection<a class="headerlink" href="#filter-based-streamline-selection" title="Link to this heading"></a></h2>
 <p>This menu is used to perform streamline selection of a tractogram using filtering. Streamlines are selected by a clustering confidence algorithm. The cluster confidence index (cci) is an estimation of the support a set of streamlines gives to a particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many streamlines voting for them. These outliers can be removed by thresholding on the cci metric. PySisyphe uses the <a class="reference external" href="https://docs.dipy.org/stable/reference/dipy.tracking.html#cluster-confidence">Dipy Cluster_Confidence function</a> library implemenentation.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget a the top to select a PySisyphe XML <strong>Tractogram</strong> file (.xtracts). This file is calculated from the <a class="reference internal" href="#menu-section-tractogram"><span class="std std-ref">tractogram generation</span></a> menu.</p>
 <p>Toggle <strong>Bundle filtering…</strong> button to show/hide parameters:</p>
 <ul class="simple">
 <li><p>Edit the <strong>Bundle name</strong> widget to set the tractogram name. This name is used to save selected streamlines in a PySisyphe tractogram file (.xtracts).</p></li>
 <li><p>Set the minimal lenght of streamlines in mm, using the <strong>Minimum length</strong> spinedit widget. Shorter streamlines will be removed from the tractogram.</p></li>
-<li><p>Set the <strong>Maximum MDF distance</strong> (Minimum average Direct-Flip in mm) that will be considered a “supporting” streamline and included in cci calculation (default 5 mm).</p></li>
-<li><p>Set the cci threshold used to select streamlines using the <strong>Cluster confidence threshold</strong> spinedit widget.</p></li>
+<li><p>Set the <strong>Maximum MDF distance</strong> (MDF Minimum average Direct-Flip in mm) that will be considered a “supporting” streamline and included in cci calculation (default 5 mm). Minimum average Direct-Flip (MDF) computes both the direct and flipped average Euclidean distances between corresponding points and takes the minimum value.</p></li>
+<li><p>Set the cci threshold used to select streamlines using the <strong>Cluster confidence threshold</strong> spinedit widget (default 1). The Cluster Confidence Index (cci) evaluates the anatomical support of a streamline by counting the number of other nearby fibers. A fiber is considered nearby when its MDF distance exceeds a threshold (Maximum MDF).</p></li>
 <li><p>Set the <strong>Power</strong> to which the MDF distance for each streamline will be raised to determine how much it contributes to the cci. High values of power make the contribution value degrade much faster. e.g., a streamline with 5 mm MDF similarity contributes 1/5 to the cci if power is 1, but only contributes 1/5^2 = 1/25 if power is 2 (default 1).</p></li>
 <li><p>Set the <strong>Streamline sampling</strong> which is the number of points that are considered for each streamline in the calculation. To save on processing time, each streamline is subsampled (default 12 points).</p></li>
 </ul>
@@ -425,8 +426,8 @@ Dzz(AArea): diffusion in z-axis direction of the association area</p>
 <p>Left-click <strong>Close</strong> button to exit dialog box.</p>
 <p>Sample volumes (DTI) can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> for testing.</p>
 </section>
-<section id="template-based-streamlines-selection">
-<span id="menu-section-templatesel"></span><h2>Template based streamlines selection<a class="headerlink" href="#template-based-streamlines-selection" title="Link to this heading"></a></h2>
+<section id="template-based-streamline-selection">
+<span id="menu-section-templatesel"></span><h2>Template based streamline selection<a class="headerlink" href="#template-based-streamline-selection" title="Link to this heading"></a></h2>
 <p>This menu is used to perform virtual dissection (i.e. streamline selection) of a tractogram using an atlas. This function recognizes white matter bundles using local and global streamline-based registration to an atlas tractogram, and clustering method based on similarity of streamlines with bundles of this atlas (see <a class="reference external" href="https://docs.dipy.org/dev/reference/dipy.segment.html#dipy.segment.bundles.RecoBundles">Dipy RecoBundles class</a>).</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget a the top to select a PySisyphe XML <strong>Tractogram</strong> file (.xtracts). This file is calculated from the <a class="reference internal" href="#menu-section-tractogram"><span class="std std-ref">tractogram generation</span></a> menu.</p>
 <p>Select atlas bundles to extract from the list located below the previous widget.</p>
