@@ -179,7 +179,7 @@
 <section id="inheritance">
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>QWidget - &gt; QDialog -&gt; DialogWait</p>
-<p>Last revision: 17/07/2025</p>
+<p>Last revision: 09/07/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.gui.dialogWait.DialogWait.FigureVisibilityOff">
 <span class="sig-name descname"><span class="pre">FigureVisibilityOff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.gui.dialogWait.DialogWait.FigureVisibilityOff" title="Link to this definition"></a></dt>
@@ -410,14 +410,26 @@ Processes pending GUI events.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.gui.dialogWait.DialogWait.messageFromDictProxyManager">
-<span class="sig-name descname"><span class="pre">messageFromDictProxyManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mng</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.gui.dialogWait.DialogWait.messageFromDictProxyManager" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">messageFromDictProxyManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mng</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.gui.dialogWait.DialogWait.messageFromDictProxyManager" title="Link to this definition"></a></dt>
 <dd><p>Updates the dialog’s state based on a dictionary from a proxy manager.
 Handles updates for information text, progress bar range, and current value.
 Processes pending GUI events.</p>
+<p>Message keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘msg’: str, display information in the progress dialog.</p></li>
+<li><p>‘amsg’: str, display additional information in the progress dialog.</p></li>
+<li><p>‘max’: int, set the maximum value of the progress bar.</p></li>
+<li><p>‘min’: int, set the minimum value of the progress bar.</p></li>
+<li><p>‘value’: int, set the current value of the progress bar.</p></li>
+<li><p>‘inc’: int, increment to the current value of the progress bar.</p></li>
+<li><p>‘acc’: Manager.list, set the current value of the progress bar based on the cumulative sum of a list.</p></li>
+</ul>
+</div></blockquote>
 <section id="id13">
 <h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>mng<span class="classifier">dict[str, str | int | None]</span></dt><dd><p>A dictionary containing update commands (e.g., ‘msg’, ‘amsg’, ‘max’, ‘value’, ‘inc’).</p>
+<dt>mng<span class="classifier">dict[str, str | int | list | None]</span></dt><dd><p>A dictionary containing update commands (e.g., ‘msg’, ‘amsg’, ‘max’, ‘value’, ‘inc’, ‘acc’).</p>
 </dd>
 </dl>
 </section>
