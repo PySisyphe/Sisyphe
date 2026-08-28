@@ -80,7 +80,7 @@ class DialogDiffusionTracking(QDialog):
         # Init window
 
         self.setWindowTitle('Diffusion tracking')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -122,6 +122,7 @@ class DialogDiffusionTracking(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -180,14 +181,18 @@ class DialogDiffusionTracking(QDialog):
             else: self._model.clear(False)
 
     def _algoChanged(self):
-        v = self._combo1.currentText() == 'Deterministic'
-        self._track.setParameterVisibility('DeterministicAlgorithm', v)
-        if v: self._deterministicChanged()
-        v = self._combo1.currentText() == 'Probabilistic'
-        self._track.setParameterVisibility('ProbabilisticAlgorithm', v)
-        self._track.setParameterVisibility('RelativePeakThreshold', False)
-        self._track.setParameterVisibility('MinSeparationAngle', False)
-        self._track.setParameterVisibility('NPeaks', False)
+        # < Revision 31/07/2026
+        if self._combo1.currentText() == 'Deterministic':
+            self._track.setParameterVisibility('DeterministicAlgorithm', True)
+            self._track.setParameterVisibility('ProbabilisticAlgorithm', False)
+            self._deterministicChanged()
+        elif self._combo1.currentText() == 'Probabilistic':
+            self._track.setParameterVisibility('ProbabilisticAlgorithm', True)
+            self._track.setParameterVisibility('DeterministicAlgorithm', False)
+            self._track.setParameterVisibility('RelativePeakThreshold', False)
+            self._track.setParameterVisibility('MinSeparationAngle', False)
+            self._track.setParameterVisibility('NPeaks', False)
+        # Revision 31/07/2026 >
         self._center(None)
 
     def _seedChanged(self):
@@ -499,7 +504,7 @@ class DialogDiffusionTracking(QDialog):
                 stopping['gm'] = self._track.getParameterWidget('StoppingGM').getFilename()
                 stopping['wm'] = self._track.getParameterWidget('StoppingWM').getFilename()
                 stopping['csf'] = self._track.getParameterWidget('StoppingCSF').getFilename()
-            # Preprocessing loop
+            # Processing loop
             r = None
             with Manager() as manager:
                 mng = manager.dict()

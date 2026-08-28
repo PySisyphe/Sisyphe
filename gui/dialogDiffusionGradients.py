@@ -9,6 +9,13 @@ from sys import platform
 
 from os.path import basename
 from os.path import splitext
+from os.path import exists
+
+from numpy import array
+from numpy import cross
+from numpy import dot
+from numpy import column_stack
+from numpy.linalg import norm
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
@@ -22,6 +29,7 @@ from Sisyphe.core.sisypheDicom import loadBVec
 from Sisyphe.core.sisypheDicom import saveBVal
 from Sisyphe.core.sisypheDicom import saveBVec
 from Sisyphe.core.sisypheDicom import removeSuffixNumberFromFilename
+from Sisyphe.core.sisypheDicom import XmlDicom
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
 from Sisyphe.widgets.selectFileWidgets import FilesSelectionWidget
@@ -70,7 +78,7 @@ class DialogDiffusionGradients(QDialog):
         # Init window
 
         self.setWindowTitle('Diffusion gradients')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -118,6 +126,7 @@ class DialogDiffusionGradients(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._exit = QPushButton('Close')
         self._exit.setAutoDefault(True)
@@ -146,6 +155,7 @@ class DialogDiffusionGradients(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._dwiSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
+        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 17/06/2025 >
         self.setModal(True)
@@ -208,7 +218,9 @@ class DialogDiffusionGradients(QDialog):
         if len(v) != self._dwiSelect.filenamesCount():
             self._bvecs.clear(signal=False)
             self._bvecs.setToolTip('')
-            messageBox(self, 'Diffusion gradients', 'There are not as many gradients directions as there are dwi files.')
+            messageBox(self,
+                       'Diffusion gradients',
+                       'There are not as many gradients directions as there are dwi files.')
             # noinspection PyInconsistentReturns
             self._save.setEnabled(False)
         else:
@@ -255,6 +267,25 @@ class DialogDiffusionGradients(QDialog):
                     return None
             bvals2 = dict()
             bvecs2 = dict()
+            # < Revision 23/07/2026
+            # Get direction from xdcm file
+            bvecs2['direction'] = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+            xdcmname = splitext(dwinames[0])[0] + XmlDicom.getFileExt()
+            if exists(xdcmname):
+                xdcm = XmlDicom()
+                xdcm.loadXmlDicomFilename(xdcmname)
+                xdcm.hasKeyword('ImageOrientationPatient')
+                v = xdcm.getDataElementValue('ImageOrientationPatient')
+                v1 = array(v[:3])
+                v1 /= norm(v1)
+                v2 = array(v[3:])
+                v2 -= dot(v2, v1) * v1
+                v2 /= norm(v2)
+                v3 = cross(v1, v2)
+                v3 /= norm(v3)
+                r = column_stack((v1, v2, v3))
+                bvecs2['direction'] = list(r.flatten())
+            # Revision 23/07/2026 >
             for i in range(len(bvals)):
                 bvals2[dwinames[i]] = bvals[str(i)]
                 bvecs2[dwinames[i]] = bvecs[str(i)]

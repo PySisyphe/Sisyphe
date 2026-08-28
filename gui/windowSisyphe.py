@@ -132,7 +132,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 09/07/2026
+    Last revision: 26/08/2026
     """
 
     # Class constants
@@ -1560,9 +1560,9 @@ class WindowSisyphe(QMainWindow):
                 Diffusion analysis along perivascular space...
                 Tractogram generation...
                 Bundle
-                    ROI based streamlines selection...
-                    Filter based streamlines selection...
-                    Template based streamlines selection...
+                    ROI based streamline selection...
+                    Filter based streamline selection...
+                    Template based streamline selection...
                     ---
                     Density map...
                     Path length map...
@@ -1589,9 +1589,14 @@ class WindowSisyphe(QMainWindow):
         # Revision 13/04/2026 >
         self._action['tracto'] = self._menu['diffusion'].addAction('Tractogram generation...')
         submenu = self._menu['diffusion'].addMenu('Bundle')
-        self._action['roisel'] = submenu.addAction('ROI based streamlines selection...')
-        self._action['filtsel'] = submenu.addAction('Filter based streamlines selection...')
-        self._action['tplsel'] = submenu.addAction('Template based streamlines selection...')
+        # < Revision 26/08/2026
+        # self._action['roisel'] = submenu.addAction('ROI based streamlines selection...')
+        # self._action['filtsel'] = submenu.addAction('Filter based streamlines selection...')
+        # self._action['tplsel'] = submenu.addAction('Template based streamlines selection...')
+        self._action['roisel'] = submenu.addAction('ROI based streamline selection...')
+        self._action['filtsel'] = submenu.addAction('Filter based streamline selection...')
+        self._action['tplsel'] = submenu.addAction('Template based streamline selection...')
+        # Revision 26/08/2026 >
         submenu.addSeparator()
         self._action['density'] = submenu.addAction('Density map...')
         self._action['length'] = submenu.addAction('Path length map...')
@@ -3359,7 +3364,11 @@ class WindowSisyphe(QMainWindow):
                     if wait.getStopped(): break
                     self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
-                messageBox(self, 'Open Nifti error', '{}\n{}'.format(type(err), str(err)))
+                # < Revision 29/07/2026
+                wait.hide()
+                # Revision 29/07/2026 >
+                messageBox(self,
+                           'Open Nifti error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
@@ -3389,7 +3398,11 @@ class WindowSisyphe(QMainWindow):
                     if wait.getStopped(): break
                     self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
-                messageBox(self, 'Open Minc error', '{}\n{}'.format(type(err), str(err)))
+                # < Revision 29/07/2026
+                wait.hide()
+                # Revision 29/07/2026 >
+                messageBox(self,
+                           'Open Minc error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
@@ -3419,7 +3432,11 @@ class WindowSisyphe(QMainWindow):
                     if wait.getStopped(): break
                     self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
-                messageBox(self, 'Open Nrrd error', '{}\n{}'.format(type(err), str(err)))
+                # < Revision 29/07/2026
+                wait.hide()
+                # Revision 29/07/2026 >
+                messageBox(self,
+                           'Open Nrrd error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
@@ -3449,7 +3466,11 @@ class WindowSisyphe(QMainWindow):
                     if wait.getStopped(): break
                     self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
-                messageBox(self, 'Open Vtk error', '{}\n{}'.format(type(err), str(err)))
+                # < Revision 29/07/2026
+                wait.hide()
+                # Revision 29/07/2026 >
+                messageBox(self,
+                           'Open Vtk error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
@@ -3479,7 +3500,11 @@ class WindowSisyphe(QMainWindow):
                     if wait.getStopped(): break
                     self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
-                messageBox(self, 'Open Sisyphe error', '{}\n{}'.format(type(err), str(err)))
+                # < Revision 29/07/2026
+                wait.hide()
+                # Revision 29/07/2026 >
+                messageBox(self,
+                           'Open Sisyphe error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
@@ -3510,7 +3535,11 @@ class WindowSisyphe(QMainWindow):
                     if wait.getStopped(): break
                     self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
-                messageBox(self, 'Open BrainVoyager VMR error', '{}\n{}'.format(type(err), str(err)))
+                # < Revision 29/07/2026
+                wait.hide()
+                # Revision 29/07/2026 >
+                messageBox(self,
+                           'Open BrainVoyager VMR error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
@@ -3541,7 +3570,11 @@ class WindowSisyphe(QMainWindow):
                     if wait.getStopped(): break
                     self.setStatusBarMessage('{} opened'.format(basename(filename)))
             except Exception as err:
-                messageBox(self, 'Open FreeSurfer MGH error', '{}\n{}'.format(type(err), str(err)))
+                # < Revision 29/07/2026
+                wait.hide()
+                # Revision 29/07/2026 >
+                messageBox(self,
+                           'Open FreeSurfer MGH error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
             wait.close()
 
@@ -3561,7 +3594,8 @@ class WindowSisyphe(QMainWindow):
                     vol.saveToNIFTI(filename)
                     self.setStatusBarMessage('{} saved'.format(vol.getBasename()))
                 except Exception as err:
-                    messageBox(self, 'Save Nifti error', '{}\n{}'.format(type(err), str(err)))
+                    messageBox(self,
+                               'Save Nifti error', '{}\n{}'.format(type(err), str(err)))
                     if self._logger is not None: self._logger.error(traceback.format_exc())
         else: messageBox(self, 'Save Nifti', 'No volume selected.')
 

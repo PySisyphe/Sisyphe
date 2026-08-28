@@ -237,90 +237,116 @@ class DialogDiffusionModel(QDialog):
     def _bvalsCleared(self):
         self._save.setEnabled(False)
         self._bvals.setToolTip('')
+        # < Revision 30/07/2026
+        self._bvecs.clear(signal=False)
+        self._bvecs.setToolTip('')
+        # Revision 30/07/2026 >
 
     def _bvecsCleared(self):
         self._save.setEnabled(False)
         self._bvecs.setToolTip('')
+        # < Revision 30/07/2026
+        self._bvals.clear(signal=False)
+        self._bvals.setToolTip('')
+        # Revision 30/07/2026 >
 
     def _updateBVals(self):
-        try: v1 = loadBVal(self._bvals.getFilename(), format='xml')
-        except:
-            messageBox(self,
-                       title=self.windowTitle(),
-                       text='{} format is invalid.'.format(basename(self._bvals.getFilename())))
-            self._bvals.clear(signal=False)
-            self._bvals.setToolTip('')
-            self._save.setEnabled(False)
-            return None
-        v = list(v1.values())
-        if len(v) > 1:
-            dwi = list(v1.keys())
-            buff = '{}: {}'.format(basename(dwi[0]), str(v[0]))
-            for i in range(1, len(v)):
-                buff += '\n{}: {}'.format(basename(dwi[i]), str(v[i]))
-            self._bvals.setToolTip(buff)
-        filename = splitext(self._bvals.getFilename())[0] + '.xbvec'
-        if exists(filename):
-            try: v2 = loadBVec(filename, format='xml')
+        # noinspection PyInconsistentReturns
+        if not self._bvals.isEmpty():
+            try: v1 = loadBVal(self._bvals.getFilename(), format='xml')
             except:
                 messageBox(self,
                            title=self.windowTitle(),
-                           text='{} format is invalid.'.format(basename(filename)))
+                           text='{} format is invalid.'.format(basename(self._bvals.getFilename())))
+                # < Revision 30/07/2026
+                self._bvals.clear(signal=False)
+                self._bvecs.clear(signal=False)
+                self._bvals.setToolTip('')
+                self._bvecs.setToolTip('')
+                # Revision 30/07/2026 >
+                self._save.setEnabled(False)
                 return None
-            if list(v1.keys()) == list(v2.keys()):
-                self._bvecs.open(filename, signal=False)
-                self._save.setEnabled(not (self._bvals.isEmpty() and self._bvecs.isEmpty()))
-                v = list(v2.values())
-                if len(v) > 1:
-                    dwi = list(v2.keys())
-                    buff = '{}: {}'.format(basename(dwi[0]), ' '.join([str(j) for j in v[0]]))
-                    for i in range(1, len(v)):
-                        buff += '\n{}: {}'.format(basename(dwi[i]), ' '.join([str(j) for j in v[i]]))
-                    # noinspection PyInconsistentReturns
-                    self._bvecs.setToolTip(buff)
-                else: raise ValueError('b-vectors and b-values count <= 1.')
-            else: raise ValueError('b-vectors and b-values mismatch.')
-        else: raise IOError('No such file {}.'.format(filename))
+            v = list(v1.values())
+            if len(v) > 1:
+                dwi = list(v1.keys())
+                buff = '{}: {}'.format(basename(dwi[0]), str(v[0]))
+                for i in range(1, len(v)):
+                    buff += '\n{}: {}'.format(basename(dwi[i]), str(v[i]))
+                self._bvals.setToolTip(buff)
+            filename = splitext(self._bvals.getFilename())[0] + '.xbvec'
+            if exists(filename):
+                try: v2 = loadBVec(filename, format='xml')
+                except:
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text='{} format is invalid.'.format(basename(filename)))
+                    return None
+                # < Revision 24/07/2026
+                if 'direction' in v2: del v2['direction']
+                # Revision 24/07/2026 >
+                if list(v1.keys()) == list(v2.keys()):
+                    self._bvecs.open(filename, signal=False)
+                    self._save.setEnabled(not (self._bvals.isEmpty() and self._bvecs.isEmpty()))
+                    v = list(v2.values())
+                    if len(v) > 1:
+                        dwi = list(v2.keys())
+                        buff = '{}: {}'.format(basename(dwi[0]), ' '.join([str(j) for j in v[0]]))
+                        for i in range(1, len(v)):
+                            buff += '\n{}: {}'.format(basename(dwi[i]), ' '.join([str(j) for j in v[i]]))
+                        # noinspection PyInconsistentReturns
+                        self._bvecs.setToolTip(buff)
+                    else: raise ValueError('b-vectors and b-values count <= 1.')
+                else: raise ValueError('b-vectors and b-values mismatch.')
+            else: raise IOError('No such file {}.'.format(filename))
 
     def _updateBVecs(self):
-        try: v1 = loadBVec(self._bvecs.getFilename(), format='xml')
-        except:
-            messageBox(self,
-                       title=self.windowTitle(),
-                       text='{} format is invalid.'.format(basename(self._bvecs.getFilename())))
-            self._bvecs.clear(signal=False)
-            self._bvecs.setToolTip('')
-            self._save.setEnabled(False)
-            return None
-        v = list(v1.values())
-        if len(v) > 1:
-            dwi = list(v1.keys())
-            buff = '{}: {}'.format(basename(dwi[0]), ' '.join([str(j) for j in v[0]]))
-            for i in range(1, len(v)):
-                buff += '\n{}: {}'.format(basename(dwi[i]), ' '.join([str(j) for j in v[i]]))
-            self._bvecs.setToolTip(buff)
-        filename = splitext(self._bvecs.getFilename())[0] + '.xbval'
-        if exists(filename):
-            try: v2 = loadBVal(filename, format='xml')
+        # noinspection PyInconsistentReturns
+        if not self._bvecs.isEmpty():
+            try: v1 = loadBVec(self._bvecs.getFilename(), format='xml')
             except:
                 messageBox(self,
                            title=self.windowTitle(),
-                           text='{} format is invalid.'.format(basename(filename)))
+                           text='{} format is invalid.'.format(basename(self._bvecs.getFilename())))
+                # < Revision 30/07/2026
+                self._bvecs.clear(signal=False)
+                self._bvals.clear(signal=False)
+                self._bvecs.setToolTip('')
+                self._bvals.setToolTip('')
+                # Revision 30/07/2026 >
+                self._save.setEnabled(False)
                 return None
-            if list(v1.keys()) == list(v2.keys()):
-                self._bvals.open(filename, signal=False)
-                self._save.setEnabled(not (self._bvals.isEmpty() and self._bvecs.isEmpty()))
-                v = list(v2.values())
-                if len(v) > 1:
-                    dwi = list(v2.keys())
-                    buff = '{}: {}'.format(basename(dwi[0]), str(v[0]))
-                    for i in range(1, len(v)):
-                        buff += '\n{}: {}'.format(basename(dwi[i]), str(v[i]))
-                    # noinspection PyInconsistentReturns
-                    self._bvals.setToolTip(buff)
-                else: raise ValueError('b-vectors and b-values count <= 1.')
-            else: raise ValueError('b-vectors and b-values mismatch.')
-        else: raise IOError('No such file {}.'.format(filename))
+            v = list(v1.values())
+            if len(v) > 1:
+                dwi = list(v1.keys())
+                buff = '{}: {}'.format(basename(dwi[0]), ' '.join([str(j) for j in v[0]]))
+                for i in range(1, len(v)):
+                    buff += '\n{}: {}'.format(basename(dwi[i]), ' '.join([str(j) for j in v[i]]))
+                self._bvecs.setToolTip(buff)
+            filename = splitext(self._bvecs.getFilename())[0] + '.xbval'
+            if exists(filename):
+                try: v2 = loadBVal(filename, format='xml')
+                except:
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text='{} format is invalid.'.format(basename(filename)))
+                    return None
+                # < Revision 24/07/2026
+                if 'direction' in v1: del v1['direction']
+                # Revision 24/07/2026 >
+                if list(v1.keys()) == list(v2.keys()):
+                    self._bvals.open(filename, signal=False)
+                    self._save.setEnabled(not (self._bvals.isEmpty() and self._bvecs.isEmpty()))
+                    v = list(v2.values())
+                    if len(v) > 1:
+                        dwi = list(v2.keys())
+                        buff = '{}: {}'.format(basename(dwi[0]), str(v[0]))
+                        for i in range(1, len(v)):
+                            buff += '\n{}: {}'.format(basename(dwi[i]), str(v[i]))
+                        # noinspection PyInconsistentReturns
+                        self._bvals.setToolTip(buff)
+                    else: raise ValueError('b-vectors and b-values count <= 1.')
+                else: raise ValueError('b-vectors and b-values mismatch.')
+            else: raise IOError('No such file {}.'.format(filename))
 
     def _modelChanged(self):
         self._DTI.setVisible(self._combo.currentText() == 'DTI')
@@ -443,21 +469,34 @@ class DialogDiffusionModel(QDialog):
             maps['gfa'] = self._DSI.getParameterValue('GFA')
         elif self._combo.currentText() == 'DSID':
             maps['gfa'] = self._DSID.getParameterValue('GFA')
-        corr = self._model.getParameterValue('Orientation')
+        # < Revision 28/07/2026
+        # corr = self._model.getParameterValue('Orientation')
+        corr1 = self._model.getParameterValue('Orientation')
+        corr2 = self._model.getParameterValue('Direction')
+        print('Orientation: {}'.format(corr1))
+        print('Direction: {}'.format(corr2))
+        # Revision 28/07/2026 >
         algo = self._model.getParameterValue('Algo')[0]
         niter = self._model.getParameterValue('Iter')
         size = self._model.getParameterValue('Size')
-        if corr is None: corr = False
+        # < Revision 28/07/2026
+        # if corr is None: corr = False
+        if corr1 is None: corr1 = False
+        if corr2 is None: corr2 = False
+        # Revision 28/07/2026 >
         # Preprocessing loop
         r = None
         with Manager() as manager:
             mng = manager.dict()
             queue = Queue()
             try:
+                # < Revision 28/07/2026
                 process = ProcessDiffusionModel(self._bvals.getFilename(),
                                                 self._bvecs.getFilename(),
                                                 self._combo.currentText(),
-                                                method, order, maps, corr, algo, niter, size,True, mng, queue)
+                                                method, order, maps, corr1, corr2,
+                                                algo, niter, size,True, mng, queue)
+                # Revision 28/07/2026 >
                 process.start()
                 while process.is_alive():
                     # noinspection PyTypeChecker

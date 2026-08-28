@@ -12,6 +12,8 @@ from os.path import join
 from os.path import basename
 from os.path import dirname
 from os.path import splitext
+from os.path import exists
+from os.path import abspath
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
@@ -237,8 +239,16 @@ class DialogDicomImport(QDialog):
                             elif fmt == 3: savename += getNrrdExt()[0]   # Nrrd
                             elif fmt == 4: savename += getNumpyExt()[0]  # Numpy
                             else: savename += getVtkExt()[0]  # VTK
-                            if self._savedir.getPath() != '': savename = join(self._savedir.getPath(), savename)
-                            else: savename = join(dirname(filenames[0]), savename)
+                            if self._savedir.getPath() != '': savename = abspath(join(self._savedir.getPath(), savename))
+                            else: savename = abspath(join(dirname(filenames[0]), savename))
+                            # < Revision 21/07/2026
+                            if exists(savename):
+                                c = 1
+                                base, ext = splitext(savename)
+                                while exists(savename):
+                                    savename = base + '_{}'.format(c) + ext
+                                    c += 1
+                            # Revision 21/07/2026 >
                             # DICOM filenames conversion to SimpleITK image
                             try: img = readFromDicomFilenames(filenames)
                             except:
@@ -249,14 +259,23 @@ class DialogDicomImport(QDialog):
                             # Siemens mosaic conversion
                             if tree.isMosaic(series):
                                 spacing = img.GetSpacing()
+                                # < Revision 23/07/2026
+                                direction = img.GetDirection()
+                                # Revision 23/07/2026 >
                                 nimg = tree.getMosaic(series)
                                 array = mosaicImageToVolume(GetArrayViewFromImage(img), nimg)
                                 img = GetImageFromArray(array)
                                 img.SetSpacing(spacing)
+                                # < Revision 23/07/2026
+                                img.SetDirection(direction)
+                                # Revision 23/07/2026 >
+                            # < Revision 21/07/2026
+                            bvec['direction'] = img.GetDirection()
                             # Sisyphe (VTK) direction convention
                             img = flipImageToVTKDirectionConvention(img)
                             # Axial orientation conversion
                             img = convertImageToAxialOrientation(img)[0]
+                            # Revision 21/07/2026 >
                             img.SetDirection(getRegularDirections())
                             if not self._origin.isChecked():
                                 img.SetOrigin((0.0, 0.0, 0.0))
@@ -270,6 +289,9 @@ class DialogDicomImport(QDialog):
                                     if vol.display.getRangeMin() < 0: vol = vol.cast('int16')
                                     else: vol = vol.cast('uint16')
                                     # Revision 09/10/2024 >
+                                    # < Revision 28/07/2026
+                                    vol.setDefaultID()
+                                    # Revision 28/07/2026 >
                                     vol.identity = idt
                                     vol.acquisition = acq
                                     vol.save(savename)
@@ -316,7 +338,10 @@ class DialogDicomImport(QDialog):
                     saveBVal(bsavename, bval, format='txt')
                     bsavename = '_'.join(buff) + '.bvec'
                     bsavename = join(bdirname, bsavename)
-                    saveBVec(bsavename, bvec, format='txt')
+                    # < Revision 23/07/2026
+                    # saveBVec(bsavename, bvec, format='txt')
+                    saveBVec(bsavename, bvec, format='txtbyvec')
+                    # Revision 23/07/2026 >
                     bsavename = '_'.join(buff) + '.xbval'
                     bsavename = join(bdirname, bsavename)
                     saveBVal(bsavename, bval, format='xml')
