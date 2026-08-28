@@ -134,7 +134,8 @@ Toggle **Diffusion model...** button to show/hide model parameters:
 	- Select the thresholding algorithm used for mask processing from the **Background thresholding algorithm** combobox. PySisyphe provides the following algorithms from the SimpleITK library: `Huang <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html>`_, Mean, `Otsu <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html>`_, `Renyi <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html>`_, `Yen <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html>`_, `Li <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html>`_, `Shanbhag <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html>`_, `Triangle <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html>`_, `Intermodes <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html>`_, `Maximumentropy <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html>`_, `Kittler <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html>`_, `Isodata <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html>`_, `Moments <https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsThresholdImageFilter.html>`_ (default Huang)
 	- Select the structuring element size, expressed in voxels, of the morphological operator used for mask processing from the **Morphological operator size** combobox (default 1).
 	- Set The number of times the morphological operator is applied for mask processing from the **Number of morphological operator iterations** spinbox (default 2).
-- Check the **Gradient orientation conversion** option to take into account orientation convention discrepancies between PySisyphe (RAS+) and Dicom (LPS+).
+- Check the **Orientation correction** option to take into account orientation convention discrepancies between PySisyphe (RAS+) and Dicom (LPS+).
+- Check the **Direction correction** option to adjust the gradient vectors according to the image orientation using the DICOM (0x020, 0x037) "ImageOrientationPatient" field.
 - Check the **Save model** option to save the fitted model to a PySisyphe diffusion model XML file (.xmodel).
 
 Toggle **DTI model...** button to show/hide DTI parameters:
@@ -285,8 +286,8 @@ Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for
 
 .. _menu-section-roisel:
 
-ROI based streamlines selection
--------------------------------
+ROI based streamline selection
+------------------------------
 
 This menu is used to perform virtual dissection (i.e. streamline selection) of a tractogram using inclusion ROI(s). PySisyphe uses the `Dipy <https://docs.dipy.org/dev/examples_built/streamline_analysis/streamline_tools.html>`_ library implemenentation.
 
@@ -312,8 +313,8 @@ Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for
 
 .. _menu-section-filtersel:
 
-Filter based streamlines selection
-----------------------------------
+Filter based streamline selection
+---------------------------------
 
 This menu is used to perform streamline selection of a tractogram using filtering. Streamlines are selected by a clustering confidence algorithm. The cluster confidence index (cci) is an estimation of the support a set of streamlines gives to a particular pathway. The cci provides a voting system where by each streamline (within a set tolerance) gets to vote on how much support it lends to. Outlier pathways score relatively low on cci, since they do not have many streamlines voting for them. These outliers can be removed by thresholding on the cci metric. PySisyphe uses the `Dipy Cluster_Confidence function <https://docs.dipy.org/stable/reference/dipy.tracking.html#cluster-confidence>`_ library implemenentation.
 
@@ -323,8 +324,8 @@ Toggle **Bundle filtering...** button to show/hide parameters:
 
 - Edit the **Bundle name** widget to set the tractogram name. This name is used to save selected streamlines in a PySisyphe tractogram file (.xtracts).
 - Set the minimal lenght of streamlines in mm, using the **Minimum length** spinedit widget. Shorter streamlines will be removed from the tractogram.
-- Set the **Maximum MDF distance** (Minimum average Direct-Flip in mm) that will be considered a "supporting" streamline and included in cci calculation (default 5 mm).
-- Set the cci threshold used to select streamlines using the **Cluster confidence threshold** spinedit widget.
+- Set the **Maximum MDF distance** (MDF Minimum average Direct-Flip in mm) that will be considered a "supporting" streamline and included in cci calculation (default 5 mm). Minimum average Direct-Flip (MDF) computes both the direct and flipped average Euclidean distances between corresponding points and takes the minimum value.
+- Set the cci threshold used to select streamlines using the **Cluster confidence threshold** spinedit widget (default 1). The Cluster Confidence Index (cci) evaluates the anatomical support of a streamline by counting the number of other nearby fibers. A fiber is considered nearby when its MDF distance exceeds a threshold (Maximum MDF).
 - Set the **Power** to which the MDF distance for each streamline will be raised to determine how much it contributes to the cci. High values of power make the contribution value degrade much faster. e.g., a streamline with 5 mm MDF similarity contributes 1/5 to the cci if power is 1, but only contributes 1/5^2 = 1/25 if power is 2 (default 1).
 - Set the **Streamline sampling** which is the number of points that are considered for each streamline in the calculation. To save on processing time, each streamline is subsampled (default 12 points).
 
@@ -336,8 +337,8 @@ Sample volumes (DTI) can be downloaded from the :ref:`menu-section-download` for
 
 .. _menu-section-templatesel:
 
-Template based streamlines selection
-------------------------------------
+Template based streamline selection
+-----------------------------------
 
 This menu is used to perform virtual dissection (i.e. streamline selection) of a tractogram using an atlas. This function recognizes white matter bundles using local and global streamline-based registration to an atlas tractogram, and clustering method based on similarity of streamlines with bundles of this atlas (see `Dipy RecoBundles class <https://docs.dipy.org/dev/reference/dipy.segment.html#dipy.segment.bundles.RecoBundles>`_).
 

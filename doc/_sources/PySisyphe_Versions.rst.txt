@@ -23,6 +23,7 @@ Version history
 - :ref:`build30-05-2026`
 - :ref:`build20-06-2026`
 - :ref:`build20-07-2026`
+- :ref:`build20-09-2026`
 
 .. _version-increment-rules:
 
@@ -170,7 +171,7 @@ version 0.12.9, build 05/08/2025
 	- gui.dialogDicomRTImport.DialogRTimport._convert()
 	- gui.dialogGenericResults.DialogGenericResults._getDataFrame()
 	
-		- replace \n by space of the dataFrame header row
+		- replace \n with space of the dataFrame header row
 	
 	- gui.attributesWidgets.ListROIAttributesWidget.__init__()
 	
@@ -667,7 +668,7 @@ version 0.16.5, build 13/10/2025
 	
 	- gui.dialogStatResult.DialogResult.setMap()
 	
-		- bug fix, line 1393, replace .setCursorOpacity(0.25) by .setLineOpacity(0.25)
+		- bug fix, line 1393, replace .setCursorOpacity(0.25) with .setLineOpacity(0.25)
 	
 	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.viewDicomAttributes()
 
@@ -985,7 +986,7 @@ version 0.20.16, build 01/11/2025
 
 	- widgets.iconBarViewWidgets.IconBarOrthogonalRegistrationViewWidget2.setMoveOverlayOff()
 
-		- bug fix, line 2530, replace widget.setMoveOverlayOff() by widget.setMoveOverlayFlag(False)
+		- bug fix, line 2530, replace widget.setMoveOverlayOff() with widget.setMoveOverlayFlag(False)
 
 	- widgets.selectFileWidgets.FilesSelectionWidget.getItemFromIndex()
 
@@ -1123,7 +1124,7 @@ version 0.21.08, build 18/11/2025
 
 		- core.sisypheImage.SisypheImage.getMin()
 
-			- bug fix, lines 4042 & 4055, returns std and not min, replace std(img) by img.min()
+			- bug fix, lines 4042 & 4055, returns std and not min, replace std(img) with img.min()
 
 		- core.sisypheImage.SisypheImage.getValueAtContiuousIndex()
 
@@ -1177,8 +1178,8 @@ version 0.21.08, build 18/11/2025
 
 		- widgets.abstractViewWidget.AbstractViewWidget._updateToolMenu()
 
-			- bug fix, lines 1441, replace isinstance(tool, HandleWidget) by tool.GetObjectName() == 'HandleWidget'
-			- bug fix, lines 1448, replace isinstance(tool, LineWidget) by tool.GetObjectName() == 'LineWidget'
+			- bug fix, lines 1441, replace isinstance(tool, HandleWidget) with tool.GetObjectName() == 'HandleWidget'
+			- bug fix, lines 1448, replace isinstance(tool, LineWidget) with tool.GetObjectName() == 'LineWidget'
 
 		- widgets.abstractViewWidget.AbstractViewWidget.synchroniseCursorPositionChanged()
 
@@ -1223,7 +1224,7 @@ version 0.21.08, build 18/11/2025
 
 		- gui.dialogSkullStripping.DialogSkullStripping.function()
 
-			- bug fix, line 202, replace copyFromNumpyArray(mask) by copyFromNumpyArray(mask, spacing=s, defaultshape=False)
+			- bug fix, line 202, replace copyFromNumpyArray(mask) with copyFromNumpyArray(mask, spacing=s, defaultshape=False)
 
 - **updated function**
 
@@ -1605,7 +1606,7 @@ version 0.22.11, build 05/12/2025
 
 	- widgets.functionsSettingsWidget.SettingsWidget.__init__()
 
-		- line 345, replace self._button.clicked.connect(self.toggleSettingsVisibility) by self._button.clicked.connect(lambda _: self.toggleSettingsVisibility(True))
+		- line 345, replace self._button.clicked.connect(self.toggleSettingsVisibility) with self._button.clicked.connect(lambda _: self.toggleSettingsVisibility(True))
 	
 	- widgets.functionsSettingsWidget.SettingsWidget.toggleSettingsVisibility()
 	- widgets.functionsSettingsWidget.SettingsWidget.settingsVisibilityOn()
@@ -1782,7 +1783,7 @@ version 0.22.11, build 05/12/2025
 
 	- version.isNewerThan()
 
-		- bug fix, line 100, replace < by > between current[2] and version[2]
+		- bug fix, line 100, replace < with > between current[2] and version[2]
 
 .. _build12-01-2026:
 
@@ -2103,7 +2104,7 @@ version 0.24.14, build 12/01/2026
 	- core.sisypheImage.SisypheImage.getMaskROI2()
 
 		- add objstep parameter
-		- replace morphological operator iteration by the size of the structuring element
+		- replace morphological operator iteration with the size of the structuring element
 
 	- core.sisypheImage.SisypheVolume.getMask2()
 	- core.sisypheImage.SisypheVolume.getMaskROI2()
@@ -2255,7 +2256,7 @@ version 0.24.14, build 12/01/2026
 
 	- gui.dialogDatatype.DialogEditID.execute()
 
-		- line 446, replace self._files.clear() by self._files.clearall()
+		- line 446, replace self._files.clear() with self._files.clearall()
 
 	- gui.dialogSettings.DialogSettings.apply()
 
@@ -2778,7 +2779,7 @@ version 0.76.22, build 29/01/2026
 
 	- core.sisypheFiducialBox.SisypheFiducialBox._firstSliceSearch()
 
-		- bug fix, line 562, replace minf < buff[i] or buff[i] > msup by buff[i] < minf or buff[i] > msup
+		- bug fix, line 562, replace minf < buff[i] or buff[i] > msup with buff[i] < minf or buff[i] > msup
 
 	- core.sisypheImage.SisypheImage.getPercentile()
 
@@ -2801,16 +2802,16 @@ version 0.76.22, build 29/01/2026
 
 	- widgets.sliceViewWidgets.SliceRegistrationViewWidget.getRegistrationBoxMaskArea()
 
-		- bug fix, line 6311, replace 'unit8' by 'uint8'
+		- bug fix, line 6311, replace 'unit8' with 'uint8'
 		- bug fix, line 6322, add v.setFilename(self._volume.getFilename())
 
 	- widgets.attributesWidgets.ListToolAttributesWidget.duplicate()
 
-		- bug fix, lines 5529,5569 & 5599, replace addTrajectory(p1, p2, name) by addTrajectory(p1, p2, name=name)
+		- bug fix, lines 5529,5569 & 5599, replace addTrajectory(p1, p2, name) with addTrajectory(p1, p2, name=name)
 
 	- widgets.attributesWidgets.ItemToolAttributesWidget._nameChanged()
 
-		- bug fix, line 1444, replace self._item.setName(self._name.getEditText()) by self._item.setName(name)
+		- bug fix, line 1444, replace self._item.setName(self._name.getEditText()) with self._item.setName(name)
 
 	- widgets.abstractViewWidget.AbstractViewWidget.synchroniseToolRenamed()
 	- widgets.abstractViewWidget.AbstractViewWidget.renameTool()
@@ -2857,7 +2858,7 @@ version 0.76.22, build 29/01/2026
 
 	- dialog.dialogSegmentation.DialogPriorBasedSegmentation.execute()
 
-		- line 1425, replace grey by gray
+		- line 1425, replace grey with gray
 
 .. _build01-02-2026:
 
@@ -3066,7 +3067,7 @@ version 0.78.08, build 01/02/2026
 	- widgets.attributesWidgets.ListROIAttributesWidget.saveNumpy()
 	- widgets.attributesWidgets.ListROIAttributesWidget.saveVTK()
 
-		- bug fix, replace item by roi
+		- bug fix, replace item with roi
 
 	- widgets.toolBarThumnail.ToolBarThumbnail.open()
 	- widgets.toolBarThumnail.ToolBarThumbnail.addVolume()
@@ -3136,7 +3137,7 @@ version 0.80.15, build 20/02/2026
 		- logging code calls initPySisypheUserPath() -> getDPIScaleFactor() which raises an exception because QApplication is called before application creation
 		- moving the logging code after creating the application
 	
-	- replace splash.close() by splash.hide()
+	- replace splash.close() with splash.hide()
 	- rebuild frozen version (pyinstaller) 
 
 - **new module**
@@ -3208,7 +3209,7 @@ version 0.80.15, build 20/02/2026
 	- core.processing.simpleItkFilters.regressionIntensityMatching()
 
 		- bug fix, cast to reference image datatype
-		- line 973, replace copyPropertiesFrom by copyAttributesFrom
+		- line 973, replace copyPropertiesFrom with copyAttributesFrom
 
 	- core.sisypheDownload.updatePySisyphe()
 
@@ -3537,7 +3538,7 @@ version 0.80.15, build 20/02/2026
 
 	- widgets.multiViewWidgets.MultiViewWidget.setOverlayColorBar()
 
-		- replace volume colorbar by overlay color
+		- replace volume colorbar with overlay color
 
 	- widgets.consoleWidget.RichJupyterWidget2._gemini()
 	- widgets.consoleWidget.RichJupyterWidget2._packages()
@@ -3610,11 +3611,11 @@ version 0.80.15, build 20/02/2026
 
 	- core.sisypheStatistics.SisypheDesign.addHRFBoxCarModelToCondition()
 
-		- line 3518, replace if ' '.join(name[1:]) == cond by if name[-1] == cond
+		- line 3518, replace if ' '.join(name[1:]) == cond with if name[-1] == cond
 
 	- core.sisypheStatistics.SisypheDesign.addHighPassToCondition()
 
-		- line 3563, replace if ' '.join(name[1:]) == cond by if name[-1] == cond
+		- line 3563, replace if ' '.join(name[1:]) == cond with if name[-1] == cond
 
 	- core.sisypheStatistics.SisypheDesign.__init__()
 
@@ -3643,11 +3644,11 @@ version 0.80.15, build 20/02/2026
 
 	- core.sisypheMesh.SisypheMesh.setDefaultFilename()
 
-		- bug fix, line 635, replace self._name != '': self.setDefaultName() by self._name == '': self.setDefaultName()
+		- bug fix, line 635, replace self._name != '': self.setDefaultName() with self._name == '': self.setDefaultName()
 
 	- core.sisypheMesh.SisypheMesh.createFromROI()
 
-		- bug fix, line 2522, replace self.setDirname(roi.getDirname()) by self.saveAs(roi.getFilename())
+		- bug fix, line 2522, replace self.setDirname(roi.getDirname()) with self.saveAs(roi.getFilename())
 
 	- core.sisypheTools.ToolWidgetCollection.hasFilename()
 
@@ -3668,15 +3669,15 @@ version 0.80.15, build 20/02/2026
 
 	- gui.dialogFileSelection.DialogFileSelection.__init__()
 
-		- line 133, replace ok by self._ok, cancel by self._cancel
+		- line 133, replace ok with self._ok, cancel with self._cancel
 
 	- gui.dialogFileSelection.DialogMultiFileSelection.__init__()
 
-		- line 224, replace ok by self._ok, cancel by self._cancel
+		- line 224, replace ok with self._ok, cancel with self._cancel
 
 	- gui.dialogFileSelection.DialogFilesSelection.__init__()
 
-		- line 434, replace ok by self._ok, cancel by self._cancel
+		- line 434, replace ok with self._ok, cancel with self._cancel
 
 	- gui.dialogWorkflow.WorkflowItem.__init__()
 
@@ -3684,13 +3685,13 @@ version 0.80.15, build 20/02/2026
 
 	- gui.dialogWorkflow.WorkflowItem.setFilenames()
 
-		- line 968, replace setMoving(input1) by setMoving(input1, editable=False)
-		- line 968, replace setFixed(input1) by setFixed(input1, editable=False)
+		- line 968, replace setMoving(input1) with setMoving(input1, editable=False)
+		- line 968, replace setFixed(input1) with setFixed(input1, editable=False)
 
 	- gui.dialogWorkflow.DialogWorkflow.WorkflowItem.init()
 
 		- lines 164, 194, 587, 626, 665 and 704, add self._dialog._cancel.setFixedWidth(100)
-		- bug fix, line 268, replace k1 != 'Radius' by k1 not in ('Radius', 'Batch')
+		- bug fix, line 268, replace k1 != 'Radius' with k1 not in ('Radius', 'Batch')
 
 	- gui.dialogWorkflow.DialogWorkflow._addProcessing()
 	- gui.dialogWorkflow.DialogWorkflow._insertProcessing()
@@ -3852,13 +3853,13 @@ version 0.80.15, build 20/02/2026
 
 	- widgets.selectFileWidgets.FileSelectionWidget.open()
 
-		- bug fix, line 2032, replace getDicomExt().append('') by getDicomExt()
+		- bug fix, line 2032, replace getDicomExt().append('') with getDicomExt()
 		- line 2056, new self._refxtools filter management
 
 	- widgets.selectFileWidgets.FilesSelectionWidget.add()
 
-		- bug fix, line 4001, replace getDicomExt().append('') by getDicomExt()
-		- bug fix, lines 3793, 3916 & 4118, replace QFileDialog.getOpenFileName by QFileDialog.getOpenFileNames
+		- bug fix, line 4001, replace getDicomExt().append('') with getDicomExt()
+		- bug fix, lines 3793, 3916 & 4118, replace QFileDialog.getOpenFileName with QFileDialog.getOpenFileNames
 
 	- widgets.attributesWidgets.ItemROIAttributesWidget.save()
 
@@ -5007,13 +5008,13 @@ version 0.87.12, build 20/04/2026
 	- core.sisypheTracts.SisypheSHCSDModel.getModel()
 	- core.sisypheTracts.SisypheSHCSDModel.computeFitting()
 
-		- replace sh_order parameter name by sh_order_max
+		- replace sh_order parameter name with sh_order_max
 		- new parameter name since dipy v1.9
 		- required for dipy migration from version 1.11.0 to 1.12.0
 
 	- core.sisypheImageAttributes.SisypheAcquisition.getLBSequences()
 
-		- bug fix, return replace tuple(cls._LBSEQUENCE) by return cls._LBSEQUENCE,
+		- bug fix, replace return tuple(cls._LBSEQUENCE) with return cls._LBSEQUENCE,
 
 	- core.sisypheStatistics.SisypheDesign.addHRFBoxCarModelToCondition()
 
@@ -5027,11 +5028,11 @@ version 0.87.12, build 20/04/2026
 
 		- pydicom bug: some DataElements have empty keywords
 		- work around the pydicom bug, detect empty keyword and create it from DataElement.name
-		- work around the pydicom bug, replace keyword by tag to extract DataElement from DataSet
+		- work around the pydicom bug, replace keyword with tag to extract DataElement from DataSet
 
 	- core.sisypheVolume.SisypheVolumeCollection.remove()
 
-		- bug fix for int value type, line 4930, replace self.pop(self.index(value)) by self.pop(value)
+		- bug fix for int value type, line 4930, replace self.pop(self.index(value)) with self.pop(value)
 
 	- core.sisypheImage.SisypheImage.loadFromNIFTI()
 
@@ -5043,7 +5044,7 @@ version 0.87.12, build 20/04/2026
 
 	- core.sisypheROI.SisypheROICollection.toLabelVolume()
 
-		- bug fix, replace roi = roi + self[i].getSITKImage() * i by roi = roi + self[i].getSITKImage() * (i + 1)
+		- bug fix, replace roi = roi + self[i].getSITKImage() * i with roi = roi + self[i].getSITKImage() * (i + 1)
 
 	- core.sisypheSettings.SisypheSettings.getFieldValue()
 	- core.sisypheSettings.SisypheSettings.setFieldValue()
@@ -5079,11 +5080,11 @@ version 0.87.12, build 20/04/2026
 
 	- gui.windowSisyphe.WindowSisyphe._openModel()
 
-		- bug fix, line 2024, replace basename(filename)[0] by splitext(basename(filename))[0]
+		- bug fix, line 2024, replace basename(filename)[0] with splitext(basename(filename))[0]
 
 	- gui.dialogStatContrast.DialogContrast.__init__()
 
-		- bug fix, line 206, replace self._cfactors.addItem('Main factor') by self._cfactors.addItem('Main')
+		- bug fix, line 206, replace self._cfactors.addItem('Main factor') with self._cfactors.addItem('Main')
 
 	- gui.dialogStatContrast.DialogLateralityIndex.execute()
 
@@ -5178,28 +5179,28 @@ version 0.87.12, build 20/04/2026
 
 	- widgets.LUTWidgets.LutWidget._get_span_left()
 
-		- matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] with self._span.get_x()
 
 	- widgets.LUTWidgets.LutWidget._get_span_right()
 
-		- matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] with self._span.get_x() + self._span.get_width()
 		
 	- widgets.LUTWidgets.LutWidget._set_span_left()
 
-		- matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)
+		- matplotlib migration to 3.10.8, replace span left update with self._span.set_x(x)
 
 	- widgets.LUTWidgets.LutWidget._set_span_right()
 
-		- matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())
+		- matplotlib migration to 3.10.8, replace span right update with self._span.set_width(x - self._span.get_x())
 
 	- widgets.LUTWidgets.LutWidget._draw()
 
-		- replace self._canvas.draw() by self._canvas.draw_idle()
+		- replace self._canvas.draw() with self._canvas.draw_idle()
 
 	- widgets.LUTWidgets.LutEditWidget.__init__()
 	- widgets.LUTWidgets.LutEditWidget._onMouseMoveEvent()
 	
-		- replace self._canvas.draw() by self._canvas.draw_idle()
+		- replace self._canvas.draw() with self._canvas.draw_idle()
 
 	- widgets.LUTWidgets.AlphaTransferWidget.__init__()
 	- widgets.LUTWidgets.AlphaTransferWidget._updateLines()
@@ -5209,67 +5210,67 @@ version 0.87.12, build 20/04/2026
 	- widgets.LUTWidgets.AlphaTransferWidget._onMenuRemove()
 	- widgets.LUTWidgets.AlphaTransferWidget._onMenuClear()
 
-		- replace self._canvas.draw() by self._canvas.draw_idle()
+		- replace self._canvas.draw() with self._canvas.draw_idle()
 
 	- widgets.LUTWidgets.ComboBoxLut._addInternalLut()
 	- widgets.LUTWidgets.ComboBoxLut.getCurrentAsMatplotlibColormap()
 	- widgets.LUTWidgets.ComboBoxLut._addInternalLut()
 
-		- matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)
+		- matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) with lut = colormaps[name].resampled(256)
 
 	- widgets.LUTWidgets.PopupMenuLut.getCurrentAsMatplotlibColormap()
 
-		- matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) by lut = colormaps[name].resampled(256)
+		- matplotlib migration to 3.10.8, replace lut = get_cmap(name, 256) with lut = colormaps[name].resampled(256)
 
 	- widgets.imageWidgets.ImagePreviewWidget.__init__()
 	- widgets.imageWidgets.ImagePreviewWidget.setDefaultLut()
 	- widgets.imageWidgets.ImagePreviewWidget.setLut()
 
-		- matplotlib migration to 3.10.8, replace self._lut = get_cmap(lut, 256) by self._lut = colormaps[lut].resampled(256)
-		- matplotlib migration to 3.10.8, replace self._lut = get_cmap('gray', 256) by self._lut = colormaps['gray'].resampled(256)
+		- matplotlib migration to 3.10.8, replace self._lut = get_cmap(lut, 256) with self._lut = colormaps[lut].resampled(256)
+		- matplotlib migration to 3.10.8, replace self._lut = get_cmap('gray', 256) with self._lut = colormaps['gray'].resampled(256)
 
 	- widgets.multiComponentViewWidget.MultiComponentViewWidget._cursorPositionChanged()
 	- widgets.multiComponentViewWidget.MultiComponentViewWidget.addCurrentCurveToChart()
 	- widgets.multiComponentViewWidget.MultiComponentViewWidget.cleanChart()
 		
-		- replace self._canvas.draw() by self._canvas.draw_idle()
+		- replace self._canvas.draw() with self._canvas.draw_idle()
 
 	- widgets.multiComponentViewWidget.MultiComponentViewWidget.updateSpan()
 
-		- matplotlib migration to 3.10.8, replace left span update by self._span.set_x(self._first)
-		- matplotlib migration to 3.10.8, replace right span update by self._span.set_width(last - self._first)
-		- replace self._canvas.draw() by self._canvas.draw_idle()
+		- matplotlib migration to 3.10.8, replace left span update with self._span.set_x(self._first)
+		- matplotlib migration to 3.10.8, replace right span update with self._span.set_width(last - self._first)
+		- replace self._canvas.draw() with self._canvas.draw_idle()
 
 	- widgets.sheetWidget.SheetChartWidget._drawChart()
 	- widgets.sheetWidget.SheetChartWidget.properties()
 
-		- replace self._canvas.draw() by self._canvas.draw_idle()
+		- replace self._canvas.draw() with self._canvas.draw_idle()
 
 	- widgets.thresholdWidget.ThresholdViewWidget.__init__()
 	- widgets.thresholdWidget.ThresholdViewWidget._onMouseMoveEvent()
 
-		- replace self._canvas.draw() by self._canvas.draw_idle()
+		- replace self._canvas.draw() with self._canvas.draw_idle()
 
 	- widgets.thresholdWidget.ThresholdViewWidget._get_span_left()
 
-		- matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] by self._span.get_x()
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[0][0] with self._span.get_x()
 
 	- widgets.thresholdWidget.ThresholdViewWidget._get_span_right()
 
-		- matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] by self._span.get_x() + self._span.get_width()
+		- matplotlib migration to 3.10.8, replace self._span.get_xy()[2][0] with self._span.get_x() + self._span.get_width()
 
 	- widgets.thresholdWidget.ThresholdViewWidget._set_span_left()
 
-		- matplotlib migration to 3.10.8, replace span left update by self._span.set_x(x)
+		- matplotlib migration to 3.10.8, replace span left update with self._span.set_x(x)
 
 	- widgets.thresholdWidget.ThresholdViewWidget._set_span_right()
 
-		- matplotlib migration to 3.10.8, replace span right update by self._span.set_width(x - self._span.get_x())
+		- matplotlib migration to 3.10.8, replace span right update with self._span.set_width(x - self._span.get_x())
 
 	- widgets.selectFileWidgets.FilesSelectionWidget.copySelectionFrom()
 	- widgets.selectFileWidgets.FilesSelectionWidget.copySelectionTo()
 
-		- bug fix, replace widget by widget._list
+		- bug fix, replace widget with widget._list
 
 	- widgets.selectFileWidgets.FilesSelectionWidget.add()
 
@@ -5282,7 +5283,7 @@ version 0.87.12, build 20/04/2026
 	- widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()
 
 		- bug fix, support for mosaics with dimensions other than 8 x 8
-		- line 1023, replace mosaic = ((v // 8) + 1) * 8 by mosaic = (int(sqrt(v)) + 1) ** 2
+		- line 1023, replace mosaic = ((v // 8) + 1) * 8 with mosaic = (int(sqrt(v)) + 1) ** 2
 
 	- widgets.attributesWidgets.ListROIAttributesWidget.__init__()
 
@@ -5291,7 +5292,7 @@ version 0.87.12, build 20/04/2026
 	- widgets.functionsSettingsWidget.SettingsWidget._initSettingsLayout()
 
 		- add attribute 'component' for 'vol' node, to define single or multicomponent xvol selection
-		- bug fix, line 755, replace data = abspath(join(base, data)) by if base != '': data = abspath(join(base, data))
+		- bug fix, line 755, replace data = abspath(join(base, data)) with if base != '': data = abspath(join(base, data))
 
 	- widgets.consoleWidget.ConsoleWidget.__init__()
 	- widgets.consoleWidget.ConsoleWidget.restart()
@@ -5700,7 +5701,7 @@ version 0.92.10, build 30/05/2026
 	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.execute()
 	- gui.dialogDeepSegmentation.DialogDeepAtlasParcellation.execute()
 		
-		- bug fix, replace self._volumeSelect.clear() by self._volumeSelect.clearall()
+		- bug fix, replace self._volumeSelect.clear() with self._volumeSelect.clearall()
 
 	- gui.dialogXmlDicom.DialogXmlDicom.__init__()
 
@@ -5708,7 +5709,7 @@ version 0.92.10, build 30/05/2026
 
 	- gui.dialogDicomDataset.DialogDicomDataset.setFilename()
 
-		- replace self._files.add(filename) by self._files.add(filename, signal=False)
+		- replace self._files.add(filename) with self._files.add(filename, signal=False)
 
 	- gui.dialogFunction.DialogIntensityNormalization.function()
 
@@ -5856,14 +5857,14 @@ version 0.92.10, build 30/05/2026
 
 	- widgets.fileBrowserWidget.FileBrowserWidget._open()
 
-		- bug fix, replace self._mainWindow_openWorkflow(action) by self._mainWindow._openWorkflow(action)
+		- bug fix, replace self._mainWindow_openWorkflow(action) with self._mainWindow._openWorkflow(action)
 		- open the dataset of dicom file
 		- open the dataset of .xdcm file
 
 	- widgets.fileBrowserWidget.FileBrowserWidget._dirClicked()
 
-		- replace srcindex = self._filemodel2.setRootPath(path) by srcindex = self._filemodel2.index(path)
-		- this result in a dramatic improvement in the widget's responsiveness (end of lags)
+		- replace srcindex = self._filemodel2.setRootPath(path) with srcindex = self._filemodel2.index(path)
+		- this result in a dramatic improvement in the widget's responsiveness
 
 	- widgets.fileBrowserWidget.FileFilterProxyModel.filterAcceptsRow()
 
@@ -6017,7 +6018,7 @@ version 0.96.24, build 20/06/2026
 
 	- core.sisypheDownload.installFromHost
 
-		- replace copy by copy2
+		- replace copy with copy2
 		- remove try/except downloadFromHost(urls, temp, wait=wait)
 
 	- core.sisypheDownload.downloadFromHost
@@ -6026,7 +6027,7 @@ version 0.96.24, build 20/06/2026
 
 	- core.sisypheDownload.updatePySisyphe
 
-		-bug fix, replace filename = join(dst, 'settings/host.xml') by filename = abspath(join(dst, 'settings', 'host.xml'))
+		-bug fix, replace filename = join(dst, 'settings/host.xml') with filename = abspath(join(dst, 'settings', 'host.xml'))
 	
 - **new classes**
 
@@ -6277,7 +6278,7 @@ version 0.96.24, build 20/06/2026
 
 	- core.sisypheROI.SisypheROIDraw.popRedoLIFO()
 
-		- bug fix, replace self._roi.getNumpy[:, :, item[1]] = buff by self._roi.getNumpy()[:, :, item[1]] = buff
+		- bug fix, replace self._roi.getNumpy[:, :, item[1]] = buff with self._roi.getNumpy()[:, :, item[1]] = buff
 
 	- lib.mega.mega.Mega._download_file()
 
@@ -6405,7 +6406,7 @@ version 0.96.24, build 20/06/2026
 	- widgets.attributeWidgets.ListMeshAttributesWidget.saveVTK()
 	- widgets.attributeWidgets.ListMeshAttributesWidget.saveXMLVTK()
 
-		- bug fix, remove item and replace item by mesh
+		- bug fix, remove item and replace item with mesh
 
 	- widgets.attributeWidgets.ListToolAttributesWidget.properties()
 
@@ -6727,11 +6728,11 @@ version 0.99.16, build 20/07/2026
 
 	- core.sisypheROI.SisypheROIDraw.getDrawThresholdedRectangleFillHoles()
 
-		- bug fix, replace self._dtrfillholes = v by return self._dtrfillholes
+		- bug fix, replace self._dtrfillholes = v with return self._dtrfillholes
 
 	- core.sisypheROI.SisypheROIDraw.setROI()
 
-		- bug fix, replace if self.hasVolume by if self.hasVolume()
+		- bug fix, replace if self.hasVolume with if self.hasVolume()
 
 	- core.sisypheROI.SisypheROIDraw.clearClipboard()
 
@@ -6754,7 +6755,7 @@ version 0.99.16, build 20/07/2026
 
 	- core.sisypheROI.SisypheROIDraw.setBrushType()
 
-		- bug fix, replace if 0 <= brushtype < 3 by if 0 <= brushtype < 4
+		- bug fix, replace if 0 <= brushtype < 3 with if 0 <= brushtype < 4
 
 	- core.sisypheTransform.SisypheTransform.saveDisplacementField()
 
@@ -6763,14 +6764,14 @@ version 0.99.16, build 20/07/2026
 
 	- gui.dialogRegistration.DialogRegistration.execute()
 
-		- bug fix, line 898, replace f.setTransform(trf) by f.setTransform(t)
-		- bug fix, line 910, replace afield = trf.getDisplacementField() by afield = t.getDisplacementField()
-		- replace t.saveDisplacementField(filename) by t.saveDisplacementField(filename, mvol.getOrigin())
+		- bug fix, line 898, replace f.setTransform(trf) with f.setTransform(t)
+		- bug fix, line 910, replace afield = trf.getDisplacementField() with afield = t.getDisplacementField()
+		- replace t.saveDisplacementField(filename) with t.saveDisplacementField(filename, mvol.getOrigin())
 		- add logger
 
 	- gui.dialogWait.DialogWaitRegistration.setAntsRegistrationProgress()
 
-		- replace nlevels = len(self._multir[0]) by nlevels = len(self._stages)
+		- replace nlevels = len(self._multir[0]) with nlevels = len(self._stages)
 
 	- gui.windowSisyphe.WindowSisyphe._initRegistrationMenu()
 
@@ -6794,7 +6795,7 @@ version 0.99.16, build 20/07/2026
 
 	- widgets.attributesWidgets.ListToolAttributesWidget.targets()
 
-		- bug fix, replace i by j in p = [p0[i] + r[i] for i in range(len(p0))]
+		- bug fix, replace i with j in p = [p0[i] + r[i] for i in range(len(p0))]
 
 	- widgets.tabToolsWidgets.TabROIToolsWidget.brush()
 
@@ -6802,4 +6803,614 @@ version 0.99.16, build 20/07/2026
 
 	- widgets.iconBarWidgets.IconBarWidget.setActionButtonAvailability()
 
-		- replace if not v: self._icons['actions'].setVisible(v) by self._icons['actions'].setVisible(v)
+		- replace if not v: self._icons['actions'].setVisible(v) with self._icons['actions'].setVisible(v)
+
+.. _build20-09-2026:
+
+version 1.01.14, build 20/09/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Versions.rst
+	- PySisyphe_Diffusion.rst
+	- PySisyphe_docktracking.rst
+	- rebuild sphinx documentation
+
+- **updated file**
+
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+	- /gui/lut/grdblue.xlut
+	- /gui/lut/grdgreen.xlut
+	- /gui/lut/grdred.xlut
+
+- **new module**
+
+	- lib.dipy.peaks
+
+		- dipy fork of the dipy.direction.peaks module
+		- add wait parameter to peaks_from_model() function for progress bar management
+
+- **updated modules**
+
+	- core.sisypheImage
+	- core.sisypheVolume
+	- core.sisypheImageAttributes
+	- core.sisypheImageIO
+	- core.sisypheDicom
+	- core.sisypheTracts
+	- gui.dialogDicomImport
+	- gui.dialogDiffusionGradients
+	- gui.dialogDiffusionModel
+	- gui.dialogDiffusionBundle
+	- gui.dialogDiffusionTracking
+	- gui.windowSisyphe
+	- processing.capturedStdoutProcessing
+	- widgets.toolbarThumbnail
+	- widgets.dicomWidgets
+	- widgets.imageWidgets
+	- widgets.multiComponentViewWidget
+	- widgets.tabToolsWidgets
+	- widgets.attributesWidgets
+
+- **updated functions**
+
+	- core.sisypheImageIO.flipImageToVTKDirectionConvention()
+
+		- bug fix
+			- replace m = abs(d).argmax(axis=1) with m = abs(d).argmax(axis=0)
+			- replace d[i, 0] with d[0, i]
+			- replace d[i, 1] with d[1, i]
+			- replace d[i, 2] with d[2, i]
+
+	- core.sisypheImageIO.convertImageToAxialOrientation()
+
+		- bug fix
+			- replace m = abs(d).argmax(axis=1) with m = abs(d).argmax(axis=0)
+			- add m = [m.index(i) for i in range(3)]
+
+	- core.sisypheImageIO.readFromDicomFilenames()
+
+		- add r.MetaDataDictionaryArrayUpdateOn()
+
+	- core.sisypheDicom.saveBVec()
+	- core.sisypheDicom.loadBVec()
+
+		- management of the 'direction' key
+
+	- gui.dialogDicomImport.DialogDicomImport
+	
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+
+		- new getDirectionsMatrix() method
+		- new getAbs() method
+		- new getSign() method
+		- update getFirstVectorDirection() method
+		- update getSecondVectorDirection() method
+		- update getThirdVectorDirection() method
+		- update getNative2DOrientation() method
+		- update getNative2DOrientationAsString() method
+		- update __str__() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- new getAbs() method
+		- new getSign() method		
+		- update __str__() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- update __str__() method
+
+	- core.sisypheTracts.SisypheDiffusionModel
+
+		- update loadGradients() method
+		- update setGradients() method
+
+	- core.sisypheTracts.SisypheTracking
+
+		- new getSeedMask() method
+		- update computeTracking() method
+		- update parseXML() method
+
+	- core.sisypheTracts.SisypheStreamlines
+
+		- new bundleCoherence() method
+		- new bundleFiberToBundleCoherenceFiltering() method
+		- new streamlinesFiberToBundleCoherenceFiltering() method
+		- update streamlinesRoiSelection() method
+
+	- gui.dialogDicomImport.DialogDicomImport
+
+		- update convert() method
+
+	- gui.dialogDiffusionGradients.DialogDiffusionGradients
+
+		- update save() method
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel
+
+		- update _updateBVals() method
+		- update _updateBVecs() method
+		- update _bvalsCleared() method
+		- update _bvecsCleared() method
+		- update multiExecute() method
+
+	- gui.dialogDiffusionBundle.DialogStreamlinesROISelection
+
+		- update __init__() method
+
+	- gui.dialogDiffusionBundle.DialogBundleFilteringSelection
+
+		- update __init__() method
+
+	- gui.dialogDiffusionBundle.DialogStreamlinesFiltering
+
+		- new setAlgorithm() method
+
+	- gui.dialogDiffusionTracking.DialogDiffusionTracking
+
+		- update _algoChanged() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update loadNifti() method
+		- update loadMinc() method
+		- update loadNrrd() method
+		- update loadVtk() method
+		- update loadSis() method
+		- update loadVmr() method
+		- update loadMgh() method
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel
+
+		- update __init__() method
+		- update run() metod
+
+	- widgets.toolbarThumbnail.ToolBarThumbnail
+
+		- update addVolume() method
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget
+
+		- update _pathToDict() method
+		- update _verifySliceOrder() method
+
+	- widgets.imageWidgets.SisypheImageViewWidget
+
+		- update __init__() method
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+
+		- update displayInMultiComponentView() method
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+
+		- update updateLut() method
+
+	- widgets.tabToolsWidgets.TabTrackingWidget
+
+		- update _clearTractogram() method
+		- update dissection() method
+		- update atlas() method
+
+	- widgets.attributesWidgets.ListROIAttributesWidget
+
+		- update open() method
+		- update saveDicomRT() method
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget
+
+		- update addRoi() method
+		- update duplicate() method
+		- update addOverlay() method
+		- update filter() method
+		- update dilate() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update open() method
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget
+
+		- new filterbcf() method
+		- update __init__() method
+		- update open() method
+		- update dissection() method
+		- update interactive() method
+		- update filter() method
+		- rename filter() method to filtercc()
+		- update cluster() method
+		- update centroid() method
+		- update toROI() method
+		- update toMesh() method
+		- update duplicate() method
+		- update dropEvent() method
+
+	- widgets.attributesWidgets.ItemROIAttributesWidget
+	- widgets.attributesWidgets.ItemMeshAttributesWidget
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+	- widgets.attributesWidgets.ItemBundleAttributesWidget
+
+		- new _updateToolTip() method
+
+	- widgets.attributesWidgets.ItemROIAttributesWidget
+
+		- new enterEvent() method
+		- update _colorChanged() method
+		- update _opacityChanged() method
+		- update _nameChanged() method
+		- update _updateSettingsFromItem() method
+
+	- widgets.attributesWidgets.ItemMeshAttributesWidget
+
+		- update _clearTransform() method
+		- update _move() method
+		- update _colorChanged() method
+		- update _opacityChanged() method
+		- update _nameChanged() method
+		- update _updateSettingsFromItem() method
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+
+		- new enterEvent() method
+		- update _colorChanged() method
+		- update _opacityChanged() method
+		- update _nameChanged() method
+		- update _updateSettingsFromItem() method
+		- update properties() method
+		- update target() method
+		- update length() method
+		- update moving() method
+
+	- widgets.attributesWidgets.ItemBundleAttributesWidget
+
+		- new enterEvent() method
+		- _opacityChanged() method
+		- _nameChanged() method
+		- _widthChanged() method
+		- _editColor() method
+		- _updateSettingsFromItem() method
+
+- **new methods**
+
+	- core.sisypheImage.SisypheImage.getAbs()
+	- core.sisypheImage.SisypheImage.getSign()
+	- core.sisypheImage.SisypheImage.getSqr()
+	- core.sisypheImage.SisypheImage.getSqrt()
+	- core.sisypheImage.SisypheImage.getExp()
+	- core.sisypheImage.SisypheImage.getExp2()
+	- core.sisypheImage.SisypheImage.getLog()
+	- core.sisypheImage.SisypheImage.getLog2()
+	- core.sisypheImage.SisypheImage.getLog10()
+	- core.sisypheImage.SisypheImage.getSin()
+	- core.sisypheImage.SisypheImage.getCos()
+	- core.sisypheImage.SisypheImage.getTan()
+	- core.sisypheImage.SisypheImage.getArcsin()
+	- core.sisypheImage.SisypheImage.getArccos()
+	- core.sisypheImage.SisypheImage.getArctan()
+	- core.sisypheImage.SisypheImage.getSinh()
+	- core.sisypheImage.SisypheImage.getCosh()
+	- core.sisypheImage.SisypheImage.getTanh()
+	- core.sisypheImage.SisypheImage.getArcsinh()
+	- core.sisypheImage.SisypheImage.getArccosh()
+	- core.sisypheImage.SisypheImage.getArctanh()
+	- core.sisypheImage.SisypheImage.getFloor()
+	- core.sisypheImage.SisypheImage.getCeil()
+
+		- get a new SisypheImage calculated using a numpy function
+
+	- core.sisypheImage.SisypheImage.getDirectionsMatrix()
+
+		- get matrix of image axes in RAS+ coordinates system
+
+	- core.sisypheVolume.SisypheVolume.getAbs()
+	- core.sisypheVolume.SisypheVolume.getSign()
+	- core.sisypheVolume.SisypheVolume.getSqr()
+	- core.sisypheVolume.SisypheVolume.getSqrt()
+	- core.sisypheVolume.SisypheVolume.getExp()
+	- core.sisypheVolume.SisypheVolume.getExp2()
+	- core.sisypheVolume.SisypheVolume.getLog()
+	- core.sisypheVolume.SisypheVolume.getLog2()
+	- core.sisypheVolume.SisypheVolume.getLog10()
+	- core.sisypheVolume.SisypheVolume.getSin()
+	- core.sisypheVolume.SisypheVolume.getCos()
+	- core.sisypheVolume.SisypheVolume.getTan()
+	- core.sisypheVolume.SisypheVolume.getArcsin()
+	- core.sisypheVolume.SisypheVolume.getArccos()
+	- core.sisypheVolume.SisypheVolume.getArctan()
+	- core.sisypheVolume.SisypheVolume.getSinh()
+	- core.sisypheVolume.SisypheVolume.getCosh()
+	- core.sisypheVolume.SisypheVolume.getTanh()
+	- core.sisypheVolume.SisypheVolume.getArcsinh()
+	- core.sisypheVolume.SisypheVolume.getArccosh()
+	- core.sisypheVolume.SisypheVolume.getArctanh()
+	- core.sisypheVolume.SisypheVolume.getFloor()
+	- core.sisypheVolume.SisypheVolume.getCeil()
+
+		- get a new SisypheVolume calculated using a numpy function
+
+	- core.sisypheVolume.SisypheVolume.setDefaultID()
+
+		- set ID to default (= Array ID)
+
+	- core.sisypheTracts.SisypheTracking.getSeedMask()
+
+		- get seed mask
+
+	- core.sisypheTracts.SisypheStreamlines.bundleCoherence()
+
+		- streamlines fiber to bundle coherence
+
+	- core.sisypheTracts.SisypheStreamlines.bundleFiberToBundleCoherenceFiltering()
+
+		- streamlines selection by a fiber to bundle coherence filtering
+
+	- core.sisypheTracts.SisypheStreamlines.streamlinesFiberToBundleCoherenceFiltering()
+
+		- streamlines selection by a fiber to bundle coherence filtering
+
+	- gui.dialogDiffusionBundle.DialogStreamlinesFiltering.setAlgorithm()
+
+		- show/hide parameters based on algorithm (cluster confidence or fiber to bundle coherence)
+
+	- widgets.attributesWidgets.ItemROIAttributesWidget._updateToolTip()
+	- widgets.attributesWidgets.ItemMeshAttributesWidget._updateToolTip()
+	- widgets.attributesWidgets.ItemToolAttributesWidget._updateToolTip()
+	- widgets.attributesWidgets.ItemBundleAttributesWidget._updateToolTip()
+
+		- method to update tooltip str
+
+	- widgets.attributesWidgets.ItemROIAttributesWidget.enterEvent()
+
+		- call method to update tooltip str
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget.enterEvent()
+
+		- call method to update tooltip str
+
+	- widgets.attributesWidgets.ItemBundleAttributesWidget.enterEvent()
+
+		- call method to update tooltip str
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget.filterbcf()
+
+		- fiber to bundle coherence filtering
+
+- **updated methods**
+
+	- core.sisypheImage.SisypheImage.getFirstVectorDirection()
+	- core.sisypheImage.SisypheImage.getSecondVectorDirection()
+	- core.sisypheImage.SisypheImage.getThirdVectorDirection()
+
+		- bug fix, returns columns rather than rows from the direction matrix
+
+	- core.sisypheImage.SisypheImage.getNative2DOrientation()
+
+		- replace self.isAnisotropic() with self.isAnisotropic(1.5)
+
+	- core.sisypheImage.SisypheImage.getNative2DOrientationAsString()
+
+		- replace return value with tuple[str, str]
+
+	- core.sisypheImage.SisypheImage.__str__()
+
+		- replace '\tDirections:\n' with '\tDirections (RAS+):\n'
+
+	- core.sisypheVolume.SisypheVolume.__str__()
+
+		- update native orientation
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- remove orientation
+
+	- core.sisypheTracts.SisypheDiffusionModel.loadGradients()
+	- core.sisypheTracts.SisypheDiffusionModel.setGradients()
+
+		- add direction parameter
+		- direction correction of gradients
+		- replace v = t @ v with v = t @ (direction.T @ v)
+
+	- core.sisypheTracts.SisypheTracking.computeTracking()
+
+		- add wait parameter to peaks_from_model()
+		- bug fix, related to dipy upgrade, line 12071, add sphere parameter to eudx_tracking()
+
+	- core.sisypheTracts.SisypheTracking.parseXML()
+
+		- bug fix, replace self.setGradients(bvals, bvecs) with self.setGradients(bvals, bvecs, lpstoras=False)
+
+	- core.sisypheTracts.SisypheStreamlines.streamlinesRoiSelection()
+
+		- replace tol = sqrt((array(self._spacing) ** 2).sum()) with tol = self._spacing[0] / 2.0
+		- use seeds_from_mask() function instead of to_indexes()
+		- take into account anisotropic voxel (density paramter used by seeds_from_mask function)
+
+	- gui.dialogDicomImport.DialogDicomImport.convert()
+
+		- add suffix number if save name exists (no file overwriting)
+		- add direction in bvec dict
+		- copy direction if mosaic
+		- replace saveBVec(bsavename, bvec, format='txt') with saveBVec(bsavename, bvec, format='txtbyvec')
+		- add vol.setDefaultID()
+
+	- gui.dialogDiffusionGradients.DialogDiffusionGradients.save()
+
+		- save direction (default or calculate from xdcm file)
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel._updateBVals()
+
+		- add if 'direction' in v2: del v2['direction']
+		- bug fix, add if not self._bvals.isEmpty():
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel._updateBVecs()
+
+		- add if 'direction' in v1: del v1['direction']
+		- bug fix, add if not self._bvecs.isEmpty():
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel._bvalsCleared()
+
+		- clear bvecs
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel._bvecsCleared()
+
+		- clear bvals
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.multiExecute()
+
+		- add direction correction of gradient vectors
+		- save principal x, y and z volumes
+
+	- gui.dialogDiffusionBundle.DialogStreamlinesROISelection.__init__()
+
+		- change to the dialog box design
+
+	- gui.dialogDiffusionBundle.DialogBundleFilteringSelection
+
+		- add self._settings.setParameterVisibility('FCB', False)
+
+	- gui.dialogDiffusionTracking.DialogDiffusionTracking._algoChanged()
+
+		- bg fix, display deterministic Euler EuDX fields
+
+	- gui.windowSisyphe.WindowSisyphe.loadNifti()
+	- gui.windowSisyphe.WindowSisyphe.loadMinc()
+	- gui.windowSisyphe.WindowSisyphe.loadNrrd()
+	- gui.windowSisyphe.WindowSisyphe.loadVtk()
+	- gui.windowSisyphe.WindowSisyphe.loadSis()
+	- gui.windowSisyphe.WindowSisyphe.loadVmr()
+	- gui.windowSisyphe.WindowSisyphe.loadMgh()
+
+		- add wait.hide() before displaying messageBox
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel.__init__()
+
+		- replace corr parameter with corr1
+		- add parameter corr2 for direction correction
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel.run()
+
+		- add direction correction of gradient vectors
+
+	- widgets.toolbarThumbnail.ToolBarThumbnail.addVolume()
+
+		- bug fix, replace if vol.hasFilename: with if vol.hasFilename():
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._pathToDict()
+
+		- replace glob(join(self._path[-1], flt), recursive=True) with glob(join(abspath(self._path[-1]), flt), recursive=True)
+
+	- widgets.dicomWidgets.DicomFilesTreeWidget._verifySliceOrder()
+
+		- bug fix, replace ImagePositionPatient (0x0020, 0x0032) with SliceLocation (0x0020, 0x1041) to sort dicom files
+
+	- widgets.imageWidgets.SisypheImageViewWidget.__init__()
+
+		- bug fix, replace s[0] != s[1]: aspect = s[1] / s[2] with s[0] != s[1]: aspect = s[1] / s[0]
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInMultiComponentView()
+
+		-- bug fix, replace if self._action['components'].isChecked() with self._action['multi'].isChecked()
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.updateLut()
+
+		- bug fix, add if self._views[k].hasVolume():
+
+	- widgets.tabToolsWidgets.TabTrackingWidget._clearTractogram()
+
+		- bug fix, add self._file.clear(signal=False)
+
+	- widgets.tabToolsWidgets.TabTrackingWidget.dissection()
+
+		- add wait.close() before displaying messageBox 
+
+	- widgets.tabToolsWidgets.TabTrackingWidget.atlas()
+
+		- move wait.close() before displaying messageBox
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.open()
+
+		- add wait.hide() before displaying messageBox
+
+	- widgets.attributesWidgets.ListROIAttributesWidget.saveDicomRT()
+
+		- add wait.close() before displaying messageBox
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget.addRoi()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.dilate()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.erode()
+
+		- add wait.hide() before displaying messageBox
+
+	- widgets.attributesWidgets.ListMeshAttributesWidget.duplicate()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.addOverlay()
+	- widgets.attributesWidgets.ListMeshAttributesWidget.filter()
+
+		- add wait.close() before displaying messageBox
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.open()
+
+		- add wait.hide() before displaying messageBox
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget.open()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.dissection()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.filter()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.cluster()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.toROI()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.toMesh()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.dropEvent()
+
+		- add wait.hide() before displaying messageBox
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget.interactive()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.centroid()
+	- widgets.attributesWidgets.ListBundleAttributesWidget.duplicate()
+
+		- add wait.close() before displaying messageBox
+
+	- widgets.attributesWidgets.ListBundleAttributesWidget.__init__()
+
+		- add QMenu (self._popupFilter) to filter button (self._filter)
+		- add QAction self._action['filter1'] to QMenu self._popupFilter
+		- add QAction self._action['filter2'] to QMenu self._popupFilter
+		- add self._action['filter1'].triggered.connect(self.filtercc)
+		- add self._action['filter2'].triggered.connect(self.filterbcf)
+
+	- widgets.attributesWidgets.ItemROIAttributesWidget._colorChanged()
+	- widgets.attributesWidgets.ItemROIAttributesWidget._opacityChanged()
+	- widgets.attributesWidgets.ItemROIAttributesWidget._nameChanged()
+	- widgets.attributesWidgets.ItemROIAttributesWidget._updateSettingsFromItem()
+
+		- add self._updateToolTip()
+
+	- widgets.attributesWidgets.ItemMeshAttributesWidget._clearTransform()
+	- widgets.attributesWidgets.ItemMeshAttributesWidget._move()
+	- widgets.attributesWidgets.ItemMeshAttributesWidget._colorChanged()
+	- widgets.attributesWidgets.ItemMeshAttributesWidget._opacityChanged()
+	- widgets.attributesWidgets.ItemMeshAttributesWidget._nameChanged()
+	- widgets.attributesWidgets.ItemMeshAttributesWidget._updateSettingsFromItem()
+
+		- add self._updateToolTip()
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget._colorChanged()
+	- widgets.attributesWidgets.ItemToolAttributesWidget._opacityChanged()
+	- widgets.attributesWidgets.ItemToolAttributesWidget._nameChanged()
+	- widgets.attributesWidgets.ItemToolAttributesWidget._updateSettingsFromItem()
+	- widgets.attributesWidgets.ItemToolAttributesWidget.properties()
+	- widgets.attributesWidgets.ItemToolAttributesWidget.target()
+	- widgets.attributesWidgets.ItemToolAttributesWidget.length()
+	- widgets.attributesWidgets.ItemToolAttributesWidget.moving()
+
+		- add self._updateToolTip()
+
+	- widgets.attributesWidgets.ItemBundleAttributesWidget._opacityChanged()
+	- widgets.attributesWidgets.ItemBundleAttributesWidget._nameChanged()
+	- widgets.attributesWidgets.ItemBundleAttributesWidget._widthChanged()
+	- widgets.attributesWidgets.ItemBundleAttributesWidget._editColor()
+	- widgets.attributesWidgets.ItemBundleAttributesWidget._updateSettingsFromItem()
+
+		- add self._updateToolTip()
