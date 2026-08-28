@@ -526,7 +526,8 @@
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Algo>
 		<Size label="Morphological kernel size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
 		<Iter label="Number of morphological operator iterations (mask)" varmax="10" varmin="1" vartype="int">2</Iter>
-		<Orientation label="Gadient orientation conversion" vartype="bool">True</Orientation>
+		<Orientation label="Orientation correction" vartype="bool">True</Orientation>
+		<Direction label="Direction correction" vartype="bool">True</Direction>
 		<Save label="Save model" vartype="bool">True</Save>
 	</DiffusionModel>
 	<DTIModel>
@@ -610,8 +611,8 @@
 		<StepSize varmax="2.0" varmin="0.2" vartype="float">0.5</StepSize>
 		<Angle label='Maximum angle' varmax="90" varmin="5" vartype="int">20</Angle>
 		<MinimalLength varmax="200.0" varmin="0.0" vartype="float">0.0</MinimalLength>
-		<RelativePeakThreshold varmax="1.0" varmin="0.0" vartype="float">0.5</RelativePeakThreshold>
-		<MinSeparationAngle label="Minimum separation angle" varmax="90.0" varmin="0.0" vartype="float">30.0</MinSeparationAngle>
+		<RelativePeakThreshold varmax="1.0" varmin="0.0" vartype="float">0.2</RelativePeakThreshold>
+		<MinSeparationAngle label="Minimum separation angle" varmax="90.0" varmin="0.0" vartype="float">25.0</MinSeparationAngle>
 		<NPeaks label="Maximum number of peaks" varmax="10" varmin="1" vartype="int">5</NPeaks>
 		<StoppingCriterion vartype="lstr">FA/GFA|ROI|GM/WM/CSF</StoppingCriterion>
 		<StoppingFAThreshold label="FA/GFA Threshold stopping criterion" varmax="1.0" varmin="0.0" vartype="float">0.1</StoppingFAThreshold>
@@ -649,6 +650,7 @@
 		<Threshold label="Cluster confidence threshold" varmax="500.0" varmin="1.0" vartype="float">1.0</Threshold>
 		<Power varmax="3" varmin="1" vartype="int">1</Power>
 		<Subsampling label="Streamline sampling (number of points)" varmax="30" varmin="10" vartype="int">12</Subsampling>
+		<FCB label="Fiber to bundle coherence threshold" varmax="1.0" varmin="0.0" decimals="4" vartype="float">0.0125</FCB>
 		<Inplace label="Replace current bundle" vartype="bool">True</Inplace>
 	</BundleFiltering>
 	<BundleClustering>

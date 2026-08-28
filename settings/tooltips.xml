@@ -2359,9 +2359,13 @@
 		</Size>
 		<Iter>Number of morphological operator iterations (default 2).</Iter>
 		<Orientation>
-			Gradient orientation conversion from LPS+ DICOM orientation to 
-			RAS+ (checked by default).
+			Gradient vectors are recalibrated with respect to image orientation, 
+			from LPS+ DICOM orientation to PySisyphe RAS+. 
 		</Orientation>
+		<Direction>
+			Gradient vectors are corrected with image orientation from dicom 
+			(0x020,0x037) ImageOrientationPatient field.
+		</Direction>
 		<Save>Save or do not save model (checked by default).</Save>
 	</DiffusionModel>
 	<DTIModel>
@@ -2372,9 +2376,9 @@
 		<Method>
 			Fitting methods:
 			- WLS: weighted least squares (default)
-            - LS or OLS: ordinary least squares
-            - NLLS: non-linear least-squares
-            - RT or RESTORE: RESTORE robust tensor
+			- LS or OLS: ordinary least squares
+			- NLLS: non-linear least-squares
+			- RT or RESTORE: RESTORE robust tensor
 		</Method>
 		<FA>
 			Fractional anisotropy (FA) calculated from tensor eigenvalues.
@@ -2820,8 +2824,15 @@
 			set this threshold to 0.1 mm (default 15 mm)
 		</ClusteringThreshold>
 		<ReductionMetric>
-			Minimum average Direct-Flip (mdf, default) or 
-			Mean Average Minimum (mam)
+			Minimum average Direct-Flip (MDF, default) or 
+			Mean Average Minimum (MAM)
+
+			Minimum average Direct-Flip (MDF) computes both the direct and 
+			flipped average Euclidean distances between corresponding points 
+			and takes the minimum value.
+
+			Mean Average Minimum (MAM) calculates the average of the minimum 
+			Euclidean distances between points on two separate streamlines.
 		</ReductionMetric>
 		<ReductionThreshold>
 			This threshold will be used to reduce the search space for finding 
@@ -2833,7 +2844,14 @@
 		</ReductionThreshold>
 		<PruningMetric>
 			Minimum Diferect Flip distance (mdf, default) or Mean Average 
-			Minimum (mam)
+			Minimum (mam).
+
+			Minimum average Direct-Flip (MDF) computes both the direct and 
+			flipped average Euclidean distances between corresponding points 
+			and takes the minimum value.
+
+			Mean Average Minimum (MAM) calculates the average of the minimum 
+			Euclidean distances between points on two separate streamlines.
 		</PruningMetric>
 		<PruningThreshold>
 			This threshold will filter the streamlines for which the distance 
@@ -2904,8 +2922,22 @@
 			be considered a supporting streamline and included in cci
 			calculation (default 5.0 mm). 0.0 to avoid cluster confidence
 			filtering.
+
+			Minimum average Direct-Flip (MDF) distance is a symmetric metric 
+			used to compare the shape and orientation of two white matter 
+			streamlines. It computes both the direct and flipped average 
+			Euclidean distances between corresponding points and takes 
+			the minimum value.
         </MaximumDistance>
-		<Threshold>cci threshold used to select streamlines.</Threshold>
+		<Threshold>
+			cci (Cluster Confidence Index) threshold used to select streamlines.
+			(default 1)
+
+			The Cluster Confidence Index (cci) evaluates the anatomical support 
+			of a streamline by counting the number of other nearby fibers. A fiber 
+			is considered nearby when its MDF distance exceeds a threshold 
+			(Maximum MDF).
+		</Threshold>
 		<Power>
 			Power to which the MDF distance for each streamline will be raised 
 			to determine how much it contributes to the cci. High values of 
@@ -2919,6 +2951,15 @@
 			calculation. To save on calculation time, each streamline is 
 			subsampled (default 12 points).
 		</Subsampling>
+		<FCB>
+			The fiber to bundle coherence (FBC) index is a measure used to 
+			quantify how well an individual fiber aligns with the other fibers 
+			belonging to the same bundle. It is a local measure of fiber 
+			consistency: a fiber receives a high score when its local orientation 
+			(i.e. angle between the local tangent directions of the two fibers) 
+			is similar to the orientations of nearby fibers in the same bundle, 
+			and a low score when it is an outlier (default 0.0125).
+		</FCB>
 		<Inplace>Create a new bundle or replace the current.</Inplace>
 	</BundleFiltering>
 	<BundleClustering>
