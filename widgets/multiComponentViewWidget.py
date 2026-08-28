@@ -371,15 +371,17 @@ class MultiComponentViewWidget(MultiViewWidget):
         lut : SisypheLut
             new lookup table to apply.
         """
+        lutm = lut.getName()
+        print(lutm)
         for k in self._views:
-            # update colormap
-            lutm = lut.getName()
-            lutk = self._views[k].getVolume().display.getLUT().getName()
-            if lutk != lutm:
-                self._views[k].getVolume().display.getLUT().setLut(lutm)
-            # update window
-            w = lut.getWindowRange()
-            self._views[k].getVolume().display.setWindow(w[0], w[1])
+            if self._views[k].hasVolume():
+                # update colormap
+                lutk = self._views[k].getVolume().display.getLUT().getName()
+                if lutk != lutm:
+                    self._views[k].getVolume().display.getLUT().setLut(lutm)
+                # update window
+                w = lut.getWindowRange()
+                self._views[k].getVolume().display.setWindow(w[0], w[1])
 
     def getPopupCurves(self) -> QMenu:
         """

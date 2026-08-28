@@ -76,7 +76,7 @@ class ToolBarThumbnail(QToolBar):
     QToolBar -> ToolBarThumbnail
 
     Creation: 02/11/2022
-    Last revision: 11/06/2026
+    Last revision: 21/07/2026
     """
 
     # Special method
@@ -424,7 +424,10 @@ class ToolBarThumbnail(QToolBar):
                     # self._actions.append(action)
                     if self._logger is not None: self._logger.info('Add {} to thumbnail'.format(vol.getBasename()))
                     if self.hasMainWindow():
-                        if vol.hasFilename: self._mainwindow.addRecent(vol.getFilename())
+                        # < Revision 21/07/2026
+                        # if vol.hasFilename: self._mainwindow.addRecent(vol.getFilename())
+                        if vol.hasFilename(): self._mainwindow.addRecent(vol.getFilename())
+                        # Revision 21/07/2026 >
                         self._mainwindow.updateMemoryUsage()
                         self._mainwindow.setStatusBarMessage('{} opened.'.format(vol.getBasename()))
                     return True
@@ -477,6 +480,7 @@ class ToolBarThumbnail(QToolBar):
                             QApplication.processEvents()
                         except Exception as err:
                             # < Revision 31/01/2026
+                            wait.hide()
                             if self.parent() is not None: window = self.parent()
                             else: window = self
                             # Revision 31/01/2026 >
@@ -509,7 +513,6 @@ class ToolBarThumbnail(QToolBar):
                        icon=QMessageBox.Information)
 
     def saveSelected(self) -> None:
-
         w = self.getSelectedWidget()
         if w is not None:w.save()
         else:

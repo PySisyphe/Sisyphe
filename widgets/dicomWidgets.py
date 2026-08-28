@@ -21,6 +21,7 @@ from os.path import join
 from os.path import exists
 from os.path import isfile
 from os.path import basename
+from os.path import abspath
 
 import cython
 
@@ -35,8 +36,8 @@ from numpy import int32
 from numpy import uint16
 from numpy import uint32
 from numpy import iinfo
-from numpy import array
-from numpy import argmax
+# from numpy import array
+#from numpy import argmax
 
 from pydicom.tag import Tag
 from pydicom.tag import BaseTag
@@ -1570,7 +1571,10 @@ class DicomFilesTreeWidget(QTreeWidget):
         if exists(self._path[-1]):
             if self._filter == '.*': flt = '**'
             else: flt = '*{}'.format(self._filter)
-            filenames = glob(join(self._path[-1], flt), recursive=True)
+            # < Revision 22/07/2026
+            # filenames = glob(join(self._path[-1], flt), recursive=True)
+            filenames = glob(join(abspath(self._path[-1]), flt), recursive=True)
+            # Revision 22/07/2026 >
             # < Revision 26/01/2026
             """
             0x0008, 0x0020 Study date
@@ -1839,14 +1843,22 @@ class DicomFilesTreeWidget(QTreeWidget):
             potentially reordered list of filenames.
         """
         try:
-            # Extract ImagePositionPatient
-            dsfirst = read_file(filenames[0], stop_before_pixels=True, specific_tags=[Tag(0x0020, 0x0032)])
-            dslast = read_file(filenames[-1], stop_before_pixels=True, specific_tags=[Tag(0x0020, 0x0032)])
-            pfirst = dsfirst[0x0020, 0x0032].value
-            plast = dslast[0x0020, 0x0032].value
-            i = argmax(abs(array(plast) - array(pfirst)))
-            if pfirst[i] > plast[i]:
+            # < Revision 23/07/2026
+            # Extract (0x0020, 0x0032) ImagePositionPatient
+            # dsfirst = read_file(filenames[0], stop_before_pixels=True, specific_tags=[Tag(0x0020, 0x0032)])
+            # dslast = read_file(filenames[-1], stop_before_pixels=True, specific_tags=[Tag(0x0020, 0x0032)])
+            # pfirst = dsfirst[0x0020, 0x0032].value
+            # plast = dslast[0x0020, 0x0032].value
+            # Extract (0x0020, 0x1041) SliceLocation
+            dsfirst = read_file(filenames[0], stop_before_pixels=True, specific_tags=[Tag(0x0020, 0x1041)])
+            dslast = read_file(filenames[-1], stop_before_pixels=True, specific_tags=[Tag(0x0020, 0x1041)])
+            pfirst = dsfirst[0x0020, 0x1041].value
+            plast = dslast[0x0020, 0x1041].value
+            # i = argmax(abs(array(plast) - array(pfirst)))
+            # if pfirst[i] > plast[i]:
+            if pfirst > plast:
                 filenames = filenames[::-1]
+            # Revision 23/07/2026 >
         except: pass
         return filenames
     # Revision 24/02/2026 >

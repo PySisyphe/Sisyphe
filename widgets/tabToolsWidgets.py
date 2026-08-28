@@ -3392,7 +3392,7 @@ class TabTrackingWidget(TabWidget):
 
     QWidget -> TabTrackingWidget
 
-    Last revision: 05/06/2026
+    Last revision: 29/07/2026
     """
 
     # Special method
@@ -3494,6 +3494,9 @@ class TabTrackingWidget(TabWidget):
         self._tractogram = None
         self._list.removeAll()
         self._list.setReferenceID('')
+        # < Revision 28/07/2026
+        self._file.clear(signal=False)
+        # Revision 28/07/2026 >
 
     # Public methods
 
@@ -3569,11 +3572,13 @@ class TabTrackingWidget(TabWidget):
                                 wait.addInformationText('Save {} tractogram...'.format(slt.getName()))
                                 slt.save()
                             except Exception as err:
+                                # < Revision 29/07/2026
+                                wait.close()
                                 messageBox(self,
                                            title='Streamlines atlas selection',
                                            text='Atlas registration error\n{}'.format(err))
-                                wait.close()
                                 return
+                                # Revision 29/07/2026 >
                         for name in checked:
                             filename = SisypheStreamlines.getAtlasBundleFilenameFromName(name)
                             if filename is not None and exists(filename):
@@ -3593,11 +3598,13 @@ class TabTrackingWidget(TabWidget):
                                                                   minlength=self._atlasdialog.getMinimalLength(),
                                                                   wait=wait)
                                 except Exception as err:
+                                    # < Revision 29/07/2026
+                                    wait.close()
                                     messageBox(self,
                                                title='Streamlines atlas selection',
                                                text='Atlas selection error\n{}'.format(err))
-                                    wait.close()
                                     return
+                                    # Revision 29/07/2026 >
                                 self._logger.info('Streamlines atlas selection - Tractogram {}'.format(slt.getFilename()))
                                 # noinspection PyUnboundLocalVariable
                                 self._list.addBundle(sl)
@@ -3607,9 +3614,10 @@ class TabTrackingWidget(TabWidget):
                 messageBox(self,
                            'Streamlines atlas selection',
                            '{} is an ICBM152 atlas tractogram.')
-        else: messageBox(self,
-                         'Streamlines atlas selection',
-                         'No whole brain tractogram.')
+        else:
+            messageBox(self,
+                       'Streamlines atlas selection',
+                       'No whole brain tractogram.')
 
     def dissection(self) -> None:
         if self.hasTractogram():
@@ -3687,13 +3695,19 @@ class TabTrackingWidget(TabWidget):
                     if sl.count() > 0:
                         self._logger.info('Streamlines ROI selection - Tractogram {}'.format(slt.getFilename()))
                         self._list.addBundle(sl)
-                    else: messageBox(self,
-                                     'Streamlines ROI selection',
-                                     'All streamlines removed, bundle is empty.')
+                    else:
+                        # < Revision 29/07/2026
+                        wait.close()
+                        messageBox(self,
+                                   'Streamlines ROI selection',
+                                   'All streamlines removed, bundle is empty.')
+                        return
+                        # Revision 29/07/2026 >
                 wait.close()
-        else: messageBox(self,
-                         'Streamlines ROI selection',
-                         'No whole brain tractogram.')
+        else:
+            messageBox(self,
+                       'Streamlines ROI selection',
+                       'No whole brain tractogram.')
 
     # < Revision 20/02/2025
     # add setEnabled method

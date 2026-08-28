@@ -101,6 +101,7 @@ if TYPE_CHECKING:
     from PyQt5.QtGui import QMouseEvent
     from PyQt5.QtGui import QDropEvent
     from PyQt5.QtGui import QDragEnterEvent
+    from PyQt5.QtGui import QEnterEvent
     from PyQt5.QtWidgets import QStatusBar
     from Sisyphe.core.sisypheTracts import SisypheTractCollection
     from Sisyphe.gui.windowSisyphe import WindowSisyphe
@@ -568,15 +569,24 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
     def _visibilityChanged(self) -> None:
         self._item.setVisibility(self._visibility.getVisibilityStateIcon())
         self._updateViews()
+        # < Revision 29/07/2026
+        self._updateToolTip()
+        # Revision 29/07/2026 >
 
     def _colorChanged(self) -> None:
         r, g, b = self._color.getColor()
         self._item.setColor(r, g, b)
         self._updateViews()
+        # < Revision 29/07/2026
+        self._updateToolTip()
+        # Revision 29/07/2026 >
 
     def _opacityChanged(self) -> None:
         self._item.setAlpha(self._opacity.getOpacity())
         self._updateViews()
+        # < Revision 29/07/2026
+        self._updateToolTip()
+        # Revision 29/07/2026 >
 
     def _nameChanged(self) -> None:
         if self.hasViewCollection():
@@ -591,6 +601,18 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
                     name = self._name.getEditText()
                     self._item.setName(name)
                     self._views.updateROIName(old, name)
+                # < Revision 29/07/2026
+                self._updateToolTip()
+                # Revision 29/07/2026 >
+
+    # < Revision 29/07/2026
+    # add _updateToolTip method
+    def _updateToolTip(self) -> None:
+        self.setToolTip(str(self._item)[:-1])
+        self._name.setToolTip('Set ROI name,\n'
+                              'Accepted characters A...Z, a...z, 0...9, -, _, comma, space.'
+                              '\n\n{}'.format(str(self._item)[:-1]))
+    # Revision 29/07/2026 >
 
     def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
@@ -598,12 +620,14 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
             c = self._item.getColor()
             self._color.setFloatColor(c[0], c[1], c[2])
             self._opacity.setOpacity(self._item.getAlpha())
+            # < Revision 29/07/2026
             # Update tooltip
-            self.setToolTip(str(self._item)[:-1])
-            self._name.setToolTip('Set ROI name,\n'
-                                  'Accepted characters A...Z, a...z, 0...9, -, _, comma, space.'
-                                  '\n\n{}'.format(str(self._item)[:-1]))
-            self.setToolTip(str(self._item)[:-1])
+            # self.setToolTip(str(self._item)[:-1])
+            # self._name.setToolTip('Set ROI name,\n'
+            #                       'Accepted characters A...Z, a...z, 0...9, -, _, comma, space.'
+            #                       '\n\n{}'.format(str(self._item)[:-1]))
+            self._updateToolTip()
+            # Revision 29/07/2026 >
 
     def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
@@ -681,8 +705,17 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
             if self._logger is not None: self._logger.info('Save ROI {}'.format(self._item.getFilename()))
             if self.hasViewCollection(): self._views.clearUndo()
         except Exception as err:
+            wait.hide()
             messageBox(self, 'Save ROI', text='{}'.format(err))
         wait.close()
+
+    # Qt Event
+
+    # < Revision 29/07/2026
+    # add enterEvent method
+    def enterEvent(self, event: QEnterEvent) -> None:
+        self._updateToolTip()
+    # Revision 29/07/2026 >
 
     # Method aliases
 
@@ -939,19 +972,25 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._ry.setValue(0.0)
         self._rz.setValue(0.0)
         self._item.setDefaultOrigin()
-        self._name.setToolTip('Set mesh name,\n'
-                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
-                              '\n\n{}'.format(str(self._item)[:-1]))
-        self.setToolTip(str(self._item)[:-1])
+        # < Revision 29/07/2026
+        # self._name.setToolTip('Set mesh name,\n'
+        #                       'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+        #                       '\n\n{}'.format(str(self._item)[:-1]))
+        # self.setToolTip(str(self._item)[:-1])
+        self._updateToolTip()
+        # Revision 29/07/2026 >
 
     def _move(self) -> None:
         if self._item.isDefaultOrigin(): self._item.setOriginToCenter()
         self._item.setPosition(self._tx.value(), self._ty.value(), self._tz.value())
         self._item.setRotation(self._rx.value(), self._ry.value(), self._rz.value())
-        self._name.setToolTip('Set mesh name,\n'
-                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
-                              '\n\n{}'.format(str(self._item)[:-1]))
-        self.setToolTip('{}'.format(str(self._item)[:-1]))
+        # < Revision 29/07/2026
+        # self._name.setToolTip('Set mesh name,\n'
+        #                       'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+        #                       '\n\n{}'.format(str(self._item)[:-1]))
+        # self.setToolTip('{}'.format(str(self._item)[:-1]))
+        self._updateToolTip()
+        # Revision 29/07/2026 >
         if self.hasViewCollection():
             view = self.getViewCollection()
             view.getVolumeView().updateRender()
@@ -975,18 +1014,24 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         if self._item.getScalarColorVisibility() == 0:
             r, g, b = self._color.getFloatColor()
             self._item.setColor(r, g, b)
-            self._name.setToolTip('Set mesh name,\n'
-                                  'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
-                                  '\n\n{}'.format(str(self._item)[:-1]))
-            self.setToolTip(str(self._item)[:-1])
+            # < Revision 29/07/2026
+            # self._name.setToolTip('Set mesh name,\n'
+            #                       'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+            #                       '\n\n{}'.format(str(self._item)[:-1]))
+            # self.setToolTip(str(self._item)[:-1])
+            self._updateToolTip()
+            # Revision 29/07/2026 >
             self._updateViews()
 
     def _opacityChanged(self) -> None:
         self._item.setOpacity(self._opacity.getOpacity())
-        self._name.setToolTip('Set mesh name,\n'
-                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
-                              '\n\n{}'.format(str(self._item)[:-1]))
-        self.setToolTip(str(self._item)[:-1])
+        # < Revision 29/07/2026
+        # self._name.setToolTip('Set mesh name,\n'
+        #                       'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+        #                       '\n\n{}'.format(str(self._item)[:-1]))
+        # self.setToolTip(str(self._item)[:-1])
+        self._updateToolTip()
+        # Revision 29/07/2026 >
         self._updateViews()
 
     def _nameChanged(self) -> None:
@@ -998,10 +1043,13 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
                     messageBox(self, 'Rename error', text='The mesh name {} is already in use.'.format(name))
                     self._name.setEditText(self._item.getName())
                 else: self._item.setName(self._name.getEditText())
-                self._name.setToolTip('Set mesh name,\n'
-                                      'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
-                                      '\n\n{}'.format(str(self._item)[:-1]))
-                self.setToolTip(str(self._item)[:-1])
+                # < Revision 29/07/2026
+                # self._name.setToolTip('Set mesh name,\n'
+                #                       'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+                #                       '\n\n{}'.format(str(self._item)[:-1]))
+                # self.setToolTip(str(self._item)[:-1])
+                self._updateToolTip()
+                # Revision 29/07/2026 >
 
     def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
@@ -1010,17 +1058,29 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
                 volview.updateRender()
                 volview.MeshOnSliceVisibilityChanged.emit(volview, volview.getMeshOnSliceVisibility())
 
+    # < Revision 29/07/2026
+    # add _updateToolTip method
+    def _updateToolTip(self) -> None:
+        self.setToolTip(str(self._item)[:-1])
+        self._name.setToolTip('Set mesh name,\n'
+                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+                              '\n\n{}'.format(str(self._item)[:-1]))
+    # Revision 29/07/2026 >
+
     def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
             self._name.setEditText(self._item.getName())
             c = self._item.getColor()
             self._color.setFloatColor(c[0], c[1], c[2])
             self._opacity.setOpacity(self._item.getOpacity())
+            # < Revision 29/07/2026
             # Update tooltip
-            self.setToolTip(str(self._item)[:-1])
-            self._name.setToolTip('Set mesh name,\n'
-                                  'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
-                                  '\n\n{}'.format(str(self._item)[:-1]))
+            # self.setToolTip(str(self._item)[:-1])
+            # self._name.setToolTip('Set mesh name,\n'
+            #                       'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+            #                       '\n\n{}'.format(str(self._item)[:-1]))
+            self._updateToolTip()
+            # Revision 29/07/2026 >
 
     def _updateLut(self) -> None:
         if self._lutwidget is not None:
@@ -1174,6 +1234,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             if self._logger is not None: self._logger.info('Save {}'.format(self._item.getFilename()))
             self._item.save()
         except Exception as err:
+            wait.hide()
             messageBox(self, 'Save Mesh', text='{}'.format(err))
 
     # Method aliases
@@ -1213,7 +1274,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemToolAttributesWidget
 
-    Last revision: 17/12/2025
+    Last revision: 29/07/2026
     """
 
     # Special method
@@ -1459,7 +1520,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 # noinspection PyUnresolvedReferences
                 w.setFloatColor(r, g, b, signal=False)
             self._item.setColor((r, g, b))
-            self.setToolTip(str(self._item))
+            # < Revision 29/07/2026
+            # self.setToolTip(str(self._item))
+            self._updateToolTip()
+            # Revision 29/07/2026 >
             view = self._views.getVolumeView()
             if view is not None: view.copyToolAttributes(self._item, None, signal=True)
 
@@ -1471,7 +1535,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             if w is not None:
                 # noinspection PyUnresolvedReferences
                 w.setValue(v)
-            self.setToolTip(str(self._item))
+            # < Revision 29/07/2026
+            # self.setToolTip(str(self._item))
+            self._updateToolTip()
+            # Revision 29/07/2026 >
             view = self._views.getVolumeView()
             if view is not None:
                 view.updateRender()
@@ -1494,7 +1561,19 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     # self._item.setName(self._name.getEditText())
                     self._item.setName(name)
                     # Revision 27/01/2026 >
-                self.setToolTip(str(self._item))
+                # < Revision 29/07/2026
+                # self.setToolTip(str(self._item))
+                self._updateToolTip()
+                # Revision 29/07/2026 >
+
+    # < Revision 29/07/2026
+    # add _updateToolTip method
+    def _updateToolTip(self) -> None:
+        self.setToolTip(str(self._item)[:-1])
+        self._name.setToolTip('Set tool name,\n'
+                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+                              '\n\n{}'.format(str(self._item)[:-1]))
+    # Revision 29/07/2026 >
 
     def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
@@ -1508,7 +1587,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             wline = isinstance(self._item, LineWidget)
             self._toEntry.setVisible(wline)
             self._length.setVisible(wline)
-            self.setToolTip(str(self._item)[:-1])
+            # < Revision 29/07/2026
+            # self.setToolTip(str(self._item)[:-1])
+            self._updateToolTip()
+            # Revision 29/07/2026 >
 
     # Public methods
 
@@ -1801,7 +1883,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 if v is None: v = True
                 if wline: self._item.setTubeVisibility(v)
                 else: self._item.setSphereVisibility(v)
-                self.setToolTip(str(self._item))
+                # < Revision 29/07/2026
+                # self.setToolTip(str(self._item))
+                self._updateToolTip()
+                # Revision 29/07/2026 >
                 view = self._views.getVolumeView()
                 if view is not None: view.copyToolAttributes(self._item, None, signal=True)
                 self._logger.info('Change propertiers Tool {}'.format(self._item.getName()))
@@ -1826,7 +1911,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 r = self._dialogtarget.getAttributes()
                 self._views.getVolumeView().moveTool(self._item, target=r['target'], entry=r['entry'])
                 self.setLock(self._item.isDynamic())
-                self.setToolTip(str(self._item))
+                # < Revision 29/07/2026
+                # self.setToolTip(str(self._item))
+                self._updateToolTip()
+                # Revision 29/07/2026 >
 
     def length(self) -> None:
         if self.hasViewCollection():
@@ -1907,7 +1995,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                                                          entry=self._item.getPosition1())
                     if e1 != 0 and e2 == 0: self.focusEntry()
                     elif e2 != 0: self.focusTarget()
-                    self.setToolTip(str(self._item))
+                    # < Revision 29/07/2026
+                    # self.setToolTip(str(self._item))
+                    self._updateToolTip()
+                    # Revision 29/07/2026 >
 
     def moving(self) -> None:
         if self.hasViewCollection():
@@ -2063,7 +2154,10 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 self.focusTarget()
                 self.unlock()
                 self._item.setStatic()
-                self.setToolTip(str(self._item))
+                # < Revision 29/07/2026
+                # self.setToolTip(str(self._item))
+                self._updateToolTip()
+                # Revision 29/07/2026 >
 
     def save(self, wait: DialogWait | None = None) -> None:
         if wait is None:
@@ -2076,7 +2170,9 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                             self._item.getName() + self._item.getFileExt())
             self._item.saveAs(filename)
             self._logger.info('Save {}'.format(filename))
-        except Exception as err: messageBox(self, 'Save tool', text='{}'.format(err))
+        except Exception as err:
+            wait.hide()
+            messageBox(self, 'Save tool', text='{}'.format(err))
 
     def setTool(self, tool: HandleWidget | LineWidget) -> None:
         if isinstance(tool, (HandleWidget, LineWidget)):
@@ -2128,6 +2224,12 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                         if action.text() == txt:
                             action.trigger()
             # Revision 02/06/2026 >
+
+    # < Revision 29/07/2026
+    # add enterEvent method
+    def enterEvent(self, event: QEnterEvent) -> None:
+        self._updateToolTip()
+    # Revision 29/07/2026 >
 
 
 class ItemBundleAttributesWidget(ItemAttributesWidget):
@@ -2258,23 +2360,30 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
         v = self._opacity.getOpacity()
         self._getTractCollection().setOpacity(v, self.getBundle())
         self._updateViews()
+        # < Revision 29/07/2026
+        self._updateToolTip()
+        # Revision 29/07/2026 >
 
     def _nameChanged(self) -> None:
         self._getTractCollection().renameBundle(old=self.getBundle(), new=self._name.getEditText())
         self._item = self._name.getEditText()
         self._sl.setName(self._name.getEditText())
-        # < Revision 20/02/2025
+        # < Revision 29/07/2026
         # add tooltip update
-        self.setToolTip(str(self._sl)[:-1])
-        self._name.setToolTip('Set streamlines name,\n'
-                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
-                              '\n\n{}'.format(str(self._sl)[:-1]))
-        # Revision 20/02/2025 >
+        # self.setToolTip(str(self._sl)[:-1])
+        # self._name.setToolTip('Set streamlines name,\n'
+        #                       'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+        #                      '\n\n{}'.format(str(self._sl)[:-1]))
+        self._updateToolTip()
+        # Revision 29/07/2026 >
 
     def _widthChanged(self) -> None:
         v = self._width.getWidth()
         self._getTractCollection().setLineWidth(v, self.getBundle())
         self._updateViews()
+        # < Revision 29/07/2026
+        self._updateToolTip()
+        # Revision 29/07/2026 >
 
     def _editColor(self) -> None:
         tracts = self._getTractCollection()
@@ -2326,12 +2435,24 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
                 if cm2 != cm:
                     tracts.setColorRepresentation(0, self.getBundle())
             self._updateViews()
+            # < Revision 29/07/2026
+            self._updateToolTip()
+            # Revision 29/07/2026 >
             wait.close()
 
     def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
             view = self._views.getVolumeView()
             if view is not None: view.updateRender()
+
+    # < Revision 29/07/2026
+    # add _updateToolTip method
+    def _updateToolTip(self) -> None:
+        self.setToolTip(str(self._sl)[:-1])
+        self._name.setToolTip('Set streamlines name,\n'
+                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+                              '\n\n{}'.format(str(self._sl)[:-1]))
+    # Revision 29/07/2026 >
 
     def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
@@ -2340,11 +2461,14 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
             self._name.setEditText(bundle)
             self._opacity.setOpacity(self._sl.getOpacity(), signal=False)
             self._width.setWidth(self._sl.getLineWidth(), signal=False)
+            # < Revision 29/07/2026
             # Update tooltip
-            self.setToolTip(str(self._sl)[:-1])
-            self._name.setToolTip('Set streamlines name,\n'
-                                  'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
-                                  '\n\n{}'.format(str(self._sl)[:-1]))
+            # self.setToolTip(str(self._sl)[:-1])
+            # self._name.setToolTip('Set streamlines name,\n'
+            #                       'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.'
+            #                       '\n\n{}'.format(str(self._sl)[:-1]))
+            self._updateToolTip()
+            # Revision 29/07/2026 >
 
     # Public methods
 
@@ -2469,12 +2593,20 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
             self._sl.setLineWidth(tracts.getLineWidth(bundle))
             self._sl.save()
             self._logger.info('Save {}'.format(self._sl.getFilename()))
-        except Exception as err: messageBox(self, 'Save streamlines', text='{}'.format(err))
+        except Exception as err:
+            wait.hide()
+            messageBox(self, 'Save streamlines', text='{}'.format(err))
 
     # Method aliases
 
     getBundle = ItemAttributesWidget.getItem
     hasBundle = ItemAttributesWidget.hasItem
+
+    # < Revision 29/07/2026
+    # add enterEvent method
+    def enterEvent(self, event: QEnterEvent) -> None:
+        self._updateToolTip()
+    # Revision 29/07/2026 >
 
 
 class ListAttributesWidget(QWidget):
@@ -3632,7 +3764,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                             f.addROI(roi)
                         try: f.execute(wait)
                         except Exception as err:
-                            wait.hide()
+                            wait.close()
                             messageBox(self,
                                        'Convert ROI(s) to Dicom RTStruct....',
                                        text='RTSTRUCT conversion error: {}\n{}.'.format(type(err), str(err)))
@@ -4753,7 +4885,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                 mesh2.setFilename(join(mesh.getDirname(), mesh2.getName() + mesh2.getFileExt()))
                                 self.add(mesh2)
                                 self._logger.info('Dilate Mesh {}'.format(mesh.getName()))
-                            else: messageBox(self, 'Checked mesh(es) dilatation', 'Empy mesh.')
+                            else:
+                                wait.hide()
+                                messageBox(self, 'Checked mesh(es) dilatation', 'Empy mesh.')
+                                wait.show()
                         wait.close()
                     else: messageBox(self, 'Checked mesh(es) dilatation', 'No checked mesh.')
                 else:
@@ -4786,7 +4921,10 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                 mesh2.setFilename(join(mesh.getDirname(), mesh2.getName() + mesh2.getFileExt()))
                                 self.add(mesh2)
                                 self._logger.info('Erode Mesh {}'.format(mesh.getName()))
-                            else: messageBox(self, 'Checked mesh(es) shrinking', 'Empy mesh.')
+                            else:
+                                wait.hide()
+                                messageBox(self, 'Checked mesh(es) shrinking', 'Empy mesh.')
+                                wait.show()
                         wait.close()
                     else: messageBox(self, 'Checked mesh(es) shrinking', 'No checked mesh.')
                 else:
@@ -5624,7 +5762,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     tools = ToolWidgetCollection()
                                     try: tools.load(filename)
                                     except Exception as err:
+                                        wait.hide()
                                         messageBox(self, 'open tools', text='{}'.format(err))
+                                        wait.show()
                                         tools = None
                                     vol = self._views.getVolume()
                                     if tools is not None and vol is not None:
@@ -5708,16 +5848,20 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                                 wait.setProgressVisibility(n > 1)
                                             # Revision 13/11/2025 >
                                         else:
+                                            wait.hide()
                                             messageBox(self,
                                                        'Open tools',
                                                        text='{} tools does not belong to {} volume (ID mismatch).'.format(
                                                            basename(filename), vol.getBasename()))
+                                            wait.show()
                                 elif ext == HandleWidget.getFileExt():
                                     if self.count() < self.getMaxCount():
                                         tool = HandleWidget('')
                                         try: tool.load(filename)
                                         except Exception as err:
+                                            wait.hide()
                                             messageBox(self, 'open tools', text='{}'.format(err))
+                                            wait.show()
                                             tool = None
                                         if tool is not None:
                                             # < Revision 16/01/2026
@@ -5756,7 +5900,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                         tool = LineWidget('')
                                         try: tool.load(filename)
                                         except Exception as err:
+                                            wait.hide()
                                             messageBox(self, 'open tools', text='{}'.format(err))
+                                            wait.show()
                                             tool = None
                                         if tool is not None:
                                             # < Revision 16/01/2026
@@ -6666,7 +6812,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListBundleAttributesWidget
 
-    Last revision: 29/11/2025
+    Last revision: 25/08/2026
     """
 
     # Class constant
@@ -6817,6 +6963,25 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._popupDuplicate.addAction(self._action['dup5'])
         self._duplicate.setMenu(self._popupDuplicate)
 
+        # < Revision 25/08/2026
+        self._popupFilter = QMenu()
+        # noinspection PyUnresolvedReferences
+        self._popupFilter.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        # noinspection PyUnresolvedReferences
+        self._popupFilter.setWindowFlag(Qt.FramelessWindowHint, True)
+        # noinspection PyUnresolvedReferences
+        self._popupFilter.setAttribute(Qt.WA_TranslucentBackground, True)
+        # < Revision 31/07/2026
+        self._action['filter1'] = QAction('Cluster confidence filtering...')
+        self._action['filter2'] = QAction('Fiber to bundle coherence filtering...')
+        self._popupFilter.addAction(self._action['filter1'])
+        self._popupFilter.addAction(self._action['filter2'])
+        # noinspection PyUnresolvedReferences
+        self._action['filter1'].triggered.connect(self.filtercc)
+        self._action['filter2'].triggered.connect(self.filterbcf)
+        self._filter.setMenu(self._popupFilter)
+        # Revision 25/08/2026 >
+
         self._popupStatistics = QMenu()
         # noinspection PyUnresolvedReferences
         self._popupStatistics.setWindowFlag(Qt.NoDropShadowWindowHint, True)
@@ -6824,33 +6989,45 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._popupStatistics.setWindowFlag(Qt.FramelessWindowHint, True)
         # noinspection PyUnresolvedReferences
         self._popupStatistics.setAttribute(Qt.WA_TranslucentBackground, True)
+        # < Revision 31/07/2026
         self._action['stat1'] = QAction('Cluster confidence statistics...')
         # noinspection PyUnresolvedReferences
         self._action['stat1'].triggered.connect(lambda _: self.statistics(0))
-        self._popupStatistics.addAction(self._action['stat1'])
+        # self._popupStatistics.addAction(self._action['stat1'])
         self._action['stat2'] = QAction('Length statistics...')
         # noinspection PyUnresolvedReferences
         self._action['stat2'].triggered.connect(lambda _: self.statistics(1))
-        self._popupStatistics.addAction(self._action['stat2'])
+        # self._popupStatistics.addAction(self._action['stat2'])
         self._action['stat3'] = QAction('Mean curvature statistics...')
         # noinspection PyUnresolvedReferences
         self._action['stat3'].triggered.connect(lambda _: self.statistics(2))
-        self._popupStatistics.addAction(self._action['stat3'])
+        # self._popupStatistics.addAction(self._action['stat3'])
         self._action['stat4'] = QAction('Cosine distance between end vectors statistics...')
         # noinspection PyUnresolvedReferences
         self._action['stat4'].triggered.connect(lambda _: self.statistics(3))
-        self._popupStatistics.addAction(self._action['stat4'])
+        # self._popupStatistics.addAction(self._action['stat4'])
         self._action['stat5'] = QAction('Euclidean distance between end points statistics...')
         # noinspection PyUnresolvedReferences
         self._action['stat5'].triggered.connect(lambda _: self.statistics(4))
+        # self._popupStatistics.addAction(self._action['stat5'])
+        self._action['stat6'] = QAction('Fiber to bundle coherence statitics...')
+        # noinspection PyUnresolvedReferences
+        self._action['stat6'].triggered.connect(lambda _: self.statistics(5))
+        self._popupStatistics.addAction(self._action['stat1'])
+        self._popupStatistics.addAction(self._action['stat6'])
+        self._popupStatistics.addAction(self._action['stat2'])
+        self._popupStatistics.addAction(self._action['stat3'])
+        self._popupStatistics.addAction(self._action['stat4'])
         self._popupStatistics.addAction(self._action['stat5'])
-
+        # Revision 31/07/2026
         self._stat.setMenu(self._popupStatistics)
 
         # noinspection PyUnresolvedReferences
         self._dissection.clicked.connect(self.dissection)
+        # < Revision 25/08/2026
         # noinspection PyUnresolvedReferences
-        self._filter.clicked.connect(self.filter)
+        # self._filter.clicked.connect(self.filter)
+        # Revision 25/08/2026 >
         # noinspection PyUnresolvedReferences
         self._cluster.clicked.connect(self.cluster)
         # noinspection PyUnresolvedReferences
@@ -7362,14 +7539,18 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                 else: select = select2
                                 if select is not None:
                                     if select.count() == 0:
+                                        wait.hide()
                                         messageBox(self,
                                                    'Bundle streamlines selection by ROI',
                                                    'All streamlines removed.')
+                                        wait.show()
                                         continue
                                     elif select.count() == sl.count():
+                                        wait.hide()
                                         messageBox(self,
                                                    'Bundle streamlines selection by ROI',
                                                    'No streamline removed.')
+                                        wait.show()
                                         continue
                                     else:
                                         if self._roidialog.getInPlace():
@@ -7390,6 +7571,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                                 return
                                         self._logger.info('Dissection Bundle {}'.format(sl.getName()))
                         else:
+                            wait.hide()
                             messageBox(self,
                                        'Bundle streamlines selection by ROI',
                                        'No ROI with valid ID (same as bundle ID.')
@@ -7597,7 +7779,10 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         wait.close()
                     else: messageBox(self, 'Interactive streamlines selection', 'No bundle checked.')
 
-    def filter(self) -> None:
+    # < Revision 25/08/2026
+    # filter method was renamed to filtercc
+    # Revision 25/08/2026 >
+    def filtercc(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 wchk = self.getChecked()
@@ -7612,10 +7797,13 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._fltdialog, c)
                     # Revision 28/08/2025 >
+                    self._fltdialog.setAlgorithm('cc')
+                    # < Revision 25/08/2026
+                    # Revision 25/08/2026 >
                     if self._fltdialog.exec() == QDialog.Accepted:
                         wait = DialogWait()
                         wait.open()
-                        wait.setInformationText('Bundle filtering...')
+                        wait.setInformationText('Bundle cluster confidence filtering...')
                         wait.setProgressVisibility(n > 1)
                         wait.setProgressRange(0, n)
                         QApplication.processEvents()
@@ -7666,7 +7854,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                         else:
                                             wait.close()
                                             messageBox(self,
-                                                       'Filter',
+                                                       'Cluster confidence filtering',
                                                        text='Maximum number of bundles reached.\n'
                                                             'Close a bundle to add a new one.',
                                                        icon=QMessageBox.Information)
@@ -7675,8 +7863,96 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                             else: continue
                         wait.close()
                 else: messageBox(self,
-                                 'Bundle filtering',
+                                 'Cluster confidence filtering',
                                  'No checked bundle.')
+
+    # < Revision 25/08/2026
+    # add filterbcf method
+    def filterbcf(self) -> None:
+        if self.isEnabled():
+            if self.hasViewCollection():
+                wchk = self.getChecked()
+                n = len(wchk)
+                if n > 0:
+                    self._logger.info('Dialog exec [gui.dialogDiffusionBundle.DialogStreamlinesFiltering]')
+                    # < Revision 28/08/2025
+                    # update title bar color of the dialog box for Win32 platform
+                    if platform == 'win32':
+                        import pywinstyles
+                        cl = self.palette().base().color()
+                        c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                        pywinstyles.change_header_color(self._fltdialog, c)
+                    # Revision 28/08/2025 >
+                    self._fltdialog.setAlgorithm('fbc')
+                    # < Revision 25/08/2026
+                    # Revision 25/08/2026 >
+                    if self._fltdialog.exec() == QDialog.Accepted:
+                        wait = DialogWait()
+                        wait.open()
+                        wait.setInformationText('Fiber to bundle coherence filtering...')
+                        wait.setProgressVisibility(n > 1)
+                        wait.setProgressRange(0, n)
+                        QApplication.processEvents()
+                        for w in wchk:
+                            select = None
+                            sl = w.getStreamlines()
+                            wait.incCurrentProgressValue()
+                            # Length filtering
+                            if self._fltdialog.getMinimalStreamlinesLength() > 0.0:
+                                wait.setInformationText('{} length filtering...'.format(sl.getName()))
+                                select = sl.bundleStreamlinesLongerThan(l=self._fltdialog.getMinimalStreamlinesLength())
+                            if self._fltdialog.getMaximumDistance() > 0.0:
+                                wait.setInformationText('{} fiber to bundle coherence filtering...'.format(sl.getName()))
+                                # < Revision 11/04/2025
+                                select2, _ = sl.bundleFiberToBundleCoherenceFiltering(
+                                    fbcthreshold=self._fltdialog.getFiberToBundleCoherenceThreshold())
+                                if select is not None:
+                                    select1 = sl.getBundle(0) - select
+                                    select = select2 - select1
+                                else:
+                                    select = select2
+                                # Revision 11/04/2025 >
+                            if select is not None:
+                                if select.count() == 0:
+                                    wait.hide()
+                                    messageBox(self,
+                                               'Fiber to bundle coherence filtering',
+                                               'All streamlines removed.')
+                                    wait.show()
+                                    continue
+                                elif select.count() == sl.count():
+                                    wait.hide()
+                                    messageBox(self,
+                                               'Fiber to bundle coherence filtering',
+                                               'No streamline removed.')
+                                    wait.show()
+                                    continue
+                                else:
+                                    if self._fltdialog.getInPlace():
+                                        wait.setInformationText('Update {}...'.format(sl.getName()))
+                                        self.updateBundle(w, select, wait)
+                                    else:
+                                        if self.count() < self.getMaxCount():
+                                            select.setName(self._getNewName(sl.getName()))
+                                            wait.setInformationText('Add {}...'.format(sl.getName()))
+                                            self.duplicateBundle(w, select, wait)
+                                        else:
+                                            wait.close()
+                                            messageBox(self,
+                                                       'Fiber to bundle coherence filtering',
+                                                       text='Maximum number of bundles reached.\n'
+                                                            'Close a bundle to add a new one.',
+                                                       icon=QMessageBox.Information)
+                                            return
+                                    self._logger.info('Streamlines filtering Bundle {}'.format(sl.getName()))
+                            else:
+                                continue
+                        wait.close()
+                else:
+                    messageBox(self,
+                               'Fiber to bundle coherence filtering',
+                               'No checked bundle.')
+    # Revision 25/08/2026 >
 
     def cluster(self) -> None:
         if self.isEnabled():
@@ -7717,6 +7993,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                                    'Bundle clustering',
                                                    text='Clustering has failed, there is only one '
                                                         'cluster which is the same as the processed bundle.')
+                                        wait.show()
                                     else:
                                         i: cython.int
                                         for i in range(n):
@@ -7998,6 +8275,12 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         elif mode == 4:
                             wait.addInformationText('Euclidean distance between end points')
                             data.append(slt.bundleEuclideanDistanceBetweenEndPoints())
+                        # < Revision 31/07/2026
+                        # Fiber to bundle coherence
+                        elif mode == 5:
+                            wait.addInformationText('Fiber to bundle coherence')
+                            data.append(slt.bundleCoherence())
+                        # Revision 31/07/2026 >
                         else: raise ValueError('Invalid statistics mode.')
                     if mode == 0:
                         title = 'Cluster confidence'
@@ -8014,6 +8297,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     elif mode == 4:
                         title = 'Euclidean distance between end points'
                         unit = ''
+                    # < Revision 31/07/2026
+                    elif mode == 5:
+                        title = 'Fiber to bundle coherence'
+                        unit = ''
+                    # Revision 31/07/2026 >
                     else: raise ValueError('Invalid statistics mode')
                     self._statdialog.newDescriptiveStatisticsTab(labels, data, title, scrshot=self._scrsht, units=unit)
                     i: cython.int
@@ -8172,6 +8460,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                                 sl.load(filename)
                                 self.addBundle(sl)
                             except Exception as err:
+                                wait.hide()
                                 messageBox(self, title, text='{}'.format(err))
                             wait.close()
                         mainwindow = self._getMainWindow()

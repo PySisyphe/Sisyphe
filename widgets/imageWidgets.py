@@ -394,7 +394,7 @@ class SisypheImageViewWidget(ImagePreviewWidget):
 
     QWidget -> ImagePreviewWidget -> SisypheImagePreviewWidget
 
-    Last revision: 16/07/2025
+    Last revision: 23/07/2026
     """
 
     def __init__(self,
@@ -406,7 +406,10 @@ class SisypheImageViewWidget(ImagePreviewWidget):
             # < Revision 16/07/2025
             # change axes aspect ratio if anistropic pixel
             s = image.getSpacing()
-            if s[0] != s[1]: aspect = s[1] / s[2]
+            # < Revision 23/07/2026
+            # if s[0] != s[1]: aspect = s[1] / s[2]
+            if s[0] != s[1]: aspect = s[1] / s[0]
+            # Revision 23/07/2026 >
             else: aspect = 1.0
             # super().__init__(image.getNumpy(), lut, size, 'lower', parent)
             super().__init__(image.getNumpy(), lut, size, 'lower', aspect, parent)
@@ -500,7 +503,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     QPushButton - > SisypheVolumeThumbnailButtonWidget
 
-    Last revision: 09/06/2026
+    Last revision: 24/07/2026
     """
 
     # Special method
@@ -1590,7 +1593,6 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                         previous = self._views['slices'].getVolume()
                         if previous.hasSameFieldOfView(self._volume):
                             # Display current volume in slice view widget
-                            print('replace')
                             # noinspection PyUnresolvedReferences
                             self._views['slices'].replaceVolume(self._volume)
                             # Set slice view widget visibility
@@ -1991,7 +1993,10 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                                     moveto: bool = True,
                                     wait: DialogWait | None = None) -> None:
         if self._views is not None:
-            if self._action['components'].isChecked():
+            # < Revision 24/07/2026
+            # if self._action['components'].isChecked():
+            if self._action['multi'].isChecked():
+            # Revision 24/07/2026 >
                 if wait is None:
                     wait = DialogWait(title='Display multi-component volume...')
                     wait.open()
