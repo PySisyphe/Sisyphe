@@ -89,7 +89,7 @@ On the Linux Ubuntu platform, install the X11 xcb library from the terminal:
 Unzip the PySisyphe archive from the terminal:
 
 	cd ~
-	unzip PySisyphe_release_cp312_x-xx-xx_xx-xx-20xx_linux_ubuntu_LTS26-04_amd64.zip
+	unzip PySisyphe_release_cp312_x-xx-xx_xx-xx-20xx_linux_ubuntu_LTS26-04_x64.zip
 
 Launch PySisyphe from the terminal:
 
