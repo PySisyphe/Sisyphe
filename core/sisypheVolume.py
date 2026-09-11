@@ -2625,6 +2625,14 @@ class SisypheVolume(SisypheImage):
         """
         Calc SisypheVolume mask of the head.
 
+        Processing stages:
+
+        - automatic thresholding of background
+        - binary not of background = object
+        - optional stage, iterative binary morphology
+        - keep major blob
+        - optional stage, fill holes ('2d', '3d' or '')
+
         Parameters
         ----------
         algo : str
@@ -2670,6 +2678,14 @@ class SisypheVolume(SisypheImage):
         """
         Calc Sisyphe.core.sisypheROI.SisypheROI mask of the head.
 
+        Processing stages:
+
+        - automatic thresholding of background
+        - binary not of background = object
+        - optional stage, iterative binary morphology
+        - keep major blob
+        - optional stage, fill holes ('2d', '3d' or '')
+
         Parameters
         ----------
         name  : str
@@ -2704,12 +2720,25 @@ class SisypheVolume(SisypheImage):
 
     def getMask2(self,
                  algo: str = 'huang',
-                 morphoiter: int = 1,
+                 morphoiter: int = 2,
                  kernel: int = 0,
                  objstep: bool = True,
                  c: int | None = 0) -> SisypheVolume:
         """
         Calc SisypheVolume mask of the head.
+
+        Processing stages:
+
+        - automatic thresholding of background
+        - binary erode (kernel size)
+        - connected component labeling, keep major blob
+        - binary dilate (kernel size)
+        - binary not (i.e. object blob)
+        - if objstep is True:
+
+            - binary erode (kernel size)
+            - connected component labeling, keep major blob
+            - binary dilate (kernel size)
 
         Parameters
         ----------
@@ -2721,7 +2750,7 @@ class SisypheVolume(SisypheImage):
         kernel : int
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
         objstep : bool
-            if False, steps 5 to 8 are skipped
+            if False, object steps are skipped
         c : int | None
             - parameter only used for multi-component image
             - int index of the component to process (default 0, first component)
@@ -2751,6 +2780,19 @@ class SisypheVolume(SisypheImage):
         """
         Calc Sisyphe.core.sisypheROI.SisypheROI mask of the head.
 
+        Processing stages:
+
+        - automatic thresholding of background
+        - binary erode (kernel size)
+        - connected component labeling, keep major blob
+        - binary dilate (kernel size)
+        - binary not (i.e. object blob)
+        - if objstep is True:
+
+            - binary erode (kernel size)
+            - connected component labeling, keep major blob
+            - binary dilate (kernel size)
+
         Parameters
         ----------
         name : str
@@ -2763,7 +2805,7 @@ class SisypheVolume(SisypheImage):
         kernel : int
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
         objstep : bool
-            if False, steps 5 to 8 are skipped
+            if False, object steps are skipped
         c : int | None
             - parameter only used for multi-component image
             - int index of the component to process (default 0, first component)

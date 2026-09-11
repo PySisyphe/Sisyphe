@@ -2327,7 +2327,7 @@ class SisypheDesign(object):
     object -> SisypheDesign
 
     Creation: 29/11/2023
-    Last revision: 01/04/2026
+    Last revision: 10/09/2026
     """
     __slots__ = ['_obs', '_cobs', '_grp', '_sbj', '_cnd', '_design', '_cdesign', '_ancova', '_norm', '_fmri', '_dancova',
                  '_age', '_beta', '_variance', '_vols', '_mean', '_mask', '_roi1', '_roi2', '_autocorr', '_filename']
@@ -4822,7 +4822,7 @@ class SisypheDesign(object):
                     node.appendChild(txt)
                     design.appendChild(node)
 
-    def load(self, filename: str, wait: DialogWait | None = None) -> None:
+    def load(self, filename: str, binary: bool = True, wait: DialogWait | None = None) -> None:
         """
         Load the current SisypheDesign instance from a PySisyphe statistical design (.xmodel) file.
 
@@ -4830,6 +4830,8 @@ class SisypheDesign(object):
         ----------
         filename : str
             PySisyphe statistical design file name
+        binary : bool
+            whether to load beta, variance, observations, mean volume and mask
         wait: DialogWait | None
             progress dialog (optional)
         """
@@ -4846,52 +4848,53 @@ class SisypheDesign(object):
             # bugfix, replace extension
             filename2 = filename.replace(self._FILEEXT, SisypheVolume.getFileExt())
             # Revision 05/12/2024 >
-            # Load beta
-            filename = addSuffixToFilename(filename2, 'beta')
-            if exists(filename):
-                if wait is not None:
-                    wait.setInformationText('Open beta volume...\n{}'.format(basename(filename)))
-                self._beta = SisypheVolume()
-                self._beta.load(filename)
-                self._autocorr = self._beta.acquisition.getAutoCorrelations()
-            else: self._beta = None
-            # Load variance
-            filename = addSuffixToFilename(filename2, 'sig2')
-            if exists(filename):
-                if wait is not None:
-                    wait.setInformationText('Open variance volume...\n{}'.format(basename(filename)))
-                self._variance = SisypheVolume()
-                self._variance.load(filename)
-            else: self._variance = None
-            # < Revision 22/11/2024
-            # load observations (multi-component volume)
-            filename = addSuffixToFilename(filename2, 'obs')
-            if exists(filename):
-                if wait is not None:
-                    wait.setInformationText('Open observation volume...\n{}'.format(basename(filename)))
-                self._vols = SisypheVolume()
-                self._vols.load(filename)
-            else: self._vols = None
-            # Revision 22/11/2024 >
-            # < Revision 24/11/2024
-            # load mean volume of observations
-            filename = addSuffixToFilename(filename2, 'mean')
-            if exists(filename):
-                if wait is not None:
-                    wait.setInformationText('Open mean observation volume...\n{}'.format(basename(filename)))
-                self._mean = SisypheVolume()
-                self._mean.load(filename)
-            else: self._mean = None
-            # Revision 24/11/2024 >
-            # < Revision 03/12/2024
-            # load mean volume of observations
-            filename = addSuffixToFilename(filename2, 'mask')
-            if exists(filename):
-                if wait is not None:
-                    wait.setInformationText('Open mask of analysis...\n{}'.format(basename(filename)))
-                self._mask = SisypheVolume()
-                self._mask.load(filename)
-            else: self._mask = None
+            if binary:
+                # Load beta
+                filename = addSuffixToFilename(filename2, 'beta')
+                if exists(filename):
+                    if wait is not None:
+                        wait.setInformationText('Open beta volume...\n{}'.format(basename(filename)))
+                    self._beta = SisypheVolume()
+                    self._beta.load(filename)
+                    self._autocorr = self._beta.acquisition.getAutoCorrelations()
+                else: self._beta = None
+                # Load variance
+                filename = addSuffixToFilename(filename2, 'sig2')
+                if exists(filename):
+                    if wait is not None:
+                        wait.setInformationText('Open variance volume...\n{}'.format(basename(filename)))
+                    self._variance = SisypheVolume()
+                    self._variance.load(filename)
+                else: self._variance = None
+                # < Revision 22/11/2024
+                # load observations (multi-component volume)
+                filename = addSuffixToFilename(filename2, 'obs')
+                if exists(filename):
+                    if wait is not None:
+                        wait.setInformationText('Open observation volume...\n{}'.format(basename(filename)))
+                    self._vols = SisypheVolume()
+                    self._vols.load(filename)
+                else: self._vols = None
+                # Revision 22/11/2024 >
+                # < Revision 24/11/2024
+                # load mean volume of observations
+                filename = addSuffixToFilename(filename2, 'mean')
+                if exists(filename):
+                    if wait is not None:
+                        wait.setInformationText('Open mean observation volume...\n{}'.format(basename(filename)))
+                    self._mean = SisypheVolume()
+                    self._mean.load(filename)
+                else: self._mean = None
+                # Revision 24/11/2024 >
+                # < Revision 03/12/2024
+                # load mean volume of observations
+                filename = addSuffixToFilename(filename2, 'mask')
+                if exists(filename):
+                    if wait is not None:
+                        wait.setInformationText('Open mask of analysis...\n{}'.format(basename(filename)))
+                    self._mask = SisypheVolume()
+                    self._mask.load(filename)
+                else: self._mask = None
             # Revision 03/12/2024 >
         else: raise IOError('No such file {}'.format(filename))
 

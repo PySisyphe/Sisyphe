@@ -2992,12 +2992,13 @@ class SisypheImage(object):
         """
         Calc SisypheImage mask of the head.
 
-        Processing stages :
-        1. automatic thresholding of background
-        2. binary not of background = object
-        2. optional stage, iterative binary morphology
-        3. keep major blob
-        4. optional stage, fill holes ('2d', '3d' or '')
+        Processing stages:
+
+        - automatic thresholding of background
+        - binary not of background = object
+        - optional stage, iterative binary morphology
+        - keep major blob
+        - optional stage, fill holes ('2d', '3d' or '')
 
         Parameters
         ----------
@@ -3271,15 +3272,18 @@ class SisypheImage(object):
         """
         Calc SisypheImage mask of the head.
 
-        Processing stages :
-        1. automatic thresholding of background
-        2. erode background
-        3. keep major blob (i.e.remove blobs in head/object)
-        4. dilate background
-        5. binary not of background = object
-        6. erode object
-        7. keep major blob (i.e.remove background blobs in head/object)
-        8. dilate object
+        Processing stages:
+
+        - automatic thresholding of background
+        - binary erode (kernel size)
+        - connected component labeling, keep major blob
+        - binary dilate (kernel size)
+        - binary not (i.e. object blob)
+        - if objstep is True:
+
+            - binary erode (kernel size)
+            - connected component labeling, keep major blob
+            - binary dilate (kernel size)
 
         Parameters
         ----------
@@ -3291,7 +3295,7 @@ class SisypheImage(object):
         kernel : int
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
         objstep : bool
-            if False, steps 5 to 8 are skipped
+            if False, object steps are skipped
         c : int | None
             - parameter only used for multi-component image
             - int index of the component to process (default 0, first component)
@@ -3430,6 +3434,14 @@ class SisypheImage(object):
         """
         Calc Sisyphe.core.sisypheROI.SisypheROI mask of the head.
 
+        Processing stages:
+
+        - automatic thresholding of background
+        - binary not of background = object
+        - optional stage, iterative binary morphology
+        - keep major blob
+        - optional stage, fill holes ('2d', '3d' or '')
+
         Parameters
         ----------
         algo : str
@@ -3558,6 +3570,19 @@ class SisypheImage(object):
         """
         Calc Sisyphe.core.sisypheROI.SisypheROI mask of the head.
 
+        Processing stages:
+
+        - automatic thresholding of background
+        - binary erode (kernel size)
+        - connected component labeling, keep major blob
+        - binary dilate (kernel size)
+        - binary not (i.e. object blob)
+        - if objstep is True:
+
+            - binary erode (kernel size)
+            - connected component labeling, keep major blob
+            - binary dilate (kernel size)
+
         Parameters
         ----------
         algo : str
@@ -3568,7 +3593,7 @@ class SisypheImage(object):
         kernel : int
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
         objstep : bool
-            if False, steps 5 to 8 are skipped
+            if False, object steps are skipped
         c : int | None
             - parameter only used for multi-component image
             - int index of the component to process (default 0, first component)

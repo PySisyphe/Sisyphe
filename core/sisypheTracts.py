@@ -127,6 +127,12 @@ from dipy.reconst.shm import SphHarmFit
 from dipy.reconst.odf import gfa
 from dipy.reconst.csdeconv import ConstrainedSphericalDeconvModel
 from dipy.reconst.csdeconv import auto_response_ssst
+# < Revision 01/09/2026
+from dipy.reconst.ivim import IvimModel
+from dipy.reconst.ivim import IvimModelTRR
+from dipy.reconst.ivim import IvimModelVP
+from dipy.reconst.ivim import IvimFit
+# Revision 01/09/2026 >
 from dipy.tracking.utils import seeds_from_mask
 from dipy.tracking.tracker import eudx_tracking
 from dipy.tracking.tracker import deterministic_tracking
@@ -211,6 +217,7 @@ __all__ = ['SisypheTract',
            'SisypheStreamlines',
            'SisypheDiffusionModel',
            'SisypheDTIModel',
+           'SisypheIvimModel',
            'SisypheFreeWaterDTIModel',
            'SisypheDKIModel',
            'SisypheRumbaModel',
@@ -3453,7 +3460,7 @@ class SisypheStreamlines(object):
     object -> SisypheStreamlines
 
     Creation: 26/10/2023
-    Last Revision: 25/08/2026
+    Last Revision: 10/09/2026
     """
 
     __slots__ = ['_index', '_ID', '_shape', '_spacing', '_bundles', '_streamlines',
@@ -6687,7 +6694,11 @@ class SisypheStreamlines(object):
             return r
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
-    def bundleToConnectivityMatrix(self, vol: SisypheVolume, bundle: str = 'all') -> DataFrame:
+    def bundleToConnectivityMatrix(self,
+                                   vol: SisypheVolume,
+                                   inclusive : bool = True,
+                                   symmetric : bool = True,
+                                   bundle: str = 'all') -> DataFrame:
         """
         Calculate the connectivity matrix of a bundle in the current SisypheStreamlines instance. The connectivity
         matrix is a square matrix with as many columns (and rows) as there are labels in a label volume. Each element
@@ -6697,9 +6708,13 @@ class SisypheStreamlines(object):
         Parameters
         ----------
         vol : Sisyphe.core.sisypheVolume.SisypheVolume
-            label volume, Sisyphe.core.sisypheVolume.SisypheVolume must a label volume
-        bundle : str
-            bundle name or 'all' for all streamlines
+            label volume
+        inclusive : bool (optional)
+            whether to analyze the entire streamline (True, default), as opposed to just the endpoints (False).
+        symmetric : bool (optional)
+            symmetric means we don't distinguish between start and end points (True, default).
+        bundle : str (optional)
+            bundle name or 'all' for all streamlines (default)
 
         Returns
         -------
@@ -6711,8 +6726,18 @@ class SisypheStreamlines(object):
             if vol.acquisition.isLB():
                 affine = diag(list(vol.getSpacing()) + [1.0])
                 sl = self.getStreamlinesFromBundle(bundle)
-                a = connectivity_matrix(sl, affine=affine, label_volume=vol.getNumpy(defaultshape=False))
-                labels = list(vol.acquisition.getLabels().values())
+                # < Revision 10/09/2026
+                # a = connectivity_matrix(sl, affine=affine, label_volume=vol.getNumpy(defaultshape=False)
+                a = connectivity_matrix(sl,
+                                        affine=affine,
+                                        label_volume=vol.getNumpy(defaultshape=False),
+                                        inclusive=inclusive,
+                                        symmetric=symmetric)
+                # labels = list(vol.acquisition.getLabels().values())
+                if 0 in vol.acquisition.getLabels().keys():
+                    labels = list(vol.acquisition.getLabels().values())
+                else: labels = ['background'] + list(vol.acquisition.getLabels().values())
+                # Revision 10/09/2026 >
                 return DataFrame(a, index=labels, columns=labels)
             else: raise ValueError('{} volume parameter modality {} is not LB.'.format(vol.getBasename(),
                                                                                        vol.acquisition.getModality()))
@@ -7085,24 +7110,33 @@ class SisypheStreamlines(object):
         """
         return self.bundleToPathLengthMap(roi)
 
-    def streamlinesToConnectivityMatrix(self, vol: SisypheVolume | None) -> DataFrame:
+    def streamlinesToConnectivityMatrix(self,
+                                        vol: SisypheVolume | None,
+                                        inclusive : bool = True,
+                                        symmetric : bool = True) -> DataFrame:
         """
         Calculate the connectivity matrix of the current SisypheStreamlines instance (all streamlines). The
         connectivity matrix is a square matrix with as many columns (rows) as there are labels in a label volume. Each
         element corresponds to the number of streamlines that start and end at each pair of labels in the label volume.
 
-
         Parameters
         ----------
         vol : Sisyphe.core.sisypheVolume.SisypheVolume
-            label volume, Sisyphe.core.sisypheVolume.SisypheVolume must be a label volume
+            label volume
+        inclusive : bool (optional)
+            whether to analyze the entire streamline (True, default), as opposed to just the endpoints (False).
+        symmetric : bool (optional)
+            symmetric means we don't distinguish between start and end points (True, default).
 
         Returns
         -------
         pandas.DataFrame
             connectivity matrix
         """
-        return self.bundleToConnectivityMatrix(vol)
+        # < Revision 10/09/2026
+        # return self.bundleToConnectivityMatrix(vol)
+        return self.bundleToConnectivityMatrix(vol, inclusive, symmetric)
+        # Revision 10/09/2026 >
 
     def streamlinesRoiSelection(self,
                                 rois: SisypheROICollection,
@@ -7564,14 +7598,23 @@ class SisypheStreamlines(object):
             slatlas.save(filename)
             f = RecoBundles(self._streamlines, greater_than=minlength)
             if wait is not None:
-                if refine: wait.addInformationText('Recognize {} bundle...'.format(atlas.getName()))
-                else: wait.addInformationText('Stage 1 - Recognize {} bundle...'.format(atlas.getName()))
+                if refine: wait.addInformationText('Stage 1 - Recognize {} bundle...'.format(atlas.getName()))
+                else: wait.addInformationText('Recognize {} bundle...'.format(atlas.getName()))
+            # < Revision 10/09/2026
+            # sl, _ = f.recognize(model_bundle=atlas2,
+            #                    model_clust_thr=threshold,
+            #                    reduction_thr=reduction,
+            #                    reduction_distance=reductiondist,
+            #                    pruning_thr=pruning,
+            #                    pruning_distance=pruningdist)
             sl, _ = f.recognize(model_bundle=atlas2,
                                 model_clust_thr=threshold,
                                 reduction_thr=reduction,
                                 reduction_distance=reductiondist,
+                                num_threads=-1,
                                 pruning_thr=pruning,
                                 pruning_distance=pruningdist)
+            # < Revision 10/09/2026
             if refine:
                 if wait is not None:
                     wait.addInformationText('Stage 2 - Refine {} bundle...'.format(atlas.getName()))
@@ -8084,7 +8127,7 @@ class SisypheDiffusionModel(object):
     object -> SisypheDiffusionModel
 
     Creation: 27/10/2023
-    Last revisions: 28/07/2026
+    Last revisions: 01/09/2026
     """
 
     __slots__ = ['_bvals', '_bvecs', '_gtable', '_dwi', '_mask', '_mean', '_b0', '_ID', '_model', '_fmodel', '_spacing']
@@ -8092,8 +8135,8 @@ class SisypheDiffusionModel(object):
     # Class constants
 
     _FILEEXT: str = '.xdmodel'
-    _DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID = 'DTI', 'FWDTI', 'DKI', 'RUMBA', 'SHCSA', 'SHCSD', 'DSI', 'DSID'
-    _MODELS: tuple[str, ...] = (_DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID)
+    _DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID, _IVIM = 'DTI', 'FWDTI', 'DKI', 'RUMBA', 'SHCSA', 'SHCSD', 'DSI', 'DSID', 'IVIM'
+    _MODELS: tuple[str, ...] = (_DTI, _FWDTI, _DKI, _RUMBA, _SHCSA, _SHCSD, _DSI, _DSID, _IVIM)
 
     # Class methods
 
@@ -8185,6 +8228,9 @@ class SisypheDiffusionModel(object):
             elif mt == cls._SHCSD: return SisypheSHCSDModel.openModel(filename, fit, binary, wait)
             elif mt == cls._DSI: return SisypheDSIModel.openModel(filename, fit, binary, wait)
             elif mt == cls._DSID: return SisypheDSIDModel.openModel(filename, fit, binary, wait)
+            # < Revision 01/09/2026
+            elif mt == cls._IVIM: return SisypheIvimModel.openModel(filename, fit, binary, wait)
+            # Revision 01/09/2026 >
         else: raise ValueError('Unknown model type {}'.format(mt))
 
     # Special method
@@ -8726,6 +8772,7 @@ class SisypheDiffusionModel(object):
         dipy.reconst.dti.TensorModel | dipy.reconst.dki.DiffusionKurtosisModel
         | dipy.reconst.shm.CsaOdfModel | dipy.reconst.csdeconv.ConstrainedSphericalDeconvModel
         | dipy.reconst.dsi.DiffusionSpectrumModel | dipy.reconst.dsi.DiffusionSpectrumDeconvModel
+        | dipy diffusion model | dipy.reconst.fwdti.FreeWaterTensorModel | dipy.reconst.rumba.RumbaSDModel
             dipy diffusion model
         """
         return self._model
@@ -9652,6 +9699,318 @@ class SisypheDTIModel(SisypheDiffusionModel):
         dict
             keys(str), values:
                 - 'model', str, 'DTI'
+                - 'dtype', str, diffusion weighted images datatype
+                - 'shape', list[int, int, int], diffusion weighted images shape (image size in each dimension)
+        """
+        root = doc.documentElement
+        if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') <= '1.0':
+            attr = super().parseXML(doc)
+            node = root.firstChild
+            while node:
+                # Model type
+                if node.nodeName == 'model': attr['model'] = node.firstChild.data
+                # Fitting algorithm
+                if node.nodeName == 'fitalgo': self._algfit = node.firstChild.data
+                node = node.nextSibling
+            return attr
+        else: raise IOError('XML file format is not supported.')
+
+
+class SisypheIvimModel(SisypheDiffusionModel):
+    """
+    Description
+    ~~~~~~~~~~~
+
+    Class to manage IntraVoxel Incoherent Motion (IVIM) diffusion model.
+
+    Methods to calculate diffusion derived maps (mean diffusivity, fractional anisotropy...).
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    object -> SisypheDiffusionModel -> SisypheIvimModel
+
+    Creation: 01/09/2026
+    """
+
+    __slots__ = ['_algfit']
+
+    # Class constants
+
+    _TRR, _VARPRO = 'trr', 'varpro'
+    _ALG: tuple[str, ...] = (_TRR, _VARPRO)
+
+    # Class method
+
+    @classmethod
+    def openModel(cls,
+                  filename: str,
+                  fit: bool = False,
+                  binary: bool = True,
+                  wait: DialogWait | DictProxy | None = None) -> SisypheIvimModel:
+        """
+        Create a SisypheIvimModel instance from a PySisyphe Diffusion model (.xdmodel) file.
+
+        Parameters
+        ----------
+        filename : str
+            Diffusion model file name
+        fit : bool
+            compute model fitting (default False)
+        binary : bool
+            - if True, binary part (DWI images, mask image, mean DWI image) is loaded (default True)
+            - if False, only XML part is loaded
+        wait : DialogWait | multiprocessing.managers.DictProxy | None
+            optional progress dialog or multiprocessing shared dict (DictProxy)
+
+        Returns
+        -------
+        SisypheDiffusionModel
+            loaded diffusion model
+        """
+        filename = splitext(filename)[0] + cls._FILEEXT
+        if exists(filename):
+            r = SisypheIvimModel()
+            r.loadModel(filename, binary, wait)
+            if fit and binary:
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setInformationText('IVIM model fitting...')
+                    elif isinstance(wait, DictProxy): wait['msg'] = 'IVIM model fitting...'
+                r.computeFitting()
+            return r
+        else: raise IOError('No such file {}.'.format(basename(filename)))
+
+    # Special method
+
+    """
+    Private attribute
+
+    _algfit         str 
+    _model          dipy.reconst.ivim.IvimModelTR | dipy.reconst.ivim.IvimModelVP
+    _fmodel         dipy.reconst.ivim.IvimFit
+    """
+
+    def __init__(self, algfit: str = 'trr') -> None:
+        """
+        SisypheIvimModel instance constructor.
+
+        Parameters
+        ----------
+        algfit : str (optional)
+            fitting algorithms:
+
+                - 'trr' (defaut)
+                - 'varpro' variable projection
+        """
+        super().__init__()
+
+        if algfit in self._ALG: self._algfit: str = algfit
+        else: self._algfit: str = 'trr'
+
+        self._model: IvimModelTRR | IvimModelVP | None = None
+        self._fmodel: IvimFit | None = None
+
+    def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            conversion of SisypheDTIModel instance to str
+         """
+        buff = 'IntraVoxel Incoherent Motion (IVIM) diffusion model\n'
+        buff += 'Fitting algorithm: {}\n'.format(self._algfit)
+        buff += super().__str__()
+        return buff
+
+    def __repr__(self) -> str:
+        """
+        Special overloaded method called by the built-in repr() python function.
+
+        Returns
+        -------
+        str
+            SisypheDTIModel instance representation
+        """
+        return 'SisypheIvimModel instance at <{}>\n'.format(str(id(self))) + self.__str__()
+
+    # Public methods
+
+    def setFitAlgorithm(self, algfit: str = 'trr') -> None:
+        """
+        Set the fitting algorithm attribute of the current SisypheIvimModel instance.
+
+        Parameters
+        ----------
+        algfit : str (optional)
+            fitting algorithm:
+
+                - 'trr' (defaut)
+                - 'varpro' variable projection
+        """
+        algfit = algfit.lower()
+        if algfit in self._ALG: self._algfit = algfit
+        else: ValueError('invalid parameter value {}.'.format(algfit))
+
+    def getFitAlgorithm(self) -> str:
+        """
+        Get the fitting algorithm attribute of the current SisypheIvimModel instance.
+
+        Returns
+        -------
+        str
+            fitting algorithm:
+
+                - 'trr' (defaut)
+                - 'varpro' variable projection
+        """
+        return self._algfit
+
+    def getModel(self):
+        """
+        Get the model attribute of the current SisypheIvimModel instance.
+
+        Returns
+        -------
+        dipy.reconst.ivim.IvimModelTRR | dipy.reconst.ivim.IvimModelVP
+            dipy IVIM model
+        """
+        if self.hasGradients():
+            if self._model is None:
+                self._model = IvimModel(self._gtable, self._algfit)
+        return super().getModel()
+
+    def computeFitting(self, algfit: str = '', wait: DialogWait | None = None) -> None:
+        """
+        Estimate the diffusion model of the current SisypheIvimModel instance.
+
+        Parameters
+        ----------
+        algfit : str
+            fitting algorithm:
+
+                - 'trr'
+                - 'varpro' variable projection
+                - if is empty (default), uses fitting algorithm attribute
+        wait: Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+        """
+        if self.hasGradients() and self.hasDWI():
+            if self._fmodel is None:
+                if wait is not None:
+                    wait.setInformationText('IVIM model fitting...')
+                if algfit == '' or algfit not in self._ALG: algfit = self._algfit
+                else: self._algfit = algfit
+                self._model = IvimModel(gtab=self._gtable, fit_method=algfit)
+                # noinspection PyTypeChecker
+                self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
+
+    def getD(self):
+        """
+        Calculate Diffusivity (IVIM D) map.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            IVIM Diffusivity map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            # noinspection PyTypeChecker,PyUnresolvedReferences
+            r.copyFromNumpyArray(self._fmodel.model_params[:, :, :, 0],
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('IVIM D')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+
+    def getDStar(self):
+        """
+        Calculate pseudo-diffusion due to vascular contributions (IVIM D*) map.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            IVIM Pseudo-diffusivity map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            # noinspection PyTypeChecker, PyUnresolvedReferences
+            r.copyFromNumpyArray(self._fmodel.model_params[:, :, :, 1],
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('IVIM D*')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+
+    def perfusionFraction(self):
+        """
+        Calculate perfusion fraction (IVIM F) map.
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            IVIM perfusion fraction map
+        """
+        if self._fmodel is not None:
+            r = SisypheVolume()
+            # noinspection PyTypeChecker, PyUnresolvedReferences
+            r.copyFromNumpyArray(self._fmodel.model_params[:, :, :, 3],
+                                 spacing=self._spacing,
+                                 defaultshape=False)
+            r.acquisition.setModalityToOT()
+            r.acquisition.setSequence('IVIM F')
+            r.setID(self.getReferenceID())
+            return r
+        else: raise AttributeError('Model attribute is None.')
+
+    # Public IO methods
+
+    def createXML(self, doc: minidom.Document) -> None:
+        """
+        Write the current SisypheDiffusionModel instance attributes to XML instance. This method is called by save() method,
+        it is not recommended for use.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            XML document
+        """
+        if isinstance(doc, minidom.Document):
+            root = doc.documentElement
+            # Model type
+            node = doc.createElement('model')
+            root.appendChild(node)
+            txt = doc.createTextNode(self._IVIM)
+            node.appendChild(txt)
+            # Fitting algorithm
+            node = doc.createElement('fitalgo')
+            root.appendChild(node)
+            txt = doc.createTextNode(self._algfit)
+            node.appendChild(txt)
+            # Common attributes
+            super().createXML(doc)
+
+    def parseXML(self, doc: minidom.Document) -> dict:
+        """
+        Read the current SisypheDiffusionModel instance attributes from XML instance. This method is called by load() method,
+        it is not recommended for use.
+
+        Parameters
+        ----------
+        doc : minidom.Document
+            XML document
+
+        Returns
+        -------
+        dict
+            keys(str), values:
+                - 'model', str, 'IVIM'
                 - 'dtype', str, diffusion weighted images datatype
                 - 'shape', list[int, int, int], diffusion weighted images shape (image size in each dimension)
         """

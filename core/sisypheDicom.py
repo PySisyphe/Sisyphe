@@ -621,6 +621,7 @@ def loadBVec(filename: str,
         if numpy parameter is False:
             - key str, diffusion weighted image file name (.xvol) or index number,
             - value [float, float, float], gradient direction vector
+        if numpy parameter is True: only b-values are returned in this case (not direction vector)
     """
     if format == 'txtbyvec':
         with open(filename, 'r') as f:
