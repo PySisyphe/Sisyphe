@@ -2284,6 +2284,14 @@
 			reconstruction, set N as the number of phase array coils. This 
 			parameter is required for noise estimation.
 		</PhaseArray>
+		<Orientation>
+			Gradient vectors are recalibrated with respect to image orientation, 
+			from LPS+ DICOM orientation to PySisyphe RAS+. 
+		</Orientation>
+		<Direction>
+			Gradient vectors are corrected with image direction from dicom 
+			(0x020,0x037) ImageOrientationPatient field.
+		</Direction>
 		<Prefix>
 			Prefix added to file name to save the preprocessed images.
 		</Prefix>
@@ -2320,6 +2328,10 @@
 	</NLMeansDenoise>
 	<SelfSupervisedDenoise>
 		<Title>Parameters of self-supervised denoising method.</Title>
+		<Version>
+			Algorithm version 1 or 3.
+			Radius of the local patch is not used in version 3.
+		</Version>
 		<PatchRadius>
 			Radius of the local patch to be taken around each voxel.
 			Patch size = patch radius x 2 + 1 (0 gives 1x1x1 patches, default)
@@ -2363,7 +2375,7 @@
 			from LPS+ DICOM orientation to PySisyphe RAS+. 
 		</Orientation>
 		<Direction>
-			Gradient vectors are corrected with image orientation from dicom 
+			Gradient vectors are corrected with image direction from dicom 
 			(0x020,0x037) ImageOrientationPatient field.
 		</Direction>
 		<Save>Save or do not save model (checked by default).</Save>
@@ -2568,6 +2580,29 @@
 			It is saved with the 'FISO' suffix.
 		</FISO>
 	</RUMBAModel>
+	<IVIMModel>
+		<Title>
+			IVIM IntraVoxel Incoherent Motion model
+			Acquisition: at least 6 b-values and directions.
+		</Title>
+		<Method>
+			Fitting methods:
+			- TRR
+			- VARPRO: variable projection
+		</Method>
+		<IVIMD>
+			Diffusivity.
+			It is saved with the 'IVIMD' suffix.
+		</IVIMD>
+		<IVIMDS>
+			Pseudo-diffusivity.
+			It is saved with the 'IVIMDS' suffix.
+		</IVIMDS>
+		<IVIMF>
+			Perfusion Fraction.
+			It is saved with the 'IVIMF' suffix.
+		</IVIMF>
+	</IVIMModel>
 	<SHCSAModel>
 		<Title>
 			Constant Solid Angle ODF (Q-Ball) model
@@ -2816,12 +2851,13 @@
 			Minimal length of streamlines in the new bundle in mm (default 50).
 		</MinimalLength>
 		<ClusteringThreshold>
-			Get the centroids of the atlas bundle and work with centroids 
-			instead of all streamlines. This helps speed up processing.
-			The larger the value of the threshold, the fewer centroids will be, 
-			and smaller the threshold value, the more centroids will be. If
-			you prefer to use all the streamlines of the model bundle, you can 
-			set this threshold to 0.1 mm (default 15 mm)
+			This is the MDF distance threshold used to partition the bundle atlas 
+			into one or more centroids. Get the centroids of the atlas bundle and 
+			work with centroids instead of all streamlines. This helps speed up 
+			processing. The larger the value of the threshold, the fewer centroids 
+			will be, and smaller the threshold value, the more centroids will be. 
+			If you prefer to use all the streamlines of the model bundle, you can 
+			set this threshold to 0.1 mm (default 15 mm).
 		</ClusteringThreshold>
 		<ReductionMetric>
 			Minimum average Direct-Flip (MDF, default) or 
@@ -3001,12 +3037,19 @@
 			Minimal length in mm of streamlines used to calculate 
 			connectvity matrix (default 10.0).
 		</BundleLength>
+		<Inclusive>
+			Whether to analyze the entire streamline (True), as opposed to just 
+			the endpoints (False).
+		</Inclusive>
+		<Symmetric>
+			Symmetric means we don't distinguish between start and end points (True).
+		</Symmetric>
+		<Exclude>Whether to exclude background label.</Exclude>
 		<Values>
 			- Absolute: connectvity matrix values are not normalized (streamline 
 			count, default).
 
-			- Diagonal ratio: connectvity matrix values are normalized as a 
-			ratio with principal diagonal elements.
+			- Ratio: normalized by the total number of streamlines.
 		</Values>
 	</BundleConnectivityMatrix>
 </tooltips>

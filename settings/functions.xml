@@ -82,6 +82,31 @@
 		<Prefix vartype="str">norm</Prefix>
 		<Suffix vartype="str"/>
 	</IntensityNormalizationImageFilter>
+	<GibbsImageFilter>
+		<Axis label="Slice axis to correct" vartype="lstr">Axial|Coronal|Sagittal</Axis>
+		<Neighbour label="Neighbor" varmax="10" varmin="1" vartype="int">3</Neighbour>
+		<Prefix vartype="str">f</Prefix>
+		<Suffix vartype="str"/>
+	</GibbsImageFilter>
+	<PCAImageFilter>
+		<Mask label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximum Entropy|Kittler|Isodata|Moments</Mask>
+		<Size label="Morphological operator size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
+		<Iter label="Number of morphological operator iterations (mask)"  varmax="10" varmin="1" vartype="int">1</Iter>
+		<Algo label="PCA denoising algorithm" vartype="lstr">Local PCA|General function PCA|Marcenko-Pastur PCA</Algo>
+		<Method label="PCA decomposition method" vartype="lstr">Eigenvalue|SVD</Method>
+		<Radius label="Patch radius" varmax="5" varmin="1" vartype="int">2</Radius>
+		<Prefix vartype="str">f</Prefix>
+		<Suffix vartype="str"/>
+	</PCAImageFilter>
+	<NLMeansImageFilter>
+		<Mask label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximum Entropy|Kittler|Isodata|Moments</Mask>
+		<Size label="Morphological operator size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
+		<Iter label="Number of morphological operator iterations (mask)"  varmax="10" varmin="1" vartype="int">1</Iter>
+		<Radius1 label="Patch radius" varmax="5" varmin="1" vartype="int">1</Radius1>
+		<Radius2 label="Block radius" varmax="10" varmin="1" vartype="int">5</Radius2>
+		<Prefix vartype="str">f</Prefix>
+		<Suffix vartype="str"/>
+	</NLMeansImageFilter>
 	<BiasFieldCorrectionImageFilter>
 		<UseMask vartype="bool">True</UseMask>
 		<ShrinkFactor varmax="5" varmin="1" vartype="int">4</ShrinkFactor>
@@ -498,13 +523,15 @@
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximum Entropy|Kittler|Isodata|Moments</Algo>
 		<Size label="Morphological operator size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
 		<Iter label="Number of morphological operator iterations (mask)"  varmax="10" varmin="1" vartype="int">2</Iter>
-		<GibbsSuppression label="Gibbs artifact correction" vartype="bool">True</GibbsSuppression>
+		<GibbsSuppression label="Gibbs artifact correction" vartype="bool">False</GibbsSuppression>
 		<GibbsNeighbour label="Gibbs neighbor" varmax="10" varmin="1" vartype="int">3</GibbsNeighbour>
 		<Denoise label="Denoising algorithm" vartype="lstr">No|Local PCA|General function PCA|Marcenko-Pastur PCA|Non-local means|Self-Supervised Denoising|Adaptive soft coefficient matching</Denoise>
 		<NoiseEstimation label="Noise estimation algorithm" vartype="lstr">Local patches|Piesno</NoiseEstimation>
 		<MRReconstruction label="MR reconstruction" vartype="lstr">SENSE (Philips)|GRAPPA (General Electric, Siemens)</MRReconstruction>
 		<ReceiverArray label="Number of receiver array head coils" varmax="64" varmin="0" vartype="int">1</ReceiverArray>
 		<PhaseArray label="Number of phase array head coils" varmax="64" varmin="0" vartype="int">1</PhaseArray>
+		<Orientation label="Orientation correction" vartype="bool">True</Orientation>
+		<Direction label="Direction correction" vartype="bool">True</Direction>
 		<Prefix vartype="str">f</Prefix>
 		<Suffix vartype="str"/>
 	</DiffusionPreprocessing>
@@ -518,11 +545,12 @@
 		<BlockRadius varmax="10" varmin="0" vartype="int">2</BlockRadius>
 	</NLMeansDenoise>
 	<SelfSupervisedDenoise>
+		<Version vartype="lstr">1|3</Version>
 		<PatchRadius varmax="10" varmin="0" vartype="int">0</PatchRadius>
 		<Solver label="Solver algorithm" vartype="lstr">OLS|RIDGE|LASSO</Solver>
 	</SelfSupervisedDenoise>
 	<DiffusionModel>
-		<Model label="Diffusion model" vartype="lstr">DTI|FWDTI|DKI|RUMBA|SHCSA|SHCSD|DSI|DSID</Model>
+		<Model label="Diffusion model" vartype="lstr">DTI|FWDTI|DKI|IVIM|RUMBA|SHCSA|SHCSD|DSI|DSID</Model>
 		<Algo label="Background thresholding algorithm (mask)" vartype="lstr">Huang|Mean|Otsu|Renyi|Yen|Li|Shanbhag|Triangle|Intermodes|Maximumentropy|Kittler|Isodata|Moments</Algo>
 		<Size label="Morphological kernel size (mask)" varmax="10" varmin="1" vartype="int">1</Size>
 		<Iter label="Number of morphological operator iterations (mask)" varmax="10" varmin="1" vartype="int">2</Iter>
@@ -579,6 +607,12 @@
 		<FWM label="White matter fraction" vartype="bool">False</FWM>
 		<FISO label="Isotropic fraction" vartype="bool">False</FISO>
 	</RUMBAModel>
+	<IVIMModel>
+		<Method label="Fitting algorithm" vartype="lstr">TRR|VARPRO</Method>
+		<IVIMD label="Diffusivity" vartype="bool">False</IVIMD>
+		<IVIMDS label="Pseudo-diffusivity" vartype="bool">False</IVIMDS>
+		<IVIMF label="Perfusion Fraction" vartype="bool">False</IVIMF>
+	</IVIMModel>
 	<SHCSAModel>
 		<Order varmax="10" varmin="2" vartype="int">6</Order>
 		<GFA label="Generalized fractional anisotropy" vartype="bool">False</GFA>
@@ -662,6 +696,9 @@
 	</BundleClustering>
 	<BundleConnectivityMatrix>
 		<BundleLength label="Bundle length threshold (mm)" varmax="100.0" varmin="10.0" vartype="float">10.0</BundleLength>
-		<Values label="Matrix values" vartype="lstr">Absolute|Diagonal ratio</Values>
+		<Inclusive vartype="bool">True</Inclusive>
+		<Symmetric vartype="bool">True</Symmetric>
+		<Exclude label="Exclude background" vartype="bool">True</Exclude>
+		<Values label="Matrix values" vartype="lstr">Absolute|Ratio</Values>
 	</BundleConnectivityMatrix>
 </functions>
