@@ -23,6 +23,7 @@ Version history
 - :ref:`build30-05-2026`
 - :ref:`build20-06-2026`
 - :ref:`build20-07-2026`
+- :ref:`build01-09-2026`
 - :ref:`build20-09-2026`
 
 .. _version-increment-rules:
@@ -6805,9 +6806,9 @@ version 0.99.16, build 20/07/2026
 
 		- replace if not v: self._icons['actions'].setVisible(v) with self._icons['actions'].setVisible(v)
 
-.. _build20-09-2026:
+.. _build01-09-2026:
 
-version 1.01.14, build 20/09/2026
+version 1.01.14, build 01/09/2026
 ---------------------------------
 
 - **updated html documentation**
@@ -6817,7 +6818,7 @@ version 1.01.14, build 20/09/2026
 	- PySisyphe_docktracking.rst
 	- rebuild sphinx documentation
 
-- **updated file**
+- **updated files**
 
 	- /settings/functions.xml
 	- /settings/tooltips.xml
@@ -7414,3 +7415,320 @@ version 1.01.14, build 20/09/2026
 	- widgets.attributesWidgets.ItemBundleAttributesWidget._updateSettingsFromItem()
 
 		- add self._updateToolTip()
+
+.. _build20-09-2026:
+
+version 1.03.09, build 20/09/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Versions.rst
+	- PySisyphe_Diffusion.rst
+	- PySisyphe_Registration.rst
+	- PySisyphe_Functions.rst
+	- rebuild sphinx documentation
+
+- **updated file**
+
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+	- /Sisyphe/lib/dipy/setup.py
+
+		- setup file to cythonize nlmeans_block.pyx
+
+- **new module**
+
+	- lib.nlmeans_block
+
+		- resolve the bug that is related to the dipy upgrade from version 1.10 to 1.12
+		- import error, dipy.denoise.nlmeans_block module does not exist in version 1.12
+		- copy the nlmeans_block.pyx file from the dipy version 1.10 to the lib.dipy folder as a new module
+		- cythonize nlmeans_block.pyx
+
+- **updated modules**
+
+	- core.sisypheStatistics
+	- core.sisypheTracts
+	- gui.dialogDeepSegmentation
+	- gui.dialogDiffusionTracking
+	- gui.dialogDiffusionModel
+	- gui.dialogDiffusionPreprocessing
+	- gui.dialogDiffusionBundle
+	- gui.dialogRegistration
+	- gui.dialogFunction
+	- gui.dialogWorkflow
+	- gui.windowSisyphe
+	- lib.non_local_means
+
+		- remove 'from dipy.denoise.nlmeans_block import nlmeans_block' import
+		- replace with 'from Sisyphe.lib.dipy.nlmeans_block import nlmeans_block'
+
+	- processing.capturedStdoutProcessing
+	- processing.dipyFunctions
+	- widget.attributesWidgets
+	- widget.fileBrowserWidget
+
+- **updated functions**
+
+	- processing.dipyFunctions.dwiNoiseEstimation
+
+		- bug fix, replace sigma = estimate_sigma(img, N=n_coils) with sigma = float(estimate_sigma(img, N=n_coils)[0])
+		- bug fix, replace s = estimate_sigma(img, N=n_coils) with s = float(estimate_sigma(img, N=n_coils)[0])
+
+	- processing.dipyFunctions.dwiPreprocessing
+
+		- bug fix, convert the image's dtype to float32 in the gibbs_removal function
+		- bug fix, add version parameter in the patch2self function
+		- bug fix, replace the multi-component image with a single-component image in the adaptive_soft_matching function
+
+- **new classes**
+
+	- core.sisypheTracts.SisypheIvimModel
+
+		- IntraVoxel Incoherent Motion (IVIM) diffusion model
+
+	- processing.capturedStdoutProcessing.ProcessGibbsImageFilter
+
+		- multiprocessing Process class for Gibbs artifact correction
+
+	- processing.capturedStdoutProcessing.ProcessPCAImageFilter
+
+		- multiprocessing Process class for PCA image denoising
+
+	- processing.capturedStdoutProcessing.ProcessNLMeansImageFilter
+
+		- multiprocessing Process class for non-local means image denoising
+
+	- gui.dialogFunction.DialogGibbsFilter
+
+		- GUI dialog window for Gibbs artifact correction
+
+	- gui.dialogFunction.DialogPCAFilter
+
+		- GUI dialog window for PCA image denoising
+
+	- gui.dialogFunctionDialogNLMeansFilter
+
+		- GUI dialog window for non-local means image denoising
+
+- **updated classes**
+
+	- core.sisypheStatistics.SisypheDesign
+
+		- update load() method
+
+	- core.sisypheTracts.SisypheStreamlines
+
+		- update streamlinesFromAtlas() method
+		- update bundleToConnectivityMatrix() method
+		- update streamlinesToConnectivityMatrix() method
+
+	- core.sisypheTracts.SisypheDiffusionModel
+
+		- add IVIM model str to class constants
+		- update openModel() method
+
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepLesionSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepAtlasParcellation
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation
+	- gui.dialogDeepSegmentation.DialogDeepMicrobleedsSegmentation
+
+		- update execute() method
+
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation
+
+		- update execute() method
+
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation
+
+		- update execute() method
+
+	- gui.dialogDiffusionTracking.DialogDiffusionTracking
+
+		- update _modelChanged() method
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel
+
+		- update __init__() method
+		- update _modelChanged() method
+		- update multiExecute() method
+
+	- gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing
+
+		- update _updateBVals() method
+		- update _updateBVecs() method
+		- update multiExecute() method
+
+	- gui.dialogDiffusionBundle.DialogBundleConnectivityMatrix
+
+		- update execute() method
+
+	- gui.dialogRegistration.DialogEddyCurrentCorrection
+
+		- update execute() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update _initFunctionsMenu() method
+
+	- gui.dialogWorkflow.WorkflowItem
+
+		- update init() method
+
+	- gui.dialogWorkflow.DialogWorkflow
+
+		- update class constant _PROC, add 'Non-local means filter' & 'Gibbs artifact correction'
+
+	- processing.capturedStdoutProcessing.ProcessDeepMedialTemporalSegmentation
+
+		- update run() method
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel
+
+		- update run() method
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionPreprocessing
+
+		- update __init__() method
+		- update run() method
+
+	- widget.attributesWidgets.ItemMeshAttributesWidget
+	- widget.attributesWidgets.ItemToolAttributesWidget
+	- widget.attributesWidgets.ItemBundleAttributesWidget
+
+		- update __init__() method
+
+	- widget.fileBrowserWidget.FileBrowserWidget
+
+		- update _fileClicked() method
+
+- **updated methods**
+
+	- core.sisypheStatistics.SisypheDesign.load()
+
+		- add binary parameter
+
+	- core.sisypheTracts.SisypheStreamlines.streamlinesFromAtlas()
+
+		- use num_threads parameter in sl, _ = f.recognize(...)
+		- change text in wait.addInformationText() 
+
+	- core.sisypheTracts.SisypheStreamlines.bundleToConnectivityMatrix()
+	- core.sisypheTracts.SisypheStreamlines.streamlinesToConnectivityMatrix()
+
+		- add inclusive and symmetric parameters
+
+	- core.sisypheTracts.SisypheDiffusionModel.openModel()
+
+		- add IVIM model
+
+	- gui.dialogDeepSegmentation.DialogDeepTumorSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepHippocampusSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepLesionSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepWhiteMatterHyperIntensitiesSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepTOFVesselSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepTissueSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepAtlasParcellation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation.execute()
+	- gui.dialogDeepSegmentation.DialogDeepMicrobleedsSegmentation.execute()
+
+		- replace 'to do' with 'perform' in the messageBox text
+
+	- gui.dialogDeepSegmentation.DialogDeepFCDSegmentation.execute()
+
+		- bug fix, handling the lack of mask
+
+	- gui.dialogDeepSegmentation.DialogDeepMedialTemporalSegmentation.execute()
+
+		- fix for queue element management returned by processing.capturedStdoutProcessing.ProcessDeepMedialTemporalSegmentation.run() (see below)
+
+	- gui.dialogDiffusionTracking.DialogDiffusionTracking._modelChanged()
+
+		- bug fix, exclude IVIM and RUMBA models
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.__init__()
+
+		- add self._IVIM attribute
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()
+	- gui.dialogDiffusionModel.DialogDiffusionModel.multiExecute()
+
+		- add IVIM model management
+
+	- gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing._updateBVals()
+
+		- bug fix, add if 'direction' in v2: del v2['direction']
+
+	- gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing._updateBVecs()
+
+		- bug fix, add if 'direction' in v1: del v1['direction']
+
+	- gui.dialogDiffusionPreprocessing.DialogDiffusionPreprocessing.multiExecute()
+
+		- add gradient correction parameters
+		- bug fix, replace self._preproc.getParameterValue('NoiseEstimation') with self._preproc.getParameterValue('NoiseEstimation')[0]
+		- bug fix, replace self._preproc.getParameterValue('MRReconstruction') with self._preproc.getParameterValue('MRReconstruction')[0]
+
+	- gui.dialogDiffusionBundle.DialogBundleConnectivityMatrix.execute()
+
+		- inclusive & symmetric parameter management
+		- replace r = sl.streamlinesToConnectivityMatrix(vol) with r = sl.streamlinesToConnectivityMatrix(vol, inclusive, symmetric)
+		- bug fix, normalization by the sum of the diagonal elements of the connectivity matrix
+
+	- gui.dialogRegistration.DialogEddyCurrentCorrection.execute()
+
+		- save new xbval file
+		- save new xbvec file
+
+	- gui.dialogWorkflow.WorkflowItem.init()
+
+		- add gibbs artifact correction & non-local mean filter processing
+
+	- gui.windowSisyphe.WindowSisyphe._initFunctionsMenu()
+
+		- add self._action['pca'] action, PCA denoising menu
+		- add self._action['nlmeans'] action, Non-local means denoising menu
+		- add self._action['gibbs'] action, Gibbs artifact correction menu
+		
+	- processing.capturedStdoutProcessing.ProcessDeepMedialTemporalSegmentation.run()
+
+		- memory overflow fix, add each volume as a separate queue item, rather than adding all volumes as a single queue item
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel.run()
+
+		- add IVIM model processing
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionPreprocessing.__init__()
+
+		- add corr1 & corr2 parameters
+		- add self._corr1 & self._corr2 attributes
+		- coor1: LPS+ to RAS+ gradient coreection
+		- coor2: gradient correction based on direction vector
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionPreprocessing.run()
+
+		- add gradient correction
+		- save new xbval file
+		- save new xbvec file
+
+	- widget.attributesWidgets.ItemMeshAttributesWidget.__init__()
+	- widget.attributesWidgets.ItemToolAttributesWidget.__init__()
+	- widget.attributesWidgets.ItemBundleAttributesWidget.__init__()
+
+		- replace regexp = QRegExp(SisypheROI.getRegExp()) with regexp = QRegExp(r'^[_A-Za-z0-9#\'\-\_\s+,]+$')
+
+	- widget.fileBrowserWidget.FileBrowserWidget._fileClicked()
+
+		- replace v.load(filename) with v.load(filename, binary=False)

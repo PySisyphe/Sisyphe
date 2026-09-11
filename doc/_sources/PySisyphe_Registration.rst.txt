@@ -419,7 +419,7 @@ Toggle **Registration...** button to show/hide parameters:
 Toggle **Resample...** button to show/hide resampling parameters:
 
 - Select the interpolation algorithm (*linear*, *nearest neighbor*, *b-spline*, *gaussian*, *hamming windowed sinc*, *cosine windowed sinc*, *welch windowed sinc*, *lanczos windowed sinc*, *blackman windowed sinc*) used to resample the moving volume.
-- Resampled volumes are saved with their original names, which are prefixed and/or suffixed by the strings edited in the "prefix" and "suffix" parameters.
+- Resampled volumes are saved with their original names, which are prefixed and/or suffixed by the strings edited in the "prefix" and "suffix" parameters. If they exist, files containing B-values (.xbval) and gradient vectors (.xbvec) are saved with the original file name prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
 
 Left-click **Execute** button to run eddy current correction.
 

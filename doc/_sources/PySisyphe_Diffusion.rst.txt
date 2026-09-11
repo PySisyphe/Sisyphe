@@ -38,7 +38,7 @@ Left-click **Close** button to exit dialog box.
 Preprocessing
 -------------
 
-This menu is used to perform preprocessings of the diffusion-weighted Volumes: *Gibbs artifact correction* and *denoising*.
+This menu is used to perform preprocessings of the diffusion-weighted volumes: *Gibbs artifact correction* and *denoising*.
 
 Gibbs artifacts (also known as truncation, ringing, or spectral leakage artifacts) typically appear as multiple fine parallel lines immediately adjacent to high-contrast interfaces. Gibbs artifacts occur as a consequence of using Fourier transforms to reconstruct MR signals into images. In theory, any signal can be represented as an infinite summation of sine waves of different amplitudes, phases, and frequencies. In MR imaging, however, we are restricted to sampling a finite number of frequencies and must therefore approximate the image by using only a relatively few harmonics in its Fourier representation.  The Fourier series, then, is cut short or truncated, hence the name for this artifact. PySisyphe used the `dipy <https://docs.dipy.org/1.8.0/examples_built/preprocessing/denoise_gibbs.html>`_ implementation.
 
@@ -79,7 +79,9 @@ Toggle **Diffusion preprocessing...** button to show/hide preprocessing paramete
 - Select the parallel MR reconstruction method of multi-channel coils used to acquire diffusion-weighted images from the **MR reconstruction** combbox. Two methods are available, *SENSE* (Philips) or *GRAPPA* (General Electric, Siemens). This parameter is required for noise estimation.
 - Define the **Number of receiver array head coils** used to acquire diffusion-weighted images. This parameter is required for noise estimation.
 - Define the **Number of phase array head coils**  used to acquire diffusion-weighted  images. if scanner does a SENSE reconstruction, always use 1, as the noise profile is always Rician. If scanner does a GRAPPA reconstruction, set N as the number of phase array coils. This parameter is required for noise estimation.
-- Preprocessed diffusion-weighted volumes are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+- Check the **Orientation correction** option to take into account orientation convention discrepancies between PySisyphe (RAS+) and Dicom (LPS+).
+- Check the **Direction correction** option to adjust the gradient vectors according to the image direction using the DICOM (0x020, 0x037) "ImageOrientationPatient" field.
+- Preprocessed diffusion-weighted volumes are saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters. Files containing B-values (.xbval) and gradient vectors (.xbvec) are saved with the original file name prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
 
 .. admonition:: Reference
 
@@ -89,7 +91,7 @@ Toogle **PCA denoising** button to show/hide parameters:
 
 - Set the **Smooth kernel radius** using spinbox (default 2). This parameter is the radius of a Gaussian smoothing kernel (in voxels) applied to the noise estimate before it is returned.
 - Set the **Patch radius** using spinbox (default 2). This parameter specifies the radius (in voxels) of the local patch to be taken around each voxel. Patch size = patch radius x 2 + 1 (2 gives 5x5x5 patches).
-- Select the **PCA method** using combobox. The algorithms provided for principal component analysis (PCA) are as follows: *eigenvalue decomposition* (EIG) or *singular value decomposition* (SVD). The default method is "EIG" which is faster. However, occasionally "SVD" might be more accurate.
+- Select the **PCA decomposition method** using combobox. The algorithms provided for principal component analysis (PCA) are as follows: *eigenvalue decomposition* (EIG) or *singular value decomposition* (SVD). The default method is "EIG" which is faster. However, occasionally "SVD" might be more accurate.
 
 Toogle **Non-local means denoising** button to show/hide parameters:
 
@@ -98,6 +100,7 @@ Toogle **Non-local means denoising** button to show/hide parameters:
 
 Toogle **Self supervised denoising** button to show/hide parameters:
 
+- Set the **Algorithm version** using combobox (version 1 or 3). The **Patch radius** parameter is not used in version 3.
 - Set the **Patch radius** using spinbox (default 0). This parameter specifies the radius (in voxels) of the local patch to be taken around each voxel. Patch size = patch radius x 2 + 1 (0 gives 1x1x1 patches).
 - Select the **Solver algorithm** using combobox. The default algorithm used to solve the set of linear equations is *ordinary least squares* regression (OLS). Depending on the size of the data, this can be slightly slower. If so, please consider switching to *ridge* regression (RIDGE).
 
@@ -110,13 +113,14 @@ Left-click **Close** button to exit dialog box.
 Diffusion model
 ---------------
 
-This menu is used to define and fit a diffusion model. The diffusion models available in Pysisyphe are as follows: *Diffusion Tensor model* (`DTI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dti.html>`_), *Free Water Diffusion Tensor model* (`FWDTI <https://docs.dipy.org/1.9.0/examples_built/reconstruction/reconst_fwdti.html>`_), *Diffusional Kurtosis model* (`DKI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dki.html>`_), *RUMBA Robust and Unbiased Model-BAsed Spherical Deconvolution model* (`RUMBA <https://docs.dipy.org/1.10.0/examples_built/reconstruction/reconst_rumba.html>`_), *Constant Solid Angle ODF model* Q-Ball (`SHCSA <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csa.html>`_), *Constrained Spherical Deconvolution model* (`SHCSD <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csd.html>`_), *Diffusion Spectrum model* (`DSI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsi.html>`_) and *Diffusion Spectrum Deconvolution model* (`DSID <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsid.html>`_). PySisyphe uses the `Dipy <https://dipy.org/>`_ library implemenentation.
+This menu is used to define and fit a diffusion model. The diffusion models available in Pysisyphe are as follows: *Diffusion Tensor model* (`DTI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dti.html>`_), *Free Water Diffusion Tensor model* (`FWDTI <https://docs.dipy.org/1.9.0/examples_built/reconstruction/reconst_fwdti.html>`_), *Diffusional Kurtosis model* (`DKI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dki.html>`_), *IVIM IntraVoxel Incoherent Motion model*, (`IVIM <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_ivim.html>`_), *RUMBA Robust and Unbiased Model-BAsed Spherical Deconvolution model* (`RUMBA <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_rumba.html>`_), *Constant Solid Angle ODF model* Q-Ball (`SHCSA <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csa.html>`_), *Constrained Spherical Deconvolution model* (`SHCSD <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_csd.html>`_), *Diffusion Spectrum model* (`DSI <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsi.html>`_) and *Diffusion Spectrum Deconvolution model* (`DSID <https://docs.dipy.org/stable/examples_built/reconstruction/reconst_dsid.html>`_). PySisyphe uses the `Dipy <https://dipy.org/>`_ library implemenentation.
 
 Each model has its own acquisition constraints:
 
 - DTI requires up to 6 directions, b-value 1000 s/mm^2, at least 1 B0.
 - FWDTI requires at least 32 directions evenly distributed, b-value less than or equal to 1000 s/mm^2, multiple B0.
 - DKI requires b-values of 0, 500, 1000, 1500, 2000, +/- 2500 s/mm^2, at least 15 directions.
+- IVIM requires at least 6 b-values and directions.
 - RUMBA requires HARDI data with at least 64 directions, b-value 2500 s/mm^2, at least 3 B0 images.
 - SHCSA requires HARDI data with at least 200 directions, b-value 3000 s/mm^2, or multi-shell.
 - SHCSD requires 20 directions, b-value 1000 s/mm^2; benefits additionally from HARDI data 60 direction, b-value 3000 s/mm^2 or multi-shell.
@@ -135,7 +139,7 @@ Toggle **Diffusion model...** button to show/hide model parameters:
 	- Select the structuring element size, expressed in voxels, of the morphological operator used for mask processing from the **Morphological operator size** combobox (default 1).
 	- Set The number of times the morphological operator is applied for mask processing from the **Number of morphological operator iterations** spinbox (default 2).
 - Check the **Orientation correction** option to take into account orientation convention discrepancies between PySisyphe (RAS+) and Dicom (LPS+).
-- Check the **Direction correction** option to adjust the gradient vectors according to the image orientation using the DICOM (0x020, 0x037) "ImageOrientationPatient" field.
+- Check the **Direction correction** option to adjust the gradient vectors according to the image direction using the DICOM (0x020, 0x037) "ImageOrientationPatient" field.
 - Check the **Save model** option to save the fitted model to a PySisyphe diffusion model XML file (.xmodel).
 
 Toggle **DTI model...** button to show/hide DTI parameters:
@@ -153,7 +157,12 @@ Toggle **DKI model...** button to show/hide DKI parameters:
 - Select the **Fitting algorithm** from the combobox. The fitting methods available in Pysisyphe are as follows: *ordinary least squares* (OLS or ULLS), *weighted ordinary least squares* (WLS, WLLS or UWLLS), *constrained ordinary least squares* (CLS or LMI), *constrained weighted least squares* (CWLS).
 - Check the map(s) to be calculated: *Fractional anisotropy* (FA), *Geodesic anisotropy* (GA), *Mean diffusivity* (MD), *Trace* of the tensor, *Axial diffusivity* (AD), *Radial diffusivity* (RD). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
 
-Toggle **RUMBA model...** button to show/hide DKI parameters:
+Toggle **IVIM model...** button to show/hide IVIM parameters:
+
+- Select the **Fitting algorithm** from the combobox. The fitting methods available in Pysisyphe are as follows: *trr*, *varpro*.
+- Check the map(s) to be calculated: *Diffusivity*, *Pseudo-diffusivity*, *Perfusion Fraction*. These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
+
+Toggle **RUMBA model...** button to show/hide RUMBA parameters:
 
 - Select the **Fitting algorithm** from the combobox. The fitting methods available in Pysisyphe are as follows: *spatial matched filter* (SMF), *sum-of-squares* (SOS).
 - Check the map(s) to be calculated: *Cerebro-spinal fluid fraction* (FCSF), *Gray matter fraction* (FGM), *White matter fraction* (WMF), *Isotropic fraction* (FISO). These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
@@ -349,7 +358,7 @@ Select atlas bundles to extract from the list located below the previous widget.
 Toggle **Bundle atlas selection...** button to show/hide parameters:
 
 - Set the minimal lenght of streamlines in mm, using the **Minimum length** spinedit widget. Shorter streamlines will be removed from the tractogram.
-- Set the **Bundle clustering threshold** using spinedit widget. Get the centroids of the atlas bundle and work with centroids instead of all streamlines. This helps speed up processing. The larger the value of the threshold, the fewer centroids will be, and smaller the threshold value, the more centroids will be. If you prefer to use all the streamlines of the model bundle, you can set this threshold to 0.1 mm.
+- Set the **Bundle clustering threshold** using spinedit widget. This is the MDF distance threshold used to partition the bundle atlas into one or more centroids. Get the centroids of the atlas bundle and work with centroids instead of all streamlines. This helps speed up processing. The larger the value of the threshold, the fewer centroids will be, and smaller the threshold value, the more centroids will be. If you prefer to use all the streamlines of the model bundle, you can set this threshold to 0.1 mm.
 - Define the **Reduction metric** using combobox. Two metrics are available: *Minimum average Direct-Flip* (mdf) or *Mean Average Minimum* (mam).
 - Set the **Reduction threshold** using spinedit widget. This threshold will be used to reduce the search space for finding the streamlines that match atlas bundle streamlines in shape. Instead of looking at the entire tractogram, now we will be looking at neighboring region of an atlas bundle in the tractogram. Increase the threshold to increase the search space. Range is 15 - 30 mm (default 25 mm).
 - Define the **Pruning metric** using combobox. Two metrics are available: *Minimum average Direct-Flip* (mdf) or *Mean Average Minimum* (mam).
@@ -410,7 +419,10 @@ Use the **Label volume** :ref:`widgets-section-multi-file` widget, under the pre
 Toggle **Bundle connectivity matrix...** button to show/hide parameters:
 
 - Set the minimal lenght of streamlines in mm, using the **Bundle length threshold** spinedit widget. Shorter streamlines will be removed from the processing.
-- Define a **matrix values normalization** using combobox: *Absolute* (no normalization) or *Diagonal ratio* (normalization with principal diagonal elements of the connectivity matrix).
+- Toggle the **Inclusive** parameter. Whether to analyze the entire streamline (True), as opposed to just the endpoints (False).
+- Toggle the **Symmetric** parameter. Symmetric means we don't distinguish between start and end points (True).
+- Toggle the **Exclude background** parameter. Whether to exclude background label.
+- Define a **matrix values normalization** using combobox: *Absolute* (no normalization) or *Ratio* (normalized by the total number of streamlines).
 
 Left-click **Execute** button to calculate the connectivity matrix. 
 
