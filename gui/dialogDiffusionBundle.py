@@ -1923,7 +1923,7 @@ class DialogBundleConnectivityMatrix(QDialog):
     QDialog -> DialogBundleConnectivityMatrix
 
     Creation: 04/04/2024
-    Last revision: 13/06/2025
+    Last revision: 10/09/2026
     """
 
     # Special method
@@ -2054,22 +2054,30 @@ class DialogBundleConnectivityMatrix(QDialog):
         vol = SisypheVolume()
         vol.load(self._filelabel.getFilename())
         length = self._settings.getParameterValue('BundleLength')
+        # < Revision 10/09/2026
+        inclusive = self._settings.getParameterValue('Inclusive')
+        symmetric = self._settings.getParameterValue('Symmetric')
+        exclude = self._settings.getParameterValue('Exclude')
+        # Revision 10/09/2026 >
         if length is None: length = 10.0
         v = self._settings.getParameterValue('Values')[0][0]
         # Connectivity matrix
-        try:
-            wait.setInformationText('{} select streamlines longer than 10 mm...'.format(basename(self._filetracts.getFilename())))
-            sl = sl.getSisypheStreamlinesLongerThan(l=length)
-            wait.setInformationText('{} connectivity matrix processing...'.format(basename(self._filetracts.getFilename())))
-            r = sl.streamlinesToConnectivityMatrix(vol)
-        except Exception as err:
-            wait.close()
-            messageBox(self,
-                       title=self.windowTitle(),
-                       text='{}'.format(err))
-            self._filetracts.clear()
-            self._filelabel.clear()
-            return
+        # try:
+        wait.setInformationText('{} select streamlines longer than 10 mm...'.format(basename(self._filetracts.getFilename())))
+        sl = sl.getSisypheStreamlinesLongerThan(l=length)
+        wait.setInformationText('{} connectivity matrix processing...'.format(basename(self._filetracts.getFilename())))
+        # < Revision 10/09/2026
+        # sl.streamlinesToConnectivityMatrix(vol)
+        r = sl.streamlinesToConnectivityMatrix(vol, inclusive, symmetric)
+        # Revision 10/09/2026 >
+        # except Exception as err:
+        #     wait.close()
+        #     messageBox(self,
+        #                title=self.windowTitle(),
+        #                text='{}'.format(err))
+        #     self._filetracts.clear()
+        #     self._filelabel.clear()
+        #     return
         # Display connectivity matrix
         dlg = DialogGenericResults()
         if platform == 'win32':
@@ -2077,21 +2085,42 @@ class DialogBundleConnectivityMatrix(QDialog):
             cl = self.palette().base().color()
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(dlg, c)
-        npr = r.to_numpy()[1:, 1:]
+        # < Revision 10/09/2026
+        # npr = r.to_numpy()[1:, 1:]
+        if exclude: npr = r.to_numpy()[1:, 1:]
+        else: npr = r.to_numpy()
+        # Revision 10/09/2026 >
         if v != 'A':
-            mat = np.zeros(npr.shape, dtype='float32')
-            for i in range(mat.shape[0]):
-                if npr[i, i] > 0.0:
-                    mat[i, i:-1] = npr[i, i:-1] / npr[i, i]
-            npr = mat + mat.T  + np.diag(np.ones(mat.shape[0]))
-            npr[npr > 1.0] = 1.0
-        labels = list(vol.acquisition.getLabels().values())
+            # < Revision 10/09/2026
+            # mat = np.zeros(npr.shape, dtype='float32')
+            # for i in range(mat.shape[0]):
+            #    if npr[i, i] > 0.0:
+            #        mat[i, i:-1] = npr[i, i:-1] / npr[i, i]
+            # npr = mat + mat.T  + np.diag(np.ones(mat.shape[0]))
+            # npr[npr > 1.0] = 1.0
+            if symmetric: n = np.triu(npr).sum()
+            else: n = npr.sum()
+            npr = npr / n
+            # Revision 10/09/2026 >
+        # < Revision 10/09/2026
+        # labels = list(vol.acquisition.getLabels().values())
+        if 0 in vol.acquisition.getLabels().keys():
+            labels = list(vol.acquisition.getLabels().values())
+        else: labels = ['background'] + list(vol.acquisition.getLabels().values())
+        # Revision 10/09/2026 >
         title1 = 'Connectivity matrix'.format(sl.getBundle(0).getName())
         title2 = 'Connectivity table'.format(sl.getBundle(0).getName())
         tab1 = dlg.newTab(title1, capture=True, clipbrd=True, scrshot=self._sshot, dataset=False)
         tab2 = dlg.newTab(title2, capture=False, clipbrd=False, scrshot=None, dataset=True)
-        dlg.setTreeWidgetHeaderLabels(index=tab2, labels=labels)
-        labels = labels[1:]
+        # < Revision 10/09/2026
+        # dlg.setTreeWidgetHeaderLabels(index=tab2, labels=labels)
+        # labels = labels[1:]
+        if exclude:
+            labels[0] = ''
+            dlg.setTreeWidgetHeaderLabels(index=tab2, labels=labels)
+            labels = labels[1:]
+        else: dlg.setTreeWidgetHeaderLabels(index=tab2, labels=[''] + labels)
+        # Revision 10/09/2026 >
         dlg.setTreeWidgetArray(index=tab2, arr=npr, d=3, rows=labels)
         # dlg.showTree(0)
         # dlg.showFigure(0)

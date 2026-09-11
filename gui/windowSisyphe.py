@@ -132,7 +132,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 26/08/2026
+    Last revision: 04/09/2026
     """
 
     # Class constants
@@ -958,6 +958,7 @@ class WindowSisyphe(QMainWindow):
                     Mean
                     Gaussian
                     Anisotropic diffusion
+                    Non-local means denoising
                     Gradient magnitude
                     Laplacian
                 Intensity processing
@@ -966,6 +967,7 @@ class WindowSisyphe(QMainWindow):
                     Intensity normalization
                 Texture features
                 ROI texture features
+                Gibbs artifact correction
                 Bias field correction
                 --
                 Atlas labeling
@@ -1042,6 +1044,9 @@ class WindowSisyphe(QMainWindow):
         self._action['gradient'] = submenu.addAction(icgrad, 'Gradient Magnitude...')
         self._action['laplacian'] = submenu.addAction(iclapl, 'Laplacian...')
         self._action['aniso'] = submenu.addAction(icaniso, 'Anisotropic diffusion...')
+        # < Revision 04/09/2026
+        self._action['nlmeans'] = submenu.addAction(icaniso, 'Non-local means denoising...')
+        # Revision 04/09/2026 >
         submenu = self._menu['func'].addMenu('Intensity processing')
         # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
@@ -1054,6 +1059,9 @@ class WindowSisyphe(QMainWindow):
         self._action['signorm'] = submenu.addAction('Intensity normalization...')
         self._action['texture'] = self._menu['func'].addAction(ictexture, 'Texture feature maps...')
         self._action['texture2'] = self._menu['func'].addAction(ictexture, 'ROI texture features...')
+        # < Revision 04/09/2026
+        self._action['gibbs'] = self._menu['func'].addAction(icbias, 'Gibbs artifact correction...')
+        # Revision 04/09/2026 >
         self._action['bias'] = self._menu['func'].addAction(icbias, 'Bias field correction...')
 
         self._menu['func'].addSeparator()
@@ -1124,6 +1132,10 @@ class WindowSisyphe(QMainWindow):
         self._action['gradient'].triggered.connect(lambda: self.filterGradient())
         self._action['laplacian'].triggered.connect(lambda: self.filterLaplacian())
         self._action['aniso'].triggered.connect(lambda: self.filterAniso())
+        # < Revision 04/09/2026
+        self._action['nlmeans'].triggered.connect(lambda: self.filterNLMeans())
+        self._action['gibbs'].triggered.connect(lambda: self.filterGibbs())
+        # Revision 04/09/2026 >
         self._action['bias'].triggered.connect(lambda: self.filterBias())
         self._action['histmatch'].triggered.connect(lambda: self.histmatch())
         self._action['regmatch'].triggered.connect(lambda: self.regmatch())
@@ -5394,6 +5406,68 @@ class WindowSisyphe(QMainWindow):
             except Exception as err:
                 messageBox(self, 'Bias field correction dialog error', '{}\n{}'.format(type(err), str(err)))
                 if self._logger is not None: self._logger.error(traceback.format_exc())
+
+    # < Revision 04/09/2026
+    # add filterNLMeans method
+    def filterNLMeans(self,
+                      filenames: str | list[str] | None = None,
+                      params: dict | None = None) -> None:
+        from Sisyphe.gui.dialogFunction import DialogNLMeansFilter
+        self._dialog = DialogNLMeansFilter()
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        if filenames is not None:
+            if isinstance(filenames, str): filenames = [filenames]
+            self._dialog.setFilenames(filenames)
+            if params is not None:
+                self._dialog.setParametersFromDict(params)
+            try:
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogNLMeansFilter]')
+                self._dialog.execute()
+            except Exception as err:
+                messageBox(self, 'Non-local means denoising dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+        else:
+            self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+            try:
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-filter-nlmeans')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogNLMeansFilter]')
+                self._dialog.exec()
+            except Exception as err:
+                messageBox(self, 'Non-local means denoising dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 04/09/2026 >
+
+    # < Revision 04/09/2026
+    # add filterGibbs method
+    def filterGibbs(self,
+                    filenames: str | list[str] | None = None,
+                    params: dict | None = None) -> None:
+        from Sisyphe.gui.dialogFunction import DialogGibbsFilter
+        self._dialog = DialogGibbsFilter()
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32': __main__.updateWindowTitleBarColor(self._dialog)
+        if filenames is not None:
+            if isinstance(filenames, str): filenames = [filenames]
+            self._dialog.setFilenames(filenames)
+            if params is not None:
+                self._dialog.setParametersFromDict(params)
+            try:
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogGibbsFilter]')
+                self._dialog.execute()
+            except Exception as err:
+                messageBox(self, 'Gibbs artifact correction dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+        else:
+            self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+            try:
+                self._tabHelp.setPage('PySisyphe_Functions.html', 'menu-section-gibbs')
+                if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFunction.DialogGibbsFilter]')
+                self._dialog.exec()
+            except Exception as err:
+                messageBox(self, 'Gibbs artifact correction dialog error', '{}\n{}'.format(type(err), str(err)))
+                if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 04/09/2026 >
 
     def automate(self) -> None:
         from Sisyphe.gui.dialogWorkflow import DialogWorkflow

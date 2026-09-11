@@ -344,7 +344,7 @@ class DialogDeepTumorSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore tumor segmentation ?',
+                           'Would you like to perform more tumor segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -549,7 +549,7 @@ class DialogDeepHippocampusSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore hippocampus segmentation ?',
+                           'Would you like to perform more hippocampus segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -576,7 +576,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
     QDialog -> DialogDeepMedialTemporalSegmentation
 
     Creation: 22/10/2024
-    Last revision: 12/05/2026
+    Last revision: 01/09/2026
     """
 
     # Class method
@@ -712,8 +712,9 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                     """
                     Segmentation
                     """
-                    # noinspection PyUnusedLocal
-                    r = None
+                    # < Revision 01/09/2026
+                    r = dict()
+                    # Revision 01/09/2026 >
                     wait.setInformationText('U-net temporal segmentation initialization...')
                     wait.setButtonVisibility(True)
                     queue = Queue()
@@ -723,11 +724,27 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                         extractor.start()
                         while extractor.is_alive():
                             if exists(stdout): wait.setAntspynetTemporalProgress(stdout)
-                            if not queue.empty():
-                                # noinspection PyUnusedLocal
-                                r = queue.get()
-                                if extractor.is_alive(): extractor.terminate()
-                                wait.progressVisibilityOff()
+                            while not queue.empty():
+                                # < Revision 01/09/2026
+                                # r = queue.get()
+                                # if extractor.is_alive(): extractor.terminate()
+                                # wait.progressVisibilityOff()
+                                buff = queue.get()
+                                if 'lbl' in buff:
+                                    r['lbl'] = buff['lbl']
+                                elif 'prb' in buff:
+                                    if 'prb' not in r: r['prb'] = list()
+                                    r['prb'].append(buff['prb'])
+                                elif 'med' in buff:
+                                    r['med'] = buff['med']
+                                elif 'hip' in buff:
+                                    r['hip'] = buff['hip']
+                                elif 'amg' in buff:
+                                    r['amg'] = buff['amg']
+                                elif 'end' in buff:
+                                    extractor.terminate()
+                                    wait.progressVisibilityOff()
+                                # Revision 01/09/2026 >
                             if wait.getStopped(): extractor.terminate()
                     except Exception:
                         if extractor.is_alive(): extractor.terminate()
@@ -748,7 +765,10 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                     Save
                     """
                     wait.setButtonVisibility(False)
-                    if r is not None:
+                    # < Revision 01/09/2026
+                    # if r is not None:
+                    if len(r) > 0:
+                    # Revision 01/09/2026 >
                         prefix = self._settings.getParameterValue('Prefix')
                         suffix = self._settings.getParameterValue('Suffix')
                         saveroi = self._settings.getParameterValue('SaveROI')
@@ -908,7 +928,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore medial temporal segmentation ?',
+                           'Would you like to perform more medial temporal segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -1112,7 +1132,7 @@ class DialogDeepLesionSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore lesion segmentation ?',
+                           'Would you like to perform more lesion segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -1366,7 +1386,7 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore white matter hyper-intensities segmentation ?',
+                           'Would you like to perform more white matter hyper-intensities segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -1579,7 +1599,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore vessel segmentation ?',
+                           'Would you like to perform more vessel segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -1844,7 +1864,7 @@ class DialogDeepTissueSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore tissue segmentation ?',
+                           'Would you like to perform more tissue segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -2141,7 +2161,7 @@ class DialogDeepAtlasParcellation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore atlas parcellation ?',
+                           'Would you like to perform more atlas parcellation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -2168,7 +2188,7 @@ class DialogDeepFCDSegmentation(QDialog):
     QDialog -> DialogDeepFCDSegmentation
 
     Creation: 12/05/2026
-    Last revision: 12/05/2026
+    Last revision: 01/09/2026
     """
 
     # Special method
@@ -2368,9 +2388,14 @@ class DialogDeepFCDSegmentation(QDialog):
                             rt1 = f.resampleToFOV(size, spacing, save=False)
                             f.setMoving(flair)
                             rflair = f.resampleToFOV(size, spacing, save=False)
-                            f.setInterpolator('nearest')
-                            f.setMoving(mask)
-                            rmask = f.resampleToFOV(size, spacing, save=False)
+                            # < Revision 01/09/2026
+                            if mask is not None:
+                                f.setInterpolator('linear')
+                                f.setInterpolator('nearest')
+                                f.setMoving(mask)
+                                rmask = f.resampleToFOV(size, spacing, save=False)
+                            else: rmask = None
+                            # Revision 01/09/2026 >
                         # Revision 29/05/2026 >
                         """
                         Segmentation
@@ -2460,7 +2485,7 @@ class DialogDeepFCDSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore FCD detection ?',
+                           'Would you like to perform more FCD detection ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -2675,7 +2700,7 @@ class DialogDeepMeningiomaSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore meningioma segmentation ?',
+                           'Would you like to perform more meningioma segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -2896,7 +2921,7 @@ class DialogDeepMetastasisSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore metastasis segmentation ?',
+                           'Would you like to perform more metastasis segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -3119,7 +3144,7 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to do\nmore microbleeds segmentation ?',
+                           'Would you like to perform more microbleeds segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)

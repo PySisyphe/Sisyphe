@@ -856,6 +856,64 @@ class WorkflowItem(QWidget):
                                   'Volume number i is inserted into the formula using a list variable named img: img[i].')
             self._outputs.setText('img{}'.format(last + 1))
             self._outputs.setToolTip('Output:\nimg{} algebra result map'.format(last + 1))
+        # < Revision 10/09/2026
+        elif name == 'gibbs':
+            self._input1.setVisible(True)
+            self._input1.setToolTip('Input: img{}'.format(self._input1.value()))
+            self._input2.setVisible(False)
+            self._outputs.setText('img{}'.format(last + 1))
+            self._outputs.setToolTip('Output:\nimg{} Gibbs artifact corrected'.format(last + 1))
+            if self._dialog is None:
+                from Sisyphe.gui.dialogFunction import DialogGibbsFilter
+                self._dialog = DialogGibbsFilter(self)
+                if platform == 'win32':
+                    import pywinstyles
+                    cl = self.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(self._dialog, c)
+                # noinspection PyProtectedMember
+                self._dialog._files.setVisible(False)
+                # noinspection PyProtectedMember
+                self._dialog._settings.setButtonsVisibility(False)
+                # noinspection PyProtectedMember
+                self._dialog._execute.setVisible(False)
+                # noinspection PyProtectedMember
+                self._dialog._ok.setText('OK')
+                self._dialog.adjustSize()
+            params = self._dialog.getParametersDict()
+            self._edit.setText(' '.join(['{}: {}'.format(k, str(v))
+                                         for k, v in params.items()]))
+            self._edit.setToolTip('\n'.join(['{}: {}'.format(k, str(v))
+                                             for k, v in params.items()]))
+        elif name == 'non-local':
+            self._input1.setVisible(True)
+            self._input1.setToolTip('Input: img{}'.format(self._input1.value()))
+            self._input2.setVisible(False)
+            self._outputs.setText('img{}'.format(last + 1))
+            self._outputs.setToolTip('Output:\nimg{} non-local means filtered'.format(last + 1))
+            if self._dialog is None:
+                from Sisyphe.gui.dialogFunction import DialogNLMeansFilter
+                self._dialog = DialogNLMeansFilter(self)
+                if platform == 'win32':
+                    import pywinstyles
+                    cl = self.palette().base().color()
+                    c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
+                    pywinstyles.change_header_color(self._dialog, c)
+                # noinspection PyProtectedMember
+                self._dialog._files.setVisible(False)
+                # noinspection PyProtectedMember
+                self._dialog._settings.setButtonsVisibility(False)
+                # noinspection PyProtectedMember
+                self._dialog._execute.setVisible(False)
+                # noinspection PyProtectedMember
+                self._dialog._ok.setText('OK')
+                self._dialog.adjustSize()
+            params = self._dialog.getParametersDict()
+            self._edit.setText(' '.join(['{}: {}'.format(k, str(v))
+                                         for k, v in params.items()]))
+            self._edit.setToolTip('\n'.join(['{}: {}'.format(k, str(v))
+                                             for k, v in params.items()]))
+        # Revision 10/09/2026 >
         self._input1.setReadOnly(last == 0)
         self._input2.setReadOnly(last == 0)
 
@@ -1007,6 +1065,8 @@ class DialogWorkflow(QDialog):
              'Gradient filter',
              'Laplacian filter',
              'Anisotropic diffusion filter',
+             'Non-local means filter',
+             'Gibbs artifact correction',
              'Bias field correction',
              'Histogram intensity matching',
              'Regression intensity matching',

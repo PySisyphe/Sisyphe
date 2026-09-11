@@ -26,6 +26,10 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheTracts import SisypheDiffusionModel
+# < Revision 01/09/2026
+from Sisyphe.core.sisypheTracts import SisypheRumbaModel
+from Sisyphe.core.sisypheTracts import SisypheIvimModel
+# Revision 01/09/2026 >
 from Sisyphe.core.sisypheTracts import SisypheTracking
 from Sisyphe.core.sisypheTracts import SisypheStreamlines
 from Sisyphe.core.sisypheROI import SisypheROI
@@ -177,7 +181,22 @@ class DialogDiffusionTracking(QDialog):
             filename = self._model.getFilename()
             if exists(filename):
                 m = SisypheDiffusionModel.openModel(filename, False,False)
-                self._model.setToolTip(str(m)[:-1])
+                # < Revision 01/09/2026
+                # self._model.setToolTip(str(m)[:-1])
+                if isinstance(m, SisypheIvimModel):
+                    self._model.clear(False)
+                    self._model.setToolTip('')
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text='IVIM diffusion model is not suitable for tractography.')
+                elif isinstance(m, SisypheRumbaModel):
+                    self._model.clear(False)
+                    self._model.setToolTip('')
+                    messageBox(self,
+                               title=self.windowTitle(),
+                               text='RUMBA diffusion model is not suitable for tractography.')
+                else: self._model.setToolTip(str(m)[:-1])
+                # Revision 01/09/2026 >
             else: self._model.clear(False)
 
     def _algoChanged(self):

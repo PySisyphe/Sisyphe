@@ -1468,6 +1468,8 @@ class DialogEddyCurrentCorrection(DialogRegistration):
     ~~~~~~~~~~~
 
     QDialog -> DialogRegistration -> DialogEddyCurrentCorrection
+
+    Last revision: 03/09/2026
     """
 
     # Special method
@@ -1557,6 +1559,39 @@ class DialogEddyCurrentCorrection(DialogRegistration):
                 messageBox(self, title=self.windowTitle(), text='{}'.format(err))
                 break
             index += 1
+        # < Revision 03/09/2026
+        # save xbval & xbvec files
+        prefix = self._resamplesettings.getParameterValue('Prefix')
+        suffix = self._resamplesettings.getParameterValue('Suffix')
+        from Sisyphe.core.sisypheConstants import removeSuffixNumberFromFilename
+        from Sisyphe.core.sisypheConstants import addPrefixSuffixToFilename
+        filename = removeSuffixNumberFromFilename(filenames[0]).replace('.xvol', '.xbval')
+        if exists(filename):
+            from Sisyphe.core.sisypheDicom import loadBVal
+            bval = loadBVal(filename, format='xml')
+            for f in filenames:
+                f = basename(f)
+                if f in bval:
+                    f2 = addPrefixSuffixToFilename(f, prefix, suffix)
+                    bval[f2] = bval[f]
+                    del bval[f]
+            from Sisyphe.core.sisypheDicom import saveBVal
+            filename2 = addPrefixSuffixToFilename(filename, prefix, suffix)
+            saveBVal(filename2, bval, format='xml')
+        filename = removeSuffixNumberFromFilename(filenames[0]).replace('.xvol', '.xbvec')
+        if exists(filename):
+            from Sisyphe.core.sisypheDicom import loadBVec
+            bvec = loadBVec(filename, format='xml')
+            for f in filenames:
+                f = basename(f)
+                if f in bvec:
+                    f2 = addPrefixSuffixToFilename(f, prefix, suffix)
+                    bvec[f2] = bvec[f]
+                    del bvec[f]
+            from Sisyphe.core.sisypheDicom import saveBVec
+            filename2 = addPrefixSuffixToFilename(filename, prefix, suffix)
+            saveBVec(filename2, bvec, format='xml')
+        # Revision 03/09/2026 >
         self._batch.clearall()
         self._fixedSelect.clear()
 

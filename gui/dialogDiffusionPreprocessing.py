@@ -62,7 +62,7 @@ class DialogDiffusionPreprocessing(QDialog):
 
     QDialog -> DialogDiffusionPreprocessing
 
-    Last revision: 04/10/2025
+    Last revision: 03/09/2026
     """
 
     # Special method
@@ -237,6 +237,9 @@ class DialogDiffusionPreprocessing(QDialog):
                            title=self.windowTitle(),
                            text='{} format is invalid.'.format(basename(filename)))
                 return None
+            # < Revision 03/09/2026
+            if 'direction' in v2: del v2['direction']
+            # Revision 03/09/2026 >
             if list(v1.keys()) == list(v2.keys()):
                 self._bvecs.open(filename, signal=False)
                 self._exec.setEnabled(not (self._bvals.isEmpty() and self._bvecs.isEmpty()))
@@ -265,6 +268,9 @@ class DialogDiffusionPreprocessing(QDialog):
             self._denoiseChanged()
             # Revision 18/06/2025 >
             return None
+        # < Revision 03/09/2026
+        if 'direction' in v1: del v1['direction']
+        # Revision 03/09/2026 >
         v = list(v1.values())
         if len(v) > 1:
             dwi = list(v1.keys())
@@ -449,7 +455,7 @@ class DialogDiffusionPreprocessing(QDialog):
         wait.close()
         r = messageBox(self,
                        self.windowTitle(),
-                       'Would you like to do\nmore diffusion preprocessing ?',
+                       'Would you like to perform additional diffusion preprocessing ?',
                        icon=QMessageBox.Question,
                        buttons=QMessageBox.Yes | QMessageBox.No,
                        default=QMessageBox.No)
@@ -467,6 +473,10 @@ class DialogDiffusionPreprocessing(QDialog):
         wait.buttonVisibilityOn()
         wait.open()
         # Parameters
+        # < Revision 03/09/2026
+        corr1 = self._preproc.getParameterValue('Orientation')
+        corr2 = self._preproc.getParameterValue('Direction')
+        # Revision 03/09/2026 >
         prefix = self._preproc.getParameterValue('Prefix')
         suffix = self._preproc.getParameterValue('Suffix')
         """
@@ -507,18 +517,25 @@ class DialogDiffusionPreprocessing(QDialog):
                 denoise['PatchRadius'] = self._pca.getParameterValue('PatchRadius')
                 denoise['PCAMethod'] = self._pca.getParameterValue('PCAMethod')[0]
             elif denoise['algo'] == 'Non-local means':
-                denoise['noisealgo'] = self._preproc.getParameterValue('NoiseEstimation')
-                denoise['rec'] = self._preproc.getParameterValue('MRReconstruction')
+                # < Revision 03/09/2026
+                denoise['noisealgo'] = self._preproc.getParameterValue('NoiseEstimation')[0]
+                denoise['rec'] = self._preproc.getParameterValue('MRReconstruction')[0]
+                # Revision 03/09/2026 >
                 denoise['ncoils'] = self._preproc.getParameterValue('ReceiverArray')
                 denoise['nphase'] = self._preproc.getParameterValue('PhaseArray')
                 denoise['patchradius'] = self._nlmeans.getParameterValue('PatchRadius')
                 denoise['blockradius'] = self._nlmeans.getParameterValue('BlockRadius')
             elif denoise['algo'] == 'Self-Supervised Denoising':
+                # < Revision 03/09/2026
+                denoise['version'] = int(self._supervised.getParameterValue('Version')[0])
+                # Revision 03/09/2026 >
                 denoise['patchradius'] = self._supervised.getParameterValue('PatchRadius')
                 denoise['solver'] = self._supervised.getParameterValue('Solver')[0]
             elif denoise['algo'] == 'Adaptive soft coefficient matching':
-                denoise['noisealgo'] = self._preproc.getParameterValue('NoiseEstimation')
-                denoise['rec'] = self._preproc.getParameterValue('MRReconstruction')
+                # < Revision 03/09/2026
+                denoise['noisealgo'] = self._preproc.getParameterValue('NoiseEstimation')[0]
+                denoise['rec'] = self._preproc.getParameterValue('MRReconstruction')[0]
+                # Revision 03/09/2026 >
                 denoise['ncoils'] = self._preproc.getParameterValue('ReceiverArray')
                 denoise['nphase'] = self._preproc.getParameterValue('PhaseArray')
         else: denoise = None
@@ -527,10 +544,17 @@ class DialogDiffusionPreprocessing(QDialog):
         with Manager() as manager:
             mng = manager.dict()
             queue = Queue()
+            # < Revision 03/09/2026
+            # process = ProcessDiffusionPreprocessing(self._bvals.getFilename(),
+            #                                         self._bvecs.getFilename(),
+            #                                         brainseg, gibbs, denoise,
+            #                                         prefix, suffix, mng, queue)
             process = ProcessDiffusionPreprocessing(self._bvals.getFilename(),
                                                     self._bvecs.getFilename(),
                                                     brainseg, gibbs, denoise,
+                                                    corr1, corr2,
                                                     prefix, suffix, mng, queue)
+            # Revision 03/09/2026 >
             try:
                 process.start()
                 while process.is_alive():
@@ -550,7 +574,7 @@ class DialogDiffusionPreprocessing(QDialog):
                 # Exit
                 r = messageBox(self,
                                self.windowTitle(),
-                               'Would you like to do\nmore diffusion preprocessing ?',
+                               'Would you like to perform additional diffusion preprocessing ?',
                                icon=QMessageBox.Question,
                                buttons=QMessageBox.Yes | QMessageBox.No,
                                default=QMessageBox.No)

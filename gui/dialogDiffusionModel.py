@@ -122,6 +122,9 @@ class DialogDiffusionModel(QDialog):
         self._FWDTI = FunctionSettingsWidget('FWDTIModel')
         self._RUMBA = FunctionSettingsWidget('RUMBAModel')
         # Revision 24/03/2026 >
+        # < Revision 01/09/2026
+        self._IVIM = FunctionSettingsWidget('IVIMModel')
+        # Revision 01/09/2026 >
         # < Revision 21/06/2025
         # self._DSI = FunctionSettingsWidget('DSI Model')
         # self._DSID = FunctionSettingsWidget('DSID Model')
@@ -138,6 +141,9 @@ class DialogDiffusionModel(QDialog):
         self._FWDTI.setSettingsButtonText('FW DTI Model')
         self._RUMBA.setSettingsButtonText('RUMBA Model')
         # Revision 24/03/2026 >
+        # < Revision 01/09/2026
+        self._IVIM.setSettingsButtonText('IVIM Model')
+        # Revision 01/09/2026 >
         self._DTI.settingsVisibilityOn()
         self._DKI.settingsVisibilityOn()
         self._SHCSA.settingsVisibilityOn()
@@ -148,6 +154,9 @@ class DialogDiffusionModel(QDialog):
         self._FWDTI.settingsVisibilityOn()
         self._RUMBA.settingsVisibilityOn()
         # Revision 24/03/2026 >
+        # < Revision 01/09/2026
+        self._IVIM.settingsVisibilityOn()
+        # Revision 01/09/2026 >
         self._DTI.hideIOButtons()
         self._DKI.hideIOButtons()
         self._SHCSA.hideIOButtons()
@@ -158,6 +167,9 @@ class DialogDiffusionModel(QDialog):
         self._FWDTI.hideIOButtons()
         self._RUMBA.hideIOButtons()
         # Revision 24/03/2026 >
+        # < Revision 01/09/2026
+        self._IVIM.hideIOButtons()
+        # Revision 01/09/2026 >
         self._modelChanged()
         self._DTI.VisibilityToggled.connect(self._center)
         self._DKI.VisibilityToggled.connect(self._center)
@@ -169,6 +181,9 @@ class DialogDiffusionModel(QDialog):
         self._FWDTI.VisibilityToggled.connect(self._center)
         self._RUMBA.VisibilityToggled.connect(self._center)
         # Revision 24/03/2026 >
+        # < Revision 01/09/2026
+        self._IVIM.VisibilityToggled.connect(self._center)
+        # Revision 01/09/2026 >
 
         # < Revision 24/03/2026
         self._layout.addWidget(self._bvals)
@@ -177,6 +192,7 @@ class DialogDiffusionModel(QDialog):
         self._layout.addWidget(self._DTI)
         self._layout.addWidget(self._FWDTI)
         self._layout.addWidget(self._DKI)
+        self._layout.addWidget(self._IVIM)
         self._layout.addWidget(self._RUMBA)
         self._layout.addWidget(self._SHCSA)
         self._layout.addWidget(self._SHCSD)
@@ -357,6 +373,9 @@ class DialogDiffusionModel(QDialog):
         self._FWDTI.setVisible(self._combo.currentText() == 'FWDTI')
         self._RUMBA.setVisible(self._combo.currentText() == 'RUMBA')
         # Revision 24/03/2026 >
+        # < Revision 01/09/2026
+        self._IVIM.setVisible(self._combo.currentText() == 'IVIM')
+        # Revision 01/09/2026 >
         self._center(None)
 
     # Public method
@@ -434,6 +453,13 @@ class DialogDiffusionModel(QDialog):
             maps['sp'] = self._DTI.getParameterValue('Sphericity')
             # Revision 23/03/2026 >
         # < Revision 23/03/2026
+        # < Revision 01/09/2026
+        elif self._combo.currentText() == 'IVIM':
+            method = self._IVIM.getParameterValue('Method')[0]
+            maps['ivimd'] = self._RUMBA.getParameterValue('IVIMD')
+            maps['ivimds'] = self._RUMBA.getParameterValue('IVIMDS')
+            maps['ivimf'] = self._RUMBA.getParameterValue('IVIMF')
+        # Revision 01/09/2026 >
         elif self._combo.currentText() == 'RUMBA':
             if not isOlderThan('1.11.0',dipyv):
                 method = self._RUMBA.getParameterValue('Method')[0]
@@ -473,8 +499,8 @@ class DialogDiffusionModel(QDialog):
         # corr = self._model.getParameterValue('Orientation')
         corr1 = self._model.getParameterValue('Orientation')
         corr2 = self._model.getParameterValue('Direction')
-        print('Orientation: {}'.format(corr1))
-        print('Direction: {}'.format(corr2))
+        # print('Orientation: {}'.format(corr1))
+        # print('Direction: {}'.format(corr2))
         # Revision 28/07/2026 >
         algo = self._model.getParameterValue('Algo')[0]
         niter = self._model.getParameterValue('Iter')
@@ -516,7 +542,7 @@ class DialogDiffusionModel(QDialog):
                 # Exit
                 r = messageBox(self,
                                self.windowTitle(),
-                               'Would you like to estimate\nmore diffusion model ?',
+                               'Would you like to estimate more diffusion model ?',
                                icon=QMessageBox.Question,
                                buttons=QMessageBox.Yes | QMessageBox.No,
                                default=QMessageBox.No)

@@ -14,6 +14,9 @@ from os.path import dirname
 from os.path import basename
 from os.path import abspath
 
+from multiprocessing import Queue
+from multiprocessing import Manager
+
 from numpy import mean, max
 
 from PyQt5.QtCore import Qt
@@ -59,7 +62,9 @@ __all__ = ['AbstractDialogFunction',
            'DialogBiasFieldCorrectionFilter',
            'DialogHistogramIntensityMatching',
            'DialogRegressionIntensityMatching',
-           'DialogIntensityNormalization']
+           'DialogIntensityNormalization',
+           'DialogGibbsFilter',
+           'DialogNLMeansFilter']
 
 """
 Class hierarchy
@@ -76,6 +81,9 @@ Class hierarchy
                                         -> DialogHistogramIntensityMatching
                                         -> DialogRegressionIntensityMatching
                                         -> DialogIntensityNormalization
+                                        -> DialogGibbsFilter
+                                        -> DialogPCAFilter
+                                        -> DialogNLMeansFilter
 """
 
 
@@ -94,7 +102,7 @@ class AbstractDialogFunction(QDialog):
     QDialog -> AbstractDialogFunction
 
     Creation: 10/10/2023
-    Last revision: 02/04/2026
+    Last revision: 10/09/2026
     """
 
     @classmethod
@@ -192,9 +200,16 @@ class AbstractDialogFunction(QDialog):
                 # Revision 02/04/2026 >
                 try:
                     self.function(filename, wait)
-                    if wait.getStopped(): break
+                    if wait.getStopped():
+                        # < Revision 10/09/2026
+                        messagebox = False
+                        # Revision 10/09/2026 >
+                        break
                 except Exception:
                     if not wait.getStopped():
+                        # < Revision 10/09/2026
+                        wait.hide()
+                        # Revision 10/09/2026 >
                         messageBox(self,
                                    title=self._funcname,
                                    text='{} failed.'.format(self.windowTitle()))
@@ -965,12 +980,6 @@ class DialogIntensityNormalization(AbstractDialogFunction):
 
     # Special method
 
-    """
-    Private attributes
-
-    _reference  FileSelectionWidget
-    """
-
     def __init__(self, parent=None):
         super().__init__('IntensityNormalizationImageFilter', parent)
         # < Revision 01/04/2026
@@ -1011,3 +1020,120 @@ class DialogIntensityNormalization(AbstractDialogFunction):
         files = self.getFilesSelectionWidget()
         if not files.isEmpty():
             super().execute()
+
+
+class DialogGibbsFilter(AbstractDialogFunction):
+    """
+    DialogGibbsFilter
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog window class for Gibbs artifact correction.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> AbstractDialogFunction -> DialogGibbsFilter
+
+    Creation: 04/09/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__('GibbsImageFilter', parent)
+        self.setWindowTitle('Gibbs artifact correction')
+        self._settings.settingsVisibilityOn()
+
+    # Public methods
+
+    def function(self, filename, wait):
+        wait.setInformationText('Gibbs artifact correction...')
+        buff = self._settings.getParameterValue('Axis')[0]
+        if buff == 'S': axis = 0
+        elif buff == 'C': axis = 1
+        else: axis = 0
+        neighbor = self._settings.getParameterValue('Neighbour')
+        prefix = self._settings.getParameterValue('Prefix')
+        suffix = self._settings.getParameterValue('Suffix')
+        # Gibbs correction
+        from Sisyphe.processing.capturedStdoutProcessing import ProcessGibbsImageFilter
+        with Manager() as manager:
+            mng = manager.dict()
+            queue = Queue()
+            try:
+                process = ProcessGibbsImageFilter(filename, axis, neighbor, prefix, suffix, mng, queue)
+                process.start()
+                while process.is_alive():
+                    # noinspection PyTypeChecker
+                    wait.messageFromDictProxyManager(mng)
+                    if not queue.empty():
+                        # noinspection PyUnusedLocal
+                        r = queue.get()
+                        if process.is_alive(): process.terminate()
+                    if wait.getStopped(): process.terminate()
+            except Exception:
+                wait.hide()
+                if process.is_alive(): process.terminate()
+        if r != 'terminate':
+            wait.setStopped()
+
+
+class DialogNLMeansFilter(AbstractDialogFunction):
+    """
+    DialogNLMeansFilter
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog window class for non-local means image denoising.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> AbstractDialogFunction -> DialogNLMeansFilter
+
+    Creation: 04/09/2026
+    """
+
+    # Special method
+
+    def __init__(self, parent=None):
+        super().__init__('NLMeansImageFilter', parent)
+        self.setWindowTitle('Non-local means denoising')
+        self._settings.settingsVisibilityOn()
+
+    # Public methods
+
+    def function(self, filename, wait):
+        wait.setInformationText('Non-local means denoising...')
+        maskalgo = self._settings.getParameterValue('Mask')[0].lower()
+        morphsize = self._settings.getParameterValue('Size')
+        morphiter = self._settings.getParameterValue('Iter')
+        pradius = self._settings.getParameterValue('Radius1')
+        bradius = self._settings.getParameterValue('Radius2')
+        prefix = self._settings.getParameterValue('Prefix')
+        suffix = self._settings.getParameterValue('Suffix')
+        # Non-local means image filter
+        from Sisyphe.processing.capturedStdoutProcessing import ProcessNLMeansImageFilter
+        with Manager() as manager:
+            mng = manager.dict()
+            queue = Queue()
+            try:
+                process = ProcessNLMeansImageFilter(filename, maskalgo, morphsize, morphiter,
+                                                    pradius, bradius, prefix, suffix, mng, queue)
+                process.start()
+                while process.is_alive():
+                    # noinspection PyTypeChecker
+                    wait.messageFromDictProxyManager(mng)
+                    if not queue.empty():
+                        # noinspection PyUnusedLocal
+                        r = queue.get()
+                        if process.is_alive(): process.terminate()
+                    if wait.getStopped(): process.terminate()
+            except Exception:
+                wait.hide()
+                if process.is_alive(): process.terminate()
+        if r != 'terminate':
+            wait.setStopped()
