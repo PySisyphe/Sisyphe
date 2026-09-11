@@ -736,7 +736,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemMeshAttributesWidget
 
-    Last revision 28/08/2025
+    Last revision 01/09/20256
     """
 
     # Special method
@@ -775,12 +775,15 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
         # Name
 
-        regexp = QRegExp(SisypheROI.getRegExp())
+        # < Revision 01/09/2026
+        # regexp = QRegExp(SisypheROI.getRegExp())
+        regexp = QRegExp(r'^[_A-Za-z0-9#\'\-\_\s+,]+$')
+        # Revision 01/09/2026 >
         validator = QRegExpValidator(regexp)
         self._name = LabeledLineEdit()
         self._name.getQLineEdit().setValidator(validator)
         self._name.setToolTip('Set mesh name,\n'
-                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.')
+                              'Accepted characters A...Z, a...z, 0...9, \', -, _, #, comma, space.')
 
         # Color
 
@@ -1274,7 +1277,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemToolAttributesWidget
 
-    Last revision: 29/07/2026
+    Last revision: 01/09/2026
     """
 
     # Special method
@@ -1338,12 +1341,15 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
         # Name
 
-        regexp = QRegExp(SisypheROI.getRegExp())
+        # < Revision 01/09/2026
+        # regexp = QRegExp(SisypheROI.getRegExp())
+        regexp = QRegExp(r'^[_A-Za-z0-9#\'\-\_\s+,]+$')
+        # Revision 01/09/2026 >
         validator = QRegExpValidator(regexp)
         self._name = LabeledLineEdit()
         self._name.getQLineEdit().setValidator(validator)
         # self._name.setFixedHeight(self._size)
-        self._name.setToolTip('Set tool name,\nAccepted characters A...Z, a...z, 0...9, -, _, comma, space.')
+        self._name.setToolTip('Set tool name,\nAccepted characters A...Z, a...z, 0...9, \', -, _, comma, space.')
         # noinspection PyUnresolvedReferences
         self._name.getQLineEdit().editingFinished.connect(self._nameChanged)
 
@@ -2245,7 +2251,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemStreamlineAttributesWidget
 
-    Last revision: 28/08/2025
+    Last revision: 01/09/2026
     """
 
     # Class constant
@@ -2283,12 +2289,15 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
 
         # Name
 
-        regexp = QRegExp(SisypheROI.getRegExp())
+        # < Revision 01/09/2026
+        # regexp = QRegExp(SisypheROI.getRegExp())
+        regexp = QRegExp(r'^[_A-Za-z0-9#\'\-\_\s+,]+$')
+        # Revision 01/09/2026 >
         validator = QRegExpValidator(regexp)
         self._name = LabeledLineEdit()
         self._name.getQLineEdit().setValidator(validator)
         self._name.setToolTip('Set streamlines name,\n'
-                              'Accepted characters A...Z, a...z, 0...9, -, _, #, comma, space.')
+                              'Accepted characters A...Z, a...z, 0...9, \', -, _, #, comma, space.')
         # noinspection PyUnresolvedReferences
         self._name.getQLineEdit().editingFinished.connect(self._nameChanged)
 

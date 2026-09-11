@@ -371,7 +371,7 @@ class FileBrowserWidget(QWidget):
     QWidget -> FileBrowserWidget
 
     Creation: 09/02/2026
-    Last revision: 16/06/2026
+    Last revision: 10/09/2026
     """
 
     # Special method
@@ -870,7 +870,9 @@ class FileBrowserWidget(QWidget):
             elif ext == '.xmodel':
                 from Sisyphe.core.sisypheStatistics import SisypheDesign
                 v = SisypheDesign()
-                v.load(filename)
+                # < Revision 10/09/2026
+                v.load(filename, binary=False)
+                # Revision 10/09/2026 >
                 self._textpreview.setPlainText(str(v))
             elif ext == '.xlabels':
                 v = SisypheVolume()
