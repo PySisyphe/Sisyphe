@@ -8,6 +8,7 @@ import numpy as np
 from scipy.spatial.distance import cdist
 
 from dipy.core.geometry import dist_to_corner
+# noinspection PyUnresolvedReferences
 from dipy.core.interpolation import interpolate_scalar_3d, interpolate_vector_3d
 from dipy.testing.decorators import warning_for_keywords
 from dipy.tracking.distances import bundles_distances_mdf

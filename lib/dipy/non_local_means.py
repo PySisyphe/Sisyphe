@@ -2,7 +2,11 @@ from numbers import Number
 
 import numpy as np
 
-from dipy.denoise.nlmeans_block import nlmeans_block
+# < Revision 02/09/2026
+# from dipy.denoise.nlmeans_block import nlmeans_block
+# noinspection PyUnresolvedReferences
+from Sisyphe.lib.dipy.nlmeans_block import nlmeans_block
+# Revision 02/09/2026 >
 from dipy.testing.decorators import warning_for_keywords
 
 from datetime import datetime
