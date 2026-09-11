@@ -83,11 +83,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#gradient-magnitude-filter">Gradient magnitude filter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#laplacian-filter">Laplacian filter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#anisotropic-diffusion-filter">Anisotropic diffusion filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#non-local-means-denoising">Non-local means denoising</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#histogram-intensity-matching">Histogram intensity matching</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#regression-intensity-matching">Regression intensity matching</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#intensity-normalization">Intensity normalization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#texture-feature-maps">Texture feature maps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#roi-texture-features">ROI Texture features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gibbs-artifact-correction">Gibbs artifact correction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bias-field-correction">Bias field correction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#roi-labeling">ROI labeling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mesh-labeling">Mesh Labeling</a></li>
@@ -159,6 +161,7 @@
 <li><p><a class="reference internal" href="#menu-section-filter-gradient"><span class="std std-ref">Gradient magnitude filter</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-filter-laplacian"><span class="std std-ref">Laplacian filter</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-filter-anisodiff"><span class="std std-ref">Anisotropic diffusion filter</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-filter-nlmeans"><span class="std std-ref">Non-local means denoising</span></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -174,6 +177,7 @@
 </li>
 <li><p><a class="reference internal" href="#menu-section-texture"><span class="std std-ref">Texture feature maps</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-roitexture"><span class="std std-ref">ROI Texture features</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-gibbs"><span class="std std-ref">Gibbs artifact correction</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-biasfield"><span class="std std-ref">Bias field correction</span></a></p></li>
 <li><dl class="simple">
 <dt>Atlas labeling &gt;</dt><dd><ul>
@@ -380,6 +384,32 @@
 <p>Left-click <strong>Execute</strong> button to perform Anisotropic diffusion filtering.</p>
 <p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
 </section>
+<section id="non-local-means-denoising">
+<span id="menu-section-filter-nlmeans"></span><h2>Non-local means denoising<a class="headerlink" href="#non-local-means-denoising" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Non-local means denoising</strong> dialog box. PySisyphe used the dipy <a class="reference external" href="https://docs.dipy.org/stable/examples_built/preprocessing/denoise_nlmeans.html#sphx-glr-examples-built-preprocessing-denoise-nlmeans-py">non local means</a> implementation.</p>
+<div class="admonition-references admonition">
+<p class="admonition-title">References</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2881565/">Article</a>: An optimized blockwise nonlocal means denoising filter for 3-D magnetic resonance images. P Coupé, P Yger, S Prima, P Hellier, C Kervrann, C Barillot. IEEE Transactions on Medical Imaging, 27(4):425–441, 2008.</p>
+</div>
+<p>Add PySisyphe volume(s) to be filtered in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Filter parameters are as follows:</p>
+<ul>
+<li><p>Check the <strong>Mask</strong> option to create a mask that excludes background voxels from the denoising processing.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Select the thresholding algorithm used for mask processing from the <strong>Background thresholding algorithm</strong> combobox. PySisyphe provides the following algorithms from the SimpleITK library: <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HuangThresholdImageFilter.html">Huang</a>, Mean, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1OtsuThresholdImageFilter.html">Otsu</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1RenyiEntropyThresholdImageFilter.html">Renyi</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1YenThresholdImageFilter.html">Yen</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1LiThresholdImageFilter.html">Li</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1ShanbhagThresholdImageFilter.html">Shanbhag</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1TriangleThresholdImageFilter.html">Triangle</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IntermodesThresholdImageFilter.html">Intermodes</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MaximumEntropyThresholdImageFilter.html">Maximumentropy</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1KittlerIllingworthThresholdImageFilter.html">Kittler</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1IsoDataThresholdImageFilter.html">Isodata</a>, <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1MomentsT">Moments</a>  (default Huang).</p></li>
+<li><p>Select the structuring element size, expressed in voxels, of the morphological operator used for mask processing from the <strong>Morphological operator size</strong> combobox (default 1).</p></li>
+<li><p>Set The number of times the morphological operator is applied for mask processing from the <strong>Number of morphological operator iterations</strong> spinbox (default 2).</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Set the <strong>Patch radius</strong> using spinbox (default 1). This parameter specifies the radius (in voxels) of the local patch to be taken around each voxel. Patch size = patch radius x 2 + 1 (1 gives 3x3x3 patches).</p></li>
+<li><p>Set the <strong>Block radius</strong> using spinbox (default 2). This parameter is the radius (in voxels) of the local block to be taken around each voxel. Block size = block radius x 2 + 1 (2 gives 5x5x5 patches).</p></li>
+<li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform Non-local means denoising.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
 <section id="histogram-intensity-matching">
 <span id="menu-section-matching-hist"></span><h2>Histogram intensity matching<a class="headerlink" href="#histogram-intensity-matching" title="Link to this heading"></a></h2>
 <p>This menu displays the <strong>Histogram intensity matching</strong> dialog box, which is used to match the intensities of one or more volumes with those of a reference volume. This filter uses a histogram matching technique where the histograms are only matched at a specified number of quantile values (see <a class="reference external" href="https://simpleitk.org/doxygen/latest/html/classitk_1_1simple_1_1HistogramMatchingImageFilter.html">SimpleITK</a>).</p>
@@ -464,6 +494,19 @@
 <p>Left-click <strong>Check all</strong> button to check all features in the list box.</p>
 <p>Left-click <strong>Uncheck all</strong> button to uncheck all features in the list box.</p>
 <p>Left-click <strong>Execute</strong> button to process the checked features.</p>
+<p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
+</section>
+<section id="gibbs-artifact-correction">
+<span id="menu-section-gibbs"></span><h2>Gibbs artifact correction<a class="headerlink" href="#gibbs-artifact-correction" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Gibbs artifact correction</strong> dialog box. Gibbs artifacts (also known as truncation, ringing, or spectral leakage artifacts) typically appear as multiple fine parallel lines immediately adjacent to high-contrast interfaces. Gibbs artifacts occur as a consequence of using Fourier transforms to reconstruct MR signals into images. In theory, any signal can be represented as an infinite summation of sine waves of different amplitudes, phases, and frequencies. In MR imaging, however, we are restricted to sampling a finite number of frequencies and must therefore approximate the image by using only a relatively few harmonics in its Fourier representation.  The Fourier series, then, is cut short or truncated, hence the name for this artifact. PySisyphe used the <a class="reference external" href="https://docs.dipy.org/1.8.0/examples_built/preprocessing/denoise_gibbs.html">dipy</a> implementation.</p>
+<p>Add PySisyphe volume(s) to be corrected in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
+<p>Filter parameters are as follows:</p>
+<ul class="simple">
+<li><p>Select the <strong>Slice axis to correct</strong>, native acquisition axis for slices: <em>axial</em>, <em>coronal</em> or <em>sagittal</em></p></li>
+<li><p>The <strong>Neighbor</strong> spinedit widget defines the number of neighboring voxels used by the Gibbs artifact correction algorithm (default 3).</p></li>
+<li><p>Filtered volumes are saved with the original file name prefixed and/or suffixed with the strings edited in the <strong>prefix</strong> and <strong>suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to process the bias field correction.</p>
 <p>Left-click <strong>Close</strong> button button to close dialog box without processing.</p>
 </section>
 <section id="bias-field-correction">
@@ -571,7 +614,7 @@
 </section>
 <section id="workflow-processing">
 <span id="menu-section-workflow"></span><h2>Workflow processing<a class="headerlink" href="#workflow-processing" title="Link to this heading"></a></h2>
-<p>This menu displays the <strong>Workflow processing</strong> dialog box. A workflow is a batch processing mechanism that automates a series of PySisyphe processes. The following functions are supported: <em>loading image</em>, <em>flip axes</em>, <em>swap axes</em>, <em>remove neck</em>, <em>texture feature map</em>, <em>mean filter</em>, <em>median filter</em>, <em>gaussian filter</em>, <em>gradient magnitude filter</em>, <em>laplacian filter</em>, <em>anistropic diffusion filter</em>, <em>bias field correction</em>, <em>histogram intensity matching</em>, <em>regression intensity matching</em>, <em>signal normalization</em>, <em>rigid registration</em>, <em>affine registration</em>, <em>displacement field registration</em>, <em>spatial normalization</em>, <em>skull stripping</em>, <em>prior based registration</em>, <em>algebra</em>.</p>
+<p>This menu displays the <strong>Workflow processing</strong> dialog box. A workflow is a batch processing mechanism that automates a series of PySisyphe processes. The following functions are supported: <em>loading image</em>, <em>flip axes</em>, <em>swap axes</em>, <em>remove neck</em>, <em>texture feature map</em>, <em>mean filter</em>, <em>median filter</em>, <em>gaussian filter</em>, <em>gradient magnitude filter</em>, <em>laplacian filter</em>, <em>anistropic diffusion filter</em>, <em>Non-local means filter</em>, <em>Gibbs artifact correction</em>, <em>bias field correction</em>, <em>histogram intensity matching</em>, <em>regression intensity matching</em>, <em>signal normalization</em>, <em>rigid registration</em>, <em>affine registration</em>, <em>displacement field registration</em>, <em>spatial normalization</em>, <em>skull stripping</em>, <em>prior based registration</em>, <em>algebra</em>.</p>
 <p>Add PySisyphe volume(s) in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget located at the top of the dialog box. These volumes will be processed successively in the workflow, as the first input image with an index of 0.</p>
 <p>The list box located below the previous widget displays the workflow with one function by row. Left-click on a row to select it (blue background). A row consists of 4 elements from left to right: <em>function name</em>, <em>input image index</em> (one or two depending on the functions), <em>function parameters</em> and <em>output image index</em>. Input image index is displayed in a SpinBox widget and can be changed using the widget’s arrows. This input image index is always 0 in the first row (i.e. original image at the first stage of the workflow).</p>
 <p>Select a function in the comboxbox located below the list box.</p>
