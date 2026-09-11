@@ -2098,7 +2098,10 @@ datatype is a two-chars str code.</p>
 </section>
 <section id="id135">
 <h2>Returns<a class="headerlink" href="#id135" title="Link to this heading"></a></h2>
-<p>Sisyphe.core.SisypheImageAttributes.SisypheAcquisition</p>
+<dl class="simple">
+<dt>Sisyphe.core.SisypheImageAttributes.SisypheIdentity</dt><dd><p>patient identity</p>
+</dd>
+</dl>
 </section>
 </dd></dl>
 
@@ -2251,7 +2254,7 @@ DICOM modality format is two-chars str for images.</p>
 </section>
 <section id="id146">
 <h2>Returns<a class="headerlink" href="#id146" title="Link to this heading"></a></h2>
-<dl class="simple">
+<dl>
 <dt>ndarray | dict[str, list[float]]</dt><dd><dl class="simple">
 <dt>if numpy parameter is False:</dt><dd><ul class="simple">
 <li><p>key str, diffusion weighted image file name (.xvol) or index number,</p></li>
@@ -2259,6 +2262,7 @@ DICOM modality format is two-chars str for images.</p>
 </ul>
 </dd>
 </dl>
+<p>if numpy parameter is True: only b-values are returned in this case (not direction vector)</p>
 </dd>
 </dl>
 </section>
