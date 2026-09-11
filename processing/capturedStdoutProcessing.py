@@ -50,6 +50,7 @@ from nibabel.processing import conform
 
 from ants.core import write_transform
 
+from Sisyphe.core.sisypheVolume import SisypheVolume
 from Sisyphe.lib.openmap.utils.load_model import load_model
 
 __all__ = ['CaptureStdout',
@@ -73,7 +74,9 @@ __all__ = ['CaptureStdout',
            'ProcessDeepMicrobleedsSegmentation',
            'ProcessDiffusionPreprocessing',
            'ProcessDiffusionModel',
-           'ProcessDiffusionTracking']
+           'ProcessDiffusionTracking',
+           'ProcessGibbsImageFilter',
+           'ProcessNLMeansImageFilter']
 
 """
 Functions
@@ -107,6 +110,8 @@ Class hierarchy
               -> ProcessDiffusionPreprocessing
               -> ProcessDiffusionModel
               -> ProcessDiffusionTracking
+              -> ProcessGibbsImageFilter
+              -> ProcessNLMeansImageFilter
 
 When QApplication is imported into a module, calling from_numpy method of the antspy library in this module raises an 
 exception in win32 platform. Processing with stdout capture is isolated in the current module to avoid conflict with 
@@ -735,6 +740,8 @@ class ProcessDeepMedialTemporalSegmentation(Process):
     ~~~~~~~~~~~
 
     Process -> ProcessDeepMedialTemporalSegmentation
+
+    Last revision: 01/09/2026
     """
 
     # Special method
@@ -781,19 +788,48 @@ class ProcessDeepMedialTemporalSegmentation(Process):
         # noinspection PyUnusedLocal
         with CapturePythonStdout(self._stdout) as F:
             r = deep_flash(t1, t2, which_parcellation=self._model, verbose=True)
+        # < Revision 01/09/2026
+        # memory overflow fix, add each volume as a separate queue item,
+        # rather than adding all volumes as a single queue item
+        # r2 = dict()
+        # r2['lbl'] = r['segmentation_image'].numpy()
+        # n = len(r['probability_images'])
+        # r2['prb'] = list()
+        # for i in range(n):
+        #     r2['prb'].append(r['probability_images'][i].numpy())
+        # if self._model == 'yassa':
+        #     r2['med'] = r['medial_temporal_lobe_probability_image'].numpy()
+        #     r2['hip'] = r['hippocampal_probability_image'].numpy()
+        # elif self._model == 'wip':
+        #     r2['amg'] = r['amygdala_probability_image'].numpy()
+        #     r2['hip'] = r['hippocampal_probability_image'].numpy()
+        # self._result.put(r2)
         r2 = dict()
         r2['lbl'] = r['segmentation_image'].numpy()
-        n = len(r['probability_images'])
-        r2['prb'] = list()
-        for i in range(n):
-            r2['prb'].append(r['probability_images'][i].numpy())
-        if self._model == 'yassa':
-            r2['med'] = r['medial_temporal_lobe_probability_image'].numpy()
-            r2['hip'] = r['hippocampal_probability_image'].numpy()
-        elif self._model == 'wip':
-            r2['amg'] = r['amygdala_probability_image'].numpy()
-            r2['hip'] = r['hippocampal_probability_image'].numpy()
         self._result.put(r2)
+        n = len(r['probability_images'])
+        if n > 0:
+            for i in range(n):
+                r2 = dict()
+                r2['prb'] = r['probability_images'][i].numpy()
+                self._result.put(r2)
+        if self._model == 'yassa':
+            r2 = dict()
+            r2['med'] = r['medial_temporal_lobe_probability_image'].numpy()
+            self._result.put(r2)
+            r2 = dict()
+            r2['hip'] = r['hippocampal_probability_image'].numpy()
+            self._result.put(r2)
+        elif self._model == 'wip':
+            r2 = dict()
+            r2['amg'] = r['amygdala_probability_image'].numpy()
+            self._result.put(r2)
+            r2 = dict()
+            r2['hip'] = r['hippocampal_probability_image'].numpy()
+            self._result.put(r2)
+        r2 = {'end': None}
+        self._result.put(r2)
+        # Revision 01/09/2026 >
 
 
 class ProcessDeepLesionSegmentation(Process):
@@ -1516,6 +1552,8 @@ class ProcessDiffusionPreprocessing(Process):
     ~~~~~~~~~~~
 
     Process -> ProcessDiffusionPreprocessing
+
+    Last revision: 03/09/2026
     """
 
     # Special method
@@ -1528,19 +1566,23 @@ class ProcessDiffusionPreprocessing(Process):
     _brainseg   dict[str, int | str], brain mask parameters
     _gibbs      dict[str, int], gibbs correction parameters
     _denoise    dict[str, int | str], denoise parameters
+    _corr1      bool, LPS+ to RAS+ gradient correction
+    _corr2      bool, gradient corretion based on direction vector
     _prefix     str, prefix for output files
     _suffix     str, suffix for output files
     _mng        dict[str]
     _result     Queue
     """
 
-    def __init__(self, bval, bvec, bseg, gibbs, denoise, prefix, suffix, mng, queue):
+    def __init__(self, bval, bvec, bseg, gibbs, denoise, corr1, corr2, prefix, suffix, mng, queue):
         Process.__init__(self)
         self._fbval = bval
         self._fbvec = bvec
         self._brainseg = bseg
         self._gibbs = gibbs
         self._denoise = denoise
+        self._corr1 = corr1
+        self._corr2 = corr2
         self._prefix = prefix
         self._suffix = suffix
         self._result = queue
@@ -1550,8 +1592,8 @@ class ProcessDiffusionPreprocessing(Process):
 
     def run(self):
         self._mng['msg'] = 'Load gradient B values...'
+        from Sisyphe.core.sisypheDicom import loadBVal
         if exists(self._fbval):
-            from Sisyphe.core.sisypheDicom import loadBVal
             try: bvals = loadBVal(self._fbval, format='xml')
             except:
                 self._result.put('{} format is invalid.'.format(basename(self._fbval)))
@@ -1560,9 +1602,19 @@ class ProcessDiffusionPreprocessing(Process):
             self._result.put('No such file {}.'.format(self._fbval))
             self.terminate()
         self._mng['msg'] = 'Load gradient directions...'
+        from Sisyphe.core.sisypheDicom import loadBVec
         if exists(self._fbvec):
-            from Sisyphe.core.sisypheDicom import loadBVec
-            try: bvecs = loadBVec(self._fbvec, format='xml', numpy=True)
+            try:
+                # < Revision 03/09/2026
+                # bvecs = loadBVec(self._fbvec, format='xml', numpy=True)
+                bvecs = loadBVec(self._fbvec, format='xml')
+                if 'direction' in bvecs:
+                    direction = array(bvecs['direction']).reshape(3, 3)
+                    del bvecs['direction']
+                else: direction = eye(3)
+                if not self._corr2: direction = eye(3)
+                bvecs = array(list(bvecs.values()))
+                # Revision 03/09/2026
             except:
                 self._result.put('{} format is invalid.'.format(basename(self._fbvec)))
                 self.terminate()
@@ -1584,9 +1636,15 @@ class ProcessDiffusionPreprocessing(Process):
             else:
                 self._result.put('Diffusion-weighted images are missing.')
                 self.terminate()
-        from dipy.core.gradients import gradient_table
+        # < Revision 03/09/2026
+        # from dipy.core.gradients import gradient_table
+        # gtable = gradient_table(bvals=bvals, bvecs=bvecs)
+        from Sisyphe.core.sisypheTracts import SisypheDiffusionModel
+        model = SisypheDiffusionModel()
         # noinspection PyUnboundLocalVariable
-        gtable = gradient_table(bvals=bvals, bvecs=bvecs)
+        model.setGradients(bvals, bvecs, lpstoras=self._corr1, direction=direction)
+        gtable = model.getGradientTable()
+        # Revision 03/09/2026 >
         try:
             from Sisyphe.processing.dipyFunctions import dwiPreprocessing
             dwiPreprocessing(vols,
@@ -1601,6 +1659,29 @@ class ProcessDiffusionPreprocessing(Process):
         except Exception as err:
             self._result.put('Diffusion preprocessing failed.\n{}\n{}.'.format(type(err), str(err)))
             self.terminate()
+        # < Revision 03/09/2026
+        from Sisyphe.core.sisypheConstants import addPrefixSuffixToFilename
+        bvals = loadBVal(self._fbval, format='xml')
+        bvecs = loadBVec(self._fbvec, format='xml')
+        bvals2 = dict()
+        bvecs2 = dict()
+        for k in bvals:
+            k2 = addPrefixSuffixToFilename(k, self._prefix, self._suffix)
+            bvals2[k2] = bvals[k]
+            if k in bvecs:
+                bvecs2[k2] = bvecs[k]
+        if 'direction' in bvecs: bvecs2['direction'] = bvecs['direction']
+        # Save xbval file
+        filename = addPrefixSuffixToFilename(self._fbval, self._prefix, self._suffix)
+        self._mng['msg'] = 'Save {}...'.format(basename(filename))
+        from Sisyphe.core.sisypheDicom import saveBVal
+        saveBVal(filename, bvals2, format='xml')
+        # Save xbvec file
+        filename = addPrefixSuffixToFilename(self._fbvec, self._prefix, self._suffix)
+        self._mng['msg'] = 'Save {}...'.format(basename(filename))
+        from Sisyphe.core.sisypheDicom import saveBVec
+        saveBVec(filename, bvecs2, format='xml')
+        # Revision 03/09/2026 >
         self._result.put('terminate')
 
 
@@ -1632,7 +1713,8 @@ class ProcessDiffusionModel(Process):
     _method     str, fit algorithm name
     _order      int, spherical harmonic order
     _maps       dict[str], diffusion maps to calculate
-    _corr       bool, gradient reorientation ? (LPS+ to RAS+)
+    _corr1      bool, LPS+ to RAS+ gradient correction
+    _corr2      bool, gradient corretion based on direction vector
     _save       bool, save diffusion model ?
     _algo       str, mask processing parameter
     _niter      int, mask processing parameter
@@ -1727,7 +1809,8 @@ class ProcessDiffusionModel(Process):
         tag = False
         # < Revision 09/04/2026
         # fa = ga = gfa = md = tr = ad = rd = False
-        fa = ga = gfa = md = tr = ad = rd = li = pl = sp = ts = ts2 = mj = evl = evc = fw = fcsf = fgm = fwm = fiso = False
+        # fa = ga = gfa = md = tr = ad = rd = li = pl = sp = ts = ts2 = mj = evl = evc = fw = fcsf = fgm = fwm = fiso = False
+        fa = ga = gfa = md = tr = ad = rd = li = pl = sp = ts = ts2 = mj = evl = evc = fw = fcsf = fgm = fwm = fiso = ivimd = ivimds = ivimf = False
         # Revision 09/04/2026 >
         if 'fa' in self._maps: fa = self._maps['fa']
         if 'ga' in self._maps: ga = self._maps['ga']
@@ -1753,6 +1836,11 @@ class ProcessDiffusionModel(Process):
         if 'fwm' in self._maps: fwm = self._maps['fwm']
         if 'fiso' in self._maps: fiso = self._maps['fiso']
         # Revision 09/04/2026 >
+        # < Revision 01/09/2026
+        if 'ivimd' in self._maps: ivimd = self._maps['ivimd']
+        if 'ivimds' in self._maps: ivimds = self._maps['ivimds']
+        if 'ivimf' in self._maps: ivimf = self._maps['ivimf']
+        # Revision 01/09/2026 >
         from Sisyphe.core.sisypheTracts import SisypheDTIModel
         if self._model == 'DTI':
             msg = 'DTI Model fitting...'
@@ -1783,6 +1871,19 @@ class ProcessDiffusionModel(Process):
             # Revision 09/04/2026 >
             ndim = 15
         # < Revision 09/04/2026
+        # < Revision 01/09/2026
+        elif self._model == 'IVIM':
+            msg = 'IVIM Model fitting...'
+            from Sisyphe.core.sisypheTracts import SisypheIvimModel
+            model = SisypheIvimModel()
+            model.setFitAlgorithm(self._method)
+            tag = ivimd or ivimds or ivimf
+            ndim = 6
+            nv = len(set(bvals))
+            if nv < 6:
+                self._result.put('{} b-values are insufficient to estimate the IVIM model (at least {}).'.format(nv, ndim))
+                self.terminate()
+        # Revision 01/09/2026 >
         elif self._model == 'RUMBA':
             msg = 'RUMBA Model fitting...'
             from Sisyphe.core.sisypheTracts import SisypheRumbaModel
@@ -2053,6 +2154,35 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setSequence('FISO')
                 v.setID(model.getReferenceID())
                 v.save()
+            # < Revision 01/09/2026
+            if ivimd:
+                self._mng['msg'] = 'Save IVIM diffusivity map...'
+                v = model.getD()
+                v.setFilename(filename)
+                v.setFilenameSuffix('IVIMD')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('IVIM Diffusivity')
+                v.setID(model.getReferenceID())
+                v.save()
+            if ivimds:
+                self._mng['msg'] = 'Save IVIM pseudo-diffusivity map...'
+                v = model.getD()
+                v.setFilename(filename)
+                v.setFilenameSuffix('IVIMDS')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('IVIM Pseudo-diffusivity')
+                v.setID(model.getReferenceID())
+                v.save()
+            if ivimf:
+                self._mng['msg'] = 'Save IVIM perfusion fraction map...'
+                v = model.getD()
+                v.setFilename(filename)
+                v.setFilenameSuffix('IVIMF')
+                v.acquisition.setModalityToOT()
+                v.acquisition.setSequence('IVIM Perfusion fraction')
+                v.setID(model.getReferenceID())
+                v.save()
+            # Revision 01/09/2026 >
         self._result.put('terminate')
 
 
@@ -2248,3 +2378,145 @@ class ProcessDiffusionTracking(Process):
         if sl.getName() == 'tractogram': msg = 'Tractogram of {} streamlines.'.format(sl.count())
         else: msg = '{} tractogram of {} streamlines.'.format(sl.getName(), sl.count())
         self._result.put(['terminate', msg])
+
+
+# < Revision 04/09/2026
+# add ProcessGibbsImageFilter class
+class ProcessGibbsImageFilter(Process):
+    """
+    ProcessGibbsImageFilter
+
+    Description
+    ~~~~~~~~~~~
+
+    Multiprocessing Process class for Gibbs artifact correction.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    Process -> ProcessGibbsImageFilter
+
+    Creation: 04/09/2026
+    """
+
+    # Special method
+
+    def __init__(self, filename, axis, neighbor, prefix, suffix, mng, queue):
+        Process.__init__(self)
+        self._filename = filename
+        self._axis = axis
+        self._neighbor = neighbor
+        self._prefix = prefix
+        self._suffix = suffix
+        self._mng = mng
+        self._result = queue
+
+    # Public methods
+
+    def run(self):
+        if exists(self._filename):
+            self._mng['msg'] = 'Load {}...'.format(basename(self._filename))
+            v = SisypheVolume()
+            v.load(self._filename)
+            self._mng['msg'] = 'Gibbs artifact correction...'
+            img = v.copyToNumpyArray(defaultshape=False)
+            if self._axis > 2: self._axis = 2
+            from dipy.denoise.gibbs import gibbs_removal
+            img = gibbs_removal(img.astype('float32'),
+                                n_points=self._neighbor,
+                                slice_axis=self._axis,
+                                inplace=True,
+                                num_processes=-1)
+            img = img.astype(v.getDatatype())
+            # Save
+            v2 = SisypheVolume()
+            v2.copyFromNumpyArray(img,
+                                  spacing=v.getSpacing(),
+                                  origin=v.getOrigin(),
+                                  direction=v.getDirections(),
+                                  defaultshape=False)
+            v2.copyAttributesFrom(v)
+            v2.setFilename(v.getFilename())
+            v2.setFilenamePrefix(self._prefix)
+            v2.setFilenameSuffix(self._suffix)
+            self._mng['msg'] = 'Save {}...'.format(v2.getBasename())
+            v2.save()
+            self._result.put('terminate')
+        else:
+            self._result.put('No such file {}.'.format(self._filename))
+            self.terminate()
+# Revision 04/09/2026 >
+
+
+# < Revision 04/09/2026
+# add ProcessNLMeansImageFilter class
+class ProcessNLMeansImageFilter(Process):
+    """
+    ProcessNLMeansImageFilter
+
+    Description
+    ~~~~~~~~~~~
+
+    Multiprocessing Process class for non-local means image denoising.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    Process -> ProcessNLMeansImageFilter
+
+    Creation: 04/09/2026
+    """
+
+    # Special method
+
+    def __init__(self, filename, maskalgo, morphsize, morphiter, pradius, bradius, prefix, suffix, mng, queue):
+        Process.__init__(self)
+        self._filename = filename
+        self._maskalgo = maskalgo
+        self._morphsize = morphsize
+        self._morphiter = morphiter
+        self._pradius = pradius
+        self._bradius = bradius
+        self._prefix = prefix
+        self._suffix = suffix
+        self._mng = mng
+        self._result = queue
+
+    # Public methods
+
+    def run(self):
+        self._mng['msg'] = 'Load {}...'.format(basename(self._filename))
+        v = SisypheVolume()
+        v.load(self._filename)
+        # Mask processing
+        self._mng['msg'] = 'Mask processing...'
+        mask = v.getMask2(self._maskalgo, self._morphiter, self._morphsize).getNumpy(defaultshape=False)
+        # Noise estimation
+        self._mng['msg'] = 'Noise estimation...'
+        sigma = v.noiseEstimate()
+        # Denoising
+        img = v.copyToNumpyArray(defaultshape=False)
+        from Sisyphe.lib.dipy.non_local_means import non_local_means
+        self._mng['msg'] = 'Non-local means denoising...'
+        img = non_local_means(img,
+                              sigma=sigma,
+                              mask=mask,
+                              patch_radius=self._pradius,
+                              block_radius=self._bradius,
+                              rician=False,
+                              wait=self._mng)
+        # Save
+        v2 = SisypheVolume()
+        v2.copyFromNumpyArray(img,
+                              spacing=v.getSpacing(),
+                              origin=v.getOrigin(),
+                              direction=v.getDirections(),
+                              defaultshape=False)
+        v2.copyAttributesFrom(v)
+        v2.setFilename(v.getFilename())
+        v2.setFilenamePrefix(self._prefix)
+        v2.setFilenameSuffix(self._suffix)
+        self._mng['msg'] = 'Save {}...'.format(v2.getBasename())
+        v2.save()
+        self._result.put('terminate')
+# Revision 04/09/2026 >

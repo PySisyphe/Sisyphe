@@ -64,9 +64,12 @@ functions
     - getSelfSupervisedDenoisingParameterDict()
     - getAdaptiveSoftCoefficientMatchingParameterDict()
     - dwiPreprocessing()
+    - gibbsCorrection()
+    - PCADenoising()
+    - NLMeansDenoising()
         
 Creation: 08/11/2023
-Last revision: 07/07/2025
+Last revision: 03/09/2026
 """
 
 _NOISE = ('Local patches', 'Piesno')
@@ -128,7 +131,10 @@ def dwiNoiseEstimation(vol: SisypheVolume | SisypheVolumeCollection,
                 if isinstance(wait, DialogWait): wait.setInformationText('{}\n{} noise estimation...'.format(vol.getBasename(), algo))
                 elif isinstance(wait, DictProxy): wait['msg'] = '{}\n{} noise estimation...'.format(vol.getBasename(), algo)
             img = vol.copyToNumpyArray(defaultshape=False)
-            sigma = estimate_sigma(img, N=n_coils)
+            # < Revision 03/09/2026
+            # sigma = estimate_sigma(img, N=n_coils)
+            sigma = float(estimate_sigma(img, N=n_coils)[0])
+            # Revision 03/09/2026 >
         elif isinstance(vol, SisypheVolumeCollection):
             l = list()
             for v in vol:
@@ -136,7 +142,10 @@ def dwiNoiseEstimation(vol: SisypheVolume | SisypheVolumeCollection,
                     if isinstance(wait, DialogWait): wait.setInformationText('{}\n{} noise estimation...'.format(v.getBasename(), algo))
                     elif isinstance(wait, DictProxy): wait['msg'] = '{}\n{} noise estimation...'.format(v.getBasename(), algo)
                 img = v.copyToNumpyArray(defaultshape=False)
-                s = estimate_sigma(img, N=n_coils)
+                # < Revision 03/09/2026
+                # s = estimate_sigma(img, N=n_coils)
+                s = float(estimate_sigma(img, N=n_coils)[0])
+                # Revision 03/09/2026 >
                 l.append(s)
             sigma = array(l)
         else: raise TypeError('parameter type {} is not SisypheVolume or SisypheVolumeCollection.')
@@ -212,18 +221,18 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
         {'algo': 'General function PCA', 'smooth': int = 2, 'radius': int = 2, 'method': str = 'eig'}
         {'algo': 'Marcenko-Pastur PCA', 'smooth': int = 2, 'radius': int = 2, 'method': str = 'eig'}
         {'algo': 'Non-local means', 'noisealgo': str, 'rec': str, 'ncoils': int, 'nphase': int, 'patchradius': int = 1, 'blockradius': int = 5}
-        {'algo': 'Self-Supervised Denoising', 'radius': int = 0, 'solver': str = 'ols'}
+        {'algo': 'Self-Supervised Denoising', 'version': int = 1, 'radius': int = 0, 'solver': str = 'ols'}
         {'algo': 'Adaptive soft coefficient matching', 'noisealgo': str, 'rec': str, 'ncoils': int, 'nphase': int}
     save : bool
         save if true
-    wait : DialogWait | multiprocessing.managers.DictProxy | None
+    wait : gui.DialogWait | multiprocessing.managers.DictProxy | None
         optional progress dialog or multiprocessing shared dict (DictProxy)
 
     Returns
     -------
     SisypheVolumeCollection : SisypheROI | None
 
-    Last revision: 04/10/2025
+    Last revision: 03/09/2026
     """
     mask = None
     # < Revision 17/06/2025
@@ -285,10 +294,10 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
         # gibbs_removal(img, n_points=gibbs['neighbour'])
         n = imgs.shape[3]
         if isinstance(wait, DialogWait):
-            wait.setProgressRange(0, n + 1)
+            wait.setProgressRange(0, n)
             wait.setCurrentProgressValue(0)
             wait.setProgressVisibility(True)
-        elif isinstance(wait, DictProxy): wait['max'] = n + 1
+        elif isinstance(wait, DictProxy): wait['max'] = n
         t = datetime.now()
         for i in range(n):
             if i > 0:
@@ -304,9 +313,18 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
                 else:
                     if isinstance(wait, DialogWait): wait.addInformationText('Estimated time remaining {} min {} s.'.format(m, s))
                     elif isinstance(wait, DictProxy): wait['msg'] = 'Gibbs correction...\nEstimated time remaining {} min {} s.'.format(m, s)
+            # < Revision 03/09/2026
+            # img = imgs[:, :, :, i]
+            # img = gibbs_removal(img, n_points=gibbs['neighbour'], inplace=False)
+            # imgs[:, :, :, i] = img
             img = imgs[:, :, :, i]
-            img = gibbs_removal(img, n_points=gibbs['neighbour'], inplace=False)
-            imgs[:, :, :, i] = img
+            img = gibbs_removal(img.astype('float32'),
+                                n_points=gibbs['neighbour'],
+                                slice_axis=2,
+                                inplace=True,
+                                num_processes=-1)
+            imgs[:, :, :, i] = img.astype(imgs.dtype)
+            # Revision 03/09/2026 >
             if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
             elif isinstance(wait, DictProxy): wait['value'] = i + 1
             # if wait.getStopped():
@@ -330,14 +348,14 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             sigma = pca_noise_estimate(imgs, gtab, smooth=smooth)
             """
             patch_radius    int, radius of the local patch to be taken around each voxel 
-                                 patch size = patch_radius x 2 + 1 (ex: 2 gives 5x5x5 patches)
+                                 patch size = patch_radius x 2 + 1 (e.g. 2 gives 5x5x5 patches)
             gtab            GradientTable
             pca_method      str, ‘eig’ or ‘svd’ (default eig)
                                  eigenvalue decomposition (eig) or singular value decomposition (svd) 
                                  for principal component analysis. The default method is ‘eig’ which is faster. 
                                  However, occasionally ‘svd’ might be more accurate.
             tau_factor      float, thresholding of PCA eigenvalues is done by nulling out eigenvalues 
-                                   that are smaller than tau = (tau_factor x sigma)**2 (default 2.3)
+                                   that are smaller than tau = (tau_factor x sigma)^2 (default 2.3)
             """
             if 'radius' in denoise: radius = denoise['radius']
             else: radius = 2
@@ -346,7 +364,13 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             if wait is not None:
                 if isinstance(wait, DialogWait): wait.setInformationText('Local PCA denoising...')
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Local PCA denoising...'
-            imgs = localpca(imgs, sigma=sigma, mask=mask, patch_radius=radius, pca_method=method, tau_factor=2.3, wait=wait)
+            imgs = localpca(imgs,
+                            sigma=sigma,
+                            mask=mask,
+                            patch_radius=radius,
+                            pca_method=method,
+                            tau_factor=2.3,
+                            wait=wait)
         # General function PCA denoising
         elif denoise['algo'] == _DENOISE[1]:
             if 'smooth' in denoise: smooth = denoise['smooth']
@@ -357,13 +381,13 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             sigma = pca_noise_estimate(imgs, gtab, smooth=smooth)
             """
                 patch_radius    int, radius of the local patch to be taken around each voxel 
-                                     patch size = patch_radius x 2 + 1 (ex: 2 gives 5x5x5 patches)
+                                     patch size = patch_radius x 2 + 1 (e.g. 2 gives 5x5x5 patches)
                 pca_method      str, ‘eig’ or ‘svd’ (default eig)
                                      eigenvalue decomposition (eig) or singular value decomposition (svd) 
                                      for principal component analysis. The default method is ‘eig’ which is faster. 
                                      However, occasionally ‘svd’ might be more accurate.
                 tau_factor      float, thresholding of PCA eigenvalues is done by nulling out eigenvalues 
-                                       that are smaller than tau = (tau_factor x sigma)**2 (default 2.3)
+                                       that are smaller than tau = (tau_factor x sigma)^2 (default 2.3)
             """
             if 'radius' in denoise: radius = denoise['radius']
             else: radius = 2
@@ -372,12 +396,18 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             if wait is not None:
                 if isinstance(wait, DialogWait): wait.setInformationText('General function PCA denoising...')
                 elif isinstance(wait, DictProxy): wait['msg'] = 'General function PCA denoising...'
-            imgs = genpca(imgs, sigma=sigma, mask=mask, patch_radius=radius, pca_method=method, tau_factor=2.3, wait=wait)
+            imgs = genpca(imgs,
+                          sigma=sigma,
+                          mask=mask,
+                          patch_radius=radius,
+                          pca_method=method,
+                          tau_factor=2.3,
+                          wait=wait)
         # Marcenko-Pastur PCA denoising
         elif denoise['algo'] == _DENOISE[2]:
             """
                 patch_radius    int, radius of the local patch to be taken around each voxel 
-                                     patch size = patch_radius x 2 + 1 (ex: 2 gives 5x5x5 patches)
+                                     patch size = patch_radius x 2 + 1 (e.g. 2 gives 5x5x5 patches)
                 pca_method      str, ‘eig’ or ‘svd’ (default eig)
                                      eigenvalue decomposition (eig) or singular value decomposition (svd) 
                                      for principal component analysis. The default method is ‘eig’ which is faster. 
@@ -390,7 +420,11 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             if wait is not None:
                 if isinstance(wait, DialogWait): wait.setInformationText('Marcenko-Pastur PCA denoising...')
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Marcenko-Pastur PCA denoising...'
-            imgs = mppca(imgs, mask=mask, patch_radius=radius, pca_method=method, wait=wait)
+            imgs = mppca(imgs,
+                         mask=mask,
+                         patch_radius=radius,
+                         pca_method=method,
+                         wait=wait)
         # Non-local means denoising
         elif denoise['algo'] == _DENOISE[3]:
             if wait is not None:
@@ -424,9 +458,9 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             sigma = dwiNoiseEstimation(vols, noisealgo, rec, ncoils, nphase, wait)
             """
                 patch_radius    int, radius of the local patch to be taken around each voxel (default 1)
-                                     patch size = patch_radius x 2 + 1 (ex: 2 gives 5x5x5 patches)
+                                     patch size = patch_radius x 2 + 1 (e.g. 2 gives 5x5x5 patches)
                 block_radius    int, radius of the local patch to be taken around each voxel  (default 5)
-                                     block size = block_radius x 2 + 1 (ex: 2 gives 5x5x5 blocks)
+                                     block size = block_radius x 2 + 1 (e.g. 2 gives 5x5x5 blocks)
                 rician      boolean, if True the noise is estimated as Rician, otherwise Gaussian noise is assumed
             """
             if 'patchradius' in denoise: patchradius = denoise['patchradius']
@@ -440,24 +474,39 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
                 if isinstance(wait, DialogWait): wait.setInformationText('Non-local means denoising...')
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Non-local means denoising...'
             # imgs = nlmeans(imgs, sigma, mask, patch_radius=patchradius, block_radius=blockradius, rician=True)
-            imgs = non_local_means(imgs, sigma=sigma, mask=mask, patch_radius=patchradius, block_radius=blockradius, rician=True, wait=wait)
+            imgs = non_local_means(imgs,
+                                   sigma=sigma,
+                                   mask=mask,
+                                   patch_radius=patchradius,
+                                   block_radius=blockradius,
+                                   rician=True,
+                                   wait=wait)
         # Self-Supervised denoising
         elif denoise['algo'] == _DENOISE[4]:
             """
                 bvals           ndarray, array of bvals from the DWI acquisition
+                version         int, algorithm version (1 or 3)
                 model           str, ‘ols’, ‘ridge’ or ‘lasso’ (default ols)
                                      algorithm used to solve the set of linear equations
                 patch_radius    int, radius of the local patch to be taken around each voxel (default 0)
-                                     patch size = patch_radius x 2 + 1 (ex: 2 gives 5x5x5 patches)
+                                     patch size = patch_radius x 2 + 1 (e.g. 2 gives 5x5x5 patches)
             """
             if 'patchradius' in denoise: patchradius = denoise['patchradius']
             else: patchradius = 0
             if 'method' in denoise: method = denoise['method']
             else: method = 'ols'
+            # < Revision 03/09/2026
+            if 'version' in denoise: version = denoise['version']
+            else: version = 1
+            # Revision 03/09/2026 >
             if wait is not None:
                 if isinstance(wait, DialogWait): wait.setInformationText('Self-Supervised denoising...')
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Self-Supervised denoising...'
-            imgs = patch2self(imgs, bvals=gtab.bvals, model=method, patch_radius=patchradius)
+            # < Revision 03/09/2026
+            # imgs = patch2self(imgs, bvals=gtab.bvals, model=method, patch_radius=patchradius)
+            if version == 1: imgs = patch2self(imgs, bvals=gtab.bvals, model=method, patch_radius=patchradius, version=1)
+            else: imgs = patch2self(imgs, bvals=gtab.bvals, model=method, version=3)
+            # Revision 03/09/2026 >
         # Adaptive soft coefficient matching denoising
         elif denoise['algo'] == _DENOISE[5]:
             if wait is not None:
@@ -494,9 +543,9 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Adaptive soft coefficient matching denoising...'
             """
                 patch_radius    int, radius of the local patch to be taken around each voxel (default 1)
-                                     patch size = patch_radius x 2 + 1 (ex: 2 gives 5x5x5 patches)
+                                     patch size = patch_radius x 2 + 1 (e.g. 2 gives 5x5x5 patches)
                 block_radius    int, radius of the local patch to be taken around each voxel  (default 5)
-                                     block size = block_radius x 2 + 1 (ex: 2 gives 5x5x5 blocks)
+                                     block size = block_radius x 2 + 1 (e.g. 2 gives 5x5x5 blocks)
                 rician      boolean, if True the noise is estimated as Rician, otherwise Gaussian noise is assumed
             """
             if wait is not None:
@@ -508,9 +557,26 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Stage 2/3 - non-local means, large patch...'
             img_large = non_local_means(imgs, sigma=sigma, mask=mask, patch_radius=2, block_radius=1, rician=True, wait=wait)
             if wait is not None:
-                if isinstance(wait, DialogWait): wait.setInformationText('Stage 3/3 - adaptive soft coefficient matching...')
-                elif isinstance(wait, DictProxy): wait['msg'] = 'Stage 3/3 - adaptive soft coefficient matching...'
-            imgs = adaptive_soft_matching(imgs, img_small, img_large, sigma=sigma[0])
+                if isinstance(wait, DialogWait):
+                    wait.setInformationText('Stage 3/3 - adaptive soft coefficient matching...')
+                    wait.setProgressRange(0, imgs.shape[-1])
+                    wait.setCurrentProgressValue(0)
+                elif isinstance(wait, DictProxy):
+                    wait['msg'] = 'Stage 3/3 - adaptive soft coefficient matching...'
+                    wait['max'] = imgs.shape[-1]
+            # < Revision 03/09/2026
+            # imgs = adaptive_soft_matching(imgs, img_small, img_large, sigma=sigma[0])
+            for i in range(imgs.shape[-1]):
+                img = imgs[:, :, :, i]
+                img = adaptive_soft_matching(img,
+                                             img_small[:, :, :, i],
+                                             img_large[:, :, :, i],
+                                             sigma=sigma[i])
+                imgs[:, :, :, i] = img * mask
+                if wait is not None:
+                    if isinstance(wait, DialogWait): wait.setCurrentProgressValue(i + 1)
+                    elif isinstance(wait, DictProxy): wait['value'] = i + 1
+            # Revision 03/09/2026 >
     # Return preprocessed
     rvol = SisypheVolumeCollection()
     for i in range(vols.count()):
