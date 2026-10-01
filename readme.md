@@ -29,7 +29,7 @@ List of available post-processings:
 - Flip/reorientation
 - Datatype conversion
 - Image attributes conversion
-- Voxel by voxel algebra (mean, median, std, min, max, any numpy expression)
+- Voxel-by-voxel algebra (mean, median, std, min, max, any numpy expression)
 - Automatic removal of caudal slices (neck slices, usually as part of a 3D sagittal acquisition)
 - Filtering/denoising: median, mean, gaussian, anistropic diffusion, non-local means, gradient magnitude, laplacian
 - Intensity matching between volumes: histogram matching, regression matching
@@ -41,19 +41,20 @@ List of available post-processings:
 - Time series realignment
 - Eddy current correction
 - Asymmetry analysis
-- Resampling (volume, ROI, mesh, streamlines, target/trajectory tools)
+- Resampling
 - KMeans segmentation
 - Prior-based tissue segmentation (gray matter, white matter, cerebro-spinal fluid)
 - Registration-based segmentation
 - Cortical thickness map
-- Deep learning segmentation (skull striping, focal cortical dysplasia, hippocampus, JHU MNI atlas parcellation, medial temporal lobe, T2*/SWI microbleeds, tissue segmentation GM/WM/CSF, tumor, T1 hypo-intensity lesions, white matter hyper-intensities)
-- fMRI analysis (model, contrast, conjunction, laterality index...)
+- Deep learning segmentation (skull striping, GM/WM/LCS tissue segmentation, JHU atlas parcellation, hippocampus, medial temporal lobe, focal cortical dysplasia, glioma, meningioma, metastasis, microbleeds, T1 hypo-intensity lesions, white matter hyper-intensities)
+- fMRI analysis (model, contrast, conjunction...)
 - Time series analysis (ICA)
 - Quantitative MR: B0 map, B1 map, T1 map, T2/T2* map, T2' map, MTR map, QSM map
-- ASL DSC perfusion map, dynamic susceptibility contrast MR perfusion maps
-- Diffusion/tracking visualization and analysis tools (DTI, FWDTI, DKI, RUMBA, SHCSA, SHCSD, DSI, DSID models)
+- ASL DSC map
+- Dynamic susceptibility contrast MR perfusion maps
+- Diffusion/tracking visualization and analysis tools (DTI, FWDTI, DKI, IVIM, RUMBA, SHCSA, SHCSD, DSI, DSID models)
 - Batch processing
-
+  
 The most common neuroimaging formats are imported/exported: DICOM (including RTSTRUCT and RTDOSE), Nifti, Nrrd, Minc, Brainvoyager, FreeSurfer, Vtk, Numpy.
 
 All native PySisyphe files are in XML format (.xvol volume, .xroi ROI, .xmesh mesh, .xtracts tracking streamlines, .xtrf/.xtrfs geometric transformation, .xlut look-up table...).
