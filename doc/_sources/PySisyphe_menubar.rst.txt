@@ -145,6 +145,7 @@ Registration
 	- :ref:`AC-PC selection... <menu-section-acpc>`
 	- :ref:`Volume reorientation... <menu-section-reorient>`
 	- :ref:`Manual registration... <menu-section-manual>`
+	- :ref:`Frame based registration... <menu-section-frame>`
 	- :ref:`Rigid registration... <menu-section-rigid>`
 	- :ref:`Affine registration... <menu-section-affine>`
 	- :ref:`Displacement field registration... <menu-section-field>`
@@ -154,6 +155,7 @@ Registration
 	- :ref:`Eddy current correction... <menu-section-eddy>`
 	- :ref:`Resample... <menu-section-resample>`
 	- :ref:`Asymmetry displacement field... <menu-section-asym>`
+	- :ref:`Displacement field inversion... <menu-section-fieldinv>`
 	- :ref:`Displacement field jacobian determinant... <menu-section-jacob>`
 
 .. _menu-section-segmentation:
@@ -175,6 +177,7 @@ Segmentation
 		- :ref:`Hippocampus segmentation... <menu-section-hipp>`
 		- :ref:`Hypo-intensity lesion segmentation... <menu-section-lesion>`
 		- :ref:`Medial temporal clustering... <menu-section-temporal>`
+		- :ref:`Meningioma segmentation... <menu-section-mening>`
 		- :ref:`Metastasis segmentation... <menu-section-meta>`
 		- :ref:`Microbleeds segmentation... <menu-section-microbld>`
 		- :ref:`Tissue segmentation... <menu-section-tissue>`

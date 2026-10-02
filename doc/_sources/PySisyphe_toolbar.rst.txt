@@ -89,7 +89,7 @@ Icons displayed in toolbar can be modified in the **settings** dialog box (tab G
 	Display a dialog box to import Dicom files. You can also use menubar (File > DICOM > DICOM Import...).
 
 |slice-view|
-	Display the selected volume of the thumbnail bar (blue border, reference volume) in the slice view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected displayed in the slice view. You can also select thumbail popup menu **Display in slice view**, or press **F1** key.
+	Display the selected volume of the thumbnail bar (blue border, reference volume) in the slice view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the slice view. You can also select thumbail popup menu **Display in slice view**, or press **F1** key.
 
 |ortho-view|
 	Display the selected volume of the thumbnail bar (blue border, reference volume) in the orthogonal view. If no thumbnail is selected, the first volume to the left of the thumbnail bar is selected and displayed in the orthogonal view. You can also select thumbail popup menu **Display in orthogonal view**, or press **F2** key.
@@ -107,7 +107,7 @@ Icons displayed in toolbar can be modified in the **settings** dialog box (tab G
 	Close all views. No volume of the thumbnail bar is selected.
 
 |join|
-	Join several single-component volumes to produce a multi-component volume. Display a file selection dialog box to open a list of single-component volumes. You can also use menubar (Functions > Join single component volume(s)...).
+	Join several single-component volumes to produce a multi-component volume. These volumes must have the same FOV (same size and same spacing). Display a file selection dialog box to open a list of single-component volumes. You can also use menubar (Functions > Join single component volume(s)...).
 
 |split|
 	Break down a multi-component volume into single-component volumes. Display a file selection dialog box to open multi-component volumes. You can also use menubar (Functions > Split multi component volume(s)...).
@@ -149,7 +149,7 @@ Icons displayed in toolbar can be modified in the **settings** dialog box (tab G
 	Display a dialog box to perform bias field filtering. You can also use menubar (Functions > Bias field correction...).
 
 |algebra|
-	Display a dialog box for voxel by voxel. You can also use menubar (Functions > Voxel-by-voxel processing > Algebra...).
+	Display a dialog box to perform voxel-by-voxel algebra. You can also use menubar (Functions > Voxel-by-voxel processing > Algebra...).
 
 |workflow|
 	Display a dialog box to automate a series of processings. You can also use menubar (Functions > Workflow processing...).
@@ -185,7 +185,7 @@ Icons displayed in toolbar can be modified in the **settings** dialog box (tab G
 	Display a dialog box for processing the Jacobian determinant of a displacement field. Assigned to the multi-component volume and displacement field sequence attribute. You can also use menubar (Registration > Displacemlent field jacobian determinant...).
 
 |strip|
-	Display a dialog box to perform a skull stripping of a volume. This function make use of pre-trained deep learning models. You can also use menubar (Segmentation -> skull stripping...).
+	Display a dialog box to perform a skull stripping of a volume. This function uses pre-trained deep learning models. You can also use menubar (Segmentation -> skull stripping...).
 
 |seg|
 	Display a dialog box to perform prior-based tissue segmentation of a volume (three to six classes: cortical gray matter, subcortical gray matter, white matter, cerebro-spinal fluid, brainstem, cerebellum). You can also use menubar (Registration > Tissue segmentation...).

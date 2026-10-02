@@ -25,6 +25,7 @@ Version history
 - :ref:`build20-07-2026`
 - :ref:`build01-09-2026`
 - :ref:`build20-09-2026`
+- :ref:`build20-10-2026`
 
 .. _version-increment-rules:
 
@@ -7732,3 +7733,283 @@ version 1.03.09, build 20/09/2026
 	- widget.fileBrowserWidget.FileBrowserWidget._fileClicked()
 
 		- replace v.load(filename) with v.load(filename, binary=False)
+
+.. _build20-10-2026:
+
+version 1.05.22, build 20/10/2026
+---------------------------------
+
+- **new html documentation**
+
+	- PySisyphe_extensions.rst
+
+- **updated html documentation**
+	
+	- PySisyphe_index.rst
+	- PySisyphe_home.rst
+	- PySisyphe_Versions.rst
+	- PySisyphe_menubar.rst
+	- PySisyphe_File.rst
+	- PySisyphe_Registration.rst
+	- PySisyphe_Segmentation.rst
+	- PySisyphe_dockroitools.rst
+	- PySisyphe_Overview.rst
+	- PySisyphe_toolbar.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /core/sisypheROI.cpython-310-darwin.so
+	- /core/sisypheROI.cpython-312-darwin.so
+	- /core/sisypheROI.cp310-win_amd64.pyd
+	- /core/sisypheROI.cp312-win_amd64.pyd
+	- /core/sisypheROI.cpython-312-x86_64-linux-gnu.so
+	- /settings/functions.xml
+	- /settings/tooltips.xml
+
+- **new files**
+
+	- /lib/agunet/weights/AGUNet/model.keras
+
+		- weights of the AGUNet model used for meningioma segmentation
+
+	- /lib/agunet/weights/UNet-FV/model.keras
+
+		- weights of the UNet-FV model used for meningioma segmentation
+
+- **new module**
+
+	- /lib/agunet
+
+		- deep learning model for meningioma segmentation
+		- fork of the `Attention Gated UNet <https://github.com/dbouget/mri_brain_tumor_segmentation>`_ package
+		- convert the weights of the AGUNet model from the Keras 2 format (model.hd5) to the Keras 3 format (model.keras)
+		- convert the weights of the UNet-FV model from the Keras 2 format (model.hd5) to the Keras 3 format (model.keras)
+
+- **updated modules**
+
+	- core.sispheROI
+
+		- update cython compilation
+
+	- core.sisypheDicom
+	- core.sisypheTransform
+	- core.sisypheFiducialBox
+	- core.sisypheImageAttributes
+	- gui.dialogDiffusionModel
+	- gui.dialogDeepSegmentation
+	- gui.dialogFiducialBox
+	- gui.dialogSettings
+	- gui.windowSisyphe
+	- processing.capturedStdoutProcessing
+	- widgets.fileBrowserWidget
+	- widgets.sliceTrajectoryViewWidget
+	- widgets.sliceViewFiducialBoxWidget
+	- widgets.projectionViewWidget
+
+- **updated functions**
+
+	- core.sisypheDicom.loadBVal()
+	- core.sisypheDicom.loadBVec()
+
+		- bug fix, replace the while loop with a for loop
+
+- **new classes**
+
+	- gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation
+
+		- GUI dialog for deep learning meningioma segmentation using agunet, dagunet, plsnet, unet models
+
+	- processing.capturedStdoutProcessing.ProcessDeepMeningiomaSegmentation
+
+		- multiprocessing class for deep learning meningioma segmentation using agunet, dagunet, plsnet, unet models.
+
+- **updated classes**
+
+	- core.sispheROI.SisypheROI
+
+		- update load() method
+
+	- core.sispheROI.SisypheROI
+
+		- update __str__() method
+
+	- core.sisypheTransform.SisypheApplyTransform
+
+		- new resampleToSpacing() method
+
+	- core.sisypheFiducialBox.SisypheFiducialBox
+
+		- new _calcTransform() method
+		- new setMaximumFiducialError() method
+		- new getMaximumFiducialError() method
+		- update calcTransform() method
+		- update __init__() method
+
+	- core.sisypheImageAttributes.SisypheAcquisition
+
+		- update setSequenceToStructMap() method
+
+	- gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation
+
+		- update __init__() method
+
+	- gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation
+
+		- update __init__() method
+	
+	- gui.dialogDiffusionModel.DialogDiffusionModel
+
+		- update multiExecute() method
+
+	- gui.dialogDiffusionModel.DialogALPS
+
+		- update execute() method
+
+	- gui.dialogFiducialBox.DialogFiducialBox
+
+		- update __init__() method
+		- update _calcTransform() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update _initSettings() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update _initFileMenu() method
+		- update frameDetection() method
+
+	- widgets.fileBrowserWidget.FileBrowserWidget
+
+		- update _fileClicked() method
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget
+
+		- update synchroniseToolMoved() method
+		- update isToolAligned() method
+
+	- widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget
+
+		- add FrontPlaneChanged Qt signal
+		- update removeFrontPlateMarkers() method
+		- update zoomOnMarker() method
+
+	- widgets.sliceViewFiducialBoxWidget.IconBarSliceViewFiducialBoxWidget
+
+		- new _frontPlaneChanged() method
+		- update __init__() method
+		- update _setViewWidget() method
+
+	- widgets.projectionViewWidget.ProjectionViewWidget
+
+		- update setVolume() method
+
+- **new methods**
+
+	- core.sisypheTransform.SisypheApplyTransform.resampleToSpacing()
+
+		- reslice the moving volume attribute with a new voxel spacing
+
+	- core.sisypheFiducialBox.SisypheFiducialBox._calcTransform()
+
+		- copy of the previous core.sisypheFiducialBox.SisypheFiducialBox.calcTransform() method
+
+	- core.sisypheFiducialBox.SisypheFiducialBox.setMaximumFiducialError()
+	- core.sisypheFiducialBox.SisypheFiducialBox.getMaximumFiducialError()
+
+		- set/get self._maxerror attribute
+
+	- widgets.sliceViewFiducialBoxWidget.IconBarSliceViewFiducialBoxWidget._frontPlaneChanged()
+
+		- update self._markermenu
+
+- **updated methods**
+
+	- core.sispheROI.SisypheROI.load()
+
+		- add binary parameter, if False, load only XML part (attributes), not binary part (array), default is True (load XML and binary parts)
+
+	- core.sispheROI.SisypheROI.__str__()
+
+		- display 'Non zero voxels' if self._sitk_image is not None
+
+	- core.sisypheFiducialBox.SisypheFiducialBox.__init__()
+
+		- add self._maxerror attribute (maximum fiducial markers error)
+
+	- core.sisypheFiducialBox.SisypheFiducialBox.calcTransform()
+
+		- outlier removing
+
+	- core.sisypheImageAttributes.SisypheAcquisition.setSequenceToStructMap()
+
+		- remove self.setUnitToPercent()
+
+	- gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation.__init__()
+	- gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation.__init__()
+
+		- replace self._volumeSelect.filterSameSequence(SisypheAcquisition.T1) with self._volumeSelect.filterSameSequence([SisypheAcquisition.T1, SisypheAcquisition.CET1])
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.multiExecute()
+
+		- bug fix, replace self._RUMBA.getParameterValue('IVIMD') with self._IVIM.getParameterValue('IVIMD')
+		- bug fix, replace self._RUMBA.getParameterValue('IVIMDS') with self._IVIM.getParameterValue('IVIMDS')
+		- bug fix, replace self._RUMBA.getParameterValue('IVIMF') with self._IVIM.getParameterValue('IVIMF')
+
+	- gui.dialogDiffusionModel.DialogALPS.execute()
+
+		- move wait.hide() to avoid the lack of a waiting dialog before the coregistration process
+
+	- gui.dialogFiducialBox.DialogFiducialBox.__init__()
+
+		- add self._threshold attribute (LabeledDoubleSpinBox)
+
+	- gui.dialogFiducialBox.DialogFiducialBox._calcTransform()
+
+		- add self._view.getFiducialBoxDict().setMaximumFiducialError(self._threshold.value())
+
+	- gui.dialogSettings.DialogSettings._initSettings()
+
+		- add FrameDetection field
+
+	- gui.windowSisyphe.WindowSisyphe._initFileMenu()
+
+		- bug fix, replace self._action['xdcm'].triggered.connect(self.xmlDicom) with self._action['xdcm'].triggered.connect(lambda: self.xmlDicom())
+
+	- gui.windowSisyphe.WindowSisyphe.frameDetection()
+
+		- ask new detection
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._fileClicked()
+
+		- add wait dialog when displaying xmesh preview
+		- add .bvec preview
+		- add .bval preview
+		- add .xbvec preview
+		- add .xbval preview
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.synchroniseToolMoved()
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.isToolAligned()
+
+		- bug fix, exception management of the 'None' type
+
+	- widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.removeFrontPlateMarkers()
+
+		- hide front plate tools
+
+	- widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.zoomOnMarker()
+
+		- bug fix, set the focal point at the tool coordinates
+
+	- widgets.sliceViewFiducialBoxWidget.IconBarSliceViewFiducialBoxWidget.__init__()
+
+		- add setattr(self, 'getFiducialBoxDict', self._widget.getFiducialBoxDict)
+
+	- widgets.sliceViewFiducialBoxWidget.IconBarSliceViewFiducialBoxWidget._setViewWidget()
+
+		- add self._widget.FrontPlaneChanged.connect(self._frontPlaneChanged)
+
+	- widgets.projectionViewWidget.ProjectionViewWidget.setVolume()
+
+		- bug fix, move the mask processing before the line if self._cut == 0:

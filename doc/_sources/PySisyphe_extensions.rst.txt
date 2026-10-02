@@ -1,0 +1,155 @@
+.. _page-extensions:
+
+PySiSyphe file extensions
+=========================
+
+All PySiSyphe files are saved in XML text format.
+
+.xbval
+------
+
+It records a list of diffusion gradient B-values. This file is created automatically during the DICOM conversion of diffusion-weighted series. It can also be created from the :ref:`menu-section-gradients` menu.
+
+.xbvec
+------
+
+It records a list of diffusion gradient B-vectors. This file is created automatically during the DICOM conversion of diffusion-weighted series. It can also be created from the :ref:`menu-section-gradients` menu.
+
+.xdcm
+-----
+
+This file is associated with a PySisyphe volume (.xvol) when converted from DICOM series (:ref:`menu-section-dcmimport`). It contains all non-private DICOM fields. It can be viewed using the :ref:`menu-section-xmldcm` menu.
+
+.xdmodel
+--------
+
+This file stores a diffusion model that is processed from the :ref:`menu-section-diffmodel` menu.
+
+.xfid
+-----
+
+This file is associated with a PySisyphe volume (.xvol) after a stereotactic frame is detected using the :ref:`menu-section-stereo` menu. It records the position of each detected fiducial marker in the world coordinate system (in mm, according to the LPS+ convention).
+
+.xlabels
+--------
+
+This file is associated with a PySisyphe volume (.xvol) with the LB modality, i.e., label image. It stores a dictionary that lists the label names associated with each numeric label index value.
+
+.xline
+------
+
+This is a trajectory tool associated with a PySisyphe volume (.xvol). It can be displayed in the :ref:`Orthogonal view <page-orthogonalview>` of the central area. It is loaded from the :ref:`Target/Trajectory tab of the dock <page-docktarget>`.
+
+.xlut
+-----
+
+This is the native format for storing PySisyphe LUT colormaps; it records a list of 256 RGB colors. You can create or edit a LUT from the :ref:`menu-section-editlut` menu.
+
+.xmodel
+-------
+
+This file records a voxel-by-voxel statistical GLM model. It is created from the :ref:`menu-section-fmri-model` or :ref:`menu-section-glm-model` menu.
+
+.xpoint
+-------
+
+This file stores a target tool associated with a specific PySisyphe volume (.xvol). It can be displayed in the :ref:`Orthogonal view <page-orthogonalview>` of the central area. It is loaded from the :ref:`Target/Trajectory tab of the dock <page-docktarget>`.
+
+.xmesh
+------
+
+This is the native format for storing PySisyphe mesh. Meshes are displayed in the :ref:`Orthogonal view <page-orthogonalview>` of the central area. They are loaded from the :ref:`Mesh tab of the dock <page-dockmesh>`.
+
+.xroi
+-----
+
+This is the native format for storing the region of interest (ROI) associated with a particular PySisyhe volume (.xvol). ROIs are displayed in the :ref:`Slice view <page-sliceview>` and/or :ref:`Synchronized view <page-synchronizedview>` of the central area. They are loaded from the :ref:`ROI tab of the dock <page-dockroi>`.
+
+.xsheet
+-------
+
+This is the native format for storing an array of numeric values.
+
+
+.xstruct
+--------
+
+This file stores the parameters for segmenting a specific anatomical structure from the :ref:`menu-section-regsegmentation` menu. It is saved in the ~/.PySisyphe/segmentation folder by default.
+
+.xtools
+-------
+
+It records a list of target and/or trajectory tools. These tools can be displayed in the :ref:`Orthogonal view <page-orthogonalview>` of the central area. They are loaded from the :ref:`Target/Trajectory tab of the dock <page-docktarget>`.
+
+.xtract
+-------
+
+This is the native format for storing a list of streamlines, i.e., a tractogram. This file is created from the :ref:`menu-section-tractogram` menu. Streamlines are displayed in the :ref:`Orthogonal view <page-orthogonalview>` of the central area. They are loaded from the :ref:`Tracking tab of the dock <page-docktracking>`.
+
+.xtrf
+-----
+
+This file records a geometric transformation between a fixed reference volume and a moving volume.
+
+.xtrfs
+------
+
+This file is associated with a PySisyphe volume (.xvol) and records a list of geometric transformations between this volume and all volumes with which it has been co-registered.
+
+.xvol
+-----
+
+This is the native format for storing a PySisyphe volume.
+
+.xwflow
+-------
+
+This file records a list of PySisyphe processing to run in batch mode. This file is created from the :ref:`menu-section-workflows` menu. It is saved in the ~/.PySisyphe/workflows folder by default.
+
+.. _page-files:
+
+PySiSyphe files
+===============
+
+.PySisyphe folder
+-----------------
+
+It is located in the user folder (C:\Users\YourUsername in windows platform, /Users/YourUsername in mac os platform and /home/YourUsername in linux platform). It can be quickly opened in the OS platform's file manager by selecting the menu :ref:`menu-section-openuser`. It contains configuration files (functions.xml, settings.xml), a log file (PySisyphe.log), and a file listing the most recently opened volumes (recent.xml).
+
+Eight default subdirectories are provided for storing user data:
+
+- **/controls**: control populations for 3D T1 MR, FDG PET, and HMPAO SPECT can be downloaded from the :ref:`menu-section-download` menu. These files are saved to this folder by default.
+
+- **/database**: PySisyphe provides a patient database manager (:ref:`menu-section-download`). It is stored in this directory by default.
+
+- **/dicom**: this directory is intended for storing PySisyphe volumes generated from the conversion of DICOM series (:ref:`menu-section-dcmimport`).
+
+- **/models**: this is the default directory used to save user-defined voxel-by-voxel statistical models (:ref:`menu-section-fmri-model` or :ref:`menu-section-glm-model`). There is a shortcut :ref:`menu-section-models` menu for quickly opening these models in PySisyphe.
+
+- **/prompts**: this directory is intended for storing gemini prompts that are generated from PySisyphe (:ref:`Gemini prompt <tools-section-gemini>`).
+
+- **/samples**: various sample volumes can be downloaded from the :ref:`menu-section-download` menu for testing PySisyphe.
+
+- **/segmentation**: this is the default directory where user-defined settings for segmenting (:ref:`menu-section-regsegmentation`) a specific anatomical structure are saved. There is a shortcut :ref:`menu-section-structs` menu for quickly opening the anatomical structure parameters in the :ref:`menu-section-regsegmentation` interface.
+
+- **/workflows**: this is the default directory where batch processing files (.xwflow files) generated from the :ref:`menu-section-workflow` menu are stored. There is a shortcut :ref:`menu-section-models` menu for quickly opening these workflows in the :ref:`menu-section-workflow` interface.
+
+PySisyphe.log
+-------------
+
+This file is located in the ~/.PySisyphe folder. It stores user actions and the traceback details when an unhandled exception occurs. Please send this file to the contact email address pysisyphe@gmail.com when you wish to report a bug.
+
+functions.xml
+-------------
+
+This file is located in the ~/.PySisyphe folder. It stores the default settings for most PySisyphe functions. These settings can be edited from the :ref:`menu-section-preferences` menu. It is not recommended to edit this file directly because the software will no longer work if the file becomes corrupted. In that case, delete this file, and a new default file will be created the next time the application is launched.
+
+recent.xml
+----------
+
+This file is located in the ~/.PySisyphe folder. It lists the most recently edited volumes. There is a shortcut :ref:`menu-section-recent` menu for quickly opening these volumes in PySisyphe.
+
+settings.xml
+------------
+
+This file is located in the ~/.PySisyphe folder. It stores the default settings for the PySisyphe graphic user interface. These settings can be edited from the :ref:`menu-section-preferences` menu. It is not recommended to edit this file directly because the software will no longer work if the file becomes corrupted. In that case, delete this file, and a new default file will be created the next time the application is launched.

@@ -16,6 +16,7 @@ Segmentation menu
 	- :ref:`menu-section-hipp`
 	- :ref:`menu-section-lesion`
 	- :ref:`menu-section-temporal`
+	- :ref:`menu-section-mening`
 	- :ref:`menu-section-meta`
 	- :ref:`menu-section-microbld`
 	- :ref:`menu-section-tissue`
@@ -360,9 +361,9 @@ Two models are available:
 
 .. admonition:: Reference
 
-	`Hippocampal subfields <https://pmc.ncbi.nlm.nih.gov/articles/PMC4461537/>`_: A computational atlas of the hippocampal formation using ex vivo, ultra-high resolution MRI: Application to adaptive segmentation of in vivo MRI. Iglesias J.E., Augustinack J.C., Nguyen K., Player C.M., Player A., Wright M., Roy N., Frosch M.P., McKee A.C., Wald L.L., Fischl B., Van Leemput K. Neuroimage. 2015 Apr 29;115:117–137.
+	`Hippocampal subfields article <https://pmc.ncbi.nlm.nih.gov/articles/PMC4461537/>`_: A computational atlas of the hippocampal formation using ex vivo, ultra-high resolution MRI: Application to adaptive segmentation of in vivo MRI. Iglesias J.E., Augustinack J.C., Nguyen K., Player C.M., Player A., Wright M., Roy N., Frosch M.P., McKee A.C., Wald L.L., Fischl B., Van Leemput K. Neuroimage. 2015 Apr 29;115:117–137.
 
-	`Amygdala nuclei <https://pmc.ncbi.nlm.nih.gov/articles/PMC5557007/>`_: High-resolution magnetic resonance imaging reveals nuclei of the human amygdala: manual segmentation to automatic atlas. Saygin Z.M., Kliemann D., Iglesias J.E., van der Kouwe A.J.W., Boyd E., Reuter M., Stevens A., Van Leemput K., McKee A., Frosch M.P., Fischl B., Augustinack J.C. Neuroimage. 2017 May 4;155:370–382.
+	`Amygdala nuclei article <https://pmc.ncbi.nlm.nih.gov/articles/PMC5557007/>`_: High-resolution magnetic resonance imaging reveals nuclei of the human amygdala: manual segmentation to automatic atlas. Saygin Z.M., Kliemann D., Iglesias J.E., van der Kouwe A.J.W., Boyd E., Reuter M., Stevens A., Van Leemput K., McKee A., Frosch M.P., Fischl B., Augustinack J.C. Neuroimage. 2017 May 4;155:370–382.
 
 Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
 
@@ -382,6 +383,32 @@ Left-click **Cancel** button to close dialog box without segmentation.
 
 Sample volume can be downloaded from the :ref:`menu-section-download` to test this processing.
 
+.. _menu-section-mening:
+
+Deep-learning Meningioma segmentation
+-------------------------------------
+
+This menu is designed to perform meningioma segmentation using deep-learning pre-trained model from post-contrast T1 sequence. The segmentation is saved as a probability map.
+
+The code in PySisype is a fork of the `Attention Gated UNet <https://github.com/dbouget/mri_brain_tumor_segmentation>`_ package. In particular, the model's weights were converted to the Keras 3 format to avoid having to install the `tf keras <https://pypi.org/project/tf-keras/>`_ compatibility module.
+
+.. admonition:: Reference
+
+	`Article <https://pmc.ncbi.nlm.nih.gov/articles/PMC10365121/>`_: Meningioma Segmentation in T1-Weighted MRI Leveraging Global Context and Attention Mechanisms. D. Bouget, A. Pedersen, S.A.M. Hosainey, O. Solheim, I. Reinertsen.  Front Radiol 2021 Sep 23:1:711514.
+
+Use the :ref:`widgets-section-multi-file` widget at the top to select **T1** PySisyphe volume(s) to be segmented.
+
+Toggle **Meningioma segmentation...** button to show/hide parameters.
+
+- Select the pre-trained model *AGUNet* or *UNet*.
+- Check **Save ROI** if you also want to save the result as a PySisyphe ROI (xroi).
+- Set the **Probability threshold**, between 0.0 and 1.0, which is used to process the ROI. This option is only active if **Save ROI** is checked.
+- The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
+
+Left-click **Execute** button to perform segmentation.
+
+Left-click **Cancel** button to close dialog box without segmentation.
+
 .. _menu-section-meta:
 
 Deep-learning Metastasis segmentation
@@ -389,7 +416,7 @@ Deep-learning Metastasis segmentation
 
 This menu is designed to perform metastasis segmentation using deep-learning pre-trained model from post-contrast black blood T1 sequences. The segmentation is saved as a probability map.
 
-The code in PySisype is a fork of the `RLK Unet <https://github.com/nibabel/RLK-Unet>`_ package.
+The code in PySisype is a fork of the `RLK UNet <https://github.com/nibabel/RLK-Unet>`_ package.
 
 .. admonition:: Reference
 
@@ -398,7 +425,7 @@ The code in PySisype is a fork of the `RLK Unet <https://github.com/nibabel/RLK-
 Toggle **Metastasis segmentation...** button to show/hide parameters.
 
 - Check **Bias field correction** to peform a bias field correction of the T1 before the segmentation processing.
-- Set the extent **Threshold** in voxels, which is used to remove small noise-related detections.
+- Set the **Metastasis extent threshold** in voxels, which is used to remove small noise-related detections.
 - The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
 
 Left-click **Execute** button to perform segmentation.
@@ -424,7 +451,7 @@ Toggle **Microbleeds segmentation...** button to show/hide parameters.
 
 - There are three models available, which can be selected individually using the first three checkboxes: **Use first model**, **Use second model**, and **Use third model**. If several models are selected (all models by default), the final map is a combination of the maps generated by each model.
 - Check **Save Mask** if you also want to save the result as a PySisyphe (xvol) mask.
-- Set the probability **Threshold**, between 0.0 and 1.0, which is used to process the mask. This option is only active if **Save Mask** is checked.
+- Set the **Probability threshold**, between 0.0 and 1.0, which is used to process the mask. This option is only active if **Save Mask** is checked.
 - The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the **Prefix** and **Suffix** parameters.
 
 Left-click **Execute** button to perform segmentation.

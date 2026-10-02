@@ -121,6 +121,8 @@ The keyboard shortcut **²** re-executes the action of the last tool clicked.
 |cross|
 	Left-click to clear the selected ROI slice.
 
+.. _tools-section-gemini:
+
 |gemini|
 	Left-click to display a menu from which you can select a Gemini AI prompt that you previously saved in the 'prompts' subfolder of the user folder (~/.PySisype). Open the Gemini prompt dialog box by selecting the "New prompt..." menu.
 

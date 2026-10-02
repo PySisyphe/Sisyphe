@@ -179,7 +179,7 @@ The Settings sections are as follows:
 - **General**
 
 	- GUI: general GUI parameters (:ref:`page-toolbar` size and visibility, :ref:`page-thumbnailbar` size, icon size, font name and size).
-	- Tolbbar icons: :ref:`page-toolbar` icons visibility. Left-click on |view| icon to toggle visibility.
+	- Toolbar icons: :ref:`page-toolbar` icons visibility. Left-click on |view| icon to toggle visibility.
 	- Viewport: display parameters of the central area view widgets (icon size, line width and opacity, various visibility options).
 	- ROI: ROI Tools tab of the dock (:ref:`tools-section-brush-settings`).
 	- Mesh: Mesh tab of the dock (:ref:`mesh-section-mesh-settings`).
@@ -239,6 +239,7 @@ Contents:
 	- Arterial, https://www.nitrc.org/projects/arterialatlas/
 	- Atag, https://www.nitrc.org/projects/atag
 	- Brainnav, https://www.nitrc.org/projects/brainstemnavig
+	- BRAVISSIMA, https://www.nitrc.org/projects/bravissima/
 	- Bundles HCP, https://brain.labsolver.org/hcp_template.html
 	- Bundles IIT, https://www.nitrc.org/projects/iit/
 	- Bundles LC2TEC, https://www.nitrc.org/projects/brainstem_atlas/
@@ -248,13 +249,14 @@ Contents:
 	- Distal, https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/
 	- HoliAtlas, https://arxiv.org/html/2501.16879v1
 	- HR, https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009
-	- LPBA40, https://www.loni.usc.edu/research/atlas_downloads
-	- PD25, https://nist.mni.mcgill.ca/multi-contrast-pd25-atlas/
 	- ICBM152 Subcortical 
 	- ICBM452, https://www.loni.usc.edu/research/atlas_downloads
+	- LPBA40, https://www.loni.usc.edu/research/atlas_downloads
 	- NAC, https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html
+	- PD25, https://nist.mni.mcgill.ca/multi-contrast-pd25-atlas/
 	- SPL, https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html
 	- SRI24, https://www.nitrc.org/projects/sri24
+	- THOMAS, https://github.com/thalamicseg/hipsthomasdocker
 
 - **Controls** 
 

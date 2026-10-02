@@ -43,6 +43,8 @@ Left-click **Calc geometric transform** button to calculate the geometric transf
 
 Left-click **Error statistics** button to show statistics relating to fiducial marker position errors. This information is displayed in a dialog box with a stack of tabbed widgets. The first tab **Global error** shows a box and whisker plot of fiducial marker position errors, and below, a table of descriptive statistics (*mean*, *root mean square*, *median*, *standard deviation*, *25th percentile*, *75th percentile*, *minimum* and *maximum*). The second tab **Errors** shows the variation curves of the error for each fiducial marker as a function of the slice level, from bottom to top, and below, a table of errors (columns = fiducial marker, rows = slice level). This makes it possible to identify the slices with the most significant errors, which can then be excluded, if necessary, to improve the results. **Acceptable values are less than 1.0 mm for both the mean and RMS error**.
 
+Set the **Marker error threshold** value (default 0.8 mm). After clicking the **Calc geometric transform** button, markers with a positional error greater than the threshold are removed to calculate the geometric transformation that defines the stereotactic space.
+
 Left-click **OK** button to save the stereotactic space information and close the dialog box. Two XML files are saved in the same folder and under the same name as the stereotactic volume. The first one, which has the xfid extension, saves the coordinates of the fiducial markers. The second one, with the xtrfs extension, saves the geometric transformation that defines the stereotactic space (XML node with LEKSELL ID).
 
 Left-click **Cancel** button to close the dialog box without saving the stereotactic space information.
