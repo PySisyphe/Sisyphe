@@ -27,6 +27,7 @@ from multiprocessing import Process
 from time import time
 
 from numpy import array
+from numpy import zeros
 from numpy import eye
 from numpy import diag
 from numpy import copy
@@ -34,12 +35,15 @@ from numpy import pad
 from numpy import roll
 from numpy import stack
 from numpy import mean
+from numpy import min
+from numpy import max
 from numpy import squeeze
 from numpy import arange
 from numpy import reshape
 from numpy import concatenate
 from numpy import zeros_like
 from numpy import count_nonzero
+from numpy import expand_dims
 
 from pandas import read_csv
 
@@ -1323,10 +1327,12 @@ class ProcessDeepMeningiomaSegmentation(Process):
     Description
     ~~~~~~~~~~~
 
-    Multiprocessing Process class for deep learning meningioma segmentation using neuronet ams model.
-    Code in PySisyphe is a fork of https://github.com/neuronets/ams/tree/master
+    Multiprocessing Process class for deep learning meningioma segmentation using agunet, dagunet, plsnet models.
+    Code in PySisyphe is a fork of https://github.com/dbouget/mri_brain_tumor_segmentation
 
     Reference:
+    Meningioma Segmentation in T1-Weighted MRI Leveraging Global Context and Attention Mechanisms. D. Bouget,
+    A. Pedersen, S.A.M. Hosainey, O. Solheim, I. Reinertsen.  Front Radiol 2021 Sep 23:1:711514
 
     Inheritance
     ~~~~~~~~~~~
@@ -1342,34 +1348,63 @@ class ProcessDeepMeningiomaSegmentation(Process):
     Private attributes
 
     _t1         ndarray, post-contrast T1 volume
+    _model      str, 
+    _mng        dict[str]
     _result     Queue
     """
 
-    def __init__(self, t1, queue):
+    def __init__(self, t1, model, mng, queue):
         Process.__init__(self)
         self._t1 = t1.getNumpy(defaultshape=False).astype('float32')
+        self._model = model.lower()
+        self._mng = mng
         self._result = queue
 
     # Public methods
 
     def run(self):
         pass
-        """
-        from Sisyphe.lib.ams.brainer import standardize_numpy
-        from Sisyphe.lib.ams.brainer import to_blocks_numpy
-        x = standardize_numpy(self._t1)
-        x = to_blocks_numpy(x, (128, 128, 128))
-        x = x[..., None]
-        import Sisyphe.lib.ams
-        model_file = join(dirname(Sisyphe.lib.ams.__file__), 'weights', 'meningioma_T1wc_128iso_v1.h5')
-        import tf_keras as keras
-        model = keras.models.load_model(model_file, compile=False, safe_mode=False)
-        y = model.predict(x, batch_size=1, verbose=1)
-        y = squeeze(y, axis=-1)
-        from Sisyphe.lib.ams.brainer import from_blocks_numpy
-        seg = from_blocks_numpy(y, (256, 256, 256))
-        self._result.put(seg)
-        """
+        # Preprocessing
+        self._mng['msg'] = 'Preprocessing...'
+        vmin = min(self._t1)
+        vmax = max(self._t1)
+        img = (self._t1 - vmin) / (vmax - vmin)
+        from Sisyphe.lib.agunet.utils.volume_utilities import crop_MR
+        img, bbox = crop_MR(img)
+        from skimage.transform import resize
+        img = resize(img, [128, 128, 144])
+        # Segmentation
+        self._mng['msg'] = 'Segmentation...'
+        import Sisyphe.lib.agunet
+        root = dirname(abspath(Sisyphe.lib.agunet.__file__))
+        # import tf_keras
+        import tensorflow.keras.models
+        if self._model == 'agunet':
+            # path = join(root, 'weights', 'AGUNet', 'model.hd5')
+            path = join(root, 'weights', 'AGUNet', 'model.keras')
+            supervision = True
+            # model = tf_keras.models.load_model(path, compile=False)
+            model = tensorflow.keras.models.load_model(path, compile=False)
+        else:  # self._model == 'unet':
+            # path = join(root, 'weights', 'UNet-FV', 'model.hd5')
+            path = join(root, 'weights', 'UNet-FV', 'model.keras')
+            supervision = False
+            # model = tf_keras.models.load_model(path, compile=False)
+            model = tensorflow.keras.models.load_model(path, compile=False)
+        img = expand_dims(img, axis=0)
+        img = expand_dims(img, axis=-1)
+        data = model.predict(img)
+        if supervision: data = data[0][0]
+        else: data = data[0]
+        # Postprocessing
+        self._mng['msg'] = 'Postprocessing...'
+        resize_ratio = (bbox[3] - bbox[0], bbox[4] - bbox[1], bbox[5] - bbox[2]) / array(data.shape[0:3])
+        if len(data.shape) == 4: resize_ratio = list(resize_ratio) + [1.]
+        from scipy.ndimage import zoom
+        if list(resize_ratio)[0:3] != [1., 1., 1.]: data = zoom(data, resize_ratio, order=1)
+        new_data = zeros(self._t1.shape, dtype=data.dtype)
+        new_data[bbox[0]:bbox[3], bbox[1]:bbox[4], bbox[2]:bbox[5]] = data[:, :, :, 1]
+        self._result.put(new_data)
 
 
 class ProcessDeepMetastasisSegmentation(Process):
