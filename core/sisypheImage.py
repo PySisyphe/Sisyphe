@@ -6544,6 +6544,9 @@ class SisypheImage(object):
             FreeSurfer file name
         """
         img = readFromFreeSurferMGH(filename)
+        # < Revision 02/10/2026
+        img.SetDirection(getRegularDirections())
+        # Revision 02/10/2026 >
         self.setSITKImage(img)
 
     @cython.ccall
@@ -6630,6 +6633,9 @@ class SisypheImage(object):
         else: origin[2] = -origin[2]
         # Revision 17/07/2024>
         self.setOrigin(origin)
+        # < Revision 02/10/2026
+        self.setDirections()
+        # Revision 02/10/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)

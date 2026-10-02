@@ -404,7 +404,8 @@ class SisypheROI(SisypheBinaryImage):
                'Name: {}\n'.format(self.getReferenceID(), self._name)
         buff += 'Color: r={0[0]:.2f} g={0[1]:.2f} b={0[2]:.2f}\n' \
                 'Alpha: {1:.2f}\n'.format(self._color, self._alpha)
-        buff += 'Non zero voxels: {}\n'.format(self.getNumberOfNonZero())
+        if self._sitk_image:
+            buff += 'Non zero voxels: {}\n'.format(self.getNumberOfNonZero())
         buff += super().__str__()
 
         return buff
@@ -2582,7 +2583,7 @@ class SisypheROI(SisypheBinaryImage):
             return attr
         else: raise IOError('XML file format is not supported.')
 
-    def load(self, filename: str) -> None:
+    def load(self, filename: str, binary: bool = True) -> None:
         """
         Load the current SisypheROI instance from a PySisyphe ROI (.xroi) file.
 
@@ -2590,6 +2591,9 @@ class SisypheROI(SisypheBinaryImage):
         ----------
         filename : str
             PySisyphe ROI file name
+        binary : bool (optional)
+            if False, load only XML part (attributes), not binary part (array), default is True (load XML and binary
+            parts)
         """
         # Check extension xroi
         path, ext = splitext(filename)
@@ -2610,15 +2614,16 @@ class SisypheROI(SisypheBinaryImage):
                 # Revision 04/04/2025 >
             # Read binary array part
                 buff = None
-                rawname = attr['array']
-                if rawname == 'self':
-                    buff = f.read()
-                else:
-                    rawname = join(dirname(filename), basename(rawname))
-                    rawname = '{}.raw'.format(splitext(rawname)[0])
-                    if exists(rawname):
-                        with open(rawname, 'rb') as fa:
-                            buff = fa.read()
+                if binary:
+                    rawname = attr['array']
+                    if rawname == 'self':
+                        buff = f.read()
+                    else:
+                        rawname = join(dirname(filename), basename(rawname))
+                        rawname = '{}.raw'.format(splitext(rawname)[0])
+                        if exists(rawname):
+                            with open(rawname, 'rb') as fa:
+                                buff = fa.read()
             if buff is not None:
                 if self._compression: buff = decompress(buff)
                 img = frombuffer(buff, dtype='uint8')

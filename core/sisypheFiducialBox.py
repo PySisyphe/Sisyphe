@@ -321,7 +321,7 @@ class SisypheFiducialBox(QObject):
     QObject -> SisypheFiducialBox
 
     Creation: 26/07/2022
-    Last revision: 02/06/2026
+    Last revision: 26/09/2026
     """
     # Class constant
 
@@ -366,6 +366,7 @@ class SisypheFiducialBox(QObject):
 
     _nbfid      int, fiducials count (6 or 9)
     _fidtol     float, distance tolerance of fiducial markers
+    _maxerror   float, maximum fiducial markers error
     _fidlist    dict, fiducial markers coordinates
     _errorlist  dict, fiducial markers errors
     _errorstats dict, fiducial markers errors statistics
@@ -382,6 +383,7 @@ class SisypheFiducialBox(QObject):
         self._volume: SisypheVolume | None = None
         self._nbfid: int = 0
         self._fidtol: float = 0.0
+        self._maxerror: float = 0.8
         """
         _fidlist = dict[key1: int, value1: dict[key2: int, value2: list[float, float, float]]]
                         key1 int, slice number
@@ -779,6 +781,54 @@ class SisypheFiducialBox(QObject):
         # noinspection PyUnresolvedReferences
         self.ProgressValueChanged.emit(self._volume.getDepth())
 
+    # < Revision 26/09/2026
+    # add _calcTransform method
+    def _calcTransform(self) -> None:
+        if not self.isEmpty():
+            sz = self._volume.getSpacing()[2]
+            f = vtkLandmarkTransform()
+            f.SetModeToRigidBody()
+            n = self._nbfid // 3
+            nb = len(self._fidlist) * n
+            ref = vtkPoints()
+            ref.SetNumberOfPoints(nb)
+            mov = vtkPoints()
+            mov.SetNumberOfPoints(nb)
+            idx = 0
+            for fid in self._fidlist:
+                # left middle fiducial
+                # Leksell coordinate (195.0, z, z)
+                c = self._fidlist[fid][1]
+                d = self._calcDistBetweenFiducials(fid, 0, 1) + 40
+                ref.SetPoint(idx, 195, d, d)
+                mov.SetPoint(idx, c[0], c[1], fid * sz)
+                idx += 1
+                # right middle fiducial
+                # Leksell coordinate (5.0, z, z)
+                c = self._fidlist[fid][4]
+                d = self._calcDistBetweenFiducials(fid, 4, 5) + 40
+                ref.SetPoint(idx, 5, d, d)
+                mov.SetPoint(idx, c[0], c[1], fid * sz)
+                idx += 1
+                if self._nbfid == 9:
+                    # anterior middle fiducial
+                    # Leksell coordinate (z, 215.0, z)
+                    c = self._fidlist[fid][7]
+                    d = self._calcDistBetweenFiducials(fid, 6, 7) + 40
+                    ref.SetPoint(idx, d, 215, d)
+                    mov.SetPoint(idx, c[0], c[1], fid * sz)
+                    idx += 1
+            f.SetSourceLandmarks(mov)
+            f.SetTargetLandmarks(ref)
+            f.Update()
+            self._trf = SisypheTransform()
+            self._trf.setID('LEKSELL')
+            self._trf.setSpacing([1.0, 1.0, 1.0])
+            self._trf.setSize([220, 220, 220])
+            self._trf.setVTKMatrix4x4(f.GetMatrix())
+            self.calcErrors()
+    # Revision 26/09/2026 >
+
     # Public methods
 
     def execute(self, vol: SisypheVolume) -> None:
@@ -831,52 +881,37 @@ class SisypheFiducialBox(QObject):
                 return False
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
+    # < Revision 26/09/2026
     def calcTransform(self) -> None:
         """
         Calculate rigid transformation between image and Leksell geometric reference.
         """
         if not self.isEmpty():
-            sz = self._volume.getSpacing()[2]
-            f = vtkLandmarkTransform()
-            f.SetModeToRigidBody()
-            n = self._nbfid // 3
-            nb = len(self._fidlist) * n
-            ref = vtkPoints()
-            ref.SetNumberOfPoints(nb)
-            mov = vtkPoints()
-            mov.SetNumberOfPoints(nb)
-            idx = 0
-            for fid in self._fidlist:
-                # left middle fiducial
-                # Leksell coordinate, 195,0 z z
-                c = self._fidlist[fid][1]
-                d = self._calcDistBetweenFiducials(fid, 0, 1) + 40
-                ref.SetPoint(idx, 195, d, d)
-                mov.SetPoint(idx, c[0], c[1], fid * sz)
-                idx += 1
-                # right middle fiducial
-                # Leksell coordinate, 5,0 z z
-                c = self._fidlist[fid][4]
-                d = self._calcDistBetweenFiducials(fid, 4, 5) + 40
-                ref.SetPoint(idx, 5, d, d)
-                mov.SetPoint(idx, c[0], c[1], fid * sz)
-                idx += 1
-                if self._nbfid == 9:
-                    # anterior middle fiducial
-                    # Leksell coordinate, z 215.0 z
-                    c = self._fidlist[fid][7]
-                    d = self._calcDistBetweenFiducials(fid, 6, 7) + 40
-                    ref.SetPoint(idx, d, 215, d)
-                    mov.SetPoint(idx, c[0], c[1], fid * sz)
-                    idx += 1
-            f.SetSourceLandmarks(mov)
-            f.SetTargetLandmarks(ref)
-            f.Update()
-            self._trf = SisypheTransform()
-            self._trf.setID('LEKSELL')
-            self._trf.setSpacing([1.0, 1.0, 1.0])
-            self._trf.setSize([220, 220, 220])
-            self._trf.setVTKMatrix4x4(f.GetMatrix())
+            # First estimate
+            self._calcTransform()
+            # Remove outliers
+            if self._maxerror > 0.0:
+                for i in self._errorlist:
+                    v = np.array(list(self._errorlist[i].values()))
+                    if np.any(v > self._maxerror):
+                        del self._fidlist[i]
+            # Final estimate
+            self._calcTransform()
+    # Revision 26/09/2026 >
+
+    # < Revision 26/09/2026
+    # add setMaximumFiducialError method
+    def setMaximumFiducialError(self, e: float = 0.8) -> None:
+        if e < 0.5: e = 0.5
+        elif e > 1.0: e = 1.0
+        self._maxerror = e
+    # Revision 26/09/2026 >
+
+    # < Revision 26/09/2026
+    # add setMaximumFiducialError method
+    def getMaximumFiducialError(self) -> float:
+        return self._maxerror
+    # Revision 26/09/2026 >
 
     # noinspection PyArgumentList
     def calcErrors(self) -> None:

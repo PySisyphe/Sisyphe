@@ -962,7 +962,7 @@ class SisypheAcquisition(object):
     object -> SisypheIdentity
 
     Creation: 16/03/2021
-    Last revision: 19/03/2026
+    Last revision: 29/09/2026
     """
     __slots__ = ['_modality', '_sequence', '_type', '_dateofscan', '_frame', '_unit', '_labels',
                  '_df', '_autocorrx', '_autocorry', '_autocorrz', '_rc', '_contrast', '_parent']
@@ -2608,7 +2608,9 @@ class SisypheAcquisition(object):
         """
         if not (self.isOT() or self.isTP()): self.setModalityToOT()
         self._sequence = self.STRUCT
-        self._unit = self.PERC
+        # < Revision 29/09/2026
+        # self.setUnitToPercent()
+        # Revision 29/09/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)

@@ -35,6 +35,7 @@ from numpy import identity
 from numpy import matmul
 from numpy import diag
 from numpy import allclose
+from numpy import ceil
 from numpy.linalg import inv
 
 from nibabel.quaternions import quat2angle_axis
@@ -3572,6 +3573,47 @@ class SisypheApplyTransform(object):
             return self.resampleMoving(save=save, prefix=prefix, suffix=suffix, wait=wait)
         else: raise AttributeError('No moving SisypheVolume.')
     # Revision 18/05/2026 >
+
+    # < Revision 24/09/2026
+    # add resampleToSpacing
+    @cython.ccall
+    @cython.returns(object)
+    def resampleToSpacing(self,
+                          spacing: tuple[float, float, float] | list[float],
+                          save: bool = True,
+                          prefix: str | None = None,
+                          suffix: str | None = None,
+                          wait: DialogWait | None = None) -> SisypheVolume | None:
+        """
+        Reslice the moving volume attribute with a new voxel spacing.
+
+        Parameters
+        ----------
+        spacing : tuple[float, float, float] | list[float]
+            voxel spacing in x, y, z
+        save : bool
+            save resliced moving volume if True (default)
+        prefix : str | None
+            file name prefix of the resliced moving volume (default None)
+        suffix : str | None
+            file name suffix of the resliced moving volume (default None)
+        wait : Sisyphe.gui.dialogWait.DialogWait | None
+            progress bar dialog (optional)
+
+        Returns
+        -------
+        Sisyphe.core.sisypheVolume.SisypheVolume
+            resliced moving volume
+        """
+        if self.hasMoving():
+            if tuple(spacing) != self._moving.getSpacing():
+                size = ceil(array(self._moving.getSize()) * (array(self._moving.getSpacing()) / array(spacing)))
+                size = size.astype(int)
+                print(size)
+                return self.resampleToFOV(size.tolist(), spacing, save=save, prefix=prefix, suffix=suffix, wait=wait)
+            else: return self._moving
+        else: raise AttributeError('No moving SisypheVolume.')
+    # Revision 24/09/2026 >
 
     @cython.ccall
     @cython.returns(object)

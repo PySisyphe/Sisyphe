@@ -577,11 +577,18 @@ def loadBVal(filename: str,
     elif format == 'xml':
         r = dict()
         with open(filename, 'rb') as f:
-            line = ''
+            # < Revision 23/09/2026
+            # line = ''
+            # strdoc = ''
+            # while line != '</xbval>\n':
+            #     line = f.readline().decode()  # Convert binary to utf-8
+            #     strdoc += line
             strdoc = ''
-            while line != '</xbval>\n':
-                line = f.readline().decode()  # Convert binary to utf-8
+            for l in f:
+                line = l.decode() # Convert binary to utf-8
                 strdoc += line
+                if line[:8] == '</xbval>': break
+            # Revision 23/09/2026 >
             doc = minidom.parseString(strdoc)
             root = doc.documentElement
             if root.nodeName == 'xbval' and root.getAttribute('version') <= '1.0':
@@ -651,11 +658,18 @@ def loadBVec(filename: str,
     elif format == 'xml':
         r = dict()
         with open(filename, 'rb') as f:
-            line = ''
+            # < Revision 23/09/2026
+            # line = ''
+            # strdoc = ''
+            # while line != '</xbvec>\n':
+            #     line = f.readline().decode()  # Convert binary to utf-8
+            #     strdoc += line
             strdoc = ''
-            while line != '</xbvec>\n':
-                line = f.readline().decode()  # Convert binary to utf-8
+            for l in f:
+                line = l.decode() # Convert binary to utf-8
                 strdoc += line
+                if line[:8] == '</xbvec>': break
+            # Revision 23/09/2026 >
             doc = minidom.parseString(strdoc)
             root = doc.documentElement
             if root.nodeName == 'xbvec' and root.getAttribute('version') <= '1.0':
