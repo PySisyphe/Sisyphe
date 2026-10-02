@@ -71,7 +71,7 @@ class DialogDiffusionModel(QDialog):
 
     QDialog -> DialogDiffusionModel
 
-    Last revision: 23/04/2026
+    Last revision: 24/09/2026
     """
 
     # Special method
@@ -456,9 +456,14 @@ class DialogDiffusionModel(QDialog):
         # < Revision 01/09/2026
         elif self._combo.currentText() == 'IVIM':
             method = self._IVIM.getParameterValue('Method')[0]
-            maps['ivimd'] = self._RUMBA.getParameterValue('IVIMD')
-            maps['ivimds'] = self._RUMBA.getParameterValue('IVIMDS')
-            maps['ivimf'] = self._RUMBA.getParameterValue('IVIMF')
+            # < Revision 24/09/2026
+            # maps['ivimd'] = self._RUMBA.getParameterValue('IVIMD')
+            # maps['ivimds'] = self._RUMBA.getParameterValue('IVIMDS')
+            # maps['ivimf'] = self._RUMBA.getParameterValue('IVIMF')
+            maps['ivimd'] = self._IVIM.getParameterValue('IVIMD')
+            maps['ivimds'] = self._IVIM.getParameterValue('IVIMDS')
+            maps['ivimf'] = self._IVIM.getParameterValue('IVIMF')
+            # Revision 24/09/2026 >
         # Revision 01/09/2026 >
         elif self._combo.currentText() == 'RUMBA':
             if not isOlderThan('1.11.0',dipyv):
@@ -532,12 +537,18 @@ class DialogDiffusionModel(QDialog):
                         r = queue.get()
                         if process.is_alive(): process.terminate()
                     if wait.getStopped(): process.terminate()
-            except Exception as err:
+            except:
                 wait.hide()
                 if process.is_alive(): process.terminate()
-                r = 'Diffusion model error: {}\n{}.'.format(type(err), str(err))
+                r = None
         wait.close()
-        if r is not None:
+        # < Revision 24/09/2026
+        if r is None:
+            messageBox(self,
+                       self.windowTitle(),
+                       'Diffusion model error')
+        # Revision 24/09/2026 >
+        else:
             if r == 'terminate':
                 # Exit
                 r = messageBox(self,
@@ -797,7 +808,9 @@ class DialogALPS(QDialog):
                         fyy = addPrefixToFilename(vyy.getFilename(), 'ALPS')
                         fzz = addPrefixToFilename(vzz.getFilename(), 'ALPS')
                         if not exists(fxx) or not exists(fyy) or not exists(fzz):
-                            wait.hide()
+                            # < Revision 17/09/2026
+                            # wait.hide()
+                            # Revision 17/09/2026 >
                             dialog = DialogRegistration(transform='Transform')
                             dialog.setFixed(template)
                             dialog.setMoving(vzz)
@@ -809,6 +822,9 @@ class DialogALPS(QDialog):
                             dialog.setParametersFromDict(params)
                             dialog.getMovingSelectionWidget().setEnabled(False)
                             dialog.getFixedSelectionWidget().setEnabled(False)
+                            # < Revision 17/09/2026
+                            wait.hide()
+                            # Revision 17/09/2026 >
                             dialog.execute()
                             wait.show()
                         wait.setInformationText('Open tensor {}...'.format(basename(filename)))

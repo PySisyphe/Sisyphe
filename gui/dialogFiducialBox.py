@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QApplication
 
 from Sisyphe.core.sisypheFiducialBox import SisypheFiducialBox
+from Sisyphe.widgets.basicWidgets import LabeledDoubleSpinBox
 from Sisyphe.widgets.sliceViewFiducialBoxWidget import IconBarSliceViewFiducialBoxWidget
 
 __all__ = ['DialogFiducialBox']
@@ -89,9 +90,22 @@ class DialogFiducialBox(QDialog):
         trf = QPushButton('Calc geometric transform')
         dlt = QPushButton('Remove current slice markers')
         dlt2 = QPushButton('Remove front plate markers')
+        # < Revision 27/09/2026
+        self._threshold = LabeledDoubleSpinBox('Marker error threshold')
+        self._threshold.setRange(0.5, 1.0)
+        self._threshold.setSingleStep(0.1)
+        self._threshold.setDecimals(1)
+        if isinstance(fid, SisypheFiducialBox):
+            self._threshold.setValue(fid.getMaximumFiducialError())
+        else: self._threshold.setValue(0.8)
+        self._threshold.setSuffix(' mm')
+        self._threshold.setToolTip('Markers with a positional error greater than this threshold are\n'
+                             'removed after clicking the “Calc geometric transform” button.')
+        # Revision 27/09/2026 >
         lyout.addWidget(ok)
         lyout.addWidget(cancel)
         lyout.addStretch()
+        lyout.addWidget(self._threshold)
         lyout.addWidget(error)
         lyout.addWidget(trf)
         lyout.addWidget(dlt2)
@@ -128,6 +142,7 @@ class DialogFiducialBox(QDialog):
     # Private method
 
     def _calcTransform(self):
+        self._view.getFiducialBoxDict().setMaximumFiducialError(self._threshold.value())
         self._view.calcTransform()
         self._view.showErrorStatistics()
 

@@ -82,6 +82,7 @@ from Sisyphe.core.sisypheROI import SisypheROICollection
 from Sisyphe.core.sisypheSettings import initPySisypheUserPath
 from Sisyphe.core.sisypheSettings import setUserSettingsToDefault
 from Sisyphe.core.sisypheSettings import SisypheSettings
+from Sisyphe.core.sisypheSettings import SisypheFunctionsSettings
 from Sisyphe.core.sisypheStatistics import SisypheDesign
 from Sisyphe.core.sisypheFiducialBox import SisypheFiducialBox
 from Sisyphe.gui.dialogFileSelection import DialogFileSelection
@@ -936,7 +937,10 @@ class WindowSisyphe(QMainWindow):
         self._action['dcmquery'].triggered.connect(self.queryDicom)
         self._action['dcmexport'].triggered.connect(self.exportDicom)
         self._action['dcmds'].triggered.connect(self.datasetDicom)
-        self._action['xdcm'].triggered.connect(self.xmlDicom)
+        # < Revision 24/09/2026
+        # self._action['xdcm'].triggered.connect(self.xmlDicom)
+        self._action['xdcm'].triggered.connect(lambda: self.xmlDicom())
+        # Revision 24/09/2026 >
         self._action['about'].triggered.connect(self.about)
         self._action['pref'].triggered.connect(self.preferences)
         self._action['exit'].triggered.connect(self.exit)
@@ -1365,9 +1369,9 @@ class WindowSisyphe(QMainWindow):
         self._action['hipp'] = submenu.addAction('Hippocampus segmentation...')
         self._action['lesion'] = submenu.addAction('Hypo-intensity lesion segmentation...')
         self._action['temporal'] = submenu.addAction('Medial temporal clustering...')
-        # < Revision 19/05/2026
-        # self._action['mngioma'] = submenu.addAction('Meningioma segmentation...')
-        # Revision 19/05/2026 >
+        # < Revision 24/09/2026
+        self._action['mngioma'] = submenu.addAction('Meningioma segmentation...')
+        # Revision 24/09/2026 >
         # < Revision 20/05/2026
         self._action['meta'] = submenu.addAction('Metastasis segmentation...')
         self._action['microbl'] = submenu.addAction('Microbleeds segmentation...')
@@ -1398,9 +1402,9 @@ class WindowSisyphe(QMainWindow):
         # < Revision 12/05/2026
         self._action['fcd'].triggered.connect(self.fcdDetection)
         # Revision 12/05/2026 >
-        # < Revision 19/05/2026
-        # self._action['mngioma'].triggered.connect(self.meningiomaSegmentation)
-        # Revision 19/05/2026 >
+        # < Revision 24/09/2026
+        self._action['mngioma'].triggered.connect(self.meningiomaSegmentation)
+        # Revision 24/09/2026 >
         # < Revision 20/05/2026
         self._action['meta'].triggered.connect(self.metastasisSegmentation)
         self._action['microbl'].triggered.connect(self.microbleedsSegmentation)
@@ -5618,8 +5622,24 @@ class WindowSisyphe(QMainWindow):
                 v.load(filename)
         if v is not None and isinstance(v, SisypheVolume):
             fid = SisypheFiducialBox()
+            # < Revision 27/09/2026
+            settings = SisypheFunctionsSettings()
+            threshold = settings.getFieldValue('FrameDetection', 'Threshold')
+            fid.setMaximumFiducialError(threshold)
+            # Revision 27/09/2026 >
             filename = v.getFilename()
             if fid.hasXML(filename):
+                # < Revision 26/09/2026
+                r = messageBox(self,
+                               self.windowTitle(),
+                               'Frame detection already exists. '
+                               'Would you like to perform a new detection ?',
+                               icon=QMessageBox.Question,
+                               buttons=QMessageBox.Yes | QMessageBox.No,
+                               default=QMessageBox.No)
+                # Revision 26/09/2026 >
+            else: r = QMessageBox.Yes
+            if r == QMessageBox.No:
                 try:
                     fid.loadFromXML(filename)
                     fid.setVolume(v)
@@ -5642,8 +5662,7 @@ class WindowSisyphe(QMainWindow):
                     fid.ProgressRangeChanged.disconnect(wait.setProgressRange)
                     fid.ProgressValueChanged.disconnect(wait.setCurrentProgressValue)
                     wait.progressVisibilityOff()
-                    try:
-                        fid.calcTransform()
+                    try: fid.calcTransform()
                     except Exception as err:
                         wait.close()
                         messageBox(self, 'Stereotactic frame detection error', '{}\n{}'.format(type(err), str(err)))
@@ -5826,6 +5845,7 @@ class WindowSisyphe(QMainWindow):
                 if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # < Revision 04/01/2025
+    # add frameRegistration method
     def frameRegistration(self) -> None:
         from Sisyphe.gui.dialogRegistration import DialogFrameBasedRegistration
         self._dialog = DialogFrameBasedRegistration(parent=self)
@@ -6412,7 +6432,7 @@ class WindowSisyphe(QMainWindow):
             if self._logger is not None: self._logger.error(traceback.format_exc())
     # Revision 12/05/2026 >
 
-    # < Revision 19/05/2026
+    # < Revision 24/09/2026
     # add meningiomaSegmentation method
     def meningiomaSegmentation(self) -> None:
         from Sisyphe.gui.dialogDeepSegmentation import DialogDeepMeningiomaSegmentation
@@ -6421,14 +6441,14 @@ class WindowSisyphe(QMainWindow):
         w = self._dialog.getSelectionWidgets()
         w.setToolbarThumbnail(self._thumbnail)
         try:
-            # self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-')
+            self._tabHelp.setPage('PySisyphe_Segmentation.html', 'menu-section-mening')
             if self._logger is not None: self._logger.info(
                 'Dialog exec [gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation]')
             self._dialog.exec()
         except Exception as err:
             messageBox(self, 'Deep learning meningioma segmentation dialog error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
-    # Revision 19/05/2026 >
+    # Revision 24/09/2026 >
 
     # < Revision 20/05/2026
     # add metastasisSegmentation method
@@ -7046,6 +7066,7 @@ class WindowSisyphe(QMainWindow):
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     # < Revision 13/04/2026
+    # add diffusionALPS method
     def diffusionALPS(self) -> None:
         from Sisyphe.gui.dialogDiffusionModel import DialogALPS
         self._dialog = DialogALPS()

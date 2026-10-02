@@ -2501,7 +2501,7 @@ class DialogDeepMeningiomaSegmentation(QDialog):
     Description
     ~~~~~~~~~~~
 
-    GUI dialog for deep learning meningioma segmentation using neuronet ams model.
+    GUI dialog for deep learning meningioma segmentation using agunet, dagunet, plsnet models.
 
     Inheritance
     ~~~~~~~~~~~
@@ -2533,7 +2533,10 @@ class DialogDeepMeningiomaSegmentation(QDialog):
 
         self._volumeSelect = FilesSelectionWidget(parent=self)
         self._volumeSelect.filterSisypheVolume()
-        self._volumeSelect.filterSameSequence(SisypheAcquisition.T1)
+        # < Revision 01/10/2026
+        # self._volumeSelect.filterSameSequence(SisypheAcquisition.T1)
+        self._volumeSelect.filterSameSequence([SisypheAcquisition.T1, SisypheAcquisition.CET1])
+        # Revision 01/10/2026 >
         self._volumeSelect.setCurrentVolumeButtonVisibility(True)
         self._volumeSelect.setTextLabel('T1')
         self._volumeSelect.setMinimumWidth(500)
@@ -2623,24 +2626,28 @@ class DialogDeepMeningiomaSegmentation(QDialog):
                                 wait.close()
                                 return
                         """
-                        256 x 256 x 256 isotropic mm resampling
+                        Isotropic mm resampling
                         """
-                        f = SisypheApplyTransform()
-                        f.setInterpolator('linear')
-                        f.setMoving(t1)
-                        rt1 = f.resampleToFOV((256, 256, 256), (1.0, 1.0, 1.0), save=False)
+                        f = None
+                        wait.setInformationText('Isotropic mm resampling...')
+                        if t1.getSpacing() == (1.0, 1.0, 1.0): rt1 = t1
+                        else:
+                            f = SisypheApplyTransform()
+                            f.setInterpolator('linear')
+                            f.setMoving(t1)
+                            rt1 = f.resampleToSpacing((1.0, 1.0, 1.0), save=False)
                         """
                         Segmentation
                         """
                         r = None
                         wait.setInformationText('Meningioma segmentation initialization...')
                         wait.setButtonVisibility(True)
+                        model = self._settings.getParameterValue('Model')[0]
                         with Manager() as manager:
                             mng = manager.dict()
                             queue = Queue()
                             try:
-                                extractor = ProcessDeepMeningiomaSegmentation(rt1, queue)
-                                wait.setInformationText('Meningioma segmentation...')
+                                extractor = ProcessDeepMeningiomaSegmentation(rt1, model, mng, queue)
                                 extractor.start()
                                 while extractor.is_alive():
                                     # noinspection PyTypeChecker
@@ -2671,17 +2678,20 @@ class DialogDeepMeningiomaSegmentation(QDialog):
                             v.copyFromNumpyArray(r, spacing=(1.0, 1.0, 1.0), defaultshape=False)
                             v.copyAttributesFrom(t1, display=False, slope=False)
                             """
-                            Resample menigioma map to native FOV
+                            Resample meningioma map to native FOV
                             """
-                            trf = f.getTransform()
-                            trf = trf.getInverseTransform()
-                            trf.setSize(t1.getSize())
-                            trf.setSpacing(t1.getSpacing())
-                            f = SisypheApplyTransform()
-                            f.setInterpolator('linear')
-                            f.setTransform(trf)
-                            f.setMoving(v)
-                            vr = f.resampleMoving(save=False)
+                            wait.setInformationText('Native FOV resampling...')
+                            if f:
+                                trf = f.getTransform()
+                                trf = trf.getInverseTransform()
+                                trf.setSize(t1.getSize())
+                                trf.setSpacing(t1.getSpacing())
+                                f = SisypheApplyTransform()
+                                f.setInterpolator('linear')
+                                f.setTransform(trf)
+                                f.setMoving(v)
+                                vr = f.resampleMoving(save=False)
+                            else: vr = v
                             """
                             Save meningioma map
                             """
@@ -2694,13 +2704,21 @@ class DialogDeepMeningiomaSegmentation(QDialog):
                             vr.setFilenameSuffix(suffix)
                             wait.setInformationText('Save {}...'.format(vr.getBasename()))
                             vr.save()
+                            """
+                            Save ROI
+                            """
+                            if self._settings.getParameterValue('SaveROI'):
+                                threshold = self._settings.getParameterValue('Threshold')
+                                roi = vr.getROI(threshold, op='>=')
+                                roi.setFilename(vr.getFilename())
+                                roi.save()
                     wait.close()
             """
             Exit
             """
             r = messageBox(self,
                            self.windowTitle(),
-                           'Would you like to perform more meningioma segmentation ?',
+                           'Would you like to perform additional meningioma segmentation ?',
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No,
                            default=QMessageBox.No)
@@ -2748,7 +2766,10 @@ class DialogDeepMetastasisSegmentation(QDialog):
 
         self._volumeSelect = FilesSelectionWidget(parent=self)
         self._volumeSelect.filterSisypheVolume()
-        self._volumeSelect.filterSameSequence(SisypheAcquisition.T1)
+        # < Revision 01/10/2026
+        # self._volumeSelect.filterSameSequence(SisypheAcquisition.T1)
+        self._volumeSelect.filterSameSequence([SisypheAcquisition.T1, SisypheAcquisition.CET1])
+        # Revision 01/10/2026 >
         self._volumeSelect.setCurrentVolumeButtonVisibility(True)
         self._volumeSelect.setTextLabel('Black blood contrast T1')
         self._volumeSelect.setMinimumWidth(500)

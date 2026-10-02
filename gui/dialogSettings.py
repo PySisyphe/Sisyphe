@@ -371,7 +371,9 @@ class DialogSettings(QDialog):
                 elif function == 'DeepMetastasisSegmentation': item.setText(0, 'Metastasis segmentation')
                 elif function == 'DeepMicrobleedsSegmentation': item.setText(0, 'Microbleeds segmentation')
                 fitems['Segmentation'].addChild(item)
-            elif function in ('Registration',
+            # < Revision 27/09/2026
+            elif function in ('FrameDetection',
+                              'Registration',
                               'T1Normalization',
                               'T2Normalization',
                               'PDNormalization',
@@ -384,6 +386,7 @@ class DialogSettings(QDialog):
                               'Realignment',
                               'Resample',
                               'DisplacementFieldJacobianDeterminant'):
+            # Revision 27/09/2026 >
                 if function == 'PDNormalization': item.setText(0, 'PD normalization')
                 elif function == 'PTNormalization': item.setText(0, 'PET normalization')
                 elif function == 'NMNormalization': item.setText(0, 'SPECT normalization')
