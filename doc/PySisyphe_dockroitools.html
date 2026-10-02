@@ -84,6 +84,8 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_extensions.html">PySiSyphe file extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_extensions.html#pysisyphe-files">PySiSyphe files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
@@ -171,7 +173,7 @@
 </div>
 <p>All tools in this section work in 2D and are applied to the selected slice displayed in the view widget (slice view or synchronized view in the central area), other slices are not affected. Left-click in the view widget to select a slice, the selected slice will be outlined in white. If no slice is selected, these tools will have no effect.</p>
 <p>The keyboard shortcut <strong>²</strong> re-executes the action of the last tool clicked.</p>
-<dl>
+<dl class="simple">
 <dt><a class="reference internal" href="_images/dilate.png"><img alt="dilate" src="_images/dilate.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click for morphological dilatation (see <a class="reference external" href="https://en.wikipedia.org/wiki/Dilation_(morphology)">Morphology dilatation in wikipedia</a>) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
 </dd>
 <dt><a class="reference internal" href="_images/erode.png"><img alt="erode" src="_images/erode.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click for morphological erosion (see <a class="reference external" href="https://en.wikipedia.org/wiki/Erosion_(morphology)">Morphology erosion in wikipedia</a>) of the selected slice. Shape and size of the structuring element used by the morphology operator are defined in <a class="reference internal" href="#tools-section-brush-settings"><span class="std std-ref">Brush settings</span></a>.</p>
@@ -206,6 +208,8 @@
 </dd>
 <dt><a class="reference internal" href="_images/cross.png"><img alt="cross" src="_images/cross.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to clear the selected ROI slice.</p>
 </dd>
+</dl>
+<dl id="tools-section-gemini">
 <dt><a class="reference internal" href="_images/gemini.png"><img alt="gemini" src="_images/gemini.png" style="width: 32.0px; height: 32.0px;" /></a></dt><dd><p>Left-click to display a menu from which you can select a Gemini AI prompt that you previously saved in the ‘prompts’ subfolder of the user folder (~/.PySisype). Open the Gemini prompt dialog box by selecting the “New prompt…” menu.</p>
 <p>This interface allows you to edit multimodal prompts, which combine text with a 2D image of the current slice displayed in the slice view widget.</p>
 <ul class="simple">

@@ -84,6 +84,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-hippocampus-segmentation">Deep-learning Hippocampus segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-hypo-intensity-lesion-segmentation">Deep-learning Hypo-intensity lesion segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-medial-temporal-segmentation">Deep-learning Medial temporal segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deep-learning-meningioma-segmentation">Deep-learning Meningioma segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-metastasis-segmentation">Deep-learning Metastasis segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-microbleeds-segmentation">Deep-learning Microbleeds segmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning-tissue-segmentation">Deep-learning Tissue segmentation</a></li>
@@ -94,6 +95,8 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_extensions.html">PySiSyphe file extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_extensions.html#pysisyphe-files">PySiSyphe files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
@@ -142,6 +145,7 @@
 <li><p><a class="reference internal" href="#menu-section-hipp"><span class="std std-ref">Deep-learning Hippocampus segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-lesion"><span class="std std-ref">Deep-learning Hypo-intensity lesion segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-temporal"><span class="std std-ref">Deep-learning Medial temporal segmentation</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-mening"><span class="std std-ref">Deep-learning Meningioma segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-meta"><span class="std std-ref">Deep-learning Metastasis segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-microbld"><span class="std std-ref">Deep-learning Microbleeds segmentation</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-tissue"><span class="std std-ref">Deep-learning Tissue segmentation</span></a></p></li>
@@ -411,8 +415,8 @@
 </div></blockquote>
 <div class="admonition-reference admonition">
 <p class="admonition-title">Reference</p>
-<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4461537/">Hippocampal subfields</a>: A computational atlas of the hippocampal formation using ex vivo, ultra-high resolution MRI: Application to adaptive segmentation of in vivo MRI. Iglesias J.E., Augustinack J.C., Nguyen K., Player C.M., Player A., Wright M., Roy N., Frosch M.P., McKee A.C., Wald L.L., Fischl B., Van Leemput K. Neuroimage. 2015 Apr 29;115:117–137.</p>
-<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5557007/">Amygdala nuclei</a>: High-resolution magnetic resonance imaging reveals nuclei of the human amygdala: manual segmentation to automatic atlas. Saygin Z.M., Kliemann D., Iglesias J.E., van der Kouwe A.J.W., Boyd E., Reuter M., Stevens A., Van Leemput K., McKee A., Frosch M.P., Fischl B., Augustinack J.C. Neuroimage. 2017 May 4;155:370–382.</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4461537/">Hippocampal subfields article</a>: A computational atlas of the hippocampal formation using ex vivo, ultra-high resolution MRI: Application to adaptive segmentation of in vivo MRI. Iglesias J.E., Augustinack J.C., Nguyen K., Player C.M., Player A., Wright M., Roy N., Frosch M.P., McKee A.C., Wald L.L., Fischl B., Van Leemput K. Neuroimage. 2015 Apr 29;115:117–137.</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5557007/">Amygdala nuclei article</a>: High-resolution magnetic resonance imaging reveals nuclei of the human amygdala: manual segmentation to automatic atlas. Saygin Z.M., Kliemann D., Iglesias J.E., van der Kouwe A.J.W., Boyd E., Reuter M., Stevens A., Van Leemput K., McKee A., Frosch M.P., Fischl B., Augustinack J.C. Neuroimage. 2017 May 4;155:370–382.</p>
 </div>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
 <p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget below to select <strong>T2</strong> PySisyphe volume(s) to be segmented. This widget will only be displayed if the <strong>Use T2</strong> parameter is checked. T1 and T2 volumes must be coregistered and resampled using the same space/transform ID.</p>
@@ -428,10 +432,29 @@
 <p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
 <p>Sample volume can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> to test this processing.</p>
 </section>
+<section id="deep-learning-meningioma-segmentation">
+<span id="menu-section-mening"></span><h2>Deep-learning Meningioma segmentation<a class="headerlink" href="#deep-learning-meningioma-segmentation" title="Link to this heading"></a></h2>
+<p>This menu is designed to perform meningioma segmentation using deep-learning pre-trained model from post-contrast T1 sequence. The segmentation is saved as a probability map.</p>
+<p>The code in PySisype is a fork of the <a class="reference external" href="https://github.com/dbouget/mri_brain_tumor_segmentation">Attention Gated UNet</a> package. In particular, the model’s weights were converted to the Keras 3 format to avoid having to install the <a class="reference external" href="https://pypi.org/project/tf-keras/">tf keras</a> compatibility module.</p>
+<div class="admonition-reference admonition">
+<p class="admonition-title">Reference</p>
+<p><a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10365121/">Article</a>: Meningioma Segmentation in T1-Weighted MRI Leveraging Global Context and Attention Mechanisms. D. Bouget, A. Pedersen, S.A.M. Hosainey, O. Solheim, I. Reinertsen.  Front Radiol 2021 Sep 23:1:711514.</p>
+</div>
+<p>Use the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget at the top to select <strong>T1</strong> PySisyphe volume(s) to be segmented.</p>
+<p>Toggle <strong>Meningioma segmentation…</strong> button to show/hide parameters.</p>
+<ul class="simple">
+<li><p>Select the pre-trained model <em>AGUNet</em> or <em>UNet</em>.</p></li>
+<li><p>Check <strong>Save ROI</strong> if you also want to save the result as a PySisyphe ROI (xroi).</p></li>
+<li><p>Set the <strong>Probability threshold</strong>, between 0.0 and 1.0, which is used to process the ROI. This option is only active if <strong>Save ROI</strong> is checked.</p></li>
+<li><p>The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
+</ul>
+<p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without segmentation.</p>
+</section>
 <section id="deep-learning-metastasis-segmentation">
 <span id="menu-section-meta"></span><h2>Deep-learning Metastasis segmentation<a class="headerlink" href="#deep-learning-metastasis-segmentation" title="Link to this heading"></a></h2>
 <p>This menu is designed to perform metastasis segmentation using deep-learning pre-trained model from post-contrast black blood T1 sequences. The segmentation is saved as a probability map.</p>
-<p>The code in PySisype is a fork of the <a class="reference external" href="https://github.com/nibabel/RLK-Unet">RLK Unet</a> package.</p>
+<p>The code in PySisype is a fork of the <a class="reference external" href="https://github.com/nibabel/RLK-Unet">RLK UNet</a> package.</p>
 <div class="admonition-reference admonition">
 <p class="admonition-title">Reference</p>
 <p><a class="reference external" href="https://www.frontiersin.org/journals/oncology/articles/10.3389/fonc.2023.1273013/full">Article</a>: Development of RLK-Unet: A clinically favorable deep learning algorithm for brain metastasis detection and treatment response assessment. Son S., Joo B., Park M., Suh S.H., Oh H.S., Kim J.W., Lee S., Ahn S.J., Lee J.-M. Front Oncol. 2024 Jan 15:13:1273013.</p>
@@ -439,7 +462,7 @@
 <p>Toggle <strong>Metastasis segmentation…</strong> button to show/hide parameters.</p>
 <ul class="simple">
 <li><p>Check <strong>Bias field correction</strong> to peform a bias field correction of the T1 before the segmentation processing.</p></li>
-<li><p>Set the extent <strong>Threshold</strong> in voxels, which is used to remove small noise-related detections.</p></li>
+<li><p>Set the <strong>Metastasis extent threshold</strong> in voxels, which is used to remove small noise-related detections.</p></li>
 <li><p>The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>
@@ -458,7 +481,7 @@
 <ul class="simple">
 <li><p>There are three models available, which can be selected individually using the first three checkboxes: <strong>Use first model</strong>, <strong>Use second model</strong>, and <strong>Use third model</strong>. If several models are selected (all models by default), the final map is a combination of the maps generated by each model.</p></li>
 <li><p>Check <strong>Save Mask</strong> if you also want to save the result as a PySisyphe (xvol) mask.</p></li>
-<li><p>Set the probability <strong>Threshold</strong>, between 0.0 and 1.0, which is used to process the mask. This option is only active if <strong>Save Mask</strong> is checked.</p></li>
+<li><p>Set the <strong>Probability threshold</strong>, between 0.0 and 1.0, which is used to process the mask. This option is only active if <strong>Save Mask</strong> is checked.</p></li>
 <li><p>The probability map is saved with the original file name, which is prefixed and/or suffixed by the strings edited in the <strong>Prefix</strong> and <strong>Suffix</strong> parameters.</p></li>
 </ul>
 <p>Left-click <strong>Execute</strong> button to perform segmentation.</p>

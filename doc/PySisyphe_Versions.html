@@ -74,6 +74,8 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_extensions.html">PySiSyphe file extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_extensions.html#pysisyphe-files">PySiSyphe files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
@@ -101,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-99-16-build-20-07-2026">version 0.99.16, build 20/07/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-01-14-build-01-09-2026">version 1.01.14, build 01/09/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-03-09-build-20-09-2026">version 1.03.09, build 20/09/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-05-22-build-20-10-2026">version 1.05.22, build 20/10/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -154,6 +157,7 @@
 <li><p><a class="reference internal" href="#build20-07-2026"><span class="std std-ref">version 0.99.16, build 20/07/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build01-09-2026"><span class="std std-ref">version 1.01.14, build 01/09/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-09-2026"><span class="std std-ref">version 1.03.09, build 20/09/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-10-2026"><span class="std std-ref">version 1.05.22, build 20/10/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -12132,6 +12136,470 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>replace v.load(filename) with v.load(filename, binary=False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-1-05-22-build-20-10-2026">
+<span id="build20-10-2026"></span><h2>version 1.05.22, build 20/10/2026<a class="headerlink" href="#version-1-05-22-build-20-10-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>new html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_extensions.rst</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_index.rst</p></li>
+<li><p>PySisyphe_home.rst</p></li>
+<li><p>PySisyphe_Versions.rst</p></li>
+<li><p>PySisyphe_menubar.rst</p></li>
+<li><p>PySisyphe_File.rst</p></li>
+<li><p>PySisyphe_Registration.rst</p></li>
+<li><p>PySisyphe_Segmentation.rst</p></li>
+<li><p>PySisyphe_dockroitools.rst</p></li>
+<li><p>PySisyphe_Overview.rst</p></li>
+<li><p>PySisyphe_toolbar.rst</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/core/sisypheROI.cpython-310-darwin.so</p></li>
+<li><p>/core/sisypheROI.cpython-312-darwin.so</p></li>
+<li><p>/core/sisypheROI.cp310-win_amd64.pyd</p></li>
+<li><p>/core/sisypheROI.cp312-win_amd64.pyd</p></li>
+<li><p>/core/sisypheROI.cpython-312-x86_64-linux-gnu.so</p></li>
+<li><p>/settings/functions.xml</p></li>
+<li><p>/settings/tooltips.xml</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new files</strong></p>
+<blockquote>
+<div><ul>
+<li><p>/lib/agunet/weights/AGUNet/model.keras</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>weights of the AGUNet model used for meningioma segmentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>/lib/agunet/weights/UNet-FV/model.keras</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>weights of the UNet-FV model used for meningioma segmentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new module</strong></p>
+<blockquote>
+<div><ul>
+<li><p>/lib/agunet</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>deep learning model for meningioma segmentation</p></li>
+<li><p>fork of the <a class="reference external" href="https://github.com/dbouget/mri_brain_tumor_segmentation">Attention Gated UNet</a> package</p></li>
+<li><p>convert the weights of the AGUNet model from the Keras 2 format (model.hd5) to the Keras 3 format (model.keras)</p></li>
+<li><p>convert the weights of the UNet-FV model from the Keras 2 format (model.hd5) to the Keras 3 format (model.keras)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sispheROI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update cython compilation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheDicom</p></li>
+<li><p>core.sisypheTransform</p></li>
+<li><p>core.sisypheFiducialBox</p></li>
+<li><p>core.sisypheImageAttributes</p></li>
+<li><p>gui.dialogDiffusionModel</p></li>
+<li><p>gui.dialogDeepSegmentation</p></li>
+<li><p>gui.dialogFiducialBox</p></li>
+<li><p>gui.dialogSettings</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>processing.capturedStdoutProcessing</p></li>
+<li><p>widgets.fileBrowserWidget</p></li>
+<li><p>widgets.sliceTrajectoryViewWidget</p></li>
+<li><p>widgets.sliceViewFiducialBoxWidget</p></li>
+<li><p>widgets.projectionViewWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated functions</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheDicom.loadBVal()</p></li>
+<li><p>core.sisypheDicom.loadBVec()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace the while loop with a for loop</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>GUI dialog for deep learning meningioma segmentation using agunet, dagunet, plsnet, unet models</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDeepMeningiomaSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>multiprocessing class for deep learning meningioma segmentation using agunet, dagunet, plsnet, unet models.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sispheROI.SisypheROI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update load() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sispheROI.SisypheROI</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __str__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheTransform.SisypheApplyTransform</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new resampleToSpacing() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new _calcTransform() method</p></li>
+<li><p>new setMaximumFiducialError() method</p></li>
+<li><p>new getMaximumFiducialError() method</p></li>
+<li><p>update calcTransform() method</p></li>
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setSequenceToStructMap() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update multiExecute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogALPS</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFiducialBox.DialogFiducialBox</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _calcTransform() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSettings() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initFileMenu() method</p></li>
+<li><p>update frameDetection() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _fileClicked() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update synchroniseToolMoved() method</p></li>
+<li><p>update isToolAligned() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add FrontPlaneChanged Qt signal</p></li>
+<li><p>update removeFrontPlateMarkers() method</p></li>
+<li><p>update zoomOnMarker() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.IconBarSliceViewFiducialBoxWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new _frontPlaneChanged() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update _setViewWidget() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheTransform.SisypheApplyTransform.resampleToSpacing()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>reslice the moving volume attribute with a new voxel spacing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox._calcTransform()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy of the previous core.sisypheFiducialBox.SisypheFiducialBox.calcTransform() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox.setMaximumFiducialError()</p></li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox.getMaximumFiducialError()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set/get self._maxerror attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.IconBarSliceViewFiducialBoxWidget._frontPlaneChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update self._markermenu</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sispheROI.SisypheROI.load()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add binary parameter, if False, load only XML part (attributes), not binary part (array), default is True (load XML and binary parts)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sispheROI.SisypheROI.__str__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>display ‘Non zero voxels’ if self._sitk_image is not None</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._maxerror attribute (maximum fiducial markers error)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox.calcTransform()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>outlier removing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageAttributes.SisypheAcquisition.setSequenceToStructMap()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove self.setUnitToPercent()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMeningiomaSegmentation.__init__()</p></li>
+<li><p>gui.dialogDeepSegmentation.DialogDeepMetastasisSegmentation.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._volumeSelect.filterSameSequence(SisypheAcquisition.T1) with self._volumeSelect.filterSameSequence([SisypheAcquisition.T1, SisypheAcquisition.CET1])</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel.multiExecute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self._RUMBA.getParameterValue(‘IVIMD’) with self._IVIM.getParameterValue(‘IVIMD’)</p></li>
+<li><p>bug fix, replace self._RUMBA.getParameterValue(‘IVIMDS’) with self._IVIM.getParameterValue(‘IVIMDS’)</p></li>
+<li><p>bug fix, replace self._RUMBA.getParameterValue(‘IVIMF’) with self._IVIM.getParameterValue(‘IVIMF’)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogALPS.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>move wait.hide() to avoid the lack of a waiting dialog before the coregistration process</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFiducialBox.DialogFiducialBox.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._threshold attribute (LabeledDoubleSpinBox)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogFiducialBox.DialogFiducialBox._calcTransform()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._view.getFiducialBoxDict().setMaximumFiducialError(self._threshold.value())</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings._initSettings()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add FrameDetection field</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._initFileMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self._action[‘xdcm’].triggered.connect(self.xmlDicom) with self._action[‘xdcm’].triggered.connect(lambda: self.xmlDicom())</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.frameDetection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ask new detection</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._fileClicked()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait dialog when displaying xmesh preview</p></li>
+<li><p>add .bvec preview</p></li>
+<li><p>add .bval preview</p></li>
+<li><p>add .xbvec preview</p></li>
+<li><p>add .xbval preview</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.synchroniseToolMoved()</p></li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.isToolAligned()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, exception management of the ‘None’ type</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.removeFrontPlateMarkers()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>hide front plate tools</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.SliceViewFiducialBoxWidget.zoomOnMarker()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, set the focal point at the tool coordinates</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.IconBarSliceViewFiducialBoxWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add setattr(self, ‘getFiducialBoxDict’, self._widget.getFiducialBoxDict)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewFiducialBoxWidget.IconBarSliceViewFiducialBoxWidget._setViewWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._widget.FrontPlaneChanged.connect(self._frontPlaneChanged)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget.setVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, move the mask processing before the line if self._cut == 0:</p></li>
 </ul>
 </div></blockquote>
 </li>

@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PySiSyphe file extensions &mdash; Sisyphe 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=049aceee"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Core API" href="API/index.html" />
+    <link rel="prev" title="Window menu" href="PySisyphe_Window.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sisyphe
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">PySisyphe documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_main.html">Main window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_toolbar.html">Toolbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_thumbnailbar.html">Thumbnail bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_sliceview.html">Slice view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_orthogonalview.html">Orthogonal view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_synchronizedview.html">Synchronized view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_projectionview.html">Projection view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_multicomponentview.html">Multi-component view widget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_database.html">Database Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_browser.html">File browser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_screenshots.html">Screenshots manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_ipython.html">IPython console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroi.html">ROI tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockroitools.html">ROI Tools tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockmesh.html">Mesh tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktarget.html">Target/Trajectory tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_docktracking.html">Tracking tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_dockhelp.html">Documentation tab of the dock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_menubar.html">Menubar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_File.html">File menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Functions.html">Functions menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Registration.html">Registration menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Segmentation.html">Segmentation menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PySiSyphe file extensions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#xbval">.xbval</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xbvec">.xbvec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xdcm">.xdcm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xdmodel">.xdmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xfid">.xfid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xlabels">.xlabels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xline">.xline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xlut">.xlut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xmodel">.xmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xpoint">.xpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xmesh">.xmesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xroi">.xroi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xsheet">.xsheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xstruct">.xstruct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xtools">.xtools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xtract">.xtract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xtrf">.xtrf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xtrfs">.xtrfs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xvol">.xvol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#xwflow">.xwflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#pysisyphe-files">PySiSyphe files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pysisyphe-folder">.PySisyphe folder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pysisyphe-log">PySisyphe.log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions-xml">functions.xml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recent-xml">recent.xml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#settings-xml">settings.xml</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_Versions.html">Version history</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sisyphe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">PySiSyphe file extensions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PySisyphe_extensions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pysisyphe-file-extensions">
+<span id="page-extensions"></span><h1>PySiSyphe file extensions<a class="headerlink" href="#pysisyphe-file-extensions" title="Link to this heading"></a></h1>
+<p>All PySiSyphe files are saved in XML text format.</p>
+<section id="xbval">
+<h2>.xbval<a class="headerlink" href="#xbval" title="Link to this heading"></a></h2>
+<p>It records a list of diffusion gradient B-values. This file is created automatically during the DICOM conversion of diffusion-weighted series. It can also be created from the <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-gradients"><span class="std std-ref">Gradients</span></a> menu.</p>
+</section>
+<section id="xbvec">
+<h2>.xbvec<a class="headerlink" href="#xbvec" title="Link to this heading"></a></h2>
+<p>It records a list of diffusion gradient B-vectors. This file is created automatically during the DICOM conversion of diffusion-weighted series. It can also be created from the <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-gradients"><span class="std std-ref">Gradients</span></a> menu.</p>
+</section>
+<section id="xdcm">
+<h2>.xdcm<a class="headerlink" href="#xdcm" title="Link to this heading"></a></h2>
+<p>This file is associated with a PySisyphe volume (.xvol) when converted from DICOM series (<a class="reference internal" href="PySisyphe_File.html#menu-section-dcmimport"><span class="std std-ref">Dicom import</span></a>). It contains all non-private DICOM fields. It can be viewed using the <a class="reference internal" href="PySisyphe_File.html#menu-section-xmldcm"><span class="std std-ref">XML Dicom attributes</span></a> menu.</p>
+</section>
+<section id="xdmodel">
+<h2>.xdmodel<a class="headerlink" href="#xdmodel" title="Link to this heading"></a></h2>
+<p>This file stores a diffusion model that is processed from the <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-diffmodel"><span class="std std-ref">Diffusion model</span></a> menu.</p>
+</section>
+<section id="xfid">
+<h2>.xfid<a class="headerlink" href="#xfid" title="Link to this heading"></a></h2>
+<p>This file is associated with a PySisyphe volume (.xvol) after a stereotactic frame is detected using the <a class="reference internal" href="PySisyphe_Registration.html#menu-section-stereo"><span class="std std-ref">Stereotactic frame detection</span></a> menu. It records the position of each detected fiducial marker in the world coordinate system (in mm, according to the LPS+ convention).</p>
+</section>
+<section id="xlabels">
+<h2>.xlabels<a class="headerlink" href="#xlabels" title="Link to this heading"></a></h2>
+<p>This file is associated with a PySisyphe volume (.xvol) with the LB modality, i.e., label image. It stores a dictionary that lists the label names associated with each numeric label index value.</p>
+</section>
+<section id="xline">
+<h2>.xline<a class="headerlink" href="#xline" title="Link to this heading"></a></h2>
+<p>This is a trajectory tool associated with a PySisyphe volume (.xvol). It can be displayed in the <a class="reference internal" href="PySisyphe_orthogonalview.html#page-orthogonalview"><span class="std std-ref">Orthogonal view</span></a> of the central area. It is loaded from the <a class="reference internal" href="PySisyphe_docktarget.html#page-docktarget"><span class="std std-ref">Target/Trajectory tab of the dock</span></a>.</p>
+</section>
+<section id="xlut">
+<h2>.xlut<a class="headerlink" href="#xlut" title="Link to this heading"></a></h2>
+<p>This is the native format for storing PySisyphe LUT colormaps; it records a list of 256 RGB colors. You can create or edit a LUT from the <a class="reference internal" href="PySisyphe_File.html#menu-section-editlut"><span class="std std-ref">Edit LUT</span></a> menu.</p>
+</section>
+<section id="xmodel">
+<h2>.xmodel<a class="headerlink" href="#xmodel" title="Link to this heading"></a></h2>
+<p>This file records a voxel-by-voxel statistical GLM model. It is created from the <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-fmri-model"><span class="std std-ref">fMRI model definition</span></a> or <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-glm-model"><span class="std std-ref">General linear model definition</span></a> menu.</p>
+</section>
+<section id="xpoint">
+<h2>.xpoint<a class="headerlink" href="#xpoint" title="Link to this heading"></a></h2>
+<p>This file stores a target tool associated with a specific PySisyphe volume (.xvol). It can be displayed in the <a class="reference internal" href="PySisyphe_orthogonalview.html#page-orthogonalview"><span class="std std-ref">Orthogonal view</span></a> of the central area. It is loaded from the <a class="reference internal" href="PySisyphe_docktarget.html#page-docktarget"><span class="std std-ref">Target/Trajectory tab of the dock</span></a>.</p>
+</section>
+<section id="xmesh">
+<h2>.xmesh<a class="headerlink" href="#xmesh" title="Link to this heading"></a></h2>
+<p>This is the native format for storing PySisyphe mesh. Meshes are displayed in the <a class="reference internal" href="PySisyphe_orthogonalview.html#page-orthogonalview"><span class="std std-ref">Orthogonal view</span></a> of the central area. They are loaded from the <a class="reference internal" href="PySisyphe_dockmesh.html#page-dockmesh"><span class="std std-ref">Mesh tab of the dock</span></a>.</p>
+</section>
+<section id="xroi">
+<h2>.xroi<a class="headerlink" href="#xroi" title="Link to this heading"></a></h2>
+<p>This is the native format for storing the region of interest (ROI) associated with a particular PySisyhe volume (.xvol). ROIs are displayed in the <a class="reference internal" href="PySisyphe_sliceview.html#page-sliceview"><span class="std std-ref">Slice view</span></a> and/or <a class="reference internal" href="PySisyphe_synchronizedview.html#page-synchronizedview"><span class="std std-ref">Synchronized view</span></a> of the central area. They are loaded from the <a class="reference internal" href="PySisyphe_dockroi.html#page-dockroi"><span class="std std-ref">ROI tab of the dock</span></a>.</p>
+</section>
+<section id="xsheet">
+<h2>.xsheet<a class="headerlink" href="#xsheet" title="Link to this heading"></a></h2>
+<p>This is the native format for storing an array of numeric values.</p>
+</section>
+<section id="xstruct">
+<h2>.xstruct<a class="headerlink" href="#xstruct" title="Link to this heading"></a></h2>
+<p>This file stores the parameters for segmenting a specific anatomical structure from the <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-regsegmentation"><span class="std std-ref">Registration based segmentation</span></a> menu. It is saved in the ~/.PySisyphe/segmentation folder by default.</p>
+</section>
+<section id="xtools">
+<h2>.xtools<a class="headerlink" href="#xtools" title="Link to this heading"></a></h2>
+<p>It records a list of target and/or trajectory tools. These tools can be displayed in the <a class="reference internal" href="PySisyphe_orthogonalview.html#page-orthogonalview"><span class="std std-ref">Orthogonal view</span></a> of the central area. They are loaded from the <a class="reference internal" href="PySisyphe_docktarget.html#page-docktarget"><span class="std std-ref">Target/Trajectory tab of the dock</span></a>.</p>
+</section>
+<section id="xtract">
+<h2>.xtract<a class="headerlink" href="#xtract" title="Link to this heading"></a></h2>
+<p>This is the native format for storing a list of streamlines, i.e., a tractogram. This file is created from the <a class="reference internal" href="PySisyphe_Diffusion.html#menu-section-tractogram"><span class="std std-ref">tractogram generation</span></a> menu. Streamlines are displayed in the <a class="reference internal" href="PySisyphe_orthogonalview.html#page-orthogonalview"><span class="std std-ref">Orthogonal view</span></a> of the central area. They are loaded from the <a class="reference internal" href="PySisyphe_docktracking.html#page-docktracking"><span class="std std-ref">Tracking tab of the dock</span></a>.</p>
+</section>
+<section id="xtrf">
+<h2>.xtrf<a class="headerlink" href="#xtrf" title="Link to this heading"></a></h2>
+<p>This file records a geometric transformation between a fixed reference volume and a moving volume.</p>
+</section>
+<section id="xtrfs">
+<h2>.xtrfs<a class="headerlink" href="#xtrfs" title="Link to this heading"></a></h2>
+<p>This file is associated with a PySisyphe volume (.xvol) and records a list of geometric transformations between this volume and all volumes with which it has been co-registered.</p>
+</section>
+<section id="xvol">
+<h2>.xvol<a class="headerlink" href="#xvol" title="Link to this heading"></a></h2>
+<p>This is the native format for storing a PySisyphe volume.</p>
+</section>
+<section id="xwflow">
+<h2>.xwflow<a class="headerlink" href="#xwflow" title="Link to this heading"></a></h2>
+<p>This file records a list of PySisyphe processing to run in batch mode. This file is created from the <a class="reference internal" href="PySisyphe_Functions.html#menu-section-workflows"><span class="std std-ref">Workflows</span></a> menu. It is saved in the ~/.PySisyphe/workflows folder by default.</p>
+</section>
+</section>
+<section id="pysisyphe-files">
+<span id="page-files"></span><h1>PySiSyphe files<a class="headerlink" href="#pysisyphe-files" title="Link to this heading"></a></h1>
+<section id="pysisyphe-folder">
+<h2>.PySisyphe folder<a class="headerlink" href="#pysisyphe-folder" title="Link to this heading"></a></h2>
+<p>It is located in the user folder (C:UsersYourUsername in windows platform, /Users/YourUsername in mac os platform and /home/YourUsername in linux platform). It can be quickly opened in the OS platform’s file manager by selecting the menu <a class="reference internal" href="PySisyphe_File.html#menu-section-openuser"><span class="std std-ref">Open user folder</span></a>. It contains configuration files (functions.xml, settings.xml), a log file (PySisyphe.log), and a file listing the most recently opened volumes (recent.xml).</p>
+<p>Eight default subdirectories are provided for storing user data:</p>
+<ul class="simple">
+<li><p><strong>/controls</strong>: control populations for 3D T1 MR, FDG PET, and HMPAO SPECT can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> menu. These files are saved to this folder by default.</p></li>
+<li><p><strong>/database</strong>: PySisyphe provides a patient database manager (<a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a>). It is stored in this directory by default.</p></li>
+<li><p><strong>/dicom</strong>: this directory is intended for storing PySisyphe volumes generated from the conversion of DICOM series (<a class="reference internal" href="PySisyphe_File.html#menu-section-dcmimport"><span class="std std-ref">Dicom import</span></a>).</p></li>
+<li><p><strong>/models</strong>: this is the default directory used to save user-defined voxel-by-voxel statistical models (<a class="reference internal" href="PySisyphe_Mapping.html#menu-section-fmri-model"><span class="std std-ref">fMRI model definition</span></a> or <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-glm-model"><span class="std std-ref">General linear model definition</span></a>). There is a shortcut <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-models"><span class="std std-ref">Models</span></a> menu for quickly opening these models in PySisyphe.</p></li>
+<li><p><strong>/prompts</strong>: this directory is intended for storing gemini prompts that are generated from PySisyphe (<a class="reference internal" href="PySisyphe_dockroitools.html#tools-section-gemini"><span class="std std-ref">Gemini prompt</span></a>).</p></li>
+<li><p><strong>/samples</strong>: various sample volumes can be downloaded from the <a class="reference internal" href="PySisyphe_File.html#menu-section-download"><span class="std std-ref">Download manager</span></a> menu for testing PySisyphe.</p></li>
+<li><p><strong>/segmentation</strong>: this is the default directory where user-defined settings for segmenting (<a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-regsegmentation"><span class="std std-ref">Registration based segmentation</span></a>) a specific anatomical structure are saved. There is a shortcut <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-structs"><span class="std std-ref">Structs</span></a> menu for quickly opening the anatomical structure parameters in the <a class="reference internal" href="PySisyphe_Segmentation.html#menu-section-regsegmentation"><span class="std std-ref">Registration based segmentation</span></a> interface.</p></li>
+<li><p><strong>/workflows</strong>: this is the default directory where batch processing files (.xwflow files) generated from the <a class="reference internal" href="PySisyphe_Functions.html#menu-section-workflow"><span class="std std-ref">Workflow processing</span></a> menu are stored. There is a shortcut <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-models"><span class="std std-ref">Models</span></a> menu for quickly opening these workflows in the <a class="reference internal" href="PySisyphe_Functions.html#menu-section-workflow"><span class="std std-ref">Workflow processing</span></a> interface.</p></li>
+</ul>
+</section>
+<section id="pysisyphe-log">
+<h2>PySisyphe.log<a class="headerlink" href="#pysisyphe-log" title="Link to this heading"></a></h2>
+<p>This file is located in the ~/.PySisyphe folder. It stores user actions and the traceback details when an unhandled exception occurs. Please send this file to the contact email address <a class="reference external" href="mailto:pysisyphe&#37;&#52;&#48;gmail&#46;com">pysisyphe<span>&#64;</span>gmail<span>&#46;</span>com</a> when you wish to report a bug.</p>
+</section>
+<section id="functions-xml">
+<h2>functions.xml<a class="headerlink" href="#functions-xml" title="Link to this heading"></a></h2>
+<p>This file is located in the ~/.PySisyphe folder. It stores the default settings for most PySisyphe functions. These settings can be edited from the <a class="reference internal" href="PySisyphe_File.html#menu-section-preferences"><span class="std std-ref">Preferences</span></a> menu. It is not recommended to edit this file directly because the software will no longer work if the file becomes corrupted. In that case, delete this file, and a new default file will be created the next time the application is launched.</p>
+</section>
+<section id="recent-xml">
+<h2>recent.xml<a class="headerlink" href="#recent-xml" title="Link to this heading"></a></h2>
+<p>This file is located in the ~/.PySisyphe folder. It lists the most recently edited volumes. There is a shortcut <a class="reference internal" href="PySisyphe_File.html#menu-section-recent"><span class="std std-ref">Open recent</span></a> menu for quickly opening these volumes in PySisyphe.</p>
+</section>
+<section id="settings-xml">
+<h2>settings.xml<a class="headerlink" href="#settings-xml" title="Link to this heading"></a></h2>
+<p>This file is located in the ~/.PySisyphe folder. It stores the default settings for the PySisyphe graphic user interface. These settings can be edited from the <a class="reference internal" href="PySisyphe_File.html#menu-section-preferences"><span class="std std-ref">Preferences</span></a> menu. It is not recommended to edit this file directly because the software will no longer work if the file becomes corrupted. In that case, delete this file, and a new default file will be created the next time the application is launched.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="PySisyphe_Window.html" class="btn btn-neutral float-left" title="Window menu" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="API/index.html" class="btn btn-neutral float-right" title="Core API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, LOTTERIE Jean-Albert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
