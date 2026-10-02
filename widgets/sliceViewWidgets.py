@@ -156,7 +156,7 @@ class SliceViewWidget(AbstractViewWidget):
     _DIM0, _DIM1, _DIM2 = 0, 1, 2
     _AXIAL, _CORONAL, _SAGITTAL, = 1, 2, 3
 
-    # Synchronisation signals
+    # Custom Qt signals
 
     TransformApplied: pyqtSignal = pyqtSignal(QWidget, float, float, float, float, float, float)
     CameraPositionChanged: pyqtSignal = pyqtSignal(QWidget, float, float, float)

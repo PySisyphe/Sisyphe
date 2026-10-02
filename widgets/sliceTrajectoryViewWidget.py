@@ -69,7 +69,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
 
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceTrajectoryViewWidget
 
-    Last revision: 20/10/2025
+    Last revision: 18/09/2026
     """
     # Custom Qt signals
 
@@ -456,7 +456,11 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             tool that was moved.
         """
         super().synchroniseToolMoved(obj, tool)
-        name = self._menuAlignGroup.checkedAction().text()
+        # < Revision 18/09/2026
+        # name = self._menuAlignGroup.checkedAction().text()
+        try: name = self._menuAlignGroup.checkedAction().text()
+        except: return
+        # Revision 18/09/2026 >
         if name[:4] == 'Tool':
             toolname = name.split(' ')[1]
             self.setTrajectoryFromLineWidget(toolname, signal=False)
@@ -969,7 +973,11 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         bool
             True if aligned with a tool, False otherwise.
         """
-        return self._menuAlignGroup.checkedAction().text()[0] == 'T'
+        # < Revision 18/09/2026
+        # self._menuAlignGroup.checkedAction().text()[0] == 'T'
+        try: return self._menuAlignGroup.checkedAction().text()[0] == 'T'
+        except: return False
+        # Revision 18/09/2026 >
 
     def isDefaultAligned(self) -> bool:
         """

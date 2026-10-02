@@ -471,19 +471,30 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
             super().removeVolume()
             self._ref = None
         bimg = None
+        # < Revision 29/09/2026
+        if mask is not None: self._mask = mask
+        if self._mask is None:
+            if foreground.acquisition.isICBM152():
+                path = join(getICBM152Path(), 'icbm152_asym_template_mask.xvol')
+                if exists(path):
+                    self._mask = SisypheVolume()
+                    self._mask.load(path)
+            else:
+                self._mask = foreground.getMask('otsu', fill='3d')
+        # Revision 29/09/2026 >
         if self._cut == 0:
             # < Revision 21/11/2024
             # add mask parameter
             # < Revision 11/12/2025
-            if mask is not None: self._mask = mask
-            if self._mask is None:
-                if foreground.acquisition.isICBM152():
-                    path = join(getICBM152Path(), 'icbm152_asym_template_mask.xvol')
-                    if exists(path):
-                        self._mask = SisypheVolume()
-                        self._mask.load(path)
-                else:
-                    self._mask = foreground.getMask('otsu', fill='3d')
+            # if mask is not None: self._mask = mask
+            # if self._mask is None:
+            #     if foreground.acquisition.isICBM152():
+            #        path = join(getICBM152Path(), 'icbm152_asym_template_mask.xvol')
+            #        if exists(path):
+            #            self._mask = SisypheVolume()
+            #            self._mask.load(path)
+            #    else:
+            #        self._mask = foreground.getMask('otsu', fill='3d')
             # < Revision 11/12/2025
             # fimg = foreground.getProjection(self._direction,
             #                                 self._thickness,

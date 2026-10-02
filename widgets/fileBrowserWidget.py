@@ -794,7 +794,7 @@ class FileBrowserWidget(QWidget):
         ext = splitext(filename)[1].lower()
         if ext in ('.xml', '.md', '.rst', '.txt', '.json', '.log', '.xlut', '.xfid', '.xtrf', '.xtrfs',
                    '.xmesh','.xtools','.xline', '.xpoint', '.xtract', '.xidentity', '.xacq', '.xdisplay',
-                   '.xacpc', '.xdcm', '.xmodel', '.xwflow', '.xlabels'):
+                   '.xacpc', '.xdcm', '.xmodel', '.xwflow', '.xlabels', '.xbvec', '.xbval', '.bvec', '.bval'):
             # Text tab
             self._tabVisibility(text=True, source=self._chksource.isChecked())
             if ext == '.xlut':
@@ -819,9 +819,13 @@ class FileBrowserWidget(QWidget):
                 self._textpreview.setPlainText(str(v))
             elif ext == '.xmesh':
                 from Sisyphe.core.sisypheMesh import SisypheMesh
+                wait = DialogWait()
+                wait.open()
+                wait.setInformationText('{} preview...'.format(basename(filename)))
                 v = SisypheMesh()
                 v.load(filename)
                 self._textpreview.setPlainText(str(v))
+                wait.close()
             elif ext == '.xtools':
                 from Sisyphe.core.sisypheTools import ToolWidgetCollection
                 v = ToolWidgetCollection()
@@ -879,15 +883,25 @@ class FileBrowserWidget(QWidget):
                 v.load(filename, binary=False)
                 if v.acquisition.hasLabels():
                     self._textpreview.setPlainText(v.acquisition.labelsToStr())
+            # < Revision 30/09/2026
+            elif ext == '.xbval':
+                from Sisyphe.core.sisypheDicom import loadBVal
+                r = loadBVal(filename, format='xml')
+                self._textpreview.setPlainText(str(r))
+            elif ext == '.xbvec':
+                from Sisyphe.core.sisypheDicom import loadBVec
+                r = loadBVec(filename, format='xml')
+                self._textpreview.setPlainText(str(r))
+            # Revision 30/09/2026 >
             # XML tab
-            if ext in ('.xml', '.xwflow', '.md', '.rst', '.txt', '.json', '.log'):
+            if ext in ('.xml', '.xwflow', '.md', '.rst', '.txt', '.json', '.log', '.bvec', '.bval'):
                 with open(filename, 'r') as f:
                     lines = f.read()
                 if ext == '.xml':
                     self._tabVisibility(source=True)
                     self._preview.setCurrentIndex(3)
                     self._xmlpreview.setPlainText(lines)
-                elif ext in ('.txt', '.json', '.log'):
+                elif ext in ('.txt', '.json', '.log', '.bval', '.bvec'):
                     self._tabVisibility(text=True)
                     self._preview.setCurrentIndex(0)
                     self._textpreview.setPlainText(lines)
@@ -924,6 +938,9 @@ class FileBrowserWidget(QWidget):
             self._textpreview.setPlainText(str(v))
         elif ext in ('.nii', '.hdr', '.img', '.nia', '.nii.gz', '.img.gz'):
             from Sisyphe.core.sisypheImageIO import readFromNIFTI
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('{} preview...'.format(basename(filename)))
             self._tabVisibility(text=True)
             self._preview.setCurrentIndex(0)
             try: r = readFromNIFTI(filename)
@@ -931,8 +948,12 @@ class FileBrowserWidget(QWidget):
                 self._tabVisibility()
                 return
             self._textpreview.setPlainText(str(r))
+            wait.close()
         elif ext in ('.nrrd', '.nhdr'):
             from Sisyphe.core.sisypheImageIO import readFromNRRD
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('{} preview...'.format(basename(filename)))
             self._tabVisibility(text=True)
             self._preview.setCurrentIndex(0)
             try: r = readFromNRRD(filename)
@@ -940,8 +961,12 @@ class FileBrowserWidget(QWidget):
                 self._tabVisibility()
                 return
             self._textpreview.setPlainText(str(r))
+            wait.close()
         elif ext in ('.mnc', '.minc'):
             from Sisyphe.core.sisypheImageIO import readFromMINC
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('{} preview...'.format(basename(filename)))
             self._tabVisibility(text=True)
             self._preview.setCurrentIndex(0)
             try: r = readFromMINC(filename)
@@ -949,8 +974,12 @@ class FileBrowserWidget(QWidget):
                 self._tabVisibility()
                 return
             self._textpreview.setPlainText(str(r))
+            wait.close()
         elif ext in ('.mgh', '.mgz'):
             from Sisyphe.core.sisypheImageIO import readFromFreeSurferMGH
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('{} preview...'.format(basename(filename)))
             self._tabVisibility(text=True)
             self._preview.setCurrentIndex(0)
             try: r = readFromFreeSurferMGH(filename)
@@ -958,8 +987,12 @@ class FileBrowserWidget(QWidget):
                 self._tabVisibility()
                 return
             self._textpreview.setPlainText(str(r))
+            wait.close()
         elif ext == '.vol':
             from Sisyphe.core.sisypheImageIO import readFromSisyphe
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('{} preview...'.format(basename(filename)))
             self._tabVisibility(text=True)
             self._preview.setCurrentIndex(0)
             try: r = readFromSisyphe(filename)
@@ -967,8 +1000,12 @@ class FileBrowserWidget(QWidget):
                 self._tabVisibility()
                 return
             self._textpreview.setPlainText(str(r[1]))
+            wait.close()
         elif ext == '.vmr':
             from Sisyphe.core.sisypheImageIO import readFromBrainVoyagerVMR
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('{} preview...'.format(basename(filename)))
             self._tabVisibility(text=True)
             self._preview.setCurrentIndex(0)
             try: r = readFromBrainVoyagerVMR(filename)
@@ -976,8 +1013,12 @@ class FileBrowserWidget(QWidget):
                 self._tabVisibility()
                 return
             self._textpreview.setPlainText(str(r))
+            wait.close()
         elif ext in ('.vtk', '.vti'):
             from Sisyphe.core.sisypheImageIO import readFromVTK
+            wait = DialogWait()
+            wait.open()
+            wait.setInformationText('{} preview...'.format(basename(filename)))
             self._tabVisibility(text=True)
             self._preview.setCurrentIndex(0)
             try: r = readFromVTK(filename)
@@ -985,6 +1026,7 @@ class FileBrowserWidget(QWidget):
                 self._tabVisibility()
                 return
             self._textpreview.setPlainText(str(r))
+            wait.close()
         elif ext == '.xfm':
             from Sisyphe.core.sisypheTransform import SisypheTransform
             self._tabVisibility(text=True)

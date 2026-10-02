@@ -14,7 +14,9 @@ from sys import platform
 import cython
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QWidget
 
 from Sisyphe.core.sisypheSettings import SisypheSettings
 # noinspection PyCompatibility
@@ -61,8 +63,12 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
 
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceViewFiducialBoxWidget
 
-    Last revision: 18/12/2025
+    Last revision: 26/09/2026
     """
+
+    # Custom Qt signals
+
+    FrontPlaneChanged: pyqtSignal = pyqtSignal(QWidget)
 
     # Special method
 
@@ -199,7 +205,13 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             if n < self._fid.getMarkersCount():
                 if self.getZoom() != 10.0: self._scale = self.getZoom()
                 f = list(self.getCamera().GetFocalPoint())
-                p = self._fid.getMarker(int(f[2]), n)
+                # < Revision 26/09/2026
+                # p = self._fid.getMarker(int(f[2]), n)
+                tool = self.getTool(n)
+                if tool.getVisibility():
+                    p = tool.getPosition()
+                else: return
+                # Revision 26/09/2026 >
                 f[0], f[1] = p[0], p[1]
                 self.setCameraPlanePosition(f)
                 self.setZoom(10.0)
@@ -297,8 +309,15 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
         if not self._fid.isEmpty():
             if self._fid.getMarkersCount() == 9:
                 self._fid.removeFrontPlateMarkers()
+                # < Revision 26/09/2026
+                for i in range(6, 9):
+                    tool = self.getTool(i)
+                    tool.setVisibility(False)
+                self.FrontPlaneChanged.emit(self)
+                # Revision 26/09/2026 >
                 self._updateDisplayedMarkers()
                 self.updateRender()
+
 
 
 class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
@@ -315,7 +334,7 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
 
     QWidget -> IconBarWidget -> IconBarSliceViewFiducialBoxWidget
 
-    Last revision: 10/10/2025
+    Last revision: 1/10/2025
     """
 
     def __init__(self, fid: SisypheFiducialBox, parent: QWidget | None = None) -> None:
@@ -351,8 +370,19 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
         setattr(self, 'showErrorStatistics', self._widget.showErrorStatistics)
         setattr(self, 'removeCurrentSliceMarkers', self._widget.removeCurrentSliceMarkers)
         setattr(self, 'removeFrontPlateMarkers', self._widget.removeFrontPlateMarkers)
+        # < Revision 27/09/2026
+        setattr(self, 'getFiducialBoxDict', self._widget.getFiducialBoxDict)
+        # Revision 27/09/2026 >
 
     # Private methods
+
+    # < Revision 26/09/2026
+    # add _frontPlaneChanged() method
+    def _frontPlaneChanged(self):
+        self._markermenu.actions()[6].setVisible(False)
+        self._markermenu.actions()[7].setVisible(False)
+        self._markermenu.actions()[8].setVisible(False)
+    # Revision 26/09/2026 >
 
     def _onMenuTools(self, action):
         s = str(action.text())[0]
@@ -389,6 +419,10 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
             # noinspection PyUnresolvedReferences
             self._markermenu.triggered.connect(self._onMarkerZoom)
             self._icons['zoom'].setMenu(self._markermenu)
+
+            # < Revision 26/09/2026
+            self._widget.FrontPlaneChanged.connect(self._frontPlaneChanged)
+            # Revision 26/09/2026 >
 
             lyout = self._bar.layout()
             lyout.insertWidget(5, self._icons['zoom'])
