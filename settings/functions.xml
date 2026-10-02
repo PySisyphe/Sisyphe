@@ -272,6 +272,9 @@
 	</DeepFCDSegmentation>
 	<DeepMeningiomaSegmentation>
 		<Bias label="Bias field correction" vartype="bool">False</Bias>
+		<Model label="Pre-trained model" vartype="lstr">AGUNet|UNet</Model>
+		<Threshold label="Probability threshold" varmax="1.0" varmin="0.1" decimals="1" vartype="float">0.4</Threshold>
+		<SaveROI label="Save ROI" vartype="bool">False</SaveROI>
 		<Prefix label="Meningioma probability map prefix" vartype="str">meningioma</Prefix>
 		<Suffix label="Meningioma probability map suffix" vartype="str"/>
 	</DeepMeningiomaSegmentation>
@@ -286,10 +289,13 @@
 		<Model1 label="Use second model" vartype="bool">True</Model1>
 		<Model2 label="Use third model" vartype="bool">True</Model2>
 		<SaveMask label="Save microbleeds mask" vartype="bool">False</SaveMask>
-		<Threshold label="Probability threshold" varmax="1.0" varmin="0.1" vartype="float">0.4</Threshold>
+		<Threshold label="Probability threshold" varmax="1.0" varmin="0.1" decimals="1" vartype="float">0.4</Threshold>
 		<Prefix label="Microbleeds probability map prefix" vartype="str">mrcbld</Prefix>
 		<Suffix label="Microbleeds probability map suffix" vartype="str"/>
 	</DeepMicrobleedsSegmentation>
+	<FrameDetection>
+		<Threshold label="Marker error threshold" varmax="1.0" varmin="0.5" decimals="1" vartype="float">0.8</Threshold>
+	</FrameDetection>
 	<Registration>
 		<FixedMask label="Fixed volume mask" vartype="bool">True</FixedMask>
 		<Estimation vartype="lstr">FOV center alignment|Center of mass alignment|No estimation</Estimation>
