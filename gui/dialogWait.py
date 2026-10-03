@@ -167,8 +167,11 @@ class DialogWait(QDialog):
         # < Revision 08/07/2026
         # < Revision 09/07/2026
         elif platform == 'linux':
+            # < Revision 03/10/2026
+            # self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
             # noinspection PyUnresolvedReferences
-            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
+            # Revision 03/10/2026 >
             self._layout = QVBoxLayout()
             self.setLayout(self._layout)
         # Revision 09/07/2026 >
