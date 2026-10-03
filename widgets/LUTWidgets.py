@@ -101,9 +101,12 @@ if TYPE_CHECKING:
     from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
     from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
 
-if platform == 'win32':
+# < Revision 03/10/2026
+# if platform == 'win32':
+if platform in ('win32', 'linux'):
     # noinspection PyUnresolvedReferences
     from qdarktheme import load_palette
+# Revision 03/10/2026 >
 
 """
 Functions
@@ -228,7 +231,7 @@ class LutWidget(QWidget):
     QWidget -> LutWidget
 
     Creation: 01/11/2022
-    Last revision: 23/04/2026
+    Last revision: 03/10/2026
     """
 
     # Custom Qt Signal
@@ -308,7 +311,9 @@ class LutWidget(QWidget):
         self._fig.set_size_inches(size / 100, size / 100)
         # Revision 11/03/2025 >
         # < Revision 11/03/2025
-        if platform == 'win32':
+        # < Revision 03/10/2026
+        # if platform == 'win32':
+        if platform in ('win32', 'linux'):
             p = load_palette('auto')
             background = p.color(QPalette.Base)
         else:
@@ -318,6 +323,7 @@ class LutWidget(QWidget):
             else:
                 # noinspection PyTypeChecker
                 background = self.palette().color(QPalette.Base)
+        # Revision 03/10/2026 >
         # < Revision 11/03/2025
         self._fig.set_facecolor((background.red() / 255,
                                  background.green() / 255,
