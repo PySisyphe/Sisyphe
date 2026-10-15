@@ -181,12 +181,20 @@ class DialogWait(QDialog):
             self._slayout = QVBoxLayout()
             self._slayout.setContentsMargins(0, 0, 0, 0)
             self._slayout.addWidget(self._frame)
-            bcolor = self.palette().window().color()
+            # < Revision 15/10/2026
+            try:
+                bacolor = __main__.palette().base().color()
+                bocolor = __main__.palette().mid().color()
+            except:
+                bacolor = self.palette().base().color()
+                bocolor = self.palette().mid().color()
             self.setStyleSheet(
                 f"QFrame#WaitFrame {{"
-                f"  background-color: {bcolor.name()};"
+                f"  background-color: {bacolor.name()};"
+                f"  border: 1px solid {bocolor.name()};"
                 f"  border-radius: 10px;"
                 f"}}")
+            # Revision 15/10/2026 >
             self._layout = QVBoxLayout()
             self._frame.setLayout(self._layout)
             self.setLayout(self._slayout)

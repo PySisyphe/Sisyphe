@@ -96,6 +96,7 @@ class DialogSplash(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -104,7 +105,37 @@ class DialogSplash(QDialog):
         self._layout = QVBoxLayout()
         self._layout.setContentsMargins(20, 20, 20, 20)
         self._layout.setSpacing(10)
-        self.setLayout(self._layout)
+
+        # Window
+
+        if sys.platform == 'win32':
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            self.setLayout(self._layout)
+        elif sys.platform == 'darwin':
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            self.setLayout(self._layout)
+        elif sys.platform == 'linux':
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
+            self.setAttribute(Qt.WA_TranslucentBackground)
+            from PyQt5.QtWidgets import QFrame
+            self._frame = QFrame()
+            self._frame.setObjectName('WaitFrame')
+            self._slayout = QVBoxLayout()
+            self._slayout.setContentsMargins(0, 0, 0, 0)
+            self._slayout.addWidget(self._frame)
+            import qdarktheme
+            palette = qdarktheme.load_palette('auto')
+            bacolor = palette.base().color()
+            bocolor = palette.mid().color()
+            self.setStyleSheet(
+                f"QFrame#WaitFrame {{"
+                f"  background-color: {bacolor.name()};"
+                f"  border: 1px solid {bocolor.name()};"
+                f"  border-radius: 10px;"
+                f"}}")
+            self._layout = QVBoxLayout()
+            self._frame.setLayout(self._layout)
+            self.setLayout(self._slayout)
 
         # Init QWidgets
         """
@@ -430,20 +461,6 @@ class DialogSplash(QDialog):
         layout.addWidget(self._exit)
         self._layout.addLayout(layout)
 
-        # Window
-
-        if sys.platform == 'win32':
-            # noinspection PyTypeChecker
-            # self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-            # noinspection PyUnresolvedReferences
-            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-        elif sys.platform == 'darwin':
-            # noinspection PyTypeChecker,PyUnresolvedReferences
-            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-        elif sys.platform == 'linux':
-            # noinspection PyTypeChecker,PyUnresolvedReferences
-            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowModality(Qt.WindowModal)
 
     # Private method
