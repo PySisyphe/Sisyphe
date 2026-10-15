@@ -128,7 +128,7 @@ class DialogResult(QDialog):
     QDialog -> DialogResult
 
     Creation: 18/11/2024
-    Last revision: 26/05/2026
+    Last revision: 07/10/2026
     """
 
     # class method
@@ -178,6 +178,7 @@ class DialogResult(QDialog):
     _res            float, resel volume (in voxels)
     _zscore         float, z-value threshold
     _extent         float, number of voxels extent
+    _compress       bool, save xvol in a compressed format
     """
 
     def __init__(self, parent=None):
@@ -209,6 +210,9 @@ class DialogResult(QDialog):
         # < Revision 05/02/2026
         self._projUpdateFlag : bool = False
         # Revision 05/02/2026 >
+        # < Revision 07/10/2026
+        self._compress: bool = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -1425,6 +1429,26 @@ class DialogResult(QDialog):
 
     # Public methods
 
+    # < Revision 07/10/2026
+    def setCompressionOn(self) -> None:
+        self._compress = True
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def setCompressionOff(self) -> None:
+        self._compress = False
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def setCompression(self, v: bool) -> None:
+        self._compress = v
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def getCompression(self) -> bool:
+        return self._compress
+    # Revision 07/10/2026 >
+
     def setMap(self, v: SisypheVolume, wait: DialogWait | None = None) -> None:
         if v.acquisition.isStatisticalMap():
             self._map = v
@@ -1778,6 +1802,9 @@ class DialogResult(QDialog):
         if filename:
             filename = abspath(filename)
             chdir(dirname(filename))
+            # < Revision 07/10/2026
+            if self._compress: vol.setCompressionOn()
+            # Revision 07/10/2026 >
             vol.saveAs(filename)
 
     def saveDataset(self) -> None:

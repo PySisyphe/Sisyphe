@@ -95,7 +95,7 @@ class DialogSeriesPreprocessing(QDialog):
     QDialog -> DialogSeriesPreprocessing
 
     Creation: 06/02/2025
-    Last revision: 15/10/2025
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -119,6 +119,10 @@ class DialogSeriesPreprocessing(QDialog):
         self.setWindowTitle('Time series preprocessing')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -292,6 +296,12 @@ class DialogSeriesPreprocessing(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def execute(self):
         if not self._series.isEmpty():
             fwhm = self._settings.getParameterValue('Smoothing')
@@ -402,6 +412,9 @@ class DialogSeriesPreprocessing(QDialog):
                 r.setFilenamePrefix(prefix)
                 r.setFilenameSuffix(suffix)
                 wait.setInformationText('Save {}...'.format(r.getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: r.setCompressionOn()
+                # Revision 07/10/2026 >
                 r.save()
             except Exception as err:
                 wait.hide()
@@ -461,6 +474,10 @@ class DialogSeriesSeedToVoxel(DialogSeriesPreprocessing):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
+
         # Init window
 
         self.setWindowTitle('Time series seed to voxel')
@@ -519,6 +536,12 @@ class DialogSeriesSeedToVoxel(DialogSeriesPreprocessing):
                                  (not self._series.isEmpty()))
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def execute(self):
         if not self._series.isEmpty():
@@ -641,8 +664,14 @@ class DialogSeriesSeedToVoxel(DialogSeriesPreprocessing):
                 r = seriesSeedToVoxel(vols, roi, confmat, fwhm, detrend, std, stdconfounds,
                                       highvarconfounds, lowpass, highpass, tr, wait)
                 wait.setInformationText('Save {}...'.format(r['cc'].getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: r['cc'].setCompressionOn()
+                # Revision 07/10/2026 >
                 r['cc'].save()
                 wait.setInformationText('Save {}...'.format(r['z'].getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: r['z'].setCompressionOn()
+                # Revision 07/10/2026 >
                 r['z'].save()
             except Exception as err:
                 wait.hide()
@@ -682,7 +711,7 @@ class DialogSeriesFastICA(DialogSeriesPreprocessing):
     QDialog -> DialogSeriesPreprocessing -> DialogSeriesFastICA
 
     Creation: 06/02/2025
-    Last revision: 15/10/2025
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -695,6 +724,10 @@ class DialogSeriesFastICA(DialogSeriesPreprocessing):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init window
 
@@ -740,6 +773,12 @@ class DialogSeriesFastICA(DialogSeriesPreprocessing):
         self._center()
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def execute(self):
         if not self._series.isEmpty():
@@ -860,6 +899,9 @@ class DialogSeriesFastICA(DialogSeriesPreprocessing):
                 r = seriesFastICA(vols, ncomp, threshold, confmat, fwhm, detrend, stdconfounds,
                                   highvarconfounds, lowpass, highpass, tr, wait)
                 wait.setInformationText('Save {}...'.format(r.getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: r.setCompressionOn()
+                # Revision 07/10/2026 >
                 r.save()
             except Exception as err:
                 wait.hide()
@@ -1183,6 +1225,10 @@ class DialogSeriesCanICA(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
+
         # Init window
 
         self.setWindowTitle('Multi-subject time Series ICA')
@@ -1251,6 +1297,12 @@ class DialogSeriesCanICA(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def execute(self):
         filenames = self._series.getFilenames()
         if len(filenames) > 1:
@@ -1269,6 +1321,9 @@ class DialogSeriesCanICA(QDialog):
                 try:
                     r = seriesGroupICA(vols, ncomp, algo, wait)
                     wait.setInformationText('Save {}...'.format(r.getBasename()))
+                    # < Revision 07/10/2026
+                    if self._compress: r.setCompressionOn()
+                    # Revision 07/10/2026 >
                     r.save()
                 except Exception as err:
                     messageBox(self, 'Multi-subject ICA processing', text='error: {}'.format(err))

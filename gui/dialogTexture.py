@@ -134,7 +134,7 @@ class DialogTexture(QDialog):
     set the featureextractor voxelBatch parameter to a low value (2048 or less) to avoid access violation.
 
     Creation: 14/10/2022
-    Last revision: 18/02/2025
+    Last revision: 06/10/2026
     """
 
     _FEATURES = {'firstorder': ('10Percentile',
@@ -261,6 +261,10 @@ class DialogTexture(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -391,6 +395,12 @@ class DialogTexture(QDialog):
         return False
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def getFilesSelectionWidget(self):
         return self._files
@@ -541,6 +551,9 @@ class DialogTexture(QDialog):
                                     m.acquisition.setModalityToOT()
                                     m.acquisition.setSequence('{} {}'.format(item.text(0), subitem.text(0)))
                                     # Revision 18/02/2025 >
+                                    # < Revision 06/10/2026
+                                    if self._compress: m.setCompressionOn()
+                                    # Revision 06/10/2026 >
                                     m.save()
                                     wait.setInformationText('{}\nSave {} {} map'.format(basename(filename),
                                                                                         item.text(0),

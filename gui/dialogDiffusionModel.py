@@ -85,6 +85,10 @@ class DialogDiffusionModel(QDialog):
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
+
         # Init QLayout
 
         self._layout = QVBoxLayout()
@@ -380,6 +384,12 @@ class DialogDiffusionModel(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def multiExecute(self):
         wait = DialogWait()
         wait.setInformationText('Diffusion model intialization...')
@@ -526,7 +536,7 @@ class DialogDiffusionModel(QDialog):
                                                 self._bvecs.getFilename(),
                                                 self._combo.currentText(),
                                                 method, order, maps, corr1, corr2,
-                                                algo, niter, size,True, mng, queue)
+                                                algo, niter, size,True, self._compress, mng, queue)
                 # Revision 28/07/2026 >
                 process.start()
                 while process.is_alive():
@@ -598,13 +608,17 @@ class DialogALPS(QDialog):
 
     QDialog -> DialogALPS
 
-    Creation: 13/04/2026
+    Creation: 06/10/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init window
 
@@ -720,6 +734,12 @@ class DialogALPS(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def getFileSelectionWidget(self):
         return [self._files,
                 self._tensor,
@@ -738,6 +758,7 @@ class DialogALPS(QDialog):
             template.setFilenameSuffix('ZZ', sep=' ')
             template.copyAttributesFrom(v, display=False)
             template.acquisition.setSequence('TENSOR ZZ')
+            if self._compress: template.setCompressionOn()
             if not exists(template.getFilename()): template.save()
             wait.setInformationText('Open reference area labels {}...'.format(basename(self._lbl.getFilename())))
             areas = SisypheVolume()
@@ -787,18 +808,21 @@ class DialogALPS(QDialog):
                     vxx.setFilenameSuffix('XX', sep=' ')
                     vxx.copyAttributesFrom(v, display=False)
                     vxx.acquisition.setSequence('TENSOR XX')
+                    if self._compress: vxx.setCompressionOn()
                     if i > 0 and not exists(vxx.getFilename()): vxx.save()
                     vyy = v.copyComponent(4)
                     vyy.setFilename(v.getFilename())
                     vyy.setFilenameSuffix('YY', sep=' ')
                     vyy.copyAttributesFrom(v, display=False)
                     vyy.acquisition.setSequence('TENSOR YY')
+                    if self._compress: vyy.setCompressionOn()
                     if i > 0 and not exists(vyy.getFilename()): vyy.save()
                     vzz = v.copyComponent(8)
                     vzz.setFilename(v.getFilename())
                     vzz.setFilenameSuffix('ZZ', sep=' ')
                     vzz.copyAttributesFrom(v, display=False)
                     vzz.acquisition.setSequence('TENSOR ZZ')
+                    if self._compress: vzz.setCompressionOn()
                     if i > 0 and not exists(vzz.getFilename()): vzz.save()
                     if i > 0:
                         """
@@ -832,6 +856,7 @@ class DialogALPS(QDialog):
                         vyy.load(fyy)
                         vzz.load(fzz)
                         dareas.setDirname(v.getDirname())
+                        if self._compress: dareas.setCompressionOn()
                         dareas.save()
                     """
                     ALPS index processing

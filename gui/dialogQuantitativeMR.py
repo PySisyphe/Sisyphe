@@ -87,6 +87,7 @@ class DialogB0Mapping(QDialog):
     QDialog -> DialogB0Mapping
 
     Creation: 26/03/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -99,6 +100,10 @@ class DialogB0Mapping(QDialog):
         self.setWindowTitle('B0 map processing')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -211,6 +216,12 @@ class DialogB0Mapping(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def getFileSelectionWidget(self):
         return [self._phseSelect,
                 self._maskSelect]
@@ -256,6 +267,9 @@ class DialogB0Mapping(QDialog):
                 r.setFilenamePrefix(prefix)
                 r.setFilenameSuffix(suffix)
                 wait.addInformationText('Save B0 map {}...'.format(r.getBasename()))
+                # < Revision 06/10/2026
+                if self._compress: r.setCompressionOn()
+                # Revision 06/10/2026 >
                 r.save()
                 wait.close()
                 """
@@ -298,6 +312,7 @@ class DialogB1Mapping(QDialog):
     QDialog -> DialogB1Mapping
 
     Creation: 30/03/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -310,6 +325,10 @@ class DialogB1Mapping(QDialog):
         self.setWindowTitle('B1 map processing')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -425,6 +444,12 @@ class DialogB1Mapping(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def getFileSelectionWidget(self):
         return [self._magnSelect,
                 self._maskSelect]
@@ -476,6 +501,9 @@ class DialogB1Mapping(QDialog):
                 r.setFilenamePrefix(prefix)
                 r.setFilenameSuffix(suffix)
                 wait.addInformationText('Save B1 map {}...'.format(r.getBasename()))
+                # < Revision 06/10/2026
+                if self._compress: r.setCompressionOn()
+                # Revision 06/10/2026 >
                 r.save()
                 wait.close()
                 """
@@ -517,6 +545,7 @@ class DialogT1Mapping(QDialog):
     QDialog -> DialogT1Mapping
 
     Creation: 30/03/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -529,6 +558,10 @@ class DialogT1Mapping(QDialog):
         self.setWindowTitle('T1 map processing')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -681,6 +714,12 @@ class DialogT1Mapping(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def getFileSelectionWidget(self):
         return [self._magnSelect,
                 self._b1Select,
@@ -755,6 +794,9 @@ class DialogT1Mapping(QDialog):
                 r.setFilenamePrefix(prefix)
                 r.setFilenameSuffix(suffix)
                 wait.addInformationText('Save T1 map {}...'.format(r.getBasename()))
+                # < Revision 06/10/2026
+                if self._compress: r.setCompressionOn()
+                # Revision 06/10/2026 >
                 r.save()
                 wait.close()
                 """
@@ -797,6 +839,7 @@ class DialogT2Mapping(QDialog):
     QDialog -> DialogT2Mapping
 
     Creation: 30/03/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -809,6 +852,10 @@ class DialogT2Mapping(QDialog):
         self.setWindowTitle('T2 map processing')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -921,6 +968,12 @@ class DialogT2Mapping(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def getFileSelectionWidget(self):
         return [self._magnSelect,
                 self._maskSelect]
@@ -979,6 +1032,9 @@ class DialogT2Mapping(QDialog):
                 r[0].setFilenamePrefix(prefix)
                 r[0].setFilenameSuffix(suffix)
                 wait.addInformationText('Save T2 map {}...'.format(r[0].getBasename()))
+                # < Revision 06/10/2026
+                if self._compress: r[0].setCompressionOn()
+                # Revision 06/10/2026 >
                 r[0].save()
                 if len(r) > 1:
                     r[1].setFilename(magn[0].getFilename())
@@ -987,6 +1043,9 @@ class DialogT2Mapping(QDialog):
                     if prefix != '': r[1].setFilenamePrefix('Long_' + prefix)
                     if suffix != '': r[1].setFilenameSuffix('Long_' + suffix)
                     wait.addInformationText('Save long T2 map {}...'.format(r[0].getBasename()))
+                    # < Revision 06/10/2026
+                    if self._compress: r[1].setCompressionOn()
+                    # Revision 06/10/2026 >
                     r[1].save()
                     r[2].setFilename(magn[0].getFilename())
                     r[2].setFilenamePrefix(prefix)
@@ -994,6 +1053,9 @@ class DialogT2Mapping(QDialog):
                     if prefix != '': r[2].setFilenamePrefix('Short_' + prefix)
                     if suffix != '': r[2].setFilenameSuffix('Short_' + suffix)
                     wait.addInformationText('Save short T2 map {}...'.format(r[0].getBasename()))
+                    # < Revision 06/10/2026
+                    if self._compress: r[2].setCompressionOn()
+                    # Revision 06/10/2026 >
                     r[2].save()
                     r[3].setFilename(magn[0].getFilename())
                     r[3].setFilenamePrefix(prefix)
@@ -1001,6 +1063,9 @@ class DialogT2Mapping(QDialog):
                     if prefix != '': r[3].setFilenamePrefix('Fraction_Long_' + prefix)
                     if suffix != '': r[3].setFilenameSuffix('Fraction_Long_' + suffix)
                     wait.addInformationText('Save long T2 fraction map {}...'.format(r[0].getBasename()))
+                    # < Revision 06/10/2026
+                    if self._compress: r[3].setCompressionOn()
+                    # Revision 06/10/2026 >
                     r[3].save()
                 wait.close()
                 """
@@ -1043,7 +1108,7 @@ class DialogT2pMapping(QDialog):
     QDialog -> DialogT2pMapping
 
     Creation: 30/03/2026
-    Last revision: 09/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -1056,6 +1121,10 @@ class DialogT2pMapping(QDialog):
         self.setWindowTitle('T2\' map processing')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -1132,6 +1201,12 @@ class DialogT2pMapping(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def getFileSelectionWidget(self):
         return self._select.getSelectionWidgets()
 
@@ -1180,6 +1255,9 @@ class DialogT2pMapping(QDialog):
                 r.setFilenamePrefix(prefix)
                 r.setFilenameSuffix(suffix)
                 if prefix == '' and suffix == '': suffix = r.acquisition.T2PMAP
+                # < Revision 06/10/2026
+                if self._compress: r.setCompressionOn()
+                # Revision 06/10/2026 >
                 r.save()
                 wait.addInformationText('Save {}...'.format(r.getBasename()))
                 wait.setCurrentProgressValue(i)
@@ -1221,7 +1299,7 @@ class DialogMTRMapping(QDialog):
     QDialog -> DialogMTRMapping
 
     Creation: 31/03/2026
-    Last revision: 09/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -1234,6 +1312,10 @@ class DialogMTRMapping(QDialog):
         self.setWindowTitle('MTR map processing')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -1310,6 +1392,12 @@ class DialogMTRMapping(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def getFileSelectionWidget(self):
         return self._select.getSelectionWidgets()
 
@@ -1358,6 +1446,9 @@ class DialogMTRMapping(QDialog):
                 if prefix == '' and suffix == '': suffix = r.acquisition.MTR
                 r.setFilenamePrefix(prefix)
                 r.setFilenameSuffix(suffix)
+                # < Revision 06/10/2026
+                if self._compress: r[0].setCompressionOn()
+                # Revision 06/10/2026 >
                 r.save()
                 wait.addInformationText('Save {}...'.format(r.getBasename()))
                 wait.setCurrentProgressValue(i)
@@ -1401,7 +1492,7 @@ class DialogQSMMapping(QDialog):
     QDialog -> DialogQSMMapping
 
     Creation: 31/03/2026
-    Last revision: 27/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -1414,6 +1505,10 @@ class DialogQSMMapping(QDialog):
         self.setWindowTitle('QSM map processing')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -1499,6 +1594,12 @@ class DialogQSMMapping(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def getFileSelectionWidget(self):
         return [self._select,
                 self._maskSelect]
@@ -1561,6 +1662,9 @@ class DialogQSMMapping(QDialog):
                 r.setFilenamePrefix(prefix)
                 r.setFilenameSuffix(suffix)
                 if prefix == '' and suffix == '': suffix = r.acquisition.QSM
+                # < Revision 06/10/2026
+                if self._compress: r[0].setCompressionOn()
+                # Revision 06/10/2026 >
                 r.save()
                 wait.addInformationText('Save {}...'.format(r.getBasename()))
                 wait.setCurrentProgressValue(i)

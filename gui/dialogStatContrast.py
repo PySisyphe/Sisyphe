@@ -99,7 +99,7 @@ class DialogContrast(QDialog):
     QDialog -> DialogContrast
 
     Creation: 29/11/2022
-    Last revision: 06/02/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -123,6 +123,10 @@ class DialogContrast(QDialog):
         self.setWindowTitle('Statistical contrast')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -279,6 +283,12 @@ class DialogContrast(QDialog):
 
     # Public methods
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def estimate(self):
         if self._design.isEstimated():
             design = self._design.getDesignMatrix()
@@ -325,6 +335,9 @@ class DialogContrast(QDialog):
                 chdir(dirname(filename))
                 wait.show()
                 wait.setInformationText('{}\n{}'.format(title, basename(filename)))
+                # < Revision 07/10/2026
+                if self._compress: img.setCompressionOn()
+                # Revision 07/10/2026 >
                 img.saveAs(filename)
             wait.close()
             """
@@ -360,7 +373,7 @@ class DialogConjunction(QDialog):
     QDialog -> DialogConjunction
 
     Creation: 19/11/2024
-    Last revision: 15/10/2025
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -380,6 +393,10 @@ class DialogConjunction(QDialog):
         self.setWindowTitle('Statistical map conjunction')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -444,6 +461,12 @@ class DialogConjunction(QDialog):
 
     # Public methods
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def execute(self):
         if not self._files.isEmpty():
             wait = DialogWait(title=self.windowTitle())
@@ -479,6 +502,9 @@ class DialogConjunction(QDialog):
                     r.setFilename(filename)
                     r.setDirname(maps[0].getFilename())
                     wait.setInformationText('Save {}...'.format(r.getBasename()))
+                    # < Revision 07/10/2026
+                    if self._compress: r.setCompressionOn()
+                    # Revision 07/10/2026 >
                     r.save()
                     wait.close()
                     r = messageBox(self,
@@ -510,7 +536,7 @@ class DialogTMapToZMap(QDialog):
     QDialog -> DialogTMapToZMap
 
     Creation: 08/10/2025
-    Last revision: 15/10/2025
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -529,6 +555,10 @@ class DialogTMapToZMap(QDialog):
         self.setWindowTitle('t to z-map conversion')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -588,6 +618,12 @@ class DialogTMapToZMap(QDialog):
 
     # Public methods
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def execute(self):
         if not self._files.isEmpty():
             filenames = self._files.getFilenames()
@@ -612,6 +648,9 @@ class DialogTMapToZMap(QDialog):
                     z.removeAllSuffixes()
                     z.setFilenameSuffix('zmap')
                     wait.setInformationText('save {}...'.format(z.getBasename()))
+                    # < Revision 07/10/2026
+                    if self._compress: z.setCompressionOn()
+                    # Revision 07/10/2026 >
                     z.save()
                     wait.incCurrentProgressValue()
             wait.close()
@@ -669,6 +708,9 @@ class DialogLateralityIndex(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._sshot = None
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -943,6 +985,12 @@ class DialogLateralityIndex(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def setScreenshotsWidget(self, widget):
         self._sshot = widget
 
@@ -981,6 +1029,9 @@ class DialogLateralityIndex(QDialog):
                 f.setInterpolator(interpol)
                 f.setTransform(smap.getTransformFromID(getID_ICBM152()))
                 f.setMoving(smap)
+                # < Revision 07/10/2026
+                if self._compress: f.setCompressionOn()
+                # Revision 07/10/2026 >
                 rmap = f.resampleMoving(prefix=self._resamplesettings.getParameterValue('NormalizationPrefix'),
                                         suffix=self._resamplesettings.getParameterValue('NormalizationSuffix'))
             else:
@@ -1024,6 +1075,9 @@ class DialogLateralityIndex(QDialog):
                 v.copyAttributesFrom(rmap)
                 v.setFilename(rmap.getFilename())
                 v.setFilenameSuffix('masked')
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             # Revision 28/04/2026 >
             dlg = DialogGenericResults()

@@ -39,7 +39,7 @@ class DialogSwapAxes(DialogFromXml):
 
     QDialog -> DialogFromXml -> DialogSwapAxes
 
-    Last revision: 15/10/2025
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -50,12 +50,22 @@ class DialogSwapAxes(DialogFromXml):
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
 
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
+
         widget = self.getFieldsWidget(0)
         self._files = widget.getParameterWidget('Volumes')
         self._swap = widget.getParameterWidget('SwapOrder')
         self._prefix = widget.getParameterWidget('Prefix')
 
     # Public method
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     # < Revision 13/02/2025
     def setFilenames(self, filenames: str | list[str]):
@@ -101,6 +111,9 @@ class DialogSwapAxes(DialogFromXml):
                     img = sitkPermuteAxes(self._volume.getSITKImage(), axes)
                     v.setSITKImage(img)
                     v.setFilenamePrefix(self._prefix.text())
+                    # < Revision 06/10/2026
+                    if self._compress: v.setCompressionOn()
+                    # Revision 06/10/2026 >
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break

@@ -81,11 +81,11 @@ class DialogACPC(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('AC-PC selection')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
@@ -131,6 +131,7 @@ class DialogACPC(QDialog):
         self._getac.pressed.connect(self._getAC)
         self._vac = QLineEdit()
         self._vac.setReadOnly(True)
+        # noinspection PyUnresolvedReferences
         self._vac.setAlignment(Qt.AlignCenter)
         self._vac.setVisible(False)
         self._setpc = QPushButton('Set PC')
@@ -143,6 +144,7 @@ class DialogACPC(QDialog):
         self._vpc = QLineEdit()
         self._vpc.setReadOnly(True)
         self._vpc.setVisible(False)
+        # noinspection PyUnresolvedReferences
         self._vpc.setAlignment(Qt.AlignCenter)
         self._setrot = QPushButton('Set rotations')
         self._setrot.setToolTip('Set Y rotation, update AC/PC with X and Z rotations.')
@@ -151,6 +153,7 @@ class DialogACPC(QDialog):
         self._vrot = QLineEdit()
         self._vrot.setReadOnly(True)
         # self._vrot.setFixedWidth(75)
+        # noinspection PyUnresolvedReferences
         self._vrot.setAlignment(Qt.AlignCenter)
         self._resettrf = QPushButton('Reset')
         self._resettrf.setVisible(False)
@@ -165,6 +168,7 @@ class DialogACPC(QDialog):
         self._width = LabeledDoubleSpinBox('Line width')
         self._width.setSingleStep(0.5)
         self._width.setRange(0.5, 5.0)
+        # noinspection PyUnresolvedReferences
         self._width.setAlignment(Qt.AlignCenter)
         self._width.setValue(self._views().getFirstViewWidget().getLineWidth())
         # noinspection PyUnresolvedReferences
@@ -197,6 +201,7 @@ class DialogACPC(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -367,6 +372,7 @@ class DialogACPC(QDialog):
     def ok(self):
         if self._acpc.hasACPC():
             vol = self._views.getVolume()
+            # noinspection PyArgumentList
             vol.setACPC(self._acpc)
             vol.save()
             self.close()

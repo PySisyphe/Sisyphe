@@ -48,6 +48,8 @@ class DialogJacobian(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogJacobian
+
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -63,11 +65,15 @@ class DialogJacobian(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Jacobian determinant of displacement field')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
         self.setSizeGripEnabled(False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -94,6 +100,7 @@ class DialogJacobian(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -123,6 +130,12 @@ class DialogJacobian(QDialog):
         QApplication.processEvents()
         
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def getSelectionWidget(self):
         return self._fields
@@ -157,6 +170,9 @@ class DialogJacobian(QDialog):
                     # noinspection PyArgumentList
                     r.setIdentity(v.getIdentity())
                     wait.setInformationText('Save {}'.format(r.getBasename()))
+                    # < Revision 06/10/2026
+                    if self._compress: r.setCompressionOn()
+                    # Revision 06/10/2026 >
                     r.save()
                 if wait.getStopped(): break
             wait.close()

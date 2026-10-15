@@ -95,7 +95,7 @@ class DialogPerfusion(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogPerfusion
 
     Creation: 23/12/2024
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -223,6 +223,9 @@ class DialogPerfusion(AbstractDialogFunction):
             # noinspection PyUnresolvedReferences
             if self._settings.getParameterWidget('Dialog').checkState() == Qt.Checked:
                 dialog = DialogArterialInputFunction(parent=self)
+                # < Revision 06/10/2026
+                dialog.setCompression(self._compress)
+                # Revision 06/10/2026 >
                 if platform == 'win32':
                     # noinspection PyUnresolvedReferences
                     import pywinstyles
@@ -256,6 +259,9 @@ class DialogPerfusion(AbstractDialogFunction):
                     return
             for k in r:
                 wait.setInformationText('Save {}...'.format(r[k].getBasename()))
+                # < Revision 06/10/2026
+                if self._compress: r[k].setCompressionOn()
+                # Revision 06/10/2026 >
                 r[k].save()
             # < Revision 01/04/2026
             # """
@@ -409,6 +415,9 @@ class DialogPerfusion2(AbstractDialogFunction):
             # noinspection PyUnresolvedReferences
             if self._settings.getParameterWidget('Dialog').checkState() == Qt.Checked:
                 dialog = DialogArterialInputFunction(parent=self)
+                # < Revision 06/10/2026
+                dialog.setCompression(self._compress)
+                # Revision 06/10/2026 >
                 if platform == 'win32':
                     # noinspection PyUnresolvedReferences
                     import pywinstyles
@@ -444,6 +453,9 @@ class DialogPerfusion2(AbstractDialogFunction):
                     return
             for k in r:
                 wait.setInformationText('Save {}...'.format(r[k].getBasename()))
+                # < Revision 06/10/2026
+                if self._compress: r[k].setCompressionOn()
+                # Revision 06/10/2026 >
                 r[k].save()
             # < Revision 01/04/2026
             # """
@@ -476,7 +488,7 @@ class DialogArterialInputFunction(QDialog):
     QDialog -> DialogArterialInputFunction
 
     Creation: 17/12/2024
-    Last revision: 19/02/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -509,6 +521,10 @@ class DialogArterialInputFunction(QDialog):
         screen = QApplication.primaryScreen().geometry()
         w = int(screen.width() * 0.75)
         self.setMinimumSize(w, int(screen.height() * 0.50))
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init non-GUI attributes
 
@@ -544,6 +560,7 @@ class DialogArterialInputFunction(QDialog):
         self._view().CursorPositionChanged.connect(self._cursorPositionChanged)
 
         self._fig = Figure()
+        # noinspection PyTypeHints
         self._axe: Axes | None = None
         self._canvas = FigureCanvas(self._fig)
         # noinspection PyTypeChecker
@@ -731,6 +748,12 @@ class DialogArterialInputFunction(QDialog):
 
     # Public methods
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def setScreenshotsGridWidget(self, widget: ScreenshotsGridWidget):
         self._scrshot = widget
 
@@ -896,6 +919,9 @@ class DialogArterialInputFunction(QDialog):
             if filename:
                 filename = abspath(filename)
                 chdir(dirname(filename))
+                # < Revision 06/10/2026
+                if self._compress: self._roi.setCompressionOn()
+                # Revision 06/10/2026 >
                 try: self._roi.save(filename)
                 except Exception as err:
                     messageBox(self, 'Save aif ROI', text='{}'.format(err))
@@ -1038,6 +1064,9 @@ class DialogASL(AbstractDialogFunction):
             m0 = masl[idx]
             m0.setFilename(filename)
             m0.setFilenameSuffix('M0')
+            # < Revision 06/10/2026
+            if self._compress: m0.setCompressionOn()
+            # Revision 06/10/2026 >
             m0.save()
             masl.remove(idx)
             if fwhm > 0.0:
@@ -1059,4 +1088,7 @@ class DialogASL(AbstractDialogFunction):
             wait.addInformationText('{} CBF processing...'.format(asl.getBasename()))
             r = cbfASLMap(m0, masl, mask, sequence, ld, pld, te, tr, lmbd, alpha, t1)
             wait.setInformationText('Save {}...'.format(r.getBasename()))
+            # < Revision 06/10/2026
+            if self._compress: r.setCompressionOn()
+            # Revision 06/10/2026 >
             r.save()

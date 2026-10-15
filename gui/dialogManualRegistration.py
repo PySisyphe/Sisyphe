@@ -81,10 +81,15 @@ class DialogManualRegistration(QDialog):
     _edge       QComboBox, type of volume display (native +/- gradient magnitude)
     _ok         QPushButton, automatic registration/exit button
     _cancel     QPushButton, cancel button
+    _compress   bool, save xvol in a compressed format
     """
 
     def __init__(self, fixed, moving, parent=None):
         super().__init__(parent)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init window
 
@@ -286,6 +291,9 @@ class DialogManualRegistration(QDialog):
 
     def _resample(self):
         f = SisypheApplyTransform()
+        # < Revision 07/10/2026
+        if self._compress: f.setCompressionOn()
+        # Revision 07/10/2026 >
         interpol = self._interpolator.currentText()
         if interpol == 'Nearest Neighbor': f.setInterpolator(0)
         elif interpol == 'Linear': f.setInterpolator(1)
@@ -340,6 +348,12 @@ class DialogManualRegistration(QDialog):
         self._widget().getFirstSliceViewWidget().setRotations((0.0, 0.0, 0.0), index=0)
 
     # Public methods
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def showDialogButtons(self):
         self._ok.setVisible(True)

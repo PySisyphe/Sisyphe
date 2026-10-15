@@ -59,6 +59,8 @@ class DialogDatatype(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogDatatype
+
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -68,6 +70,7 @@ class DialogDatatype(QDialog):
 
     _files      FilesSelectionWidget
     _datatype   LabeledComboBox
+    _compress   bool, save xvol in compressed format
     """
 
     def __init__(self, parent=None):
@@ -79,6 +82,10 @@ class DialogDatatype(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
         self.setSizeGripEnabled(False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -134,6 +141,12 @@ class DialogDatatype(QDialog):
 
     # Public methods
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getFilesSelectionWidget(self):
         return self._files
 
@@ -157,6 +170,9 @@ class DialogDatatype(QDialog):
                             v2 = v.cast(dtype)
                             v2.setFilename(v.getFilename())
                             v2.setFilenameSuffix(dtype)
+                            # < Revision 07/10/2026
+                            if self._compress: v2.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v2.save()
                     except Exception as err:
                         messageBox(self, title, '{}'.format(err))
@@ -177,6 +193,8 @@ class DialogAttributes(DialogDatatype):
     ~~~~~~~~~~~
 
     QDialog -> DialogDatatype -> DialogAttributes
+
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -187,6 +205,10 @@ class DialogAttributes(DialogDatatype):
         self.setWindowTitle('Attributes conversion')
         self._execute.setToolTip('Execute attributes conversion.')
         self._datatype.setVisible(False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         self._attributes = DialogSettingsWidget('Attributes')
         if platform == 'win32':
@@ -265,6 +287,12 @@ class DialogAttributes(DialogDatatype):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def execute(self):
         n = self._files.filenamesCount()
         if n > 0:
@@ -298,6 +326,9 @@ class DialogAttributes(DialogDatatype):
                             v.setDefaultOrigin()
                         if self._attributes.getParameterWidget('SetDirections').checkState() > 0:
                             v.setDirections()
+                        # < Revision 07/10/2026
+                        if self._compress: v.setCompressionOn()
+                        # Revision 07/10/2026 >
                         v.save()
                     except Exception as err:
                         messageBox(self, title, '{}'.format(err))
@@ -320,7 +351,7 @@ class DialogEditID(QDialog):
 
     QDialog -> DialogEditID
 
-    Last revision: 10/04/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -334,6 +365,10 @@ class DialogEditID(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
         self.setSizeGripEnabled(False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # attributes
 
@@ -423,6 +458,12 @@ class DialogEditID(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     # < Revision 16/12/2025
     def getreferenceSelectionWidget(self):
         return self._ref
@@ -455,6 +496,9 @@ class DialogEditID(QDialog):
                         # < Revision 10/04/2026
                         v.setOrigin(self._origin)
                         # Revision 10/04/2026 >
+                        # < Revision 07/10/2026
+                        if self._compress: v.setCompressionOn()
+                        # Revision 07/10/2026 >
                         v.save()
                     elif ext == SisypheROI.getFileExt():
                         v = SisypheROI()
@@ -463,6 +507,9 @@ class DialogEditID(QDialog):
                         # < Revision 10/04/2026
                         v.setOrigin(self._origin)
                         # Revision 10/04/2026 >
+                        # < Revision 07/10/2026
+                        if self._compress: v.setCompressionOn()
+                        # Revision 07/10/2026 >
                         v.save()
                     elif ext == SisypheMesh.getFileExt():
                         v = SisypheMesh()

@@ -54,7 +54,7 @@ class DialogOldSisypheImport(QDialog):
 
     QDialog -> DialogOldSisypheImport
 
-    Last revision: 29/11/2024
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -63,10 +63,14 @@ class DialogOldSisypheImport(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Sisyphe import')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -104,6 +108,7 @@ class DialogOldSisypheImport(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -120,6 +125,12 @@ class DialogOldSisypheImport(QDialog):
         self.setModal(True)
 
     # Public method
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def convert(self):
         folders = self._files.getFilenames()
@@ -157,9 +168,10 @@ class DialogOldSisypheImport(QDialog):
                             else: savename = filename
                             progress.setInformationText('Folder {}, '
                                                         'save {}'.format(basename(folder), basename(savename)))
-                            try:
-                                # noinspection PyTypeChecker
-                                vol.saveAs(savename)
+                            # < Revision 06/10/2026
+                            if self._compress: vol.setCompression(self._compress)
+                            # Revision 06/10/2026 >
+                            try: vol.saveAs(savename)
                             except:
                                 messageBox(self,
                                            'Sisyphe old binary format import',

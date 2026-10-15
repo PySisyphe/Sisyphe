@@ -117,7 +117,7 @@ class DialogWait(QDialog):
     _currentiter    int
     """
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def __init__(self,
                  title: str = '',
                  info: str = '',
@@ -158,7 +158,6 @@ class DialogWait(QDialog):
 
         self.setObjectName('DialogWait')
         if platform == 'win32':
-            # noinspection PyUnresolvedReferences
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
             try: __main__.updateWindowTitleBarColor(self)
             except: pass
@@ -167,21 +166,37 @@ class DialogWait(QDialog):
         # < Revision 08/07/2026
         # < Revision 09/07/2026
         elif platform == 'linux':
+            # to get a dialog box with rounded border on linux platform
             # < Revision 03/10/2026
             # self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-            # noinspection PyUnresolvedReferences
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
             # Revision 03/10/2026 >
+            # < Revision 13/10/2026
+            # self._layout = QVBoxLayout()
+            # self.setLayout(self._layout)
+            self.setAttribute(Qt.WA_TranslucentBackground)
+            from PyQt5.QtWidgets import QFrame
+            self._frame = QFrame()
+            self._frame.setObjectName('WaitFrame')
+            self._slayout = QVBoxLayout()
+            self._slayout.setContentsMargins(0, 0, 0, 0)
+            self._slayout.addWidget(self._frame)
+            bcolor = self.palette().window().color()
+            self.setStyleSheet(
+                f"QFrame#WaitFrame {{"
+                f"  background-color: {bcolor.name()};"
+                f"  border-radius: 10px;"
+                f"}}")
             self._layout = QVBoxLayout()
-            self.setLayout(self._layout)
+            self._frame.setLayout(self._layout)
+            self.setLayout(self._slayout)
+            # Revision 13/10/2026 >
         # Revision 09/07/2026 >
         else:
         # Revision 08/07/2026 >
             # < Revision 17/07/2025
-            # bug fix darwin platform, to get a dialog box with rounded border
-            # noinspection PyUnresolvedReferences
+            # to get a dialog box with rounded border on Darwin platform
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-            # noinspection PyUnresolvedReferences
             self.setAttribute(Qt.WA_TranslucentBackground)
             from PyQt5.QtWidgets import QFrame
             self._frame = QFrame()
@@ -215,7 +230,6 @@ class DialogWait(QDialog):
         self._canvas = FigureCanvas(self._fig)
 
         self._info = QLabel(parent=self)
-        # noinspection PyUnresolvedReferences
         self._info.setAlignment(Qt.AlignCenter | Qt.AlignBottom)
         self._progress = QProgressBar(parent=self)
         self._progress.setFixedSize(200, 20)
@@ -223,7 +237,6 @@ class DialogWait(QDialog):
         self._abort.setFixedWidth(100)
         self._abort.setAutoDefault(True)
         self._abort.setDefault(True)
-        # noinspection PyUnresolvedReferences
         self._abort.clicked.connect(self._stop)
 
         # Set defaults
@@ -325,6 +338,7 @@ class DialogWait(QDialog):
         Processes pending GUI events to ensure correct positioning.
         """
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -766,7 +780,7 @@ class DialogWait(QDialog):
         # Revision 04/04/2025 >
         QApplication.processEvents()
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def setCurrentProgressValuePercent(self, v: float | int, dummy: Any) -> None:
         """
         Sets the current value of the progress bar as a percentage (0-100).
@@ -884,6 +898,7 @@ class DialogWait(QDialog):
 
     # Qt event
 
+    # noinspection method-overriding
     def showEvent(self, event: Any):
         """
         Event handler for when the dialog is shown.
@@ -1107,6 +1122,7 @@ class DialogWaitRegistration(DialogWait):
         self._pos = 0
         self._time = None
 
+    # noinspection unresolved-references
     def setAntsAtroposProgress(self, stdout):
         lock = Lock()
         with lock:
@@ -1131,6 +1147,7 @@ class DialogWaitRegistration(DialogWait):
                         if not self.getProgressVisibility(): self.progressVisibilityOn()
                         self.incCurrentProgressValue()
 
+    # noinspection unresolved-references
     def setAntsCorticalThicknessProgress(self, stdout):
         lock = Lock()
         with lock:
@@ -1146,7 +1163,6 @@ class DialogWaitRegistration(DialogWait):
                         if self._time is not None:
                             delta = datetime.now() - self._time
                             delta *= self.getProgressMaximum() - self.getCurrentProgressValue()
-                            # noinspection PyTypeChecker
                             m = delta.seconds // 60
                             s = delta.seconds - (m * 60)
                             if m == 0: self.addInformationText('Estimated time remaining {} s.'.format(s))

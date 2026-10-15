@@ -39,13 +39,17 @@ class DialogFlipAxes(DialogFromXml):
 
     QDialog -> DialogFromXml -> DialogFlipAxes
 
-    Last revision: 19/02/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
 
     def __init__(self, parent=None):
         super().__init__('Flip axes', 'FlipAxes', parent)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -58,6 +62,12 @@ class DialogFlipAxes(DialogFromXml):
         self._prefix = widget.getParameterWidget('Prefix')
 
     # Public method
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     # < Revision 13/02/2025
     def setFilenames(self, filenames: str | list[str]):
@@ -109,6 +119,9 @@ class DialogFlipAxes(DialogFromXml):
                     img = sitkFlip(v.getSITKImage(), axes)
                     v.setSITKImage(img)
                     v.setFilenamePrefix(self._prefix.text())
+                    # < Revision 06/10/2026
+                    if self._compress: v.setCompressionOn()
+                    # Revision 06/10/2026 >
                     v.save()
                     wait.incCurrentProgressValue()
                     if wait.getStopped(): break

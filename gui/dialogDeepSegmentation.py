@@ -98,7 +98,7 @@ class DialogDeepTumorSegmentation(QDialog):
     QDialog -> DialogDeepTumorSegmentation
 
     Creation: 22/10/2024
-    Last revision: 12/05/2026
+    Last revision: 07/10/2026
     """
 
     # Class method
@@ -111,14 +111,18 @@ class DialogDeepTumorSegmentation(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('U-net tumor segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -156,7 +160,6 @@ class DialogDeepTumorSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -175,9 +178,7 @@ class DialogDeepTumorSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -186,14 +187,13 @@ class DialogDeepTumorSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -201,9 +201,16 @@ class DialogDeepTumorSegmentation(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getSelectionWidgets(self):
         return self._volumeSelect.getSelectionWidgets()
 
+    # noinspection unresolved-references,unreachable-code
     def execute(self):
         if self._volumeSelect.isReady():
             filenames = self._volumeSelect.getFilenames()
@@ -255,7 +262,6 @@ class DialogDeepTumorSegmentation(QDialog):
                     """
                     Segmentation
                     """
-                    # noinspection PyUnusedLocal
                     r = None
                     wait.setInformationText('U-net tumor segmentation initialization...')
                     wait.setButtonVisibility(True)
@@ -267,7 +273,6 @@ class DialogDeepTumorSegmentation(QDialog):
                         while extractor.is_alive():
                             if exists(stdout): wait.setAntspynetTumorProgress(stdout)
                             if not queue.empty():
-                                # noinspection PyUnusedLocal
                                 r = queue.get()
                                 if extractor.is_alive(): extractor.terminate()
                                 wait.progressVisibilityOff()
@@ -283,7 +288,6 @@ class DialogDeepTumorSegmentation(QDialog):
                     finally:
                         # Remove temporary std::cout file
                         if exists(stdout): remove(stdout)
-                    # noinspection PyUnreachableCode
                     if wait.getStopped():
                         wait.close()
                         return
@@ -321,9 +325,15 @@ class DialogDeepTumorSegmentation(QDialog):
                                 elif lbl == 2: roi.setFilenameSuffix('ed')
                                 elif lbl == 4: roi.setFilenameSuffix('et')
                                 wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                                # < Revision 07/10/2026
+                                if self._compress: roi.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 roi.save()
                         # Revision 02/10/2025 >
                         wait.setInformationText('Save {}...'.format(v.getBasename()))
+                        # < Revision 07/10/2026
+                        if self._compress: v.setCompressionOn()
+                        # Revision 07/10/2026 >
                         v.save()
                         for j in range(len(r['prb'])):
                             if j in (1, 2, 4):
@@ -337,6 +347,9 @@ class DialogDeepTumorSegmentation(QDialog):
                                 elif j == 2: v2.setFilenameSuffix('ed')
                                 elif j == 4: v2.setFilenameSuffix('et')
                                 wait.setInformationText('Save {}...'.format(v2.getBasename()))
+                                # < Revision 07/10/2026
+                                if self._compress: v2.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 v2.save()
                     wait.close()
             """
@@ -371,7 +384,7 @@ class DialogDeepHippocampusSegmentation(QDialog):
     QDialog -> DialogDeepHippocampusSegmentation
 
     Creation: 22/10/2024
-    Last revision: 12/05/2026
+    Last revision: 07/10/2026
     """
 
     # Class method
@@ -384,14 +397,18 @@ class DialogDeepHippocampusSegmentation(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('U-net hippocampus segmentation')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -421,7 +438,6 @@ class DialogDeepHippocampusSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -440,9 +456,7 @@ class DialogDeepHippocampusSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -451,14 +465,13 @@ class DialogDeepHippocampusSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -466,9 +479,16 @@ class DialogDeepHippocampusSegmentation(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getSelectionWidget(self):
         return self._volumeSelect
 
+    # noinspection unresolved-references
     def execute(self):
         if not self._volumeSelect.isEmpty():
             filenames = self._volumeSelect.getFilenames()
@@ -485,7 +505,6 @@ class DialogDeepHippocampusSegmentation(QDialog):
                         """
                         Segmentation
                         """
-                        # noinspection PyUnusedLocal
                         r = None
                         wait.setInformationText('U-net hippocampus segmentation initialization...')
                         wait.setButtonVisibility(True)
@@ -497,7 +516,6 @@ class DialogDeepHippocampusSegmentation(QDialog):
                             while extractor.is_alive():
                                 if exists(stdout): wait.setAntspynetHippocamusProgress(stdout)
                                 if not queue.empty():
-                                    # noinspection PyUnusedLocal
                                     r = queue.get()
                                     if extractor.is_alive(): extractor.terminate()
                                     wait.progressVisibilityOff()
@@ -513,7 +531,6 @@ class DialogDeepHippocampusSegmentation(QDialog):
                         finally:
                             # Remove temporary std::cout file
                             if exists(stdout): remove(stdout)
-                        # noinspection PyUnreachableCode
                         if wait.getStopped():
                             wait.close()
                             return
@@ -540,8 +557,14 @@ class DialogDeepHippocampusSegmentation(QDialog):
                                     roi.setFilename(t1.getFilename())
                                     roi.setFilenameSuffix(lbls[j])
                                     wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                                    # < Revision 07/10/2026
+                                    if self._compress: roi.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     roi.save()
                             wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: v.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v.save()
                     wait.close()
             """
@@ -576,7 +599,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
     QDialog -> DialogDeepMedialTemporalSegmentation
 
     Creation: 22/10/2024
-    Last revision: 01/09/2026
+    Last revision: 07/10/2026
     """
 
     # Class method
@@ -589,14 +612,18 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('U-net medial temporal segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -631,7 +658,6 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -650,9 +676,7 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -661,14 +685,13 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -682,6 +705,12 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
         self._volumeSelect.setAvailability(flags)
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def getSelectionWidgets(self):
         return self._volumeSelect.getSelectionWidgets()
@@ -810,8 +839,14 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                     roi.setFilenamePrefix('')
                                     roi.setFilenameSuffix(lbls[k])
                                     wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                                    # < Revision 07/10/2026
+                                    if self._compress: roi.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     roi.save()
                             wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: v.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v.save()
                             if saveprob:
                                 for j, k in enumerate(lbls):
@@ -825,6 +860,9 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                         v2.setFilenamePrefix('')
                                         v2.setFilenameSuffix(lbls[k])
                                         wait.setInformationText('Save {}...'.format(v2.getBasename()))
+                                        # < Revision 07/10/2026
+                                        if self._compress: v2.setCompressionOn()
+                                        # Revision 07/10/2026 >
                                         v2.save()
                                 lbls = {'med': 'medial',
                                         'hip': 'hippocampus'}
@@ -838,6 +876,9 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                     v2.setFilenamePrefix('')
                                     v2.setFilenameSuffix(lbls[k])
                                     wait.setInformationText('Save {}...'.format(v2.getBasename()))
+                                    # < Revision 07/10/2026
+                                    if self._compress: v2.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     v2.save()
                         elif model == 'wip':
                             # < Revision 02/06/2026
@@ -880,6 +921,9 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                 v.acquisition.setLabel(lbls[k][0], lbls[k][1])
                             v.copyFromNumpyArray(img, spacing=t1.getSpacing())
                             wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: v.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v.save()
                             # Revision 02/06/2026 >
                             for k in lbls:
@@ -892,6 +936,9 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                     roi.setFilenameSuffix(lbls[k][1])
                                     # Revision 03/06/2026 >
                                     wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                                    # < Revision 07/10/2026
+                                    if self._compress: roi.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     roi.save()
                             if saveprob:
                                 for j, k in enumerate(lbls):
@@ -908,6 +955,9 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                         v2.setFilenameSuffix(lbls[k][1])
                                         # Revision 03/06/2026 >
                                         wait.setInformationText('Save {}...'.format(v2.getBasename()))
+                                        # < Revision 07/10/2026
+                                        if self._compress: v2.setCompressionOn()
+                                        # Revision 07/10/2026 >
                                         v2.save()
                                 lbls = {'hip': 'hippocampus',
                                         'amg': 'amygdala'}
@@ -921,6 +971,9 @@ class DialogDeepMedialTemporalSegmentation(QDialog):
                                     v2.setFilenamePrefix('')
                                     v2.setFilenameSuffix(lbls[k])
                                     wait.setInformationText('Save {}...'.format(v2.getBasename()))
+                                    # < Revision 07/10/2026
+                                    if self._compress: v2.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     v2.save()
                     wait.close()
             """
@@ -955,7 +1008,7 @@ class DialogDeepLesionSegmentation(QDialog):
     QDialog -> DialogDeepLesionSegmentation
 
     Creation: 22/10/2024
-    Last revision: 12/05/2026
+    Last revision: 07/10/2026
     """
 
     # Class method
@@ -968,14 +1021,18 @@ class DialogDeepLesionSegmentation(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('U-net lesion segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -1005,7 +1062,6 @@ class DialogDeepLesionSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -1024,9 +1080,7 @@ class DialogDeepLesionSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -1035,20 +1089,25 @@ class DialogDeepLesionSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def getSelectionWidget(self):
         return self._volumeSelect
@@ -1117,6 +1176,9 @@ class DialogDeepLesionSegmentation(QDialog):
                             v.setFilenamePrefix(prefix)
                             v.setFilenameSuffix(suffix)
                             wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: v.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v.save()
                             saveroi = self._settings.getParameterValue('SaveROI')
                             if saveroi:
@@ -1125,6 +1187,9 @@ class DialogDeepLesionSegmentation(QDialog):
                                 roi.setFilenamePrefix(prefix)
                                 roi.setFilenameSuffix(suffix)
                                 wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                                # < Revision 07/10/2026
+                                if self._compress: roi.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 roi.save()
                     wait.close()
             """
@@ -1159,7 +1224,7 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
     QDialog -> DialogDeepWhiteMatterHyperIntensitiesSegmentation
 
     Creation: 22/10/2024
-    Last revision: 12/05/2026
+    Last revision: 07/10/2026
     """
 
     # Class method
@@ -1172,14 +1237,18 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('U-net white matter hyper-intensities segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -1219,7 +1288,6 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -1238,9 +1306,7 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -1249,14 +1315,13 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -1276,6 +1341,12 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
         self._volumeSelect.setAvailability(flags)
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def getSelectionWidgets(self):
         return self._volumeSelect.getSelectionWidgets()
@@ -1371,6 +1442,9 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
                         v.setFilenamePrefix(prefix)
                         v.setFilenameSuffix(suffix)
                         wait.setInformationText('Save {}...'.format(v.getBasename()))
+                        # < Revision 07/10/2026
+                        if self._compress: v.setCompressionOn()
+                        # Revision 07/10/2026 >
                         v.save()
                         saveroi = self._settings.getParameterValue('SaveROI')
                         if saveroi:
@@ -1379,6 +1453,9 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
                             roi.setFilenamePrefix(prefix)
                             roi.setFilenameSuffix(suffix)
                             wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                            # < Revision 07/10/2026
+                            if self._compress: roi.setCompressionOn()
+                            # Revision 07/10/2026 >
                             roi.save()
                     wait.close()
             """
@@ -1397,6 +1474,7 @@ class DialogDeepWhiteMatterHyperIntensitiesSegmentation(QDialog):
                 # Revision 12/05/2026 >
             else: self.accept()
 
+    # noinspection method-overriding
     def showEvent(self, event):
         super().showEvent(event)
         self._useT1Changed()
@@ -1432,13 +1510,13 @@ class DialogDeepTOFVesselSegmentation(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('U-net TOF vessel segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1469,7 +1547,6 @@ class DialogDeepTOFVesselSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -1488,9 +1565,7 @@ class DialogDeepTOFVesselSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -1499,14 +1574,13 @@ class DialogDeepTOFVesselSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -1626,7 +1700,7 @@ class DialogDeepTissueSegmentation(QDialog):
     QDialog -> DialogDeepTissueSegmentation
 
     Creation: 03/06/2025
-    Last revision: 12/05/2026
+    Last revision: 07/10/2026
     """
 
     # Class method
@@ -1639,14 +1713,18 @@ class DialogDeepTissueSegmentation(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('U-net tissue segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -1676,7 +1754,6 @@ class DialogDeepTissueSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -1695,9 +1772,7 @@ class DialogDeepTissueSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -1706,14 +1781,13 @@ class DialogDeepTissueSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -1721,9 +1795,16 @@ class DialogDeepTissueSegmentation(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getSelectionWidget(self):
         return self._volumeSelect
 
+    # noinspection unresolved-references
     def execute(self):
         if not self._volumeSelect.isEmpty():
             filenames = self._volumeSelect.getFilenames()
@@ -1740,7 +1821,6 @@ class DialogDeepTissueSegmentation(QDialog):
                         """
                         Segmentation
                         """
-                        # noinspection PyUnusedLocal
                         r = None
                         wait.setInformationText('U-net tissue segmentation initialization...')
                         wait.setButtonVisibility(True)
@@ -1752,7 +1832,6 @@ class DialogDeepTissueSegmentation(QDialog):
                             while extractor.is_alive():
                                 if exists(stdout): wait.setAntspynetTissueProgress(stdout)
                                 if not queue.empty():
-                                    # noinspection PyUnusedLocal
                                     r = queue.get()
                                     if extractor.is_alive(): extractor.terminate()
                                     wait.progressVisibilityOff()
@@ -1768,7 +1847,6 @@ class DialogDeepTissueSegmentation(QDialog):
                         finally:
                             # Remove temporary std::cout file
                             if exists(stdout): remove(stdout)
-                        # noinspection PyUnreachableCode
                         if wait.getStopped():
                             wait.close()
                             return
@@ -1800,8 +1878,14 @@ class DialogDeepTissueSegmentation(QDialog):
                                     roi.setFilename(t1.getFilename())
                                     roi.setFilenameSuffix(lbls2[j])
                                     wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                                    # < Revision 07/10/2026
+                                    if self._compress: roi.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     roi.save()
                             wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: v.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v.save()
                             # brain mask
                             mask = v > 1
@@ -1810,6 +1894,9 @@ class DialogDeepTissueSegmentation(QDialog):
                             mask.setFilename(t1.getFilename())
                             mask.setFilenamePrefix('brainmask')
                             wait.setInformationText('Save {}...'.format(mask.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: mask.setCompressionOn()
+                            # Revision 07/10/2026 >
                             mask.save()
                             # skull stripped
                             v2 = t1 * mask.cast(t1.getDatatype())
@@ -1817,6 +1904,9 @@ class DialogDeepTissueSegmentation(QDialog):
                             v2.setFilename(t1.getFilename())
                             v2.setFilenamePrefix('brain')
                             wait.setInformationText('Save {}...'.format(v2.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: v2.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v2.save()
                             # 3 labels image for cortical thickness processing
                             if prefix != '': prefix += '3'
@@ -1832,6 +1922,9 @@ class DialogDeepTissueSegmentation(QDialog):
                             v.acquisition.setLabel(4, '')
                             v.acquisition.setLabel(5, '')
                             v.acquisition.setLabel(6, '')
+                            # < Revision 07/10/2026
+                            if self._compress: v.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v.save()
                             # probability images
                             saveprb = self._settings.getParameterValue('SaveProbability')
@@ -1857,6 +1950,9 @@ class DialogDeepTissueSegmentation(QDialog):
                                         v2.setFilenameSuffix(seq)
                                         # Revision 31/01/2026 >
                                         wait.setInformationText('Save {}...'.format(v2.getBasename()))
+                                        # < Revision 07/10/2026
+                                        if self._compress: v2.setCompressionOn()
+                                        # Revision 07/10/2026 >
                                         v2.save()
                     wait.close()
             """
@@ -1891,19 +1987,23 @@ class DialogDeepAtlasParcellation(QDialog):
     QDialog -> DialogDeepAtlasParcellation
 
     Creation: 12/03/2026
-    Last revision: 12/05/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('OpenMAP-T1 atlas parcellation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -1934,7 +2034,6 @@ class DialogDeepAtlasParcellation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -1953,9 +2052,7 @@ class DialogDeepAtlasParcellation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -1964,14 +2061,13 @@ class DialogDeepAtlasParcellation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -1979,9 +2075,16 @@ class DialogDeepAtlasParcellation(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getSelectionWidget(self):
         return self._volumeSelect
 
+    # noinspection unresolved-references
     def execute(self):
         if not self._volumeSelect.isEmpty():
             filenames = self._volumeSelect.getFilenames()
@@ -2009,7 +2112,6 @@ class DialogDeepAtlasParcellation(QDialog):
                         """
                         Segmentation
                         """
-                        # noinspection PyUnusedLocal
                         r = None
                         wait.setInformationText('OpenMAP-T1 atlas parcellation initialization...')
                         wait.setButtonVisibility(True)
@@ -2020,16 +2122,13 @@ class DialogDeepAtlasParcellation(QDialog):
                                 extractor = ProcessDeepAtlasParcellation(t1, True, mng, queue)
                                 extractor.start()
                                 while extractor.is_alive():
-                                    # noinspection PyTypeChecker
                                     wait.messageFromDictProxyManager(mng)
                                     if not queue.empty():
-                                        # noinspection PyUnusedLocal
                                         r = queue.get()
                                         if extractor.is_alive(): extractor.terminate()
                                     if wait.getStopped(): extractor.terminate()
                             except Exception:
                                 if extractor.is_alive(): extractor.terminate()
-                        # noinspection PyUnreachableCode
                         if wait.getStopped():
                             wait.close()
                             return
@@ -2058,6 +2157,9 @@ class DialogDeepAtlasParcellation(QDialog):
                             v.setFilenamePrefix(pre)
                             v.setFilenameSuffix(suf)
                             wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: v.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v.save()
                             # save stripped
                             pre = self._settings.getParameterValue('PrefixStrip')
@@ -2069,6 +2171,9 @@ class DialogDeepAtlasParcellation(QDialog):
                             v.setFilenamePrefix(pre)
                             v.setFilenameSuffix(suf)
                             wait.setInformationText('Save {}...'.format(v.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: v.setCompressionOn()
+                            # Revision 07/10/2026 >
                             v.save()
                             # save 8 labels
                             if self._settings.getParameterValue('Save8'):
@@ -2082,6 +2187,9 @@ class DialogDeepAtlasParcellation(QDialog):
                                 v.setFilenamePrefix(pre)
                                 v.setFilenameSuffix(suf)
                                 wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                # < Revision 07/10/2026
+                                if self._compress: v.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 v.save()
                                 src = join(root, 'level1.xlabels')
                                 if exists(filename):
@@ -2099,6 +2207,9 @@ class DialogDeepAtlasParcellation(QDialog):
                                 v.setFilenamePrefix(pre)
                                 v.setFilenameSuffix(suf)
                                 wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                # < Revision 07/10/2026
+                                if self._compress: v.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 v.save()
                                 src = join(root, 'level2.xlabels')
                                 if exists(filename):
@@ -2116,6 +2227,9 @@ class DialogDeepAtlasParcellation(QDialog):
                                 v.setFilenamePrefix(pre)
                                 v.setFilenameSuffix(suf)
                                 wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                # < Revision 07/10/2026
+                                if self._compress: v.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 v.save()
                                 src = join(root, 'level3.xlabels')
                                 if exists(filename):
@@ -2133,6 +2247,9 @@ class DialogDeepAtlasParcellation(QDialog):
                                 v.setFilenamePrefix(pre)
                                 v.setFilenameSuffix(suf)
                                 wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                # < Revision 07/10/2026
+                                if self._compress: v.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 v.save()
                                 src = join(root, 'level4.xlabels')
                                 if exists(filename):
@@ -2150,6 +2267,9 @@ class DialogDeepAtlasParcellation(QDialog):
                                 v.setFilenamePrefix(pre)
                                 v.setFilenameSuffix(suf)
                                 wait.setInformationText('Save {}...'.format(v.getBasename()))
+                                # < Revision 07/10/2026
+                                if self._compress: v.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 v.save()
                                 src = join(root, 'level5.xlabels')
                                 if exists(filename):
@@ -2188,19 +2308,23 @@ class DialogDeepFCDSegmentation(QDialog):
     QDialog -> DialogDeepFCDSegmentation
 
     Creation: 12/05/2026
-    Last revision: 01/09/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('FCD detection')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -2240,7 +2364,6 @@ class DialogDeepFCDSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -2255,9 +2378,7 @@ class DialogDeepFCDSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -2266,14 +2387,13 @@ class DialogDeepFCDSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -2281,9 +2401,16 @@ class DialogDeepFCDSegmentation(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getSelectionWidgets(self):
         return self._volumeSelect.getSelectionWidgets()
 
+    # noinspection unresolved-references
     def execute(self):
         self._maskSelect.setVisible(False)
         if self._volumeSelect.isReady():
@@ -2337,6 +2464,9 @@ class DialogDeepFCDSegmentation(QDialog):
                                         # t1.saveAs(ft1)
                                         t1.setFilename(ft1)
                                         t1.setFilenamePrefix('bias')
+                                        # < Revision 07/10/2026
+                                        if self._compress: t1.setCompressionOn()
+                                        # Revision 07/10/2026 >
                                         t1.save()
                                         # Revision 30/05/2026 >
                                     except: pass
@@ -2357,6 +2487,9 @@ class DialogDeepFCDSegmentation(QDialog):
                                         # flair.saveAs(fflair)
                                         flair.setFilename(fflair)
                                         flair.setFilenamePrefix('bias')
+                                        # < Revision 07/10/2026
+                                        if self._compress: flair.setCompressionOn()
+                                        # Revision 07/10/2026 >
                                         flair.save()
                                         # Revision 30/05/2026 >
                                     except: pass
@@ -2405,7 +2538,6 @@ class DialogDeepFCDSegmentation(QDialog):
                         batchsize = self._settings.getParameterValue('Batch')[0]
                         if batchsize is None: batchsize = 8192
                         else: batchsize = int(batchsize)
-                        # noinspection PyUnusedLocal
                         r = None
                         wait.setInformationText('FCD detection initialization...')
                         wait.setButtonVisibility(True)
@@ -2416,16 +2548,13 @@ class DialogDeepFCDSegmentation(QDialog):
                                 extractor = ProcessDeepFCDSegmentation(rt1, rflair, rmask, threshold, batchsize, mng, queue)
                                 extractor.start()
                                 while extractor.is_alive():
-                                    # noinspection PyTypeChecker
                                     wait.messageFromDictProxyManager(mng)
                                     if not queue.empty():
-                                        # noinspection PyUnusedLocal
                                         r = queue.get()
                                         if extractor.is_alive(): extractor.terminate()
                                     if wait.getStopped(): extractor.terminate()
                             except Exception:
                                 if extractor.is_alive(): extractor.terminate()
-                        # noinspection PyUnreachableCode
                         if wait.getStopped():
                             wait.close()
                             return
@@ -2478,6 +2607,9 @@ class DialogDeepFCDSegmentation(QDialog):
                             vr.setFilenamePrefix(prefix)
                             vr.setFilenameSuffix(suffix)
                             wait.setInformationText('Save {}...'.format(vr.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: vr.setCompressionOn()
+                            # Revision 07/10/2026 >
                             vr.save()
                     wait.close()
             """
@@ -2509,18 +2641,23 @@ class DialogDeepMeningiomaSegmentation(QDialog):
     QDialog -> DialogDeepMeningiomaSegmentation
 
     Creation: 19/05/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Meningioma segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -2553,7 +2690,6 @@ class DialogDeepMeningiomaSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -2568,9 +2704,7 @@ class DialogDeepMeningiomaSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -2579,14 +2713,13 @@ class DialogDeepMeningiomaSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -2594,9 +2727,16 @@ class DialogDeepMeningiomaSegmentation(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getSelectionWidgets(self):
         return self._volumeSelect
 
+    # noinspection unresolved-references
     def execute(self):
         if not self._volumeSelect.isEmpty():
             ft1s = self._volumeSelect.getFilenames()
@@ -2619,6 +2759,9 @@ class DialogDeepMeningiomaSegmentation(QDialog):
                             wait.setInformationText('T1 bias field correction...')
                             try:
                                 t1 = biasFieldCorrection(t1, shrink=4, wait=wait)[0]
+                                # < Revision 07/10/2026
+                                if self._compress: t1.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 t1.saveAs(ft1)
                             except: pass
                             wait.progressVisibilityOff()
@@ -2650,16 +2793,13 @@ class DialogDeepMeningiomaSegmentation(QDialog):
                                 extractor = ProcessDeepMeningiomaSegmentation(rt1, model, mng, queue)
                                 extractor.start()
                                 while extractor.is_alive():
-                                    # noinspection PyTypeChecker
                                     wait.messageFromDictProxyManager(mng)
                                     if not queue.empty():
-                                        # noinspection PyUnusedLocal
                                         r = queue.get()
                                         if extractor.is_alive(): extractor.terminate()
                                     if wait.getStopped(): extractor.terminate()
                             except Exception:
                                 if extractor.is_alive(): extractor.terminate()
-                        # noinspection PyUnreachableCode
                         if wait.getStopped():
                             wait.close()
                             return
@@ -2703,6 +2843,9 @@ class DialogDeepMeningiomaSegmentation(QDialog):
                             vr.setFilenamePrefix(prefix)
                             vr.setFilenameSuffix(suffix)
                             wait.setInformationText('Save {}...'.format(vr.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: vr.setCompressionOn()
+                            # Revision 07/10/2026 >
                             vr.save()
                             """
                             Save ROI
@@ -2711,6 +2854,9 @@ class DialogDeepMeningiomaSegmentation(QDialog):
                                 threshold = self._settings.getParameterValue('Threshold')
                                 roi = vr.getROI(threshold, op='>=')
                                 roi.setFilename(vr.getFilename())
+                                # < Revision 07/10/2026
+                                if self._compress: roi.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 roi.save()
                     wait.close()
             """
@@ -2742,18 +2888,23 @@ class DialogDeepMetastasisSegmentation(QDialog):
     QDialog -> DialogDeepMetastasisSegmentation
 
     Creation: 20/05/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Metastasis segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -2786,7 +2937,6 @@ class DialogDeepMetastasisSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -2801,9 +2951,7 @@ class DialogDeepMetastasisSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -2812,14 +2960,13 @@ class DialogDeepMetastasisSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -2827,9 +2974,16 @@ class DialogDeepMetastasisSegmentation(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getSelectionWidgets(self):
         return self._volumeSelect
 
+    # noinspection unresolved-references
     def execute(self):
         if not self._volumeSelect.isEmpty():
             ft1s = self._volumeSelect.getFilenames()
@@ -2852,6 +3006,9 @@ class DialogDeepMetastasisSegmentation(QDialog):
                             wait.setInformationText('T1 bias field correction...')
                             try:
                                 t1 = biasFieldCorrection(t1, shrink=4, wait=wait)[0]
+                                # < Revision 07/10/2026
+                                if self._compress: t1.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 t1.saveAs(ft1)
                             except: pass
                             wait.progressVisibilityOff()
@@ -2883,16 +3040,13 @@ class DialogDeepMetastasisSegmentation(QDialog):
                                 wait.setInformationText('Metastasis segmentation...')
                                 extractor.start()
                                 while extractor.is_alive():
-                                    # noinspection PyTypeChecker
                                     wait.messageFromDictProxyManager(mng)
                                     if not queue.empty():
-                                        # noinspection PyUnusedLocal
                                         r = queue.get()
                                         if extractor.is_alive(): extractor.terminate()
                                     if wait.getStopped(): extractor.terminate()
                             except Exception:
                                 if extractor.is_alive(): extractor.terminate()
-                        # noinspection PyUnreachableCode
                         if wait.getStopped():
                             wait.close()
                             return
@@ -2935,6 +3089,9 @@ class DialogDeepMetastasisSegmentation(QDialog):
                             vr.setFilenamePrefix(prefix)
                             vr.setFilenameSuffix(suffix)
                             wait.setInformationText('Save {}...'.format(vr.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: vr.setCompressionOn()
+                            # Revision 07/10/2026 >
                             vr.save()
                     wait.close()
             """
@@ -2966,19 +3123,23 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
     QDialog -> DialogDeepMicrobleedsSegmentation
 
     Creation: 20/05/2026
-    Last revision: 21/05/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Microbleeds segmentation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -3008,7 +3169,6 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         # cancel.setFixedWidth(100)
@@ -3023,9 +3183,7 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -3034,14 +3192,13 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._volumeSelect.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references, unused-parameter
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -3049,9 +3206,16 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getSelectionWidgets(self):
         return self._volumeSelect
 
+    # noinspection unresolved-references
     def execute(self):
         if not self._volumeSelect.isEmpty():
             fswis = self._volumeSelect.getFilenames()
@@ -3100,16 +3264,13 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
                                 wait.setInformationText('Microbleeds segmentation...')
                                 extractor.start()
                                 while extractor.is_alive():
-                                    # noinspection PyTypeChecker
                                     wait.messageFromDictProxyManager(mng)
                                     if not queue.empty():
-                                        # noinspection PyUnusedLocal
                                         r = queue.get()
                                         if extractor.is_alive(): extractor.terminate()
                                     if wait.getStopped(): extractor.terminate()
                             except Exception:
                                 if extractor.is_alive(): extractor.terminate()
-                        # noinspection PyUnreachableCode
                         if wait.getStopped():
                             wait.close()
                             return
@@ -3150,6 +3311,9 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
                             vr.setFilenamePrefix(prefix)
                             vr.setFilenameSuffix(suffix)
                             wait.setInformationText('Save {}...'.format(vr.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: vr.setCompressionOn()
+                            # Revision 07/10/2026 >
                             vr.save()
                             """
                             Save microbleeds mask
@@ -3158,6 +3322,9 @@ class DialogDeepMicrobleedsSegmentation(QDialog):
                                 threshold = self._settings.getParameterValue('Threshold')
                                 if threshold is not None: threshold = 0.4
                                 mask = vr.getThresholdingMask(threshold, '>=')
+                                # < Revision 07/10/2026
+                                if self._compress: mask.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 mask.save()
                     wait.close()
             """

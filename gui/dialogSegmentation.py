@@ -130,6 +130,8 @@ class DialogKMeansClustering(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogKMeansClustering
+
+    Last revision: 07/10/2026
     """
     # Special method
 
@@ -153,6 +155,9 @@ class DialogKMeansClustering(QDialog):
         # Init non-GUI attributes
 
         self._pos = 0
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -209,7 +214,7 @@ class DialogKMeansClustering(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or sys.platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -284,6 +289,12 @@ class DialogKMeansClustering(QDialog):
             self._settings1.setParameterVisibility('Radius', False)
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def getSelectionWidget(self):
         return self._volumeSelect
@@ -360,6 +371,9 @@ class DialogKMeansClustering(QDialog):
                         wait.setInformationText('save {}...'.format(fltvol.getBasename()))
                         wait.buttonVisibilityOff()
                         wait.progressVisibilityOff()
+                        # < Revision 07/10/2026
+                        if self._compress: fltvol.setCompressionOn()
+                        # Revision 07/10/2026 >
                         fltvol.save()
                 """
                 Second stage - Bias field correction
@@ -405,6 +419,9 @@ class DialogKMeansClustering(QDialog):
                         wait.setInformationText('save {}...'.format(fltvol.getBasename()))
                         wait.buttonVisibilityOff()
                         wait.progressVisibilityOff()
+                        # < Revision 07/10/2026
+                        if self._compress: fltvol.setCompressionOn()
+                        # Revision 07/10/2026 >
                         fltvol.save()
                 """
                 Third stage - KMeans clustering
@@ -443,6 +460,9 @@ class DialogKMeansClustering(QDialog):
                 wait.setInformationText('save {}...'.format(fltvol.getBasename()))
                 wait.buttonVisibilityOff()
                 wait.progressVisibilityOff()
+                # < Revision 07/10/2026
+                if self._compress: fltvol.setCompressionOn()
+                # Revision 07/10/2026 >
                 fltvol.save()
                 if classroi:
                     for j in range(nclass):
@@ -460,6 +480,9 @@ class DialogKMeansClustering(QDialog):
                         roi.setFilenamePrefix(prefix)
                         roi.setFilenameSuffix(suffix)
                         wait.setInformationText('save {}...'.format(basename(roi.getFilename())))
+                        # < Revision 07/10/2026
+                        if self._compress: roi.setCompressionOn()
+                        # Revision 07/10/2026 >
                         roi.save()
             """
             Exit  
@@ -491,7 +514,7 @@ class DialogKMeansSegmentation(QDialog):
 
     QDialog -> DialogSupervisedKMeans
 
-    Last revision: 04/06/2025
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -511,6 +534,10 @@ class DialogKMeansSegmentation(QDialog):
         self.setWindowTitle('KMeans segmentation')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -567,7 +594,7 @@ class DialogKMeansSegmentation(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or sys.platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -642,6 +669,12 @@ class DialogKMeansSegmentation(QDialog):
             self._settings1.setParameterVisibility('Radius', False)
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def getSelectionWidget(self):
         return self._volumeSelect
@@ -723,6 +756,9 @@ class DialogKMeansSegmentation(QDialog):
                         wait.setInformationText('save {}...'.format(fltvol.getBasename()))
                         wait.buttonVisibilityOff()
                         wait.progressVisibilityOff()
+                        # < Revision 07/10/2026
+                        if self._compress: fltvol.setCompressionOn()
+                        # Revision 07/10/2026 >
                         fltvol.save()
                 """
                 Second stage - Bias field correction
@@ -767,6 +803,9 @@ class DialogKMeansSegmentation(QDialog):
                         wait.setInformationText('save {}...'.format(fltvol.getBasename()))
                         wait.buttonVisibilityOff()
                         wait.progressVisibilityOff()
+                        # < Revision 07/10/2026
+                        if self._compress: fltvol.setCompressionOn()
+                        # Revision 07/10/2026 >
                         fltvol.save()
                 """
                 Third stage - KMeans segmentation
@@ -854,6 +893,9 @@ class DialogKMeansSegmentation(QDialog):
                             fltvol.setFilenamePrefix(prefix)
                             fltvol.setFilenameSuffix(suffix)
                             wait.setInformationText('Save {}'.format(fltvol.getBasename()))
+                            # < Revision 07/10/2026
+                            if self._compress: fltvol.setCompressionOn()
+                            # Revision 07/10/2026 >
                             fltvol.save()
                             vols.append(fltvol)
                             if exists(filename): remove(filename)
@@ -865,6 +907,9 @@ class DialogKMeansSegmentation(QDialog):
                         fltvol.setFilenamePrefix(segprefix)
                         fltvol.setFilenameSuffix(segsuffix)
                         wait.setInformationText('Save {}'.format(fltvol.getBasename()))
+                        # < Revision 07/10/2026
+                        if self._compress: fltvol.setCompressionOn()
+                        # Revision 07/10/2026 >
                         fltvol.save()
                 wait.close()
             """
@@ -896,7 +941,7 @@ class DialogPriorBasedSegmentation(QDialog):
 
     QDialog -> DialogPriorBasedSegmentation
 
-    Last revision: 04/06/2025
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -930,6 +975,9 @@ class DialogPriorBasedSegmentation(QDialog):
         self._multir = None
         self._stages = None
         self._conv = None
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -985,7 +1033,7 @@ class DialogPriorBasedSegmentation(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or sys.platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -1080,6 +1128,12 @@ class DialogPriorBasedSegmentation(QDialog):
             self._settings1.setParameterVisibility('Radius', False)
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     # < Revision 13/02/2025
     # add setFilenames method
@@ -1181,6 +1235,9 @@ class DialogPriorBasedSegmentation(QDialog):
                         wait.setInformationText('save {}...'.format(fltvol.getBasename()))
                         wait.buttonVisibilityOff()
                         wait.progressVisibilityOff()
+                        # < Revision 07/10/2026
+                        if self._compress: fltvol.setCompressionOn()
+                        # Revision 07/10/2026 >
                         fltvol.save()
                 """
                 Second stage - Bias field correction
@@ -1226,6 +1283,9 @@ class DialogPriorBasedSegmentation(QDialog):
                         wait.setInformationText('save {}...'.format(fltvol.getBasename()))
                         wait.buttonVisibilityOff()
                         wait.progressVisibilityOff()
+                        # < Revision 07/10/2026
+                        if self._compress: fltvol.setCompressionOn()
+                        # Revision 07/10/2026 >
                         fltvol.save()
                 """
                 Third stage - Priors registration
@@ -1469,6 +1529,9 @@ class DialogPriorBasedSegmentation(QDialog):
                                     r.setFilenamePrefix(prefix)
                                     r.setFilenameSuffix(suffix)
                                     wait.setInformationText('Save {}...'.format(r.getBasename()))
+                                    # < Revision 07/10/2026
+                                    if self._compress: r.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     r.save()
                             for j in range(len(priors)):
                                 filename = addPrefixSuffixToFilename(priors[j],
@@ -1499,6 +1562,9 @@ class DialogPriorBasedSegmentation(QDialog):
                                     r.setFilenamePrefix(prefix)
                                     r.setFilenameSuffix(suffix)
                                     wait.setInformationText('Save {}...'.format(r.getBasename()))
+                                    # < Revision 07/10/2026
+                                    if self._compress: r.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     r.save()
                                 priors[j] = r
                             if fmask != '' and exists(fmask):
@@ -1526,6 +1592,9 @@ class DialogPriorBasedSegmentation(QDialog):
                                     mask.setFilenamePrefix(prefix)
                                     mask.setFilenameSuffix(suffix)
                                     wait.setInformationText('Save {}...'.format(mask.getBasename()))
+                                    # < Revision 07/10/2026
+                                    if self._compress: mask.setCompressionOn()
+                                    # Revision 07/10/2026 >
                                     mask.save()
                         else: priors = 'Kmeans[3]'
                 else: priors = 'Kmeans[3]'
@@ -1642,6 +1711,9 @@ class DialogPriorBasedSegmentation(QDialog):
                             v.setFilename(vols[j].getFilename())
                             vols[j] = v
                         wait.setInformationText('Save {}'.format(v.getBasename()))
+                        # < Revision 07/10/2026
+                        if self._compress: v.setCompressionOn()
+                        # Revision 07/10/2026 >
                         v.save()
                     # Save label tissue map
                     if len(vols) > 0:
@@ -1652,6 +1724,9 @@ class DialogPriorBasedSegmentation(QDialog):
                         v.setFilenamePrefix(segprefix)
                         v.setFilenameSuffix(segsuffix)
                         wait.setInformationText('Save {}'.format(v.getBasename()))
+                        # < Revision 07/10/2026
+                        if self._compress: v.setCompressionOn()
+                        # Revision 07/10/2026 >
                         v.save()
                         if len(vols) > 3:
                             if self._settings.getParameterValue('SegSGM') is True:
@@ -1670,6 +1745,9 @@ class DialogPriorBasedSegmentation(QDialog):
                                 v.setFilenamePrefix(segprefix)
                                 v.setFilenameSuffix(segsuffix)
                                 wait.setInformationText('Save {}'.format(v.getBasename()))
+                                # < Revision 07/10/2026
+                                if self._compress: v.setCompressionOn()
+                                # Revision 07/10/2026 >
                                 v.save()
                     # Save skull strip volume
                     if radius > 0 and strip:
@@ -1682,6 +1760,9 @@ class DialogPriorBasedSegmentation(QDialog):
                         v.setFilenamePrefix(prefix)
                         v.setFilenameSuffix(suffix)
                         wait.setInformationText('Save {}'.format(v.getBasename()))
+                        # < Revision 07/10/2026
+                        if self._compress: v.setCompressionOn()
+                        # Revision 07/10/2026 >
                         v.save()
                     # Save brain mask
                     if radius > 0:
@@ -1691,6 +1772,9 @@ class DialogPriorBasedSegmentation(QDialog):
                         mask.acquisition.setModalityToOT()
                         mask.acquisition.setSequence(SisypheAcquisition.MASK)
                         wait.setInformationText('Save {}'.format(mask.getBasename()))
+                        # < Revision 07/10/2026
+                        if self._compress: mask.setCompressionOn()
+                        # Revision 07/10/2026 >
                         mask.save()
                 wait.close()
             """
@@ -1722,7 +1806,7 @@ class DialogCorticalThickness(QDialog):
 
     QDialog -> DialogCorticalThickness
 
-    Last revision: 13/02/2025
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -1742,6 +1826,10 @@ class DialogCorticalThickness(QDialog):
         self.setWindowTitle('Cortical thickness')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -1769,7 +1857,7 @@ class DialogCorticalThickness(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or sys.platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -1813,6 +1901,12 @@ class DialogCorticalThickness(QDialog):
         QApplication.processEvents()
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     # < Revision 13/02/2025
     # add getFilenames method
@@ -1954,6 +2048,9 @@ class DialogCorticalThickness(QDialog):
                     if pfx !='': v.setFilenamePrefix(pfx)
                     if sfx !='': v.setFilenameSuffix(sfx)
                     wait.setInformationText('Save {}...'.format(v.getBasename()))
+                    # < Revision 07/10/2026
+                    if self._compress: v.setCompressionOn()
+                    # Revision 07/10/2026 >
                     v.save()
                 wait.close()
             """
@@ -1983,7 +2080,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
 
     QDialog -> DialogRegistrationBasedSegmentation
 
-    Last revision 03/02/2026
+    Last revision 07/10/2026
     """
 
     # Special method
@@ -2005,6 +2102,10 @@ class DialogRegistrationBasedSegmentation(QDialog):
         self.setWindowTitle(title)
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -2065,7 +2166,7 @@ class DialogRegistrationBasedSegmentation(QDialog):
         # Init default dialog buttons
 
         layout = QHBoxLayout()
-        if sys.platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
+        if sys.platform == 'win32' or sys.platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
@@ -2277,6 +2378,12 @@ class DialogRegistrationBasedSegmentation(QDialog):
         QApplication.processEvents()
 
     # Public method
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def getSelectionWidgets(self):
         return self._volumeSelect, self._structSelect
@@ -2885,6 +2992,9 @@ class DialogRegistrationBasedSegmentation(QDialog):
                     rstruct.setFilenamePrefix(struct.getName())
                     if origin is not None: rstruct.setOrigin(origin)
                     wait.setInformationText('Save {}...'.format(rstruct.getBasename()))
+                    # < Revision 07/10/2026
+                    if self._compress: rstruct.setCompressionOn()
+                    # Revision 07/10/2026 >
                     rstruct.save()
                     wait.close()
                     # < Revision 03/02/2026
@@ -2896,6 +3006,9 @@ class DialogRegistrationBasedSegmentation(QDialog):
                         except: v = False
                         if v:
                             roi = rstruct.getROI(0.5, '>=')
+                            # < Revision 07/10/2026
+                            if self._compress: roi.setCompressionOn()
+                            # Revision 07/10/2026 >
                             roi.save(rstruct.getFilename())
                     # Revision 03/02/2026 >
             """

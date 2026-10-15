@@ -94,11 +94,11 @@ class DialogBundleROISelection(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Bundle ROI selection')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -145,7 +145,6 @@ class DialogBundleROISelection(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._exit = QPushButton('Close')
         self._exit.setAutoDefault(True)
@@ -163,9 +162,7 @@ class DialogBundleROISelection(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._exit.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._process.clicked.connect(self.execute)
 
         # < Revision 13/06/2025
@@ -174,7 +171,6 @@ class DialogBundleROISelection(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._filetracts.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
@@ -182,10 +178,11 @@ class DialogBundleROISelection(QDialog):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _center(self, widget):
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -241,6 +238,7 @@ class DialogBundleROISelection(QDialog):
         wait.setInformationText('{} ROI selection...'.format(basename(self._filetracts.getFilename())))
         include = self._filerois.getCheckStateList()
         mode = self._toroisettings.getParameterValue('Mode')
+        # noinspection unresolved-references
         sl = sl.streamlinesRoiSelection(rois, include, mode, wait=wait)
         # Save bundle
         wait.hide()
@@ -293,13 +291,13 @@ class DialogStreamlinesROISelection(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Streamlines ROI selection')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init attribute
@@ -333,11 +331,8 @@ class DialogStreamlinesROISelection(QDialog):
         self._rois.setDragDropMode(self._rois.DragDrop)
         self._inclrois.setDragDropMode(self._rois.DragDrop)
         self._exclrois.setDragDropMode(self._rois.DragDrop)
-        # noinspection PyUnresolvedReferences
         self._rois.setDefaultDropAction(Qt.MoveAction)
-        # noinspection PyUnresolvedReferences
         self._inclrois.setDefaultDropAction(Qt.MoveAction)
-        # noinspection PyUnresolvedReferences
         self._exclrois.setDefaultDropAction(Qt.MoveAction)
         self._rois.setAcceptDrops(True)
         self._inclrois.setAcceptDrops(True)
@@ -357,19 +352,14 @@ class DialogStreamlinesROISelection(QDialog):
         self._inclremove.setToolTip('Remove selected ROI(s) from inclusion list')
         self._excladd.setToolTip('Add selected ROI(s) to exclusion list')
         self._exclremove.setToolTip('Remove selected ROI(s) from exclusion list')
-        # noinspection PyUnresolvedReferences
         self._incladd.clicked.connect(self._addInclusionROI)
-        # noinspection PyUnresolvedReferences
         self._inclremove.clicked.connect(self._removeInclusionROI)
-        # noinspection PyUnresolvedReferences
         self._excladd.clicked.connect(self._addExclusionROI)
-        # noinspection PyUnresolvedReferences
         self._exclremove.clicked.connect(self._removeExclusionROI)
 
         # < Revision 03/04/2025
         self._openroi = QPushButton('Add ROI(s)')
         self._openroi.setToolTip('Add ROI(s) from disk.')
-        # noinspection PyUnresolvedReferences
         self._openroi.clicked.connect(self._addROIfromDisk)
         # Revision 03/04/2025 >
 
@@ -406,7 +396,6 @@ class DialogStreamlinesROISelection(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -423,9 +412,7 @@ class DialogStreamlinesROISelection(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self._accept)
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
 
         # < Revision 13/06/2025
@@ -434,7 +421,6 @@ class DialogStreamlinesROISelection(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._toroisettings.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
@@ -587,6 +573,7 @@ class DialogStreamlinesROISelection(QDialog):
         # Revision 03/04/2025 >
         self._rois.sortItems()
 
+    # noinspection unresolved-references
     def getInclusionROINames(self) -> list[str]:
         r = list()
         n = self._inclrois.count()
@@ -594,7 +581,6 @@ class DialogStreamlinesROISelection(QDialog):
             for i in range(n):
                 # < Revision 03/04/2025
                 # r.append(self._inclrois.item(i).text())
-                # noinspection PyUnresolvedReferences
                 path = self._inclrois.item(i).data(Qt.UserRole)
                 if path == '': r.append(self._inclrois.item(i).text())
                 else:
@@ -603,6 +589,7 @@ class DialogStreamlinesROISelection(QDialog):
                 # Revision 03/04/2025 >
         return r
 
+    # noinspection unresolved-references
     def getExclusionROINames(self):
         r = list()
         n = self._exclrois.count()
@@ -610,7 +597,6 @@ class DialogStreamlinesROISelection(QDialog):
             for i in range(n):
                 # < Revision 03/04/2025
                 # r.append(self._exclrois.item(i).text())
-                # noinspection PyUnresolvedReferences
                 path = self._exclrois.item(i).data(Qt.UserRole)
                 if path == '': r.append(self._exclrois.item(i).text())
                 else:
@@ -688,11 +674,11 @@ class DialogBundleAtlasSelection(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Bundle Atlas selection')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -713,7 +699,6 @@ class DialogBundleAtlasSelection(QDialog):
 
         self._atlas = QListWidget()
         self._atlas.setToolTip('Atlas bundles')
-        # noinspection PyUnresolvedReferences
         self._atlas.itemClicked.connect(lambda: self._validate())
         self._initAtlas()
 
@@ -739,7 +724,6 @@ class DialogBundleAtlasSelection(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._exit = QPushButton('Close')
         self._exit.setAutoDefault(True)
@@ -757,9 +741,7 @@ class DialogBundleAtlasSelection(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._exit.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._process.clicked.connect(self.execute)
 
         # < Revision 13/06/2025
@@ -768,7 +750,6 @@ class DialogBundleAtlasSelection(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._filetracts.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
@@ -776,10 +757,11 @@ class DialogBundleAtlasSelection(QDialog):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _center(self, widget):
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -805,11 +787,11 @@ class DialogBundleAtlasSelection(QDialog):
 
     # Public methods
 
+    # noinspection unresolved-references
     def getAtlasBundlesChecked(self) -> list[str]:
         checked = list()
         for i in range(self._atlas.count()):
             item = self._atlas.item(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState() == Qt.Checked:
                 checked.append(item.text())
         return checked
@@ -975,13 +957,13 @@ class DialogStreamlinesAtlasSelection(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Streamlines atlas selection')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1011,7 +993,6 @@ class DialogStreamlinesAtlasSelection(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -1028,9 +1009,7 @@ class DialogStreamlinesAtlasSelection(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
 
         # < Revision 13/06/2025
@@ -1039,17 +1018,17 @@ class DialogStreamlinesAtlasSelection(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._settings.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _center(self, widget):
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -1071,11 +1050,11 @@ class DialogStreamlinesAtlasSelection(QDialog):
 
     # Public methods
 
+    # noinspection unresolved-references
     def getAtlasBundlesChecked(self) -> list[str]:
         checked = list()
         for i in range(self._atlas.count()):
             item = self._atlas.item(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState() == Qt.Checked:
                 checked.append(item.text())
         return checked
@@ -1128,11 +1107,11 @@ class DialogBundleFilteringSelection(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Bundle filtering selection')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1179,7 +1158,6 @@ class DialogBundleFilteringSelection(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._exit = QPushButton('Close')
         self._exit.setAutoDefault(True)
@@ -1197,9 +1175,7 @@ class DialogBundleFilteringSelection(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._exit.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._process.clicked.connect(self.execute)
 
         # < Revision 13/06/2025
@@ -1208,7 +1184,6 @@ class DialogBundleFilteringSelection(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._filetracts.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
@@ -1216,10 +1191,11 @@ class DialogBundleFilteringSelection(QDialog):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _center(self, widget):
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -1244,6 +1220,7 @@ class DialogBundleFilteringSelection(QDialog):
     def getStreamlinesSampling(self) -> int:
         return self._settings.getParameterValue('Subsampling')
 
+    # noinspection unresolved-references
     def execute(self):
         # Open tractogram
         wait = DialogWait()
@@ -1325,13 +1302,13 @@ class DialogStreamlinesFiltering(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Streamlines cluster confidence filtering')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1353,7 +1330,6 @@ class DialogStreamlinesFiltering(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -1370,9 +1346,7 @@ class DialogStreamlinesFiltering(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
 
         # < Revision 13/06/2025
@@ -1381,7 +1355,6 @@ class DialogStreamlinesFiltering(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._settings.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
@@ -1445,13 +1418,13 @@ class DialogStreamlinesClustering(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Streamlines clustering')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1475,7 +1448,6 @@ class DialogStreamlinesClustering(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -1492,9 +1464,7 @@ class DialogStreamlinesClustering(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
 
         # < Revision 13/06/2025
@@ -1595,14 +1565,18 @@ class DialogBundleToDensityMap(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
         self._ID = None
 
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
+
         # Init window
 
         self.setWindowTitle('Density map processing')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1628,7 +1602,6 @@ class DialogBundleToDensityMap(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -1649,9 +1622,7 @@ class DialogBundleToDensityMap(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         exitb.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._process.clicked.connect(self.execute)
 
         # < Revision 13/06/2025
@@ -1660,7 +1631,6 @@ class DialogBundleToDensityMap(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._filetracts.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
@@ -1668,10 +1638,11 @@ class DialogBundleToDensityMap(QDialog):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _center(self, widget):
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -1679,6 +1650,12 @@ class DialogBundleToDensityMap(QDialog):
         self._process.setEnabled(not self._filetracts.isEmpty())
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def setTractogram(self, filename: str) -> None:
         if splitext(filename)[1] == SisypheStreamlines.getFileExt() and exists(filename):
@@ -1717,6 +1694,9 @@ class DialogBundleToDensityMap(QDialog):
             chdir(dirname(filename))
             wait.show()
             wait.setInformationText('Save {}...'.format(basename(filename)))
+            # < Revisiobn 06/10/2026
+            if self._compress: r.setCompressionOn()
+            # Revisiobn 06/10/2026 >
             r.saveAs(filename)
         wait.close()
         """
@@ -1747,19 +1727,23 @@ class DialogBundleToPathLengthMap(QDialog):
     QDialog -> DialogBundleToPathLengthMap
 
     Creation: 04/04/2024
-    Last revision: 13/06/2025
+    Last revision: 06/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
         self._ID = None
 
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
+
         # Init window
 
         self.setWindowTitle('Path length map processing')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1794,7 +1778,6 @@ class DialogBundleToPathLengthMap(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -1812,9 +1795,7 @@ class DialogBundleToPathLengthMap(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         exitb.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._process.clicked.connect(self.execute)
 
         # < Revision 13/06/2025
@@ -1823,7 +1804,6 @@ class DialogBundleToPathLengthMap(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._filetracts.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
@@ -1831,10 +1811,11 @@ class DialogBundleToPathLengthMap(QDialog):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _center(self, widget):
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -1850,6 +1831,12 @@ class DialogBundleToPathLengthMap(QDialog):
             self._process.setEnabled(not self._fileroi.isEmpty())
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def setTractogram(self, filename: str) -> None:
         if splitext(filename)[1] == SisypheStreamlines.getFileExt() and exists(filename):
@@ -1891,6 +1878,9 @@ class DialogBundleToPathLengthMap(QDialog):
             chdir(dirname(filename))
             wait.show()
             wait.setInformationText('Save {}...'.format(basename(filename)))
+            # < Revisiobn 06/10/2026
+            if self._compress: r.setCompressionOn()
+            # Revisiobn 06/10/2026 >
             r.saveAs(filename)
         wait.close()
         """
@@ -1923,11 +1913,12 @@ class DialogBundleConnectivityMatrix(QDialog):
     QDialog -> DialogBundleConnectivityMatrix
 
     Creation: 04/04/2024
-    Last revision: 10/09/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
         self._ID = None
@@ -1936,7 +1927,6 @@ class DialogBundleConnectivityMatrix(QDialog):
         # Init window
 
         self.setWindowTitle('Connectivity matrix processing')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1977,7 +1967,6 @@ class DialogBundleConnectivityMatrix(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -1995,9 +1984,7 @@ class DialogBundleConnectivityMatrix(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         exitb.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._process.clicked.connect(self.execute)
 
         # < Revision 13/06/2025
@@ -2006,7 +1993,6 @@ class DialogBundleConnectivityMatrix(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._filetracts.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 13/06/2025 >
         self.setModal(True)
@@ -2014,10 +2000,11 @@ class DialogBundleConnectivityMatrix(QDialog):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _center(self, widget):
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -2043,6 +2030,7 @@ class DialogBundleConnectivityMatrix(QDialog):
             self._filetracts.open(filename)
             self._validate()
 
+    # noinspection unresolved-references
     def execute(self):
         # Open bundle
         wait = DialogWait()
@@ -2083,6 +2071,7 @@ class DialogBundleConnectivityMatrix(QDialog):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(dlg, c)
         # < Revision 10/09/2026
@@ -2129,7 +2118,6 @@ class DialogBundleConnectivityMatrix(QDialog):
         fig.set_layout_engine('constrained')
         fig.clear()
         ax = fig.add_subplot(111, anchor='C')
-        # noinspection PyTypeChecker
         cax = ax.inset_axes([1.05, 0.0, 0.05, 1.0])
         im = ax.imshow(npr, cmap='jet')
         cbar = fig.colorbar(im, cax=cax, cmap='jet')

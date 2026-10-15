@@ -69,7 +69,7 @@ class WorkflowItem(QWidget):
     QWidget -> WorkflowItem
 
     Creation: 13/02/2025
-    Last revision: 03/02/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -80,6 +80,9 @@ class WorkflowItem(QWidget):
         self._dialog = None
         self._last: int = 0
         self._old: str = ''
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         self._process = QLabel(self)
         self._process.setText(name)
@@ -122,6 +125,12 @@ class WorkflowItem(QWidget):
 
     # Public methods
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def init(self, last: int | None = None):
         if last is None: last = self._last
         else: self._last = last
@@ -160,6 +169,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFlipAxes import DialogFlipAxes
                 self._dialog = DialogFlipAxes()
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     # < Revision 03/02/2026
@@ -193,6 +205,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogSwapAxes import DialogSwapAxes
                 self._dialog = DialogSwapAxes()
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     # < Revision 03/02/2026
@@ -226,6 +241,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogRemoveNeckSlices
                 self._dialog = DialogRemoveNeckSlices(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -252,6 +270,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogTexture import DialogTexture
                 self._dialog = DialogTexture()
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     # < Revision 03/02/2026
@@ -297,6 +318,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogMeanFilter
                 self._dialog = DialogMeanFilter(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -325,6 +349,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogMedianFilter
                 self._dialog = DialogMedianFilter(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -353,6 +380,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogGaussianFilter
                 self._dialog = DialogGaussianFilter(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -381,6 +411,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogGradientFilter
                 self._dialog = DialogGradientFilter(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -409,6 +442,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogLaplacianFilter
                 self._dialog = DialogLaplacianFilter(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -437,6 +473,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogAnisotropicDiffusionFilter
                 self._dialog = DialogAnisotropicDiffusionFilter(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -466,6 +505,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogBiasFieldCorrectionFilter
                 self._dialog = DialogBiasFieldCorrectionFilter(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -495,6 +537,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogHistogramIntensityMatching
                 self._dialog = DialogHistogramIntensityMatching(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -526,6 +571,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogRegressionIntensityMatching
                 self._dialog = DialogRegressionIntensityMatching(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -556,6 +604,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogFunction import DialogIntensityNormalization
                 self._dialog = DialogIntensityNormalization(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -588,6 +639,9 @@ class WorkflowItem(QWidget):
                 # self._dialog = DialogRegistration(transform='Rigid', parent=self)
                 self._dialog = DialogRegistration(transform='Rigid')
                 # Revision 03/02/2026 >
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -634,6 +688,9 @@ class WorkflowItem(QWidget):
                 # self._dialog = DialogRegistration(transform='Affine', parent=self)
                 self._dialog = DialogRegistration(transform='Affine')
                 # Revision 03/02/2026 >
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -680,6 +737,9 @@ class WorkflowItem(QWidget):
                 # self._dialog = DialogRegistration(transform='DisplacementField', parent=self)
                 self._dialog = DialogRegistration(transform='DisplacementField')
                 # Revision 03/02/2026 >
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -726,6 +786,9 @@ class WorkflowItem(QWidget):
                 # self._dialog = DialogICBMNormalization(self)
                 self._dialog = DialogICBMNormalization()
                 # Revision 03/02/2026 >
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -768,6 +831,9 @@ class WorkflowItem(QWidget):
             if self._dialog is None:
                 from Sisyphe.gui.dialogSkullStripping import DialogSkullStripping
                 self._dialog = DialogSkullStripping(self)
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -797,6 +863,9 @@ class WorkflowItem(QWidget):
                 # self._dialog = DialogPriorBasedSegmentation(self)
                 self._dialog = DialogPriorBasedSegmentation()
                 # Revision 03/02/2026 >
+                # < Revision 07/10/2026
+                self._dialog.setCompression(self._compress)
+                # Revision 07/10/2026 >
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
@@ -1049,7 +1118,7 @@ class DialogWorkflow(QDialog):
     QDialog -> DialogWorkflow
 
     Creation: 13/02/2025
-    Last revision: 03/02/2026
+    Last revision: 07/10/2026
     """
 
     # Class constants
@@ -1099,6 +1168,7 @@ class DialogWorkflow(QDialog):
     _name       str, current workflow name
     _files      FilesSelectionWidget
     _worklist   QListWidget
+    _compress   bool, save xvol in compressed format
     """
 
     def __init__(self, parent=None):
@@ -1109,6 +1179,9 @@ class DialogWorkflow(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._name = 'workflow'
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -1246,6 +1319,9 @@ class DialogWorkflow(QDialog):
         # w = WorkflowItem(self._process.currentText(), last)
         w = WorkflowItem(self._process.currentText(), last, parent=self)
         # Revision 03/02/2026 >
+        # < Revision 07/10/2026
+        w.setCompression(self._compress)
+        # Revision 07/10/2026 >
         item = QListWidgetItem()
         item.setSizeHint(w.sizeHint())
         self._worklist.addItem(item)
@@ -1261,6 +1337,9 @@ class DialogWorkflow(QDialog):
             # w = WorkflowItem(self._process.currentText(), last)
             w = WorkflowItem(self._process.currentText(), last, parent=self)
             # Revision 03/02/2026 >
+            # < Revision 07/10/2026
+            w.setCompression(self._compress)
+            # Revision 07/10/2026 >
             item = QListWidgetItem()
             item.setSizeHint(w.sizeHint())
             self._worklist.insertItem(row, item)
@@ -1289,6 +1368,12 @@ class DialogWorkflow(QDialog):
         return r
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def save(self):
         if self._worklist.count() > 0:
@@ -1447,6 +1532,9 @@ class DialogWorkflow(QDialog):
                             return
                         wait.close()
                     elif name == 'algebra':
+                        # < Revision 07/10/2026
+                        w.setCompression(self._compress)
+                        # Revision 07/10/2026 >
                         f = w.getEdit()
                         if f != '':
                             wait = DialogWait()

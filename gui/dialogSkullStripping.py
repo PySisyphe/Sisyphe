@@ -76,6 +76,9 @@ class DialogSkullStripping(AbstractDialogFunction):
 
         self._modality = 't1'
         self._extractor = None
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         data = self._settings.getParameterWidget('TrainingData')
         data.currentTextChanged.connect(self._dataChanged)
@@ -149,6 +152,12 @@ class DialogSkullStripping(AbstractDialogFunction):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def execute(self, messagebox: bool = True):
         if self.getNumberOfFilenames() > 0:
             wait = DialogWait(title=self._funcname)
@@ -187,6 +196,7 @@ class DialogSkullStripping(AbstractDialogFunction):
                 else: self.accept()
             # Revision 01/04/2026 >
 
+    # noinspection unresolved-references
     def function(self, filename, wait):
         rimg = None
         img = SisypheVolume()
@@ -232,16 +242,13 @@ class DialogSkullStripping(AbstractDialogFunction):
                     extractor = ProcessDeepAtlasParcellation(img, False, mng, queue)
                     extractor.start()
                     while extractor.is_alive():
-                        # noinspection PyTypeChecker
                         wait.messageFromDictProxyManager(mng)
                         if not queue.empty():
-                            # noinspection PyUnusedLocal
                             r = queue.get()
                             if extractor.is_alive(): extractor.terminate()
                         if wait.getStopped(): extractor.terminate()
                 except Exception as err:
                     if extractor.is_alive(): extractor.terminate()
-                # noinspection PyUnreachableCode
                 if wait.getStopped():
                     wait.close()
                     return
@@ -261,6 +268,9 @@ class DialogSkullStripping(AbstractDialogFunction):
                 v.setFilenamePrefix(prefix)
                 v.setFilenameSuffix(suffix)
                 wait.setInformationText('Save {}...'.format(v.getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 mask = r[1] > 0
                 mask = mask.astype(uint8)
@@ -275,6 +285,9 @@ class DialogSkullStripping(AbstractDialogFunction):
                     v.setFilenamePrefix(maskprefix)
                     v.setFilenameSuffix(masksuffix)
                     wait.setInformationText('Save {}...'.format(v.getBasename()))
+                    # < Revision 07/10/2026
+                    if self._compress: v.setCompressionOn()
+                    # Revision 07/10/2026 >
                     v.save()
                 if roimask:
                     roi = SisypheROI()
@@ -282,6 +295,9 @@ class DialogSkullStripping(AbstractDialogFunction):
                     roi.setName('Cerebrum')
                     roi.setReferenceID(img)
                     filename2 = addPrefixSuffixToFilename(img.getFilename(), maskprefix, masksuffix)
+                    # < Revision 07/10/2026
+                    if self._compress: roi.setCompressionOn()
+                    # Revision 07/10/2026 >
                     roi.saveAs(filename2)
             wait.close()
             return
@@ -303,6 +319,9 @@ class DialogSkullStripping(AbstractDialogFunction):
                 v.acquisition.setSequenceToDensityMap()
                 v.acquisition.setNoUnit()
                 wait.setInformationText('Save {}...'.format(basename(filename2)))
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.saveAs(filename2)
             # Save mask
             if savemask:
@@ -314,6 +333,9 @@ class DialogSkullStripping(AbstractDialogFunction):
                 v.setID(img)
                 v.acquisition.setSequenceToMask()
                 wait.setInformationText('Save {}...'.format(basename(filename2)))
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.saveAs(filename2)
             # Save mask as ROI
             if roimask:
@@ -327,6 +349,9 @@ class DialogSkullStripping(AbstractDialogFunction):
                 # Revision 06/11/2025 >
                 roi.setName('Cerebrum')
                 roi.setReferenceID(img)
+                # < Revision 07/10/2026
+                if self._compress: roi.setCompressionOn()
+                # Revision 07/10/2026 >
                 # < Revision 06/11/2025
                 # roi.saveAs(filename2)
                 roi.saveAs(filename2)
@@ -339,4 +364,7 @@ class DialogSkullStripping(AbstractDialogFunction):
             v.copyFromNumpyArray(rimg, spacing=s, defaultshape=False)
             v.copyAttributesFrom(img)
             wait.setInformationText('Save {}...'.format(basename(filename2)))
+            # < Revision 07/10/2026
+            if self._compress: v.setCompressionOn()
+            # Revision 07/10/2026 >
             v.save(filename2)

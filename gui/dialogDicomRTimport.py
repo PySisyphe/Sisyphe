@@ -72,7 +72,7 @@ class DialogRTimport(QDialog):
 
     QDialog -> DialogRTimport
 
-    Last revision: 19/02/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -98,6 +98,10 @@ class DialogRTimport(QDialog):
         self._size = None
         self._spacing = None
         self._origin = None
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -447,6 +451,9 @@ class DialogRTimport(QDialog):
                                     acq.getSequence()]) + vol.getFileExt()
                 if self._savedir.getPath() != '': savename = join(self._savedir.getPath(), savename)
                 else: savename = join(dirname(filename), savename)
+                # < Revision 05/10/2026
+                if self._compress: vol.setCompressionOn()
+                # Revision 05/10/2026 >
                 try: vol.save(savename)
                 except: messageBox(self, 'DICOM RT import', 'SisypheVolume write error.')
             else: raise FileNotFoundError('no such file {}.'.format(filename))
@@ -486,6 +493,9 @@ class DialogRTimport(QDialog):
                                 acq.getSequence()]) + vol.getFileExt()
             if self._savedir.getPath() != '': savename = join(self._savedir.getPath(), savename)
             else: savename = join(dirname(filenames[0]), savename)
+            # < Revision 05/10/2026
+            if self._compress: vol.setCompressionOn()
+            # Revision 05/10/2026 >
             try: vol.save(savename)
             except: messageBox(self, 'DICOM RT import', 'SisypheVolume write error.')
             # Write XmlDicom
@@ -574,3 +584,11 @@ class DialogRTimport(QDialog):
                 finally:
                     progress.hide()
                     self._clear()
+
+    # Public method
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >

@@ -74,6 +74,10 @@ class DialogDiffusionPreprocessing(QDialog):
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
+
         # Init QLayout
 
         self._layout = QVBoxLayout()
@@ -336,6 +340,12 @@ class DialogDiffusionPreprocessing(QDialog):
 
     # Public methods
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def execute(self):
         wait = DialogWait()
         # < Revision 17/06/2025
@@ -442,7 +452,11 @@ class DialogDiffusionPreprocessing(QDialog):
                 denoise['ncoils'] = self._preproc.getParameterValue('ReceiverArray')
                 denoise['nphase'] = self._preproc.getParameterValue('PhaseArray')
         else: denoise = None
-        try: dwiPreprocessing(vols, prefix, suffix, gtable, brainseg, gibbs, denoise, save=True, wait=wait)
+        # < Revision 07/10/2026
+        # try: dwiPreprocessing(vols, prefix, suffix, gtable, brainseg, gibbs, denoise, save=True, wait=wait)
+        try: dwiPreprocessing(vols, prefix, suffix, gtable, brainseg, gibbs, denoise,
+                              save=True, compress=self._compress, wait=wait)
+        # Revision 07/10/2026 >
         except Exception as err:
             wait.hide()
             messageBox(self,

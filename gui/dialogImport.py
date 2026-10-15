@@ -48,7 +48,7 @@ class DialogImport(QDialog):
 
     QDialog -> DialogImport
 
-    Last revision: 19/02/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -68,6 +68,10 @@ class DialogImport(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
+
+        # < Revision 06/10/2026
+        self._compress = False
+        # Revision 06/10/2026 >
 
         # Init QLayout
 
@@ -128,6 +132,12 @@ class DialogImport(QDialog):
 
     # Public method
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def convert(self):
         filenames = self._files.getFilenames()
         if filenames is not None:
@@ -172,6 +182,9 @@ class DialogImport(QDialog):
                             savename += vol.getFileExt()
                             if not self._savedir.isEmpty():
                                 savename = join(self._savedir.getPath(), basename(savename))
+                            # < Revision 05/10/2026
+                            if self._compress: vol.setCompressionOn()
+                            # Revision 05/10/2026 >
                             vol.save(savename)
                         except:
                             self.hide()

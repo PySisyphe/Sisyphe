@@ -67,7 +67,7 @@ class DialogReorient(QDialog):
 
     QDialog -> DialogReorient
 
-    Last revision: 31/01/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -103,6 +103,10 @@ class DialogReorient(QDialog):
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -270,6 +274,12 @@ class DialogReorient(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def setBoxVisibility(self, v):
         if isinstance(v, bool):
             self._views().setFOVBoxVisibility(v)
@@ -410,8 +420,10 @@ class DialogReorient(QDialog):
         wait = DialogWait(title='Resample')
         wait.open()
         wait.setInformationText('Resample {} ...'.format(self.getVolume().getBasename()))
-        try:
-            f.execute(fixed=None, save=True, dialog=True, prefix=prefix, suffix=suffix, wait=wait)
+        # < Revision 07/10/2026
+        if self._compress: f.setCompressionOn()
+        # Revision 07/10/2026 >
+        try: f.execute(fixed=None, save=True, dialog=True, prefix=prefix, suffix=suffix, wait=wait)
         except Exception as err:
             messageBox(self, title=self.windowTitle(), text='{}'.format(err))
         wait.close()

@@ -75,7 +75,7 @@ class DialogTarget(QDialog):
 
     QDialog -> DialogTarget
 
-    Last revision: 30/03/2025
+    Last revision: 14/10/2026
     """
 
     # Special method
@@ -95,11 +95,11 @@ class DialogTarget(QDialog):
     
     """
 
+    # noinspection unresolved-references
     def __init__(self, tool=None, views=None, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Target position')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         from Sisyphe.widgets.iconBarViewWidgets import IconBarViewWidgetCollection
@@ -119,8 +119,20 @@ class DialogTarget(QDialog):
 
         # Init widgets
 
+        # Interactive position
+
+        # < Revision 14/10/2026
+        self._posmouse = QRadioButton('Interactive position')
+        self._posmouse.setChecked(True)
+        self._layout.addWidget(self._posmouse)
+        # Revision 14/10/2026 >
+
+        # Cursor position
+
         self._poscursor = QRadioButton('Cursor position')
-        self._poscursor.setChecked(True)
+        # < Revision 14/10/2026
+        # self._poscursor.setChecked(True)
+        # Revision 14/10/2026 >
         self._layout.addWidget(self._poscursor)
 
         # Absolute position
@@ -129,21 +141,18 @@ class DialogTarget(QDialog):
         self._layout.addWidget(self._posabs)
 
         self._posx = LabeledDoubleSpinBox(title='X', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._posx.setAlignment(Qt.AlignCenter)
         self._posx.setDecimals(1)
         self._posx.setSingleStep(1.0)
         self._posx.setRange(0.0, 512.0)
         self._posx.adjustSize()
         self._posy = LabeledDoubleSpinBox(title='Y', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._posy.setAlignment(Qt.AlignCenter)
         self._posy.setDecimals(1)
         self._posy.setSingleStep(1.0)
         self._posy.setRange(0.0, 512.0)
         self._posy.adjustSize()
         self._posz = LabeledDoubleSpinBox(title='Z', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._posz.setAlignment(Qt.AlignCenter)
         self._posz.setDecimals(1)
         self._posz.setSingleStep(1.0)
@@ -153,7 +162,6 @@ class DialogTarget(QDialog):
         lyout = QHBoxLayout()
         lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(5)
-        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignCenter)
         lyout.addWidget(self._posx)
         lyout.addWidget(self._posy)
@@ -162,7 +170,6 @@ class DialogTarget(QDialog):
         self._abs.setLayout(lyout)
         self._abs.setEnabled(False)
         self._layout.addWidget(self._abs)
-        # noinspection PyUnresolvedReferences
         self._posabs.toggled.connect(self._abs.setEnabled)
 
         # Leksell absolute position
@@ -171,7 +178,6 @@ class DialogTarget(QDialog):
         self._layout.addWidget(self._poslabs)
 
         self._poslx = LabeledDoubleSpinBox(title='X', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._poslx.setAlignment(Qt.AlignCenter)
 
         self._poslx.setDecimals(1)
@@ -179,14 +185,12 @@ class DialogTarget(QDialog):
         self._poslx.setRange(0.0, 512.0)
         self._poslx.adjustSize()
         self._posly = LabeledDoubleSpinBox(title='Y', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._posly.setAlignment(Qt.AlignCenter)
         self._posly.setDecimals(1)
         self._posly.setSingleStep(1.0)
         self._posly.setRange(0.0, 512.0)
         self._posly.adjustSize()
         self._poslz = LabeledDoubleSpinBox(title='Z', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._poslz.setAlignment(Qt.AlignCenter)
         self._poslz.setDecimals(1)
         self._poslz.setSingleStep(1.0)
@@ -196,7 +200,6 @@ class DialogTarget(QDialog):
         lyout = QHBoxLayout()
         lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(5)
-        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignCenter)
         lyout.addWidget(self._poslx)
         lyout.addWidget(self._posly)
@@ -206,7 +209,6 @@ class DialogTarget(QDialog):
         self._labs.setEnabled(False)
         self._layout.addWidget(self._poslabs)
         self._layout.addWidget(self._labs)
-        # noinspection PyUnresolvedReferences
         self._poslabs.toggled.connect(self._labs.setEnabled)
 
         # Mesh center of mass
@@ -217,7 +219,6 @@ class DialogTarget(QDialog):
         self._meshes = QComboBox(self)
         self._meshes.setEnabled(False)
         self._layout.addWidget(self._meshes)
-        # noinspection PyUnresolvedReferences
         self._posmeshes.toggled.connect(self._meshes.setEnabled)
 
         # Weighted targets
@@ -228,15 +229,12 @@ class DialogTarget(QDialog):
         self._points = QTreeWidget(self)
         self._points.setHeaderLabels(['Points          ', 'Relative weights', 'Absolute weights'])
         for i in range(self._points.headerItem().columnCount()):
-            # noinspection PyUnresolvedReferences
             self._points.headerItem().setTextAlignment(i, Qt.AlignCenter)
-        # noinspection PyTypeChecker
         self._points.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self._points.header().setStretchLastSection(False)
         self._points.setAlternatingRowColors(True)
         self._points.setEnabled(False)
         self._layout.addWidget(self._points)
-        # noinspection PyUnresolvedReferences
         self._postargets.toggled.connect(self._points.setEnabled)
 
         # Relative position
@@ -247,7 +245,6 @@ class DialogTarget(QDialog):
         self._ref = QComboBox(self)
         self._ref.adjustSize()
         self._ap1 = QDoubleSpinBox(self)
-        # noinspection PyUnresolvedReferences
         self._ap1.setAlignment(Qt.AlignCenter)
         self._ap1.setDecimals(1)
         self._ap1.setSingleStep(1.0)
@@ -255,10 +252,8 @@ class DialogTarget(QDialog):
         self._ap1.setRange(-256.0, 256.0)
         self._ap1.adjustSize()
         self._ap1.setToolTip('Anterior +, Posterior -')
-        # noinspection PyUnresolvedReferences
         self._ap1.valueChanged.connect(self._apChanged)
         self._ap2 = QDoubleSpinBox(self)
-        # noinspection PyUnresolvedReferences
         self._ap2.setAlignment(Qt.AlignCenter)
         self._ap2.setDecimals(2)
         self._ap2.setSingleStep(0.1)
@@ -266,22 +261,17 @@ class DialogTarget(QDialog):
         self._ap2.setRange(-1.0, 1.0)
         self._ap2.adjustSize()
         self._ap2.setToolTip('Anterior +, Posterior -')
-        # noinspection PyUnresolvedReferences
         self._ap2.valueChanged.connect(self._apChanged)
         self._ap3 = QComboBox(self)
-        # noinspection PyUnresolvedReferences
         self._ap3.currentIndexChanged.connect(self._apChanged)
         self._ap4 = QComboBox(self)
-        # noinspection PyUnresolvedReferences
         self._ap4.currentIndexChanged.connect(self._apChanged)
         self._ap5 = QLineEdit(self)
         self._ap5.setText('0.0')
         self._ap5.setReadOnly(True)
-        # noinspection PyUnresolvedReferences
         self._ap5.setAlignment(Qt.AlignCenter)
         self._ap5.adjustSize()
         self._lat1 = QDoubleSpinBox(self)
-        # noinspection PyUnresolvedReferences
         self._lat1.setAlignment(Qt.AlignCenter)
         self._lat1.setDecimals(1)
         self._lat1.setSingleStep(1.0)
@@ -289,10 +279,8 @@ class DialogTarget(QDialog):
         self._lat1.setRange(-256.0, 256.0)
         self._lat1.adjustSize()
         self._lat1.setToolTip('Right +, Left -')
-        # noinspection PyUnresolvedReferences
         self._lat1.valueChanged.connect(self._latChanged)
         self._lat2 = QDoubleSpinBox(self)
-        # noinspection PyUnresolvedReferences
         self._lat2.setAlignment(Qt.AlignCenter)
         self._lat2.setDecimals(2)
         self._lat2.setSingleStep(0.1)
@@ -300,22 +288,17 @@ class DialogTarget(QDialog):
         self._lat2.setRange(-1.0, 1.0)
         self._lat2.adjustSize()
         self._lat2.setToolTip('Right +, Left -')
-        # noinspection PyUnresolvedReferences
         self._lat2.valueChanged.connect(self._latChanged)
         self._lat3 = QComboBox(self)
-        # noinspection PyUnresolvedReferences
         self._lat3.currentIndexChanged.connect(self._latChanged)
         self._lat4 = QComboBox(self)
-        # noinspection PyUnresolvedReferences
         self._lat4.currentIndexChanged.connect(self._latChanged)
         self._lat5 = QLineEdit(self)
         self._lat5.setText('0.0')
         self._lat5.setReadOnly(True)
-        # noinspection PyUnresolvedReferences
         self._lat5.setAlignment(Qt.AlignCenter)
         self._lat5.adjustSize()
         self._h1 = QDoubleSpinBox(self)
-        # noinspection PyUnresolvedReferences
         self._h1.setAlignment(Qt.AlignCenter)
         self._h1.setDecimals(1)
         self._h1.setSingleStep(1.0)
@@ -323,10 +306,8 @@ class DialogTarget(QDialog):
         self._h1.setRange(-256.0, 256.0)
         self._h1.adjustSize()
         self._h1.setToolTip('Top +, Bottom -')
-        # noinspection PyUnresolvedReferences
         self._h1.valueChanged.connect(self._hChanged)
         self._h2 = QDoubleSpinBox(self)
-        # noinspection PyUnresolvedReferences
         self._h2.setAlignment(Qt.AlignCenter)
         self._h2.setDecimals(2)
         self._h2.setSingleStep(0.1)
@@ -334,25 +315,20 @@ class DialogTarget(QDialog):
         self._h2.setRange(-1.0, 1.0)
         self._h2.adjustSize()
         self._h2.setToolTip('Top +, Bottom -')
-        # noinspection PyUnresolvedReferences
         self._h2.valueChanged.connect(self._hChanged)
         self._h3 = QComboBox(self)
-        # noinspection PyUnresolvedReferences
         self._h3.currentIndexChanged.connect(self._hChanged)
         self._h4 = QComboBox(self)
-        # noinspection PyUnresolvedReferences
         self._h4.currentIndexChanged.connect(self._hChanged)
         self._h5 = QLineEdit(self)
         self._h5.setText('0.0')
         self._h5.setReadOnly(True)
         self._h5.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._h5.setAlignment(Qt.AlignCenter)
 
         lyout = QHBoxLayout()
         lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(5)
-        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignCenter)
         lyout.addWidget(self._ap1)
         lyout.addWidget(QLabel('+'))
@@ -369,7 +345,6 @@ class DialogTarget(QDialog):
         lyout = QHBoxLayout()
         lyout.setSpacing(5)
         lyout.setContentsMargins(0, 0, 0, 0)
-        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignCenter)
         lyout.addWidget(self._lat1)
         lyout.addWidget(QLabel('+'))
@@ -386,7 +361,6 @@ class DialogTarget(QDialog):
         lyout = QHBoxLayout()
         lyout.setSpacing(5)
         lyout.setContentsMargins(0, 0, 0, 0)
-        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignCenter)
         lyout.addWidget(self._h1)
         lyout.addWidget(QLabel('+'))
@@ -414,7 +388,6 @@ class DialogTarget(QDialog):
         self._rel.setLayout(lyout)
         self._rel.setEnabled(False)
         self._layout.addWidget(self._rel)
-        # noinspection PyUnresolvedReferences
         self._posrel.toggled.connect(self._rel.setEnabled)
 
         # Trajectory
@@ -429,7 +402,6 @@ class DialogTarget(QDialog):
         self._yangle.setSingleStep(1.0)
         self._yangle.setRange(-90.0, 90.0)
         self._yangle.setValue(0.0)
-        # noinspection PyUnresolvedReferences
         self._yangle.valueChanged.connect(self._trajectoryChanged)
         self._xangle = LabeledDoubleSpinBox(title='Sagittal angle', fontsize=14)
         self._xangle.setToolTip('Angle around x-axis -180° to +180°\n'
@@ -441,7 +413,6 @@ class DialogTarget(QDialog):
         self._xangle.setSingleStep(1.0)
         self._xangle.setRange(-180.0, 180.0)
         self._xangle.setValue(0.0)
-        # noinspection PyUnresolvedReferences
         self._xangle.valueChanged.connect(self._trajectoryChanged)
         self._length = LabeledDoubleSpinBox(title='Length', fontsize=14)
         self._length.setToolTip('Trajectory length in mm')
@@ -451,13 +422,11 @@ class DialogTarget(QDialog):
         self._length.setSingleStep(1.0)
         self._length.setRange(0.0, 512.0)
         self._length.setValue(50.0)
-        # noinspection PyUnresolvedReferences
         self._length.valueChanged.connect(self._trajectoryChanged)
 
         lyout = QVBoxLayout()
         lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(5)
-        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignCenter)
         lyout.addWidget(self._yangle)
         lyout.addWidget(self._xangle)
@@ -469,37 +438,30 @@ class DialogTarget(QDialog):
         self._layout.addWidget(self._trajectory)
 
         self._posex = LabeledDoubleSpinBox(title='X', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._posex.setAlignment(Qt.AlignCenter)
         self._posex.setDecimals(1)
         self._posex.setSingleStep(1.0)
         self._posex.setRange(0.0, 512.0)
         self._posex.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._posex.valueChanged.connect(self._entryChanged)
         self._posey = LabeledDoubleSpinBox(title='Y', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._posey.setAlignment(Qt.AlignCenter)
         self._posey.setDecimals(1)
         self._posey.setSingleStep(1.0)
         self._posey.setRange(0.0, 512.0)
         self._posey.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._posey.valueChanged.connect(self._entryChanged)
         self._posez = LabeledDoubleSpinBox(title='Z', fontsize=14)
-        # noinspection PyUnresolvedReferences
         self._posez.setAlignment(Qt.AlignCenter)
         self._posez.setDecimals(1)
         self._posez.setSingleStep(1.0)
         self._posez.setRange(0.0, 512.0)
         self._posez.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._posez.valueChanged.connect(self._entryChanged)
 
         lyout = QHBoxLayout()
         lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(5)
-        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignCenter)
         lyout.addWidget(self._posex)
         lyout.addWidget(self._posey)
@@ -516,7 +478,6 @@ class DialogTarget(QDialog):
         if platform == 'win32' or platform == 'linux': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
         lyout.setContentsMargins(0, 0, 0, 0)
-        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         self._cancel = QPushButton('Cancel')
         self._cancel.setFixedWidth(100)
@@ -527,12 +488,14 @@ class DialogTarget(QDialog):
         lyout.addWidget(self._ok)
         lyout.addWidget(self._cancel)
         lyout.addStretch()
-        # noinspection PyUnresolvedReferences
         lyout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         self._layout.addLayout(lyout)
 
         self._btgroup = QButtonGroup()
         self._btgroup.setExclusive(True)
+        # < Revision 14/10/2026
+        self._btgroup.addButton(self._posmouse)
+        # Revision 14/10/2026 >
         self._btgroup.addButton(self._poscursor)
         self._btgroup.addButton(self._posabs)
         self._btgroup.addButton(self._poslabs)
@@ -542,9 +505,7 @@ class DialogTarget(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
 
         if views is not None:
@@ -595,7 +556,7 @@ class DialogTarget(QDialog):
         self._posey.blockSignals(False)
         self._posez.blockSignals(False)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _apChanged(self, d):
         d = 0.0
         if self._points.topLevelItemCount() > 0:
@@ -613,7 +574,7 @@ class DialogTarget(QDialog):
         r = self._ap1.value() + self._ap2.value() * d
         self._ap5.setText('{:.1f}'.format(r))
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _latChanged(self, d):
         d = 0.0
         if self._points.topLevelItemCount() > 0:
@@ -631,7 +592,7 @@ class DialogTarget(QDialog):
         r = self._lat1.value() + self._lat2.value() * d
         self._lat5.setText('{:.1f}'.format(r))
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _hChanged(self, d):
         d = 0.0
         if self._points.topLevelItemCount() > 0:
@@ -649,7 +610,7 @@ class DialogTarget(QDialog):
         r = self._h1.value() + self._h2.value() * d
         self._h5.setText('{:.1f}'.format(r))
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _trajectoryChanged(self, d):
         from Sisyphe.core.sisypheTools import LineWidget
         if self._tool is None:
@@ -668,7 +629,7 @@ class DialogTarget(QDialog):
             self._posey.blockSignals(False)
             self._posez.blockSignals(False)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _entryChanged(self, d):
         from Sisyphe.core.sisypheTools import LineWidget
         if self._tool is None:
@@ -687,7 +648,7 @@ class DialogTarget(QDialog):
             self._yangle.blockSignals(False)
             self._length.blockSignals(False)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _editWeight(self, index):
         n = self._points.topLevelItemCount()
         if n > 0:
@@ -706,6 +667,7 @@ class DialogTarget(QDialog):
         n = 0
         self._meshes.clear()
         if self.hasViewCollection():
+            # noinspection unresolved-references
             meshes = self._views.getMeshCollection()
             if meshes is not None:
                 n = meshes.count()
@@ -717,6 +679,7 @@ class DialogTarget(QDialog):
 
     # Public methods
 
+    # noinspection unresolved-references
     def initPoints(self):
         if self._tool is not None: self._posabs.setChecked(self._tool.isStatic())
         weights = dict()
@@ -724,7 +687,6 @@ class DialogTarget(QDialog):
         if n > 0:
             for i in range(n):
                 key = self._points.topLevelItem(i).text(0)
-                # noinspection PyUnresolvedReferences
                 weights[key] = (self._points.itemWidget(self._points.topLevelItem(i), 1).value(),
                                 self._points.topLevelItem(i).data(2, Qt.UserRole))
         row = 0
@@ -756,31 +718,23 @@ class DialogTarget(QDialog):
                     for acpc in ['AC', 'PC']:
                         item = QTreeWidgetItem(self._points)
                         item.setText(0, acpc)
-                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(0, Qt.AlignCenter)
                         if acpc == 'AC':
-                            # noinspection PyUnresolvedReferences
                             item.setData(0, Qt.UserRole, vol.acpc.getAC())
                         else:
-                            # noinspection PyUnresolvedReferences
                             item.setData(0, Qt.UserRole, vol.acpc.getPC())
                         edit = QSpinBox()
                         edit.setRange(0, 100)
                         if acpc in weights:
                             edit.setValue(weights[acpc][0])
-                            # noinspection PyUnresolvedReferences
                             item.setData(2, Qt.UserRole, weights[acpc][1])
                             item.setText(2, '{:.2f}'.format(weights[acpc][1]))
                         else:
                             edit.setValue(0)
-                            # noinspection PyUnresolvedReferences
                             item.setData(2, Qt.UserRole, 0.0)
                             item.setText(2, '0.0')
-                        # noinspection PyUnresolvedReferences
                         edit.setAlignment(Qt.AlignCenter)
-                        # noinspection PyUnresolvedReferences
                         edit.valueChanged.connect(self._editWeight)
-                        # noinspection PyUnresolvedReferences
                         item.setTextAlignment(2, Qt.AlignCenter)
                         self._points.setItemWidget(item, 1, edit)
                         self._points.addTopLevelItem(item)
@@ -803,30 +757,22 @@ class DialogTarget(QDialog):
                                 name = tool.getName()
                                 item.setText(0, name)
                                 if isinstance(tool, HandleWidget):
-                                    # noinspection PyUnresolvedReferences
                                     item.setData(0, Qt.UserRole, tool.getPosition())
                                 else:
-                                    # noinspection PyUnresolvedReferences
                                     item.setData(0, Qt.UserRole, tool.getPosition2())
                                 edit = QSpinBox()
                                 edit.setRange(0, 100)
                                 if name in weights:
                                     edit.setValue(weights[name][0])
-                                    # noinspection PyUnresolvedReferences
                                     item.setData(2, Qt.UserRole, weights[name][1])
                                     item.setText(2, '{:.2f}'.format(weights[name][1]))
                                 else:
                                     edit.setValue(0)
-                                    # noinspection PyUnresolvedReferences
                                     item.setData(2, Qt.UserRole, 0.0)
                                     item.setText(2, '0.0')
-                                # noinspection PyUnresolvedReferences
                                 item.setTextAlignment(0, Qt.AlignCenter)
-                                # noinspection PyUnresolvedReferences
                                 edit.setAlignment(Qt.AlignCenter)
-                                # noinspection PyUnresolvedReferences
                                 edit.valueChanged.connect(self._editWeight)
-                                # noinspection PyUnresolvedReferences
                                 item.setTextAlignment(2, Qt.AlignCenter)
                                 self._points.setItemWidget(item, 1, edit)
                                 self._points.addTopLevelItem(item)
@@ -838,31 +784,24 @@ class DialogTarget(QDialog):
                                 self._h3.addItem(name)
                                 self._h4.addItem(name)
                                 row += 1
-        # noinspection PyUnresolvedReferences
         i = self._ref.findText(pref, Qt.MatchExactly)
         if i == -1: i = 0
         if self._ref.count() > 0: self._ref.setCurrentIndex(i)
-        # noinspection PyUnresolvedReferences
         i = self._ap3.findText(pap3, Qt.MatchExactly)
         if i == -1: i = 0
         if self._ap3.count() > 0: self._ap3.setCurrentIndex(i)
-        # noinspection PyUnresolvedReferences
         i = self._ap4.findText(pap4, Qt.MatchExactly)
         if i == -1: i = 0
         if self._ap4.count() > 0: self._ap4.setCurrentIndex(i)
-        # noinspection PyUnresolvedReferences
         i = self._lat3.findText(plat3, Qt.MatchExactly)
         if i == -1: i = 0
         if self._lat3.count() > 0: self._lat3.setCurrentIndex(i)
-        # noinspection PyUnresolvedReferences
         i = self._lat4.findText(plat4, Qt.MatchExactly)
         if i == -1: i = 0
         if self._lat4.count() > 0: self._lat4.setCurrentIndex(i)
-        # noinspection PyUnresolvedReferences
         i = self._h3.findText(ph3, Qt.MatchExactly)
         if i == -1: i = 0
         if self._h3.count() > 0: self._h3.setCurrentIndex(i)
-        # noinspection PyUnresolvedReferences
         i = self._h4.findText(ph4, Qt.MatchExactly)
         if i == -1: i = 0
         if self._h4.count() > 0: self._h4.setCurrentIndex(i)
@@ -914,12 +853,14 @@ class DialogTarget(QDialog):
                     wd = dialog._points.itemWidget(dialog._points.topLevelItem(i), 1)
                     if w is not None and wd is not None: w.setValue(wd.value())
                 self._editWeight(0.0)
+            # noinspection unresolved-references
             txt = dialog._btgroup.checkedButton().text()
             for bt in self._btgroup.buttons():
                 if bt.text() == txt:
                     bt.setChecked(True)
                     break
 
+    # noinspection unresolved-references
     def copyFieldsTo(self, dialog):
         if isinstance(dialog, DialogTarget):
             if dialog._ref.count() > 0: dialog._ref.setCurrentIndex(self._ref.currentIndex())
@@ -953,20 +894,26 @@ class DialogTarget(QDialog):
                     break
             dialog._first = False
 
+    # noinspection unresolved-references
     def setDefaultPosition(self):
         if self.hasViewCollection():
             p = list(self._views.getVolumeView().getCursorWorldPosition())
             self.setAbsolutePosition(p, check=False)
             p[2] += 50.0
             self.setEntryPosition(p)
-            self._poscursor.setChecked(True)
+            # < Revision 14/10/2026
+            # self._poscursor.setChecked(True)
+            self._posmouse.setChecked(True)
+            # Revision 14/10/2026 >
 
+    # noinspection unresolved-references
     def setCursorPosition(self):
         if self.hasViewCollection():
             p = self._views.getVolumeView().getCursorWorldPosition()
             self.setAbsolutePosition(p, check=False)
             self._poscursor.setChecked(True)
 
+    # noinspection unresolved-references
     def setAbsolutePosition(self, p, check=True, leksell=True):
         self._posx.setValue(p[0])
         self._posy.setValue(p[1])
@@ -1013,8 +960,9 @@ class DialogTarget(QDialog):
                 self._entryChanged(0)
             else: raise TypeError('{} invalid type (HandleWidget or LineWidget expected).'.format(type(self._tool)))
 
+    # noinspection unresolved-references
     def getTargetPosition(self):
-        # noinspection PyInconsistentReturns
+        # noinspection inconsistent-returns
         if self.hasViewCollection():
             # Cursor position (Default)
             p = self._views.getVolumeView().getCursorWorldPosition()
@@ -1049,18 +997,14 @@ class DialogTarget(QDialog):
                 # Weighted targets
                 n = self._points.topLevelItemCount()
                 if n > 0:
-                    # noinspection PyUnresolvedReferences
                     p = list(self._points.topLevelItem(0).data(0, Qt.UserRole))
                     if n > 1:
-                        # noinspection PyUnresolvedReferences
                         w = self._points.topLevelItem(0).data(2, Qt.UserRole)
                         p[0] *= w
                         p[1] *= w
                         p[2] *= w
                         for i in range(1, n):
-                            # noinspection PyUnresolvedReferences
                             p2 = self._points.topLevelItem(i).data(0, Qt.UserRole)
-                            # noinspection PyUnresolvedReferences
                             w = self._points.topLevelItem(i).data(2, Qt.UserRole)
                             p[0] += (p2[0] * w)
                             p[1] += (p2[1] * w)
@@ -1122,6 +1066,12 @@ class DialogTarget(QDialog):
         r['target'] = self.getTargetPosition()
         return r
 
+    # < Revision 14/10/2026
+    # add isInteractivePosition method
+    def isInteractivePosition(self):
+        return self._posmouse.isChecked()
+    # Revision 14/10/2026 >
+
     def isAbsolutePosition(self):
         return self._poscursor.isChecked() or self._posabs.isChecked() or self._poslabs.isChecked()
 
@@ -1164,6 +1114,7 @@ class DialogTarget(QDialog):
 
     # Qt Event
 
+    # noinspection method-overriding,unresolved-references
     def showEvent(self, event):
         super().showEvent(event)
         self.initPoints()
@@ -1197,13 +1148,13 @@ class DialogTargetsAlongTrajectory(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Add targets along trajectory')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -1250,7 +1201,6 @@ class DialogTargetsAlongTrajectory(QDialog):
         if platform == 'win32' or platform == 'linux': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
         lyout.setContentsMargins(0, 0, 0, 0)
-        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         self._cancel = QPushButton('Cancel')
         self._cancel.setFixedWidth(100)
@@ -1263,19 +1213,17 @@ class DialogTargetsAlongTrajectory(QDialog):
         lyout.addStretch()
         self._layout.addLayout(lyout)
 
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         self.setModal(True)
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
 
     # Private methods
 
+    # noinspection unresolved-references
     def _initElectrodes(self) -> None:
         import Sisyphe.settings
         filename = abspath(join(dirname(Sisyphe.settings.__file__), 'electrodes.xml'))
@@ -1319,10 +1267,11 @@ class DialogTargetsAlongTrajectory(QDialog):
     def _center(self) -> None:
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _doubleClickedElectrode(self, item: QTreeWidgetItem, column: int) -> None:
         size = float(item.text(2))
         spacing = float(item.text(3))
@@ -1364,6 +1313,7 @@ class DialogTargetsAlongTrajectory(QDialog):
 
     # Qt Event
 
+    # noinspection method-overriding
     def showEvent(self, event):
         super().showEvent(event)
         self._center()

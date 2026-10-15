@@ -70,6 +70,7 @@ class DialogDiffusionTracking(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
 
         super().__init__(parent)
@@ -84,7 +85,6 @@ class DialogDiffusionTracking(QDialog):
         # Init window
 
         self.setWindowTitle('Diffusion tracking')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -126,7 +126,6 @@ class DialogDiffusionTracking(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -144,10 +143,8 @@ class DialogDiffusionTracking(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         exitb.clicked.connect(self.accept)
         # < Revision 11/07/2025
-        # noinspection PyUnresolvedReferences
         # self._process.clicked.connect(self.execute)
         self._process.clicked.connect(self.multiExecute)
         # Revision 11/07/2025 >
@@ -166,7 +163,7 @@ class DialogDiffusionTracking(QDialog):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _center(self, widget):
         self._track.adjustSize()
         QApplication.processEvents()

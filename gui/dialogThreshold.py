@@ -54,7 +54,7 @@ class DialogThreshold(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle('Set threshold')
-        # noinspection PyTypeChecker
+        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setSizeGripEnabled(False)
 
@@ -82,6 +82,7 @@ class DialogThreshold(QDialog):
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         layout.setContentsMargins(0, 0, 0, 0)
+        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -169,6 +170,7 @@ class DialogThreshold(QDialog):
             if self._threshold is not None:
                 self._threshold.finalize()
         # Revision 10/03/2025 >
+
 
 class DialogGradientThreshold(DialogThreshold):
     """

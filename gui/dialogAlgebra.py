@@ -52,7 +52,7 @@ class DialogAlgebra(QDialog):
 
     QDialog -> DialogAlgebra
 
-    Last revision: 19/02/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -64,14 +64,18 @@ class DialogAlgebra(QDialog):
     _formula    LabeledLineEdit
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Voxel by voxel algebraic calculation')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
+
+        # < Revision 06/10/2026
+        self._compress = False
+        # Revision 06/10/2026 >
 
         # Init QLayout
 
@@ -92,7 +96,6 @@ class DialogAlgebra(QDialog):
         # Formula edit widget
 
         self._formula = LabeledLineEdit()
-        # noinspection PyUnresolvedReferences
         self._formula.setFocusPolicy(Qt.StrongFocus)
         self._formula.setLabelText('Formula')
         self._formula.setToolTip('All functions and operators of the Numpy library can be used in formula.\n'
@@ -106,7 +109,6 @@ class DialogAlgebra(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -121,9 +123,7 @@ class DialogAlgebra(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         self.setModal(True)
@@ -143,6 +143,12 @@ class DialogAlgebra(QDialog):
         else: raise TypeError('parameter type {} is not str.'.format(type(v)))
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def getFilesSelectionWidget(self):
         return self._files
@@ -173,6 +179,9 @@ class DialogAlgebra(QDialog):
                 # Revision 10/11/2024 >
                 exec(f)
                 result = locals()['r']
+                # < Revision 13/10/2026
+                if result.dtype == 'bool': result = result.astype('uint8')
+                # Revision 13/10/2026 >
                 m = SisypheVolume()
                 # noinspection PyUnboundLocalVariable
                 m.copyFromNumpyArray(result, spacing=v.getSpacing())
@@ -186,6 +195,9 @@ class DialogAlgebra(QDialog):
                     filename = abspath(filename)
                     chdir(dirname(filename))
                     m.updateArrayID()
+                    # < Revision 06/10/2026
+                    if self._compress: m.setCompressionOn()
+                    # Revision 06/10/2026 >
                     m.saveAs(filename)
                 # < Revision 22/05/2025
                 # self._formula.setEditText('')

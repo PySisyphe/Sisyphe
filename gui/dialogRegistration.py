@@ -107,7 +107,7 @@ class DialogRegistration(QDialog):
 
     QDialog -> DialogRegistration
 
-    Last revision: 02/07/2026
+    Last revision: 07/10/2026
     """
     # Class method
 
@@ -155,6 +155,7 @@ class DialogRegistration(QDialog):
     _settings           FunctionSettingsWidget
     _resamplesettings   FunctionSettingsWidget
     _execute            QPushButton
+    _compress           bool, save xvol in a compressed format
     """
 
     def __init__(self, transform='Affine', parent=None):
@@ -175,6 +176,9 @@ class DialogRegistration(QDialog):
         self._progbylevel = None
         self._convergence = None
         self._wait = DialogWaitRegistration(title='{} Registration'.format(self._reg))
+        # < Revision 07/10/2026
+        self._compress: bool = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -327,6 +331,12 @@ class DialogRegistration(QDialog):
             self._execute.setEnabled(False)
 
     # Public methods
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def getFixedSelectionWidget(self):
         return self._fixedSelect
@@ -964,6 +974,9 @@ class DialogRegistration(QDialog):
             """
             resampled = None
             f = SisypheApplyTransform()
+            # < Revision 07/10/2026
+            if self._compress: f.setCompressionOn()
+            # Revision 07/10/2026 >
             if trf is not None:
                 f.setMoving(mvol)
                 if self._trf.isAffine():
@@ -1053,6 +1066,9 @@ class DialogRegistration(QDialog):
                             resampled.setFilename(filename)
                             self._wait.setInformationText('Save {}...'.format(resampled.getBasename()))
                             resampled.setFilename(filename)
+                    # < Revision 07/10/2026
+                    if self._compress: resampled.setCompressionOn()
+                    # Revision 07/10/2026 >
                     resampled.save()
                     if self._applyToSelect.filenamesCount() > 0:
                         filenames = self._applyToSelect.getFilenames()
@@ -1070,6 +1086,9 @@ class DialogRegistration(QDialog):
                             img.load(filename)
                             img.setID(mvol.getID())
                             f.updateVolumeTransformsFromMoving(img)
+                            # < Revision 07/10/2026
+                            if self._compress: img.setCompressionOn()
+                            # Revision 07/10/2026 >
                             img.save()
                 if exists(trf): remove(trf)
         """
@@ -1413,6 +1432,9 @@ class DialogAsymmetry(DialogRegistration):
                 self._fixedSelect.open(v.getFilename())
                 v.flip([True, False, False])
                 v.setFilenamePrefix('flip')
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 self._movingSelect.open(v.getFilename())
                 """
@@ -1450,6 +1472,9 @@ class DialogAsymmetry(DialogRegistration):
                     r.getAcquisition().setSequenceToAlgebraMap()
                     # noinspection PyArgumentList
                     r.setIdentity(v.getIdentity())
+                    # < Revision 07/10/2026
+                    if self._compress: r.setCompressionOn()
+                    # Revision 07/10/2026 >
                     r.save()
                 index += 1
             self._batch.clearall()
@@ -1610,7 +1635,7 @@ class DialogFrameBasedRegistration(QDialog):
 
     QDialog -> DialogFrameBasedRegistration
 
-    Creation: 04/01/2026
+    Creation: 07/10/2026
     """
 
     # Special method
@@ -1621,6 +1646,10 @@ class DialogFrameBasedRegistration(QDialog):
         self.setWindowTitle('Frame-based registration')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 07/10/2026
+        self._compress: bool = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -1717,6 +1746,12 @@ class DialogFrameBasedRegistration(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def execute(self):
         if not (self._fixedSelect.isEmpty() or self._movingSelect.isEmpty()):
             filenames = self._movingSelect.getFilenames()
@@ -1733,6 +1768,9 @@ class DialogFrameBasedRegistration(QDialog):
             prefix = self._resamplesettings.getParameterValue('Prefix')
             suffix = self._resamplesettings.getParameterValue('Suffix')
             f = SisypheApplyTransform()
+            # < Revision 07/10/2026
+            if self._compress: f.setCompressionOn()
+            # Revision 07/10/2026 >
             interpol = self._resamplesettings.getParameterValue('Interpolator')[0]
             if interpol == 'NearestNeighbor': f.setInterpolator(sitkNearestNeighbor)
             elif interpol == 'Linear': f.setInterpolator(sitkLinear)

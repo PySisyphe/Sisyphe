@@ -49,7 +49,7 @@ class DialogVolumeAttributes(QDialog):
 
     QWidget -> QDialog -> DialogVolumeAttributes
 
-    Last revision: 11/06/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -66,6 +66,10 @@ class DialogVolumeAttributes(QDialog):
         self.setWindowTitle('Edit volume attributes')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init Attributes widgets
         # Lastname
@@ -623,6 +627,9 @@ class DialogVolumeAttributes(QDialog):
              self._dir4.value(), self._dir5.value(), self._dir6.value(),
              self._dir7.value(), self._dir8.value(), self._dir9.value())
         self._vol.setDirections(d)
+        # < Revision 06/10/2026
+        if self._compress: self._vol.setCompressionOn()
+        # Revision 06/10/2026 >
         self._vol.save()
         self.accept()
 
@@ -719,6 +726,12 @@ class DialogVolumeAttributes(QDialog):
     # Revision 25/12/2025 >
 
     # Public method
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def setVolume(self, vol):
         if isinstance(vol, SisypheVolume):

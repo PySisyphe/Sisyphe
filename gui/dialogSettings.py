@@ -73,11 +73,11 @@ class DialogSetting(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, section='', parent=None):
         super().__init__(parent)
 
         self.setWindowTitle(self.formatLabel(section))
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -99,7 +99,6 @@ class DialogSetting(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -111,16 +110,13 @@ class DialogSetting(QDialog):
         layout.addWidget(self._cancel)
         layout.addStretch()
         self._layout.addLayout(layout)
-        # noinspection PyUnresolvedReferences
         layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
 
         self._layout.addLayout(layout)
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
 
         # < Revision 30/03/2025
@@ -202,11 +198,11 @@ class DialogSettings(QDialog):
     _mainwindow     windowSisyphe, PySisyphe main window
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Preferences')
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.5))
@@ -238,7 +234,6 @@ class DialogSettings(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('OK')
         self._ok.setFixedWidth(100)
@@ -260,13 +255,9 @@ class DialogSettings(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._apply.clicked.connect(self.apply)
-        # noinspection PyUnresolvedReferences
         self._default.clicked.connect(self.default)
 
         # < Revision 30/03/2025
@@ -275,6 +266,7 @@ class DialogSettings(QDialog):
 
     # Private methods
 
+    # noinspection unresolved-references,unreachable-code
     def _initSettings(self):
         fitems = dict()
         # Settings
@@ -291,12 +283,10 @@ class DialogSettings(QDialog):
             scroll = QScrollArea()
             scroll.setWidget(widget)
             scroll.setFrameShape(QScrollArea.NoFrame)
-            # noinspection PyUnresolvedReferences
             scroll.setAlignment(Qt.AlignHCenter)
             self._stack.addWidget(scroll)
             item = QTreeWidgetItem()
             item.setText(0, self.formatLabel(section))
-            # noinspection PyUnresolvedReferences
             item.setData(0, Qt.UserRole, self._stack.count() - 1)
             fitems['General'].addChild(item)
             self._sections.addTopLevelItem(fitems['General'])
@@ -311,7 +301,6 @@ class DialogSettings(QDialog):
         fitems['Diffusion'] = QTreeWidgetItem()
         for k in fitems:
             fitems[k].setText(0, k)
-            # noinspection PyUnresolvedReferences
             fitems[k].setData(0, Qt.UserRole, -1)
             self._sections.addTopLevelItem(fitems[k])
         settings = SisypheFunctionsSettings()
@@ -327,12 +316,10 @@ class DialogSettings(QDialog):
             scroll = QScrollArea()
             scroll.setWidget(widget)
             scroll.setFrameShape(QScrollArea.NoFrame)
-            # noinspection PyUnresolvedReferences
             scroll.setAlignment(Qt.AlignHCenter)
             self._stack.addWidget(scroll)
             item = QTreeWidgetItem()
             item.setText(0, self.formatLabel(function))
-            # noinspection PyUnresolvedReferences
             item.setData(0, Qt.UserRole, self._stack.count() - 1)
             if function in ('RemoveNeckSlices',
                             'MeanImageFilter',
@@ -442,6 +429,7 @@ class DialogSettings(QDialog):
                               'DTIModel',
                               'FWDTIModel',
                               'RUMBAModel',
+                              'IVIMModel',
                               'DKIModel',
                               'SHCSAModel',
                               'SHCSDModel',
@@ -460,6 +448,7 @@ class DialogSettings(QDialog):
                 elif function == 'DTIModel': item.setText(0, 'DTI model')
                 elif function == 'FWDTIModel': item.setText(0, 'FWDTI model')
                 elif function == 'RUMBAModel': item.setText(0, 'RUMBA model')
+                elif function == 'IVIMModel': item.setText(0, 'IVIM model')
                 elif function == 'DKIModel': item.setText(0, 'DKI model')
                 elif function == 'SHCSAModel': item.setText(0, 'SHCSA model')
                 elif function == 'SHCSDModel': item.setText(0, 'SHCSD model')
@@ -476,19 +465,17 @@ class DialogSettings(QDialog):
                     widget.setParameterVisibility('StoppingCSF', False)
                 fitems['Diffusion'].addChild(item)
         self._sections.setCurrentItem(self._sections.topLevelItem(0))
-        # noinspection PyUnresolvedReferences
         self._sections.currentItemChanged.connect(self._currentSelectedChanged)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _currentSelectedChanged(self, current, previous):
-        # noinspection PyUnresolvedReferences
         index = current.data(0, Qt.UserRole)
         if index >= 0: self._stack.setCurrentIndex(index)
 
     # Public method
 
+    # noinspection unresolved-references
     def default(self):
-        # noinspection PyUnresolvedReferences
         c = self._sections.currentItem().data(0, Qt.UserRole)
         # < Revision 19/01/2026
         if c < 0: c = 0
@@ -498,9 +485,11 @@ class DialogSettings(QDialog):
 
     def save(self):
         for i in range(self._stack.count()):
+            # noinspection unresolved-references
             widget = self._stack.widget(i).widget()
             widget.saveSettings()
 
+    # noinspection unresolved-references
     def apply(self):
         if self.hasMainWindow():
             wait = DialogWait()
@@ -606,6 +595,11 @@ class DialogSettings(QDialog):
                     if v is not None: window.setViewportsOrientationMarkerVisibility(v)
                     v = widget.getParameterValue('Align')
                     if v is not None: window.setViewportsAlign(v)
+                # < Revision 07/10/2026
+                elif c == 'Volume':
+                    v = widget.getParameterValue('Compression')
+                    if v is not None: window.setCompression(v)
+                # Revision 07/10/2026 >
                 # < Revision 16/01/2026
                 elif c == 'ROI':
                     v = widget.getParameterValue('MaxCount')

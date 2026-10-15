@@ -79,6 +79,8 @@ class DialogSeriesRealignment(QDialog):
     ~~~~~~~~~~~
 
     QDialog -> DialogSeriesRealignment
+
+    Last revision: 07/10/2026
     """
 
     # Class method
@@ -122,6 +124,9 @@ class DialogSeriesRealignment(QDialog):
 
         self._trfs = list()
         self._wait = DialogWait()
+        # < Revision 07/10/2026
+        self._compress = False
+        # Revision 07/10/2026 >
 
         # Init QLayout
 
@@ -248,6 +253,12 @@ class DialogSeriesRealignment(QDialog):
         return trfs
 
     # Public methods
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
 
     def getSelectionWidget(self):
         return self._select
@@ -380,6 +391,9 @@ class DialogSeriesRealignment(QDialog):
                     if i == 0: refid = v.getArrayID()
                     v.setFilenamePrefix(prefix)
                     v.setFilenameSuffix(suffix)
+                    # < Revision 07/10/2026
+                    if self._compress: v.setCompressionOn()
+                    # Revision 07/10/2026 >
                     v.save()
                     vols[i] = v
             """
@@ -392,6 +406,9 @@ class DialogSeriesRealignment(QDialog):
                 v.setFilename(vols[0].getFilename())
                 v.removeSuffixNumber()
                 v.setFilenamePrefix('mean')
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             """    
             Display result

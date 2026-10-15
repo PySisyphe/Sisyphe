@@ -946,7 +946,7 @@ class DialogDisplacementFieldInversion(QDialog):
     QDialog -> DialogDisplacementFieldInversion
 
     Creation: 02/07/2026
-    Last revision: 02/07/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -957,6 +957,10 @@ class DialogDisplacementFieldInversion(QDialog):
         self.setWindowTitle('Displacement field inversion')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -1034,6 +1038,12 @@ class DialogDisplacementFieldInversion(QDialog):
 
     # Public method
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
     def getFileSelectionWidget(self):
         return [self._fields,
                 self._refs]
@@ -1078,6 +1088,9 @@ class DialogDisplacementFieldInversion(QDialog):
                     ifield.setFilename(fields[i])
                     ifield.setFilenamePrefix(prefix)
                     ifield.setFilenameSuffix(suffix)
+                # < Revision 07/10/2026
+                if self._compress: ifield.setCompressionOn()
+                # Revision 07/10/2026 >
                 ifield.save()
                 wait.setInformationText('Save {}...'.format(ifield.getBasename()))
                 wait.addInformationText('')

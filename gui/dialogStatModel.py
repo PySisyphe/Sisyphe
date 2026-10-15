@@ -81,7 +81,7 @@ class DialogModel(QDialog):
     QDialog -> DialogModel
 
     Creation: 29/11/2022
-    Last revision: 19/02/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -139,6 +139,9 @@ class DialogModel(QDialog):
         ngrp = self._design.getGroupCount()
         nsbj = self._design.getSubjectCount()
         ncnd = self._design.getConditionCount()
+        # < Revision 07/10/2026
+        self._compress: bool = False
+        # Revision 07/10/2026 >
 
         # Init widgets
 
@@ -1438,6 +1441,9 @@ class DialogModel(QDialog):
                 # Revision 06/02/2026 >
                 wait = DialogWait(title=self.windowTitle())
                 wait.open()
+                # < Revision 07/10/2026
+                if self._compress: self._design.setCompressionOn()
+                # Revision 07/10/2026 >
                 try: self._design.save(wait)
                 except: messageBox(self, title='Save model', text='{} IO error.'.format(basename(filename)))
                 finally: wait.close()

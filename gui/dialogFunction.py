@@ -102,7 +102,7 @@ class AbstractDialogFunction(QDialog):
     QDialog -> AbstractDialogFunction
 
     Creation: 10/10/2023
-    Last revision: 10/09/2026
+    Last revision: 06/10/2026
     """
 
     @classmethod
@@ -121,6 +121,10 @@ class AbstractDialogFunction(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
         self._funcname = funcname
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -179,6 +183,12 @@ class AbstractDialogFunction(QDialog):
     """
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def getLayout(self):
         return self._layout
@@ -288,7 +298,7 @@ class DialogRemoveNeckSlices(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogRemoveNeckSlices
 
     Creation: 10/10/2023
-    Last Revision: 01/04/2026
+    Last Revision: 06/10/2026
     """
 
     # Special method
@@ -315,6 +325,9 @@ class DialogRemoveNeckSlices(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
 
@@ -334,7 +347,7 @@ class DialogGaussianFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogGaussianFilterFunction
 
     Creation: 10/10/2023
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -366,6 +379,9 @@ class DialogGaussianFilter(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
 
@@ -384,7 +400,7 @@ class DialogMeanFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogMeanFilter
 
     Creation: 10/10/2023
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -415,6 +431,9 @@ class DialogMeanFilter(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
 
@@ -433,7 +452,7 @@ class DialogMedianFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogMedianFilter
 
     Creation: 10/10/2023
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -463,6 +482,9 @@ class DialogMedianFilter(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
 
@@ -483,7 +505,7 @@ class DialogAnisotropicDiffusionFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogAnisotropicDiffusionFilter
 
     Creation: 10/10/2023
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -559,6 +581,9 @@ class DialogAnisotropicDiffusionFilter(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
 
@@ -579,7 +604,7 @@ class DialogGradientFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogGradientFilter
 
     Creation: 10/10/2023
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -612,6 +637,9 @@ class DialogGradientFilter(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
 
@@ -630,7 +658,7 @@ class DialogLaplacianFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogLaplacianFilter
 
     Creation: 10/10/2023
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -662,6 +690,9 @@ class DialogLaplacianFilter(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
 
@@ -680,7 +711,7 @@ class DialogBiasFieldCorrectionFilter(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogBiasFieldCorrectionFilter
 
     Creation: 10/10/2023
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -725,11 +756,17 @@ class DialogBiasFieldCorrectionFilter(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
         bimg.setFilename(filename)
         bimg.setFilenamePrefix(bprefix)
         bimg.setFilenameSuffix(bsuffix)
         wait.setInformationText('Save {}'.format(bimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: bimg.setCompressionOn()
+        # Revision 06/10/2026 >
         bimg.save()
 
 
@@ -748,7 +785,7 @@ class DialogHistogramIntensityMatching(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogHistogramMatching
 
     Creation: 10/10/2023
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -823,6 +860,9 @@ class DialogHistogramIntensityMatching(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
         idx = self._results.newTab(rimg.getBasename(), dataset=False)
         self._results.getTreeWidget(idx).setVisible(False)
@@ -868,7 +908,7 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogRegressionIntensityMatching
 
     Creation: 23/10/2024
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -946,6 +986,9 @@ class DialogRegressionIntensityMatching(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
     def execute(self, dummy: bool = True):
@@ -975,7 +1018,7 @@ class DialogIntensityNormalization(AbstractDialogFunction):
     QDialog -> AbstractDialogFunction -> DialogIntensityNormalization
 
     Creation: 27/10/2024
-    Last revision: 01/04/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -1014,6 +1057,9 @@ class DialogIntensityNormalization(AbstractDialogFunction):
         rimg.setFilenamePrefix(prefix)
         rimg.setFilenameSuffix(suffix)
         wait.setInformationText('Save {}'.format(rimg.getBasename()))
+        # < Revision 06/10/2026
+        if self._compress: rimg.setCompressionOn()
+        # Revision 06/10/2026 >
         rimg.save()
 
     def execute(self, dummy: bool = True):

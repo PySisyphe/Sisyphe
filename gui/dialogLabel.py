@@ -71,7 +71,8 @@ class DialogVOLtoLabel(QDialog):
 
     QDialog -> DialogVOLtoLabel
 
-    Last revision: 15/10/2025
+    Creation: 12/10/2025
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -88,6 +89,10 @@ class DialogVOLtoLabel(QDialog):
         self.setWindowTitle('Probability volumes to Label volume')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -145,6 +150,12 @@ class DialogVOLtoLabel(QDialog):
 
     # Public methods
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def setFilenames(self, filenames: str | list[str]) -> None:
         if isinstance(filenames, str): filenames = [filenames]
         self._list.setFilenames(filenames)
@@ -178,6 +189,9 @@ class DialogVOLtoLabel(QDialog):
                 if filename:
                     filename = abspath(filename)
                     chdir(dirname(filename))
+                    # < Revision 06/10/2026
+                    if self._compress: lbl.setCompressionOn()
+                    # Revision 06/10/2026 >
                     lbl.saveAs(filename)
             else: wait.hide()
             r = messageBox(self,
@@ -211,7 +225,8 @@ class DialogROItoLabel(QDialog):
 
     QDialog -> DialogROItoLabel
 
-    Last revision: 15/10/2025
+    Creation: 12/10/2025
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -228,6 +243,10 @@ class DialogROItoLabel(QDialog):
         self.setWindowTitle('ROI(s) to Label volume')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -284,6 +303,12 @@ class DialogROItoLabel(QDialog):
 
     # Public methods
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def setFilenames(self, filenames: str | list[str]) -> None:
         if isinstance(filenames, str): filenames = [filenames]
         self._list.setFilenames(filenames)
@@ -314,6 +339,9 @@ class DialogROItoLabel(QDialog):
                 if filename:
                     filename = abspath(filename)
                     chdir(dirname(filename))
+                    # < Revision 06/10/2026
+                    if self._compress: lbl.setCompressionOn()
+                    # Revision 06/10/2026 >
                     lbl.saveAs(filename)
             wait.hide()
             r = messageBox(self,
@@ -347,7 +375,8 @@ class DialogLabeltoROI(QDialog):
 
     QDialog -> DialogLabelToROI
 
-    Last revision: 15/10/2025
+    Creation: 13/10/2025
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -364,6 +393,10 @@ class DialogLabeltoROI(QDialog):
         self.setWindowTitle('Label volume(s) to ROI(s)')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -418,6 +451,12 @@ class DialogLabeltoROI(QDialog):
 
     # Public methods
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def setFilenames(self, filenames: str | list[str]) -> None:
         if isinstance(filenames, str): filenames = [filenames]
         self._list.setFilenames(filenames)
@@ -437,6 +476,11 @@ class DialogLabeltoROI(QDialog):
                     v.load(filename)
                     rois = SisypheROICollection()
                     rois.fromLabelVolume(v)
+                    # < Revision 06/10/2026
+                    if self._compress:
+                        for r in rois:
+                            r.setCompressionOn()
+                    # Revision 06/10/2026 >
                     rois.save()
             wait.hide()
             r = messageBox(self,
@@ -471,7 +515,7 @@ class DialogLabeltoMask(QDialog):
      QDialog -> DialogLabelToMask
 
      Creation: 13/10/2025
-     Last revision: 15/10/2025
+     Last revision: 06/10/2026
      """
 
     # Special method
@@ -490,6 +534,10 @@ class DialogLabeltoMask(QDialog):
         self.setWindowTitle('Label volume to mask')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -599,6 +647,12 @@ class DialogLabeltoMask(QDialog):
 
     # Public methods
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def convert(self):
         if not self._list.isEmpty() and self._hasChecked():
             wait = DialogWait(info=self.windowTitle())
@@ -629,9 +683,15 @@ class DialogLabeltoMask(QDialog):
             if filename:
                 filename = abspath(filename)
                 chdir(dirname(filename))
+                # < Revision 06/10/2026
+                if self._compress: mask.setCompressionOn()
+                # Revision 06/10/2026 >
                 mask.saveAs(filename)
                 if self._roi.isChecked():
                     roi = mask.getROI()
+                    # < Revision 06/10/2026
+                    if self._compress: roi.setCompressionOn()
+                    # Revision 06/10/2026 >
                     roi.saveAs(mask.getFilename())
                 r = messageBox(self,
                                title=self.windowTitle(),
@@ -665,6 +725,7 @@ class DialogRelabel(QDialog):
      QDialog -> DialogRelabel
 
      Creation: 15/10/2025
+     Last revision: 06/10/2026
      """
 
     # Special method
@@ -683,6 +744,10 @@ class DialogRelabel(QDialog):
         self.setWindowTitle('Remap label volume')
         # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Init QLayout
 
@@ -778,6 +843,12 @@ class DialogRelabel(QDialog):
 
     # Public methods
 
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
+
     def convert(self):
         if not self._list.isEmpty() and self._labels.topLevelItemCount() > 0:
             wait = DialogWait(info=self.windowTitle())
@@ -810,6 +881,9 @@ class DialogRelabel(QDialog):
             if filename:
                 filename = abspath(filename)
                 chdir(dirname(filename))
+                # < Revision 06/10/2026
+                if self._compress: v2.setCompressionOn()
+                # Revision 06/10/2026 >
                 v2.saveAs(filename)
                 r = messageBox(self,
                                title=self.windowTitle(),
