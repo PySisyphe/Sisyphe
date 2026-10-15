@@ -404,6 +404,24 @@ class SisypheFiducialBox(QObject):
         """
         self._errorstats: dict[str, float] = dict()
 
+    def __str__(self) -> str:
+        """
+        Special overloaded method called by the built-in str() python function.
+
+        Returns
+        -------
+        str
+            conversion of SisypheFiducialBox instance to str
+        """
+        buff = 'Markers count: {}\n'.format(self._nbfid)
+        if self._nbfid > 0:
+            for k1 in self._fidlist:
+                buff += '  Slice {}\n'.format(k1)
+                for k2 in self._fidlist[k1]:
+                    c = self._fidlist[k1][k2]
+                    buff += '    Marker {} {:.2f} {:.2f}\n'.format(k2, c[0], c[1])
+        return buff
+
     # Container Public methods
 
     def __getitem__(self, index) -> list[float]:
@@ -529,6 +547,7 @@ class SisypheFiducialBox(QObject):
             else: return self._nbfid
         else: return 0
 
+    # noinspection unresolved-references
     def _firstSliceSearch(self, img: sitkImage, idx: int) -> None:
         slc = img[:, :, idx]
         slc = sitkBinaryDilate(slc, [2, 2], sitkBall)
@@ -711,6 +730,7 @@ class SisypheFiducialBox(QObject):
                     elif v == 1: self._fidlist[idx][7] = coor[i]
                     else: self._fidlist[idx][4] = coor[i]
 
+    # noinspection unresolved-references
     def _markersSearch(self, slc: int | None = None) -> None:
         # noinspection PyUnresolvedReferences
         self.ProgressTextChanged.emit('Fiducial markers detection...')
@@ -783,6 +803,7 @@ class SisypheFiducialBox(QObject):
 
     # < Revision 26/09/2026
     # add _calcTransform method
+    # noinspection unresolved-references
     def _calcTransform(self) -> None:
         if not self.isEmpty():
             sz = self._volume.getSpacing()[2]
@@ -846,6 +867,7 @@ class SisypheFiducialBox(QObject):
             self.calcTransform()
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
+    # noinspection unresolved-references
     def markersSearch(self, vol: SisypheVolume, slc: int | None = None) -> bool:
         """
         Leksell fiducial markers detection in a slice.
@@ -913,7 +935,7 @@ class SisypheFiducialBox(QObject):
         return self._maxerror
     # Revision 26/09/2026 >
 
-    # noinspection PyArgumentList
+    # noinspection PyArgumentList,unresolved-references
     def calcErrors(self) -> None:
         """
         Calculate errors i.e. euclidean distances between coordinates of the detected fiducial markers and their
@@ -1059,6 +1081,7 @@ class SisypheFiducialBox(QObject):
             return self._errorstats
         else: raise AttributeError('Error attribute is empty.')
 
+    # noinspection unresolved-references
     def addTransformToVolume(self) -> None:
         """
         Add the calculated geometric transformation to the Sisyphe.core.sisypheTransform.SisypheTransforms attribute
@@ -1073,6 +1096,7 @@ class SisypheFiducialBox(QObject):
             else: raise ValueError('Geometric transformation attribute is empty.')
         else: raise ValueError('Volume attribute is empty.')
 
+    # noinspection unresolved-references
     def removeTransformFromVolume(self) -> None:
         """
         Remove the calculated geometric transformation from the Sisyphe.core.sisypheTransform.SisypheTransforms
@@ -1340,6 +1364,7 @@ class SisypheFiducialBox(QObject):
                 finally: f.close()
             else: raise TypeError('parameter type {} is not str.'.format(type(filename)))
 
+    # noinspection unresolved-references
     def loadFromXML(self, filename: str) -> None:
         """
         Load fiducial markers coordinates file (.xfid).
@@ -1355,19 +1380,20 @@ class SisypheFiducialBox(QObject):
             if exists(filename):
                 doc = minidom.parse(filename)
                 root = doc.documentElement
-                if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
-                    self._fidlist.clear()
-                    node = root.getElementsByTagName('markerscount')[0]
-                    self._nbfid = int(node.firstChild.data)
-                    for node1 in root.getElementsByTagName('slice'):
-                        k1 = int(node1.getAttribute('index'))
-                        self._fidlist[k1] = dict()
-                        for node2 in node1.getElementsByTagName('marker'):
-                            k2 = int(node2.getAttribute('location'))
-                            buff = node2.firstChild.data
-                            buff = buff.split(' ')
-                            self._fidlist[k1][k2] = (float(buff[0]), float(buff[1]))
-                else: raise IOError('XML file format is not supported.')
+                if root:
+                    if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
+                        self._fidlist.clear()
+                        node = root.getElementsByTagName('markerscount')[0]
+                        self._nbfid = int(node.firstChild.data)
+                        for node1 in root.getElementsByTagName('slice'):
+                            k1 = int(node1.getAttribute('index'))
+                            self._fidlist[k1] = dict()
+                            for node2 in node1.getElementsByTagName('marker'):
+                                k2 = int(node2.getAttribute('location'))
+                                buff = node2.firstChild.data
+                                buff = buff.split(' ')
+                                self._fidlist[k1][k2] = (float(buff[0]), float(buff[1]))
+                    else: raise IOError('XML file format is not supported.')
             else: raise IOError('No such file : {}'.format(filename))
         else: raise TypeError('parameter type {} is not str.'.format(type(filename)))
 

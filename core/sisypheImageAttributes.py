@@ -264,6 +264,7 @@ class SisypheIdentity(object):
             return strself <= strbuff
         else: raise TypeError('parameter type is not {}.'.format(self.__class__.__name__))
 
+    # noinspection method-overriding
     def __eq__(self, other: SisypheIdentity) -> bool:
         """
         Special overloaded relational operator ==. Attribute comparison order: lastname, firstname, birthdate, gender.
@@ -281,6 +282,7 @@ class SisypheIdentity(object):
         """
         return self.isEqual(other)
 
+    # noinspection method-overriding
     def __ne__(self, other: SisypheIdentity) -> bool:
         """
         Special overloaded relational operator !=. Attribute comparison order: lastname, firstname, birthdate, gender.
@@ -829,14 +831,14 @@ class SisypheIdentity(object):
     @cython.returns(cython.void)
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write current SisypheIdentity instance attributes to xml instance.
+        Write current SisypheIdentity instance attributes to XML instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -865,6 +867,7 @@ class SisypheIdentity(object):
             else: raise TypeError('parameter type {} is not xml.dom.minidom.Element.'.format(type(currentnode)))
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
@@ -921,6 +924,7 @@ class SisypheIdentity(object):
         finally:
             f.close()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
@@ -1535,6 +1539,7 @@ class SisypheAcquisition(object):
         """
         return self.getModality(True) == buff or self._sequence == buff
 
+    # noinspection method-overriding
     def __eq__(self, other: SisypheAcquisition) -> bool:
         """
         Special overloaded relational operator ==. Check whether parameter instance and current SisypheAcquisition
@@ -1553,6 +1558,7 @@ class SisypheAcquisition(object):
         """
         return self.isEqual(other)
 
+    # noinspection method-overriding
     def __ne__(self, other: SisypheAcquisition) -> bool:
         """
         Special overloaded relational operator !=. Check whether parameter instance and current SisypheAcquisition
@@ -1832,7 +1838,7 @@ class SisypheAcquisition(object):
 
     @cython.ccall
     @cython.returns(cython.void)
-    def setLabel(self, index: int, value: str) -> None:
+    def setLabel(self, index: int | float, value: str) -> None:
         """
         Set label name for an index value, image modality must be label.
 
@@ -1978,6 +1984,7 @@ class SisypheAcquisition(object):
         return max(self._labels)
     # Revision 12/03/2026 >
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def loadLabels(self) -> None:
@@ -2025,6 +2032,7 @@ class SisypheAcquisition(object):
                 txt = doc.createTextNode(self._labels[k])
                 node.appendChild(txt)
             # Revision 12/03/2026 >
+            # noinspection unresolved-references
             path, ext = splitext(self._parent.getFilename())
             filename = path + self.getLabelsFileExt()
             buffxml = doc.toprettyxml()
@@ -4512,14 +4520,14 @@ class SisypheAcquisition(object):
     @cython.returns(cython.void)
     def createXML(self, doc:  minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write current SisypheAcquisition instance attributes to xml instance.
+        Write current SisypheAcquisition instance attributes to XML instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -4590,16 +4598,17 @@ class SisypheAcquisition(object):
             else: raise TypeError('parameter functype is not xml.dom.minidom.Element.')
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read current SisypheAcquisition instance attributes from xml instance.
+        Read current SisypheAcquisition instance attributes from XML instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             attr = doc.getElementsByTagName('acquisition')
@@ -4652,12 +4661,12 @@ class SisypheAcquisition(object):
     @cython.returns(cython.void)
     def saveToXML(self, filename: str) -> None:
         """
-        Save current SisypheAcquisition instance attributes to xml file (.xacq).
+        Save current SisypheAcquisition instance attributes to XML file (.xacq).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xacq)
+            XML file name (.xacq)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -4674,16 +4683,17 @@ class SisypheAcquisition(object):
         finally: f.close()
         if self.isLB() and self.hasLabels(): self.saveLabels()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
         """
-        Load current SisypheAcquisition instance attributes from xml file (.xacq).
+        Load current SisypheAcquisition instance attributes from XML file (.xacq).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xacq)
+            XML file name (.xacq)
         """
         path, ext = splitext(filename)
         if ext.lower() != self._FILEEXT:
@@ -4776,7 +4786,7 @@ class SisypheDisplay(object):
                  rangemax: float = 0.0,
                  windowmin: float | None = None,
                  windowmax: float | None = None,
-                 lut: SisypheLut | None = None,
+                 lut: SisypheLut | str | None = None,
                  parent: SisypheVolume | None = None) -> None:
         """
         SisypheDisplay instance constructor.
@@ -5396,6 +5406,7 @@ class SisypheDisplay(object):
             else: raise TypeError('parameter functype is not xml.dom.minidom.Element.')
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
@@ -5458,6 +5469,7 @@ class SisypheDisplay(object):
         finally:
             f.close()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
@@ -5611,6 +5623,7 @@ class SisypheACPC(object):
             o = self._pc[2] - self._ac[2]
             rx = degrees(atan2(o, a))
         else: rx, rz = 0.0, 0.0
+        # noinspection unresolved-references
         ry = self._trf.getRotations(deg=True)[1]
         self._trf.setRotations((rx, ry, rz), deg=True)
         self._trf.setCenter(self.getMidACPC())
@@ -5839,6 +5852,7 @@ class SisypheACPC(object):
         """
         if self.hasParent() and self.hasACPC():
             from Sisyphe.core.sisypheTransform import SisypheTransform
+            # noinspection unresolved-references
             c = list(self._parent.getCenter())
             m = list(self.getMidACPC())
             c[0] -= m[0]
@@ -6306,14 +6320,14 @@ class SisypheACPC(object):
     @cython.returns(cython.void)
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write current SisypheACPC instance attributes to xml instance.
+        Write current SisypheACPC instance attributes to XML instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -6334,12 +6348,14 @@ class SisypheACPC(object):
                 # Rotation
                 node = doc.createElement('Rotation')
                 item.appendChild(node)
+                # noinspection unresolved-references
                 r = str(self._trf.getRotations(deg=True)[1])
                 txt = doc.createTextNode(r)
                 node.appendChild(txt)
             else: raise TypeError('parameter functype is not xml.dom.minidom.Element.')
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def parseXML(self, doc: minidom.Document) -> None:
@@ -6365,7 +6381,7 @@ class SisypheACPC(object):
                         self._pc = (float(r[0]), float(r[1]), float(r[2]))
                     # Rotation
                     elif node.nodeName == 'Rotation':
-                        if node.firstChild.data is not None: r = float(node.firstChild.data)
+                        if node.firstChild.data: r = float(node.firstChild.data)
                         else: r = 0.0
                         self.setYRotation(r, deg=True)
                         self._updateTransform()
@@ -6396,6 +6412,7 @@ class SisypheACPC(object):
         except IOError: raise IOError('XML file write error.')
         finally: f.close()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:

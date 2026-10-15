@@ -1357,6 +1357,7 @@ def conjunctionFisher(maps: list[SisypheVolume] | SisypheVolumeCollection) -> Si
     # numpy conj map to SisypheVolume
     conj = conj.reshape(maps[0].getNumpy().shape)
     rmap = SisypheVolume()
+    # noinspection unresolved-references
     rmap.copyFromNumpyArray(conj,
                             spacing=maps[0].getSpacing(),
                             origin=maps[0].getOrigin(),
@@ -1456,6 +1457,7 @@ def conjunctionWorsley(maps: list[SisypheVolume] | SisypheVolumeCollection) -> S
     # numpy conj map to SisypheVolume
     conj = conj.reshape(maps[0].getNumpy().shape)
     rmap = SisypheVolume()
+    # noinspection unresolved-references
     rmap.copyFromNumpyArray(conj,
                             spacing=maps[0].getSpacing(),
                             origin=maps[0].getOrigin(),
@@ -1555,6 +1557,7 @@ def conjunctionStouffer(maps: list[SisypheVolume] | SisypheVolumeCollection) -> 
     # numpy conj map to SisypheVolume
     conj = conj.reshape(maps[0].getNumpy().shape)
     rmap = SisypheVolume()
+    # noinspection unresolved-references
     rmap.copyFromNumpyArray(conj,
                             spacing=maps[0].getSpacing(),
                             origin=maps[0].getOrigin(),
@@ -1658,6 +1661,7 @@ def conjunctionMudholkar(maps: list[SisypheVolume] | SisypheVolumeCollection) ->
     # numpy conj map to SisypheVolume
     conj = conj.reshape(maps[0].getNumpy().shape)
     rmap = SisypheVolume()
+    # noinspection unresolved-references
     rmap.copyFromNumpyArray(conj,
                             spacing=maps[0].getSpacing(),
                             origin=maps[0].getOrigin(),
@@ -1759,6 +1763,7 @@ def conjunctionTippett(maps: list[SisypheVolume] | SisypheVolumeCollection) -> S
     # numpy conj map to SisypheVolume
     conj = conj.reshape(maps[0].getNumpy().shape)
     rmap = SisypheVolume()
+    # noinspection unresolved-references
     rmap.copyFromNumpyArray(conj,
                             spacing=maps[0].getSpacing(),
                             origin=maps[0].getOrigin(),
@@ -2327,10 +2332,11 @@ class SisypheDesign(object):
     object -> SisypheDesign
 
     Creation: 29/11/2023
-    Last revision: 10/09/2026
+    Last revision: 07/10/2026
     """
     __slots__ = ['_obs', '_cobs', '_grp', '_sbj', '_cnd', '_design', '_cdesign', '_ancova', '_norm', '_fmri', '_dancova',
-                 '_age', '_beta', '_variance', '_vols', '_mean', '_mask', '_roi1', '_roi2', '_autocorr', '_filename']
+                 '_age', '_beta', '_variance', '_vols', '_mean', '_mask', '_roi1', '_roi2', '_autocorr', '_filename',
+                 '_compress']
 
     # Class constants
 
@@ -2432,6 +2438,7 @@ class SisypheDesign(object):
     _roi1       str, analysis ROI filename
     _roi2       str, normalization ROI filename   
     _autocorr   tuple[float, float, float], auto-correlations (defined after estimation)
+    _compress   bool, save xvol in a compressed format
     """
 
     def __init__(self) -> None:
@@ -2443,8 +2450,8 @@ class SisypheDesign(object):
         self._cnd: list[str] | None  = None  # condition names
         self._obs: dict[tuple[str, str, str], list[str]] = dict()  # (Key (group, subj, cond), list of filenames)
         self._cobs: dict[tuple[str, str, str], list[int]] = dict()  # (Key (group, subj, cond), number of filenames)
-        self._cdesign: list[tuple[str, int]] = None  # list[(name: str, estimable: int)] of design matrix columns
-        self._design: ndarray = None  # numpy.ndarray, design matrix
+        self._cdesign: list[tuple[str, int]] | None = None  # list[(name: str, estimable: int)] of design matrix columns
+        self._design: ndarray | None = None  # numpy.ndarray, design matrix
         self._ancova: int = 0  # 0 ANCOVA global, 1 by group, 2 by subject, 3 by condition
         self._norm: int = 0  # 0 no, 1 proportional scaling, 2 roi, 3 ancova
         self._age: int = 0  # Age global covariate: 0 No, 1 global, 2 by group, by subject, by condition
@@ -2455,10 +2462,13 @@ class SisypheDesign(object):
         self._vols: SisypheVolume | None = None  # SisypheVolume, observations
         self._mean: SisypheVolume | None = None  # SisypheVolume, mean volume of observations
         self._mask: SisypheVolume | None = None  # SisypheVolume, mask of analysis volume
-        self._autocorr: tuple[float, float, float] = None  # (float, float, float)
+        self._autocorr: tuple[float, float, float] | None = None  # (float, float, float)
         self._filename: str = ''
         self._roi1: str = ''
         self._roi2: str = ''
+        # < Revision 07/10/2026
+        self._compress: bool = False
+        # Revision 07/10/2026 >
 
     def __str__(self) -> str:
         """
@@ -2559,6 +2569,7 @@ class SisypheDesign(object):
 
     # Private methods
 
+    # noinspection unresolved-references
     def _makeDesignMatrix(self) -> None:
         if self.hasModel():
             nbobs = self.getTotalObsCount()
@@ -2817,6 +2828,26 @@ class SisypheDesign(object):
 
     # Public methods
 
+    # < Revision 07/10/2026
+    def setCompressionOn(self) -> None:
+        self._compress = True
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def setCompressionOff(self) -> None:
+        self._compress = False
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def setCompression(self, v: bool) -> None:
+        self._compress = v
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def getCompression(self) -> bool:
+        return self._compress
+    # Revision 07/10/2026 >
+
     def hasFilename(self) -> bool:
         """
         Check whether the filename attribute of the current SisypheDesign instance is defined (i.e. not '')
@@ -3012,6 +3043,7 @@ class SisypheDesign(object):
         return self._dancova
     # Revision 06/02/2026 >
 
+    # noinspection unresolved-references
     def setDictDesign(self, design: dict) -> None:
         """
         Set the observation dictionary of the current SisypheDesign instance.
@@ -3207,6 +3239,7 @@ class SisypheDesign(object):
         """
         if isinstance(index, int):
             if 0 <= index < len(self._grp):
+                # noinspection unresolved-references
                 return self._grp[index]
             else:
                 raise ValueError('index parameter value {} is out of range [0...{}]'.format(index, len(self._grp) - 1))
@@ -3229,6 +3262,7 @@ class SisypheDesign(object):
         """
         if isinstance(index, int):
             if 0 <= index < len(self._sbj):
+                # noinspection unresolved-references
                 return self._sbj[index]
             else:
                 raise ValueError('index parameter value {} is out of range [0...{}]'.format(index, len(self._sbj) - 1))
@@ -3251,6 +3285,7 @@ class SisypheDesign(object):
         """
         if isinstance(index, int):
             if 0 <= index < len(self._cnd):
+                # noinspection unresolved-references
                 return self._cnd[index]
             else:
                 raise ValueError('index parameter value {} is out of range [0...{}]'.format(index, len(self._cnd) - 1))
@@ -3616,6 +3651,7 @@ class SisypheDesign(object):
 
     # Revision 29/11/2024 >
 
+    # noinspection unresolved-references
     def addHRFBoxCarModelToCondition(self, cond: str) -> None:
         """
         Add a BoxCar (with HRF convolution) covariate to the fMRI model of the current SisypheDesign instance.
@@ -3676,6 +3712,7 @@ class SisypheDesign(object):
                             else: raise ValueError('Design matrix elements {} != observations {}.'.format(len(boxcar), n))
             else: raise ValueError('Invalid condition.')
 
+    # noinspection unresolved-references
     def addHighPassToCondition(self, cond: str) -> None:
         """
         Add high pass filter covariates to the fMRI model of the current SisypheDesign instance.
@@ -3772,6 +3809,7 @@ class SisypheDesign(object):
             True if design matrix column is a global factor
         """
         if self._design is None: self._makeDesignMatrix()
+        # noinspection unresolved-references
         return all(self._design[:, col] == 1.0, axis=0)
     # Revision 10/06/2025 >
 
@@ -3793,6 +3831,7 @@ class SisypheDesign(object):
         else: return None
     # Revision 03/12/2024 >
 
+    # noinspection unresolved-references
     def addGlobalCovariable(self,
                             name: str,
                             cov: ndarray,
@@ -3852,6 +3891,7 @@ class SisypheDesign(object):
                 # Revision 10/10/2025 >
             # Revision 03/12/2024 >
 
+    # noinspection unresolved-references
     def addCovariableByGroup(self,
                              name: str,
                              cov: ndarray,
@@ -3903,6 +3943,7 @@ class SisypheDesign(object):
                     'Number of covariable elements {} and observations {} is not equal'.format(len(cov), n))
         else: raise ValueError('No group in model.')
 
+    # noinspection unresolved-references
     def addCovariableBySubject(self,
                                name: str,
                                cov: ndarray,
@@ -3954,6 +3995,7 @@ class SisypheDesign(object):
                     'Number of covariable elements {} and observations {} is not equal'.format(len(cov), n))
         else: raise ValueError('No subject in model.')
 
+    # noinspection unresolved-references
     def addCovariableByCondition(self,
                                  name: str,
                                  cov: ndarray,
@@ -4227,6 +4269,7 @@ class SisypheDesign(object):
         if self._design is None or recalc: self._makeDesignMatrix()
         return self._design
 
+    # noinspection unresolved-references
     def estimate(self,
                  mask: SisypheROI | SisypheVolume | None = None,
                  roi: SisypheROI | SisypheVolume | None = None,
@@ -4509,6 +4552,7 @@ class SisypheDesign(object):
 
     # IO public methods
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> None:
         """
         Read the current SisypheDesign instance attributes from XML instance. This method is called by load() method,
@@ -4822,6 +4866,7 @@ class SisypheDesign(object):
                     node.appendChild(txt)
                     design.appendChild(node)
 
+    # noinspection unresolved-references
     def load(self, filename: str, binary: bool = True, wait: DialogWait | None = None) -> None:
         """
         Load the current SisypheDesign instance from a PySisyphe statistical design (.xmodel) file.
@@ -4916,6 +4961,9 @@ class SisypheDesign(object):
                 self._beta.setFilenameSuffix('beta')
                 if wait is not None:
                     wait.setInformationText('Save beta volume...\n{}'.format(self._beta.getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: self._beta.setCompressionOn()
+                # Revision 07/10/2026 >
                 self._beta.save()
             # Save variance
             if self._variance is not None:
@@ -4923,6 +4971,9 @@ class SisypheDesign(object):
                 self._variance.setFilenameSuffix('sig2')
                 if wait is not None:
                     wait.setInformationText('Save variance volume...\n{}'.format(self._variance.getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: self._variance.setCompressionOn()
+                # Revision 07/10/2026 >
                 self._variance.save()
             # < Revision 22/11/2024
             # Save observations
@@ -4931,6 +4982,9 @@ class SisypheDesign(object):
                 self._vols.setFilenameSuffix('obs')
                 if wait is not None:
                     wait.setInformationText('Save observation volume...\n{}'.format(self._vols.getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: self._vols.setCompressionOn()
+                # Revision 07/10/2026 >
                 self._vols.save()
             # Revision 22/11/2024 >
             # < Revision 24/11/2024
@@ -4940,6 +4994,9 @@ class SisypheDesign(object):
                 self._mean.setFilenameSuffix('mean')
                 if wait is not None:
                     wait.setInformationText('Save mean observation volume...\n{}'.format(self._mean.getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: self._mean.setCompressionOn()
+                # Revision 07/10/2026 >
                 self._mean.save()
             # Revision 24/11/2024 >
             # < Revision 03/12/2024
@@ -4949,6 +5006,9 @@ class SisypheDesign(object):
                 self._mask.setFilenameSuffix('mask')
                 if wait is not None:
                     wait.setInformationText('Save mask of analysis...\n{}'.format(self._mask.getBasename()))
+                # < Revision 07/10/2026
+                if self._compress: self._mask.setCompressionOn()
+                # Revision 07/10/2026 >
                 self._mask.save()
             # Revision 24/11/2024 >
             # Save xml

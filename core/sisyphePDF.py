@@ -165,6 +165,7 @@ class SisypheParsePdf(object):
 
     # Public methods
 
+    # noinspection unresolved-references
     def parseOCR(self, filename: str, linc: float = 0.98, wait: DialogWait | None = None) -> tuple[DataFrame, list]:
         """
         PDF OCR parsing:
@@ -288,6 +289,7 @@ class SisypheParsePdf(object):
 
     # < Revision 16/01/2026
     # add parseRenishawReport method
+    # noinspection unresolved-references
     def parseRenishawReport(self, filename: str) -> tuple[DataFrame, str]:
         """
         Renishaw robotic neurosurgery system report parsing:
@@ -410,6 +412,7 @@ class SisypheParsePdf(object):
         if self._exclude is None: self._exclude = list()
         # Revision 16/01/2026 >
         if isinstance(fields, str): fields = [fields]
+        # noinspection unresolved-references
         self._exclude += fields
 
     def hasFieldNamesToExclude(self) -> bool:
@@ -448,6 +451,7 @@ class SisypheParsePdf(object):
         if self._fields is None: self._fields = list()
         # Revision 16/01/2026 >
         if isinstance(fields, str): fields = [fields]
+        # noinspection unresolved-references
         self._fields += fields
 
     def getFieldNamesToExtract(self) -> list[str]:
@@ -505,6 +509,7 @@ class SisypheParsePdf(object):
                     node.appendChild(txt)
                 if self._fields is not None and len(self._fields) > 0:
                     for i in range(len(self._exclude)):
+                        # noinspection unresolved-references
                         field = self._exclude[i]
                         node = doc.createElement('exclude')
                         root.appendChild(node)
@@ -516,6 +521,7 @@ class SisypheParsePdf(object):
             else: raise AttributeError('No field name to save.')
         else: raise AttributeError('No field name to save.')
 
+    # noinspection unresolved-references
     def loadFieldNames(self, filename: str) -> None:
         """
         Load the XML file that stores the table fields to be searched in the PDF.

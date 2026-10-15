@@ -221,6 +221,7 @@ def compareDataElementsBetweenDatasets(ds1: Dataset, ds2: Dataset, equality: boo
         ds = Dataset()
         for de in ds1:
             if de.tag in ds2:
+                # noinspection unresolved-references
                 if (de.value == ds2[de.tag].value) == equality:
                     ds.add(de)
         return ds

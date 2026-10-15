@@ -370,7 +370,9 @@ def getLibraryDataType(datatype: str = 'uint8', lib: str | int = _LIBSITK) -> st
                 elif isinstance(lib, str): return _DATATYPES[datatype][_NAMETOLIB[lib]]
                 else: raise ValueError('invalid lib parameter.')
             else: raise ValueError('invalid datatype parameter.')
-        else: raise TypeError('{} parameter type is not str.'.format(str(type(datatype))))
+        else:
+            # noinspection string-conversion-without-dunder-method
+            raise TypeError('{} parameter type is not str.'.format(str(type(datatype))))
 
 def getSupportedITKDatatypes() -> list[itkCType]:
     """

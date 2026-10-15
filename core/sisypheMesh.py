@@ -317,6 +317,7 @@ class SisypheMesh(object):
 
     # set/get mesh point methods
 
+    # noinspection unresolved-references
     def __getitem__(self, idx: int | list[int] | tuple[int, ...] | slice) -> ndarray:
         """
         Special overloaded container getter method. Get mesh point with slicing ability.
@@ -349,6 +350,7 @@ class SisypheMesh(object):
             return array(r)
         else: raise TypeError('parameter type is not int, list[int], tuple[int, ...] or slice')
 
+    # noinspection unresolved-references
     def __setitem__(self, idx: int | list[int] | tuple[int, ...] | slice, value: ndarray) -> None:
         """
         Special overloaded container setter method. Set mesh point with slicing ability.
@@ -766,6 +768,7 @@ class SisypheMesh(object):
             if self._polydata is not None:
                 del self._polydata
             self._polydata = vtkPolyData()
+            # noinspection unresolved-references
             self._polydata.DeepCopy(data)
             self._updatePolydata()
             self._mapper.ScalarVisibilityOff()
@@ -834,6 +837,7 @@ class SisypheMesh(object):
         int
             number of points
         """
+        # noinspection unresolved-references
         return self._polydata.GetNumberOfPoints()
 
     def getPoints(self) -> vtkPoints:
@@ -845,8 +849,10 @@ class SisypheMesh(object):
         vtkPoints
             vtkPoints shallow copy
         """
+        # noinspection unresolved-references
         return self._polydata.GetPoints()
 
+    # noinspection unresolved-references
     def setPoints(self, p: vtkPoints) -> None:
         """
         Set the vtKPoints (vtk container of points) of the vtkPolyData attribute of the current SisypheMesh instance.
@@ -877,6 +883,7 @@ class SisypheMesh(object):
         tuple[float, float, float]
             point coordinates
         """
+        # noinspection unresolved-references
         return self._polydata.GetPoint(idx)
 
     def setPoint(self, idx: int, p: vectorFloat3Type) -> None:
@@ -890,6 +897,7 @@ class SisypheMesh(object):
         p : tuple[float, float, float] | list[float]
             point coordinates
         """
+        # noinspection unresolved-references
         self._polydata.GetPoints().SetPoint(idx, p)
 
     def setPosition(self, x: float, y: float, z: float) -> None:
@@ -1084,6 +1092,7 @@ class SisypheMesh(object):
             - y minimum, y maximum,
             - z minimum, z maximum
         """
+        # noinspection unresolved-references
         return self._polydata.GetBounds()
 
     def setTransform(self, trf: SisypheTransform | vtkTransform) -> None:
@@ -2937,6 +2946,7 @@ class SisypheMesh(object):
                 # < Revision 22/03/2025
                 roi = self.convertToSisypheROI(refimg=None)
                 dmap = roi.getDistanceMap()
+                # noinspection unresolved-references
                 roi = dmap.getROI(mm, '<=')
                 if roi.getNumberOfNonZero() > 0: self.createIsosurface(dmap, mm)
                 else: self.clear()
@@ -2959,6 +2969,7 @@ class SisypheMesh(object):
                 # < Revision 22/03/2025
                 roi = self.convertToSisypheROI(refimg=None)
                 dmap = roi.getDistanceMap()
+                # noinspection unresolved-references
                 roi = dmap.getROI(-mm, '<=')
                 if roi.getNumberOfNonZero() > 0: self.createIsosurface(dmap, -mm)
                 else: self.clear()
@@ -3228,6 +3239,7 @@ class SisypheMesh(object):
             return img
         else: raise AttributeError('Polydata is None.')
 
+    # noinspection unresolved-references
     def convertToSisypheROI(self,
                             refimg: SisypheVolume | str | None,
                             tol: float = 0.0) -> SisypheROI:
@@ -3388,6 +3400,7 @@ class SisypheMesh(object):
         path, ext = splitext(filename)
         self._filename = path + self._FILEEXT
 
+    # noinspection unresolved-references
     def ParseXML(self, doc: minidom.Document) -> None:
         """
         Read the current SisypheMesh instance attributes
@@ -3534,7 +3547,7 @@ class SisypheMesh(object):
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write the current SisypheMesh instance attributes to xml document instance.
+        Write the current SisypheMesh instance attributes to XML document instance.
 
         Parameters
         ----------

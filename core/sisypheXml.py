@@ -46,7 +46,7 @@ class AbstractXml(object):
     ~~~~~~~~~~~
 
     Abstract ancestor class of XmlVolume, XmlRoi and XmlStreamlines classes. These classes provide direct access to
-    the xml fields in PySisyphe Volume (.xvol), Roi (.xroi) and Streamlines (.xtracts) files.
+    the XML fields in PySisyphe Volume (.xvol), Roi (.xroi) and Streamlines (.xtracts) files.
 
     Inheritance
     ~~~~~~~~~~~
@@ -108,6 +108,7 @@ class AbstractXml(object):
         """
         return 'AbstractXml instance at <{}>\n'.format(str(id(self)))
 
+    # noinspection unresolved-references
     def __str__(self) -> str:
         """
          Special overloaded method called by the built-in str() python function.
@@ -182,6 +183,7 @@ class AbstractXml(object):
 
     # Public methods
 
+    # noinspection unresolved-references
     def getFieldList(self) -> list[str]:
         """
         Get field list in the current AbstractXml instance.
@@ -270,7 +272,7 @@ class XmlVolume(AbstractXml):
     Description
     ~~~~~~~~~~~
 
-    Class for accessing the xml fields of the PySisyphe volume (.xvol).
+    Class for accessing the XML fields of the PySisyphe volume (.xvol).
 
     Inheritance
     ~~~~~~~~~~~
@@ -335,6 +337,7 @@ class XmlVolume(AbstractXml):
         list[int]
             volume size in x, y and z axes
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('size').split(' ')
         return [int(v) for v in r]
 
@@ -360,6 +363,7 @@ class XmlVolume(AbstractXml):
         list[float]
             volume spacing in x, y and z axes
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('spacing').split(' ')
         return [float(v) for v in r]
 
@@ -385,6 +389,7 @@ class XmlVolume(AbstractXml):
         list[float]
             origin coordinates of the volume
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('origin').split(' ')
         return [float(v) for v in r]
 
@@ -432,6 +437,7 @@ class XmlVolume(AbstractXml):
         list[float]
             volume directions
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('directions').split(' ')
         return [float(v) for v in r]
 
@@ -666,7 +672,7 @@ class XmlROI(AbstractXml):
     Description
     ~~~~~~~~~~~
 
-    Class for accessing the xml fields of the PySisyphe ROI (.xroi).
+    Class for accessing the XML fields of the PySisyphe ROI (.xroi).
 
     Inheritance
     ~~~~~~~~~~~
@@ -754,6 +760,7 @@ class XmlROI(AbstractXml):
         list[float]
             Roi color, red, green, blue components between 0.0 and 1.0
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('color').split(' ')
         return [float(v) for v in r]
 
@@ -803,6 +810,7 @@ class XmlROI(AbstractXml):
         list[int]
             Roi size in x, y and z axes
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('size').split(' ')
         return [int(v) for v in r]
 
@@ -815,6 +823,7 @@ class XmlROI(AbstractXml):
         list[float]
             Roi spacing in x, y and z axes
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('spacing').split(' ')
         return [float(v) for v in r]
 
@@ -924,6 +933,7 @@ class XmlStreamlines(AbstractXml):
         list[float]
             Streamlines color, red, green, blue components between 0.0 and 1.0
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('color').split(' ')
         return [float(v) for v in r]
 
@@ -995,6 +1005,7 @@ class XmlStreamlines(AbstractXml):
         list[int]
             Streamlines size in x, y and z axes
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('shape').split(' ')
         return [int(v) for v in r]
 
@@ -1008,6 +1019,7 @@ class XmlStreamlines(AbstractXml):
         list[float]
             Streamlines spacing in x, y and z axes
         """
+        # noinspection unresolved-references
         r = self.getFieldValues('spacing').split(' ')
         return [float(v) for v in r]
 
@@ -1034,6 +1046,7 @@ class XmlStreamlines(AbstractXml):
             Affine transform
         """
         buff = self.getFieldValues('affine')
+        # noinspection unresolved-references
         affine = [float(v) for v in buff.split(' ')]
         return array(affine).reshape(4, 4)
 

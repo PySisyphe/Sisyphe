@@ -129,7 +129,9 @@ def getPackageMetadata(packages: str | list[str] | None = None,
             wait.progressVisibilityOn()
         else: wait2 = tqdm(total=n, colour='white')
         for pkg in distrib:
+            # noinspection unresolved-references
             n = len(pkg.files[0].parts)
+            # noinspection unresolved-references
             root = Path(pkg.files[0].locate()).parents[n-1]
             name = pkg.metadata['Name']
             r[name] = dict()
@@ -222,7 +224,9 @@ def getPackageFolder() -> str:
         package folder
     """
     pkg = metadata.distribution('decorator')
+    # noinspection unresolved-references
     n = len(pkg.files[0].parts)
+    # noinspection unresolved-references
     return str(Path(pkg.files[0].locate()).parents[n-1])
 
 
@@ -503,24 +507,25 @@ def updatePySisyphe(wait: DialogWait | None = None) -> None:
                 url = ''
                 doc = minidom.parse(filename)
                 root = doc.documentElement
-                if root.nodeName == 'host' and root.getAttribute('version') == '1.0':
-                    if hasattr(sys, '_MEIPASS'):
-                        # < Revision 28/01/2026
-                        vpython = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)
-                        if vpython == '3.10':
-                            # < Revision 15/10/2025
-                            # if sys.platform == 'win32': updatesec = 'updatepyc'
-                            updatesec = 'updatepyc'
-                            # Revision 15/10/2025 >
-                        elif vpython == '3.12': updatesec = 'updatepyc312'
-                        elif vpython == '3.14': updatesec = 'updatepyc314'
-                        else: raise ValueError('Python {} is not supported.'.format(vpython))
-                        # Revision 28/01/2026 >
-                    else: updatesec = 'updatepy'
-                    section = doc.getElementsByTagName(updatesec)
-                    if len(section) > 0:
-                        section = section[0]
-                        url = section.getAttribute('url')
+                if root:
+                    if root.nodeName == 'host' and root.getAttribute('version') == '1.0':
+                        if hasattr(sys, '_MEIPASS'):
+                            # < Revision 28/01/2026
+                            vpython = '{}.{}'.format(sys.version_info.major, sys.version_info.minor)
+                            if vpython == '3.10':
+                                # < Revision 15/10/2025
+                                # if sys.platform == 'win32': updatesec = 'updatepyc'
+                                updatesec = 'updatepyc'
+                                # Revision 15/10/2025 >
+                            elif vpython == '3.12': updatesec = 'updatepyc312'
+                            elif vpython == '3.14': updatesec = 'updatepyc314'
+                            else: raise ValueError('Python {} is not supported.'.format(vpython))
+                            # Revision 28/01/2026 >
+                        else: updatesec = 'updatepy'
+                        section = doc.getElementsByTagName(updatesec)
+                        if len(section) > 0:
+                            section = section[0]
+                            url = section.getAttribute('url')
                 if url is not None and url != '':
                     try:
                         with TemporaryDirectory() as temp:

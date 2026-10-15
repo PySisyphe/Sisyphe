@@ -106,7 +106,7 @@ class SisypheDatabase(object):
         else: raise TypeError('parameter type {} is not str.'.format(type(folder)))
 
     @classmethod
-    def getFolderFromIdentity(cls, identity: SisypheIdentity) -> str:
+    def getFolderFromIdentity(cls, identity: SisypheIdentity | SisypheVolume) -> str:
         """
         Get patient folder name from identity (Sisyphe.core.sisypheImageAttributes.SisypheIdentity).
 
@@ -1255,8 +1255,9 @@ class SisypheDatabase(object):
                     for patient in patients:
                         if wait: wait.setInformationText('Backup {}'.format(basename(patient)))
                         self.backupPatient(patient, backuppath)
-                        if wait: wait.incCurrentProgressValue()
-                        if wait.getStopped(): break
+                        if wait:
+                            wait.incCurrentProgressValue()
+                            if wait.getStopped(): break
             else: raise TypeError('parameter type {} is not str.'.format(type(backuppath)))
         else: raise ValueError('Database is not defined or is empty.')
 

@@ -1981,7 +1981,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
 
     # Private VTK event methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onInteractionEvent(self, widget, event) -> None:
         p = self.GetHandleRepresentation().GetWorldPosition()
         # noinspection PyArgumentList,PyTypeChecker
@@ -1996,7 +1996,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
     def _onEndInteractionEvent(self, widget, event) -> None:
         pass
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onEnableEvent(self, widget, event) -> None:
         renderer = self.GetCurrentRenderer()
         renderer.AddActor(self._targetText)
@@ -2020,7 +2020,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
                 self.updateContourActor(prop.GetMapper().GetSlicePlane())
                 break
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onDisableEvent(self, widget, event) -> None:
         renderer = self.GetCurrentRenderer()
         renderer.RemoveActor(self._targetText)
@@ -2206,6 +2206,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
             if usedpi:
                 try:
                     from PyQt5.QtWidgets import QApplication
+                    # noinspection unresolved-references
                     f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
                     if f != 1.0: size = int(size * f)
                 except: pass
@@ -2233,6 +2234,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         if usedpi:
             try:
                 from PyQt5.QtWidgets import QApplication
+                # noinspection unresolved-references
                 f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
                 if f != 1.0: size = ceil(size / f)
             except: pass
@@ -3263,14 +3265,14 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write the current HandleWidget instance attributes to xml document instance.
+        Write the current HandleWidget instance attributes to XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -3436,6 +3438,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         if currentnode.nodeName == 'point':
             for node in currentnode.childNodes:
                 if node.hasChildNodes():
+                    # noinspection unresolved-references
                     buff = node.firstChild.data
                     if buff is not None:
                         # name
@@ -3517,6 +3520,7 @@ class HandleWidget(vtkHandleWidget, NamedWidget):
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
+            # noinspection unresolved-references
             if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
                 tool = doc.getElementsByTagName('point')
                 if tool is not None: self.parseXMLNode(tool[0])
@@ -3770,7 +3774,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
     # Private event methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onInteractionEvent(self, widget, event) -> None:
         p1 = self.GetLineRepresentation().GetPoint1WorldPosition()
         p2 = self.GetLineRepresentation().GetPoint2WorldPosition()
@@ -3787,7 +3791,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
     def _onEndInteractionEvent(self, widget, event) -> None:
         pass
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onEnableEvent(self, widget, event) -> None:
         renderer = self.GetCurrentRenderer()
         props = renderer.GetViewProps()
@@ -3818,7 +3822,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         # noinspection PyArgumentList
         self._cutter.Update()
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onDisableEvent(self, widget, event) -> None:
         renderer = self.GetCurrentRenderer()
         renderer.RemoveActor(self._targetText)
@@ -4040,6 +4044,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
             if usedpi:
                 try:
                     from PyQt5.QtWidgets import QApplication
+                    # noinspection unresolved-references
                     f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
                     if f != 1.0: size = int(size * f)
                 except: pass
@@ -4068,6 +4073,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
         if usedpi:
             try:
                 from PyQt5.QtWidgets import QApplication
+                # noinspection unresolved-references
                 f = QApplication.primaryScreen().logicalDotsPerInch() / 92.0
                 if f != 1.0: size = ceil(size / f)
             except: pass
@@ -5815,14 +5821,14 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write the current LineWidget instance attributes to xml document instance.
+        Write the current LineWidget instance attributes to XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):
@@ -6009,6 +6015,7 @@ class LineWidget(vtkLineWidget2, NamedWidget):
                 node.appendChild(txt)
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    # noinspection unresolved-references
     def parseXMLNode(self, currentnode: minidom.Element) -> None:
         """
         Read the current LineWidget instance attributes from XML document instance.
@@ -6102,15 +6109,16 @@ class LineWidget(vtkLineWidget2, NamedWidget):
 
     def parseXML(self, doc: minidom.Document) -> None:
         """
-        Read the current LineWidget instance attributes from xml document instance.
+        Read the current LineWidget instance attributes from XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
+            # noinspection unresolved-references
             if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
                 tool = doc.getElementsByTagName('line')
                 if tool is not None: self.parseXMLNode(tool[0])
@@ -7423,6 +7431,7 @@ class ToolWidgetCollection(object):
 
     # IO Public methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current ToolWidgetCollection instance attributes to XML document instance.
@@ -7453,6 +7462,7 @@ class ToolWidgetCollection(object):
                     tool.createXML(doc, root)
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> None:
         """
         Read the current oolWidgetCollection instance attributes from XML document instance.

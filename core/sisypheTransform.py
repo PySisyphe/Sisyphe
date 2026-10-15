@@ -150,7 +150,7 @@ class SisypheTransform(object):
     object -> SisypheTransform
 
     Creation: 05/10/2021
-    Last revision: 02/07/2026
+    Last revision: 07/10/2026
     """
     __slots__ = ['_parent', '_name', '_ID', '_size', '_spacing', '_transform', '_field', '_fieldname']
 
@@ -1044,6 +1044,7 @@ class SisypheTransform(object):
         """
         return self._transform.GetCenter() != (0.0, 0.0, 0.0)
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def copyFrom(self, t: SisypheTransform) -> None:
@@ -1093,6 +1094,7 @@ class SisypheTransform(object):
                 t.setSpacing(self.getSpacing())
                 t.setCenter(self.getCenter())
                 t.setTranslations(self._transform.GetTranslation())
+                # noinspection unresolved-references
                 t.getSITKTransform().SetMatrix(self._transform.GetMatrix())
             else:
                 f = sitkDisplacementFieldTransform()
@@ -1116,6 +1118,7 @@ class SisypheTransform(object):
         self.copyTo(t)
         return t
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def setSITKTransform(self, trf) -> None:
@@ -1693,8 +1696,8 @@ class SisypheTransform(object):
         """
         if self._field is None:
             trf = self.getVTKTransform(center_correction)
-            # noinspection PyTypeChecker
-            return trf.Inverse()
+            trf.Inverse()
+            return trf
         else: raise TypeError('No affine transform.')
 
     @cython.ccall
@@ -2049,6 +2052,7 @@ class SisypheTransform(object):
         """
         return self._field is None
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def affineToDisplacementField(self, inverse: bool = True) -> None:
@@ -2135,7 +2139,7 @@ class SisypheTransform(object):
 
     @cython.ccall
     @cython.returns(cython.void)
-    def setSpacing(self, spacing: vectorFloat3) -> None:
+    def setSpacing(self, spacing: vectorFloat3 | SisypheImage | SisypheVolume) -> None:
         """
         Set the spacing attribute of the current SisypheTransform instance. Voxel size in the x, y and z axes of the
         floating volume in mm.
@@ -2178,7 +2182,7 @@ class SisypheTransform(object):
 
     @cython.ccall
     @cython.returns(cython.void)
-    def setSize(self, size: vectorInt3) -> None:
+    def setSize(self, size: vectorInt3 | SisypheImage | SisypheVolume) -> None:
         """
         Set the size attribute of the current SisypheTransform instance. Image size in the x, y and z axes of the
         floating volume (in voxels).
@@ -2320,6 +2324,9 @@ class SisypheTransform(object):
             path = split(filename)
             if path[1][:6] != 'field_': self._fieldname = join(path[0], 'field_' + path[1])
             else: self._fieldname = filename
+            # < Revision 07/10/2026
+            field.setCompressionOn()
+            # Revision 07/10/2026 >
             field.save(self._fieldname)
 
     @cython.ccall
@@ -2405,6 +2412,7 @@ class SisypheTransform(object):
                     node.appendChild(txt)
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def parseXMLNode(self, currentnode: minidom.Element) -> None:
@@ -2494,6 +2502,7 @@ class SisypheTransform(object):
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
+            # noinspection unresolved-references
             if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
                 transform = doc.getElementsByTagName('transform')
                 self.parseXMLNode(transform[0])
@@ -2535,6 +2544,7 @@ class SisypheTransform(object):
         except IOError: raise IOError('XML file write error.')
         finally: f.close()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def load(self, filename: str) -> None:
@@ -2818,9 +2828,9 @@ class SisypheApplyTransform(object):
     object -> SisypheApplyTransform
 
     Creation: 05/10/2021
-    Last revision: 20/05/2026
+    Last revision: 07/10/2026
     """
-    __slots__ = ['_moving', '_roi', '_mesh', '_sl', '_transform', '_resample']
+    __slots__ = ['_moving', '_roi', '_mesh', '_sl', '_transform', '_resample', '_compress']
 
     # Class constants
 
@@ -2903,7 +2913,8 @@ class SisypheApplyTransform(object):
     _mesh       SisypheMesh to resample
     _sl         SisypheStreamlines to resample
     _transform  SisypheTransform, geometric transformation to apply
-    _resample   sitkResampleImageFilter    
+    _resample   sitkResampleImageFilter
+    _compress   bool, save xvol in a compressed format   
     """
 
     def __init__(self) -> None:
@@ -2916,7 +2927,9 @@ class SisypheApplyTransform(object):
         self._sl: SisypheStreamlines | None = None
         self._transform: SisypheTransform | None = None
         self._resample = sitkResampleImageFilter()
+        # noinspection unresolved-references
         self._resample.SetInterpolator(sitkLinear)
+        self._compress: bool = False
 
     def __str__(self) -> str:
         """
@@ -2945,6 +2958,35 @@ class SisypheApplyTransform(object):
 
     # Public methods
 
+    # < Revision 07/10/2026
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setCompressionOn(self) -> None:
+        self._compress = True
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setCompressionOff(self) -> None:
+        self._compress = False
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    @cython.ccall
+    @cython.returns(cython.void)
+    def setCompression(self, v: bool) -> None:
+        self._compress = v
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    @cython.ccall
+    @cython.returns(bool)
+    def getCompression(self) -> bool:
+        return self._compress
+    # Revision 07/10/2026 >
+
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def setInterpolator(self, v: int | str) -> None:
@@ -2982,6 +3024,7 @@ class SisypheApplyTransform(object):
             interpolation name. Methods of interpolation are : 'nearest', 'linear', 'bspline', 'gaussian',
             'hammingsinc', 'cosinesinc', 'welchsinc', 'lanczossinc', 'blackmansinc'
         """
+        # noinspection unresolved-references
         return self._FROMCODE[self._resample.GetInterpolator()]
 
     @cython.ccall
@@ -2996,8 +3039,10 @@ class SisypheApplyTransform(object):
         int
             SimpleITK’s interpolation int code
         """
+        # noinspection unresolved-references
         return self._resample.GetInterpolator()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def setTransform(self, trf: SisypheTransform, center: bool = True) -> None:
@@ -3104,6 +3149,7 @@ class SisypheApplyTransform(object):
         SisypheTransform
             backward transform copy
         """
+        # noinspection unresolved-references
         return self._transform.getInverseTransform()
 
     @cython.ccall
@@ -3117,6 +3163,7 @@ class SisypheApplyTransform(object):
         SimpleITK.AffineTransform | SimpleITK.DisplacementFieldTransform
             SimpleITK forward transform copy
         """
+        # noinspection unresolved-references
         return self._transform.getSITKTransform()
 
     @cython.ccall
@@ -3130,6 +3177,7 @@ class SisypheApplyTransform(object):
         SimpleITK.Transform
             SimpleITK backward transform copy
         """
+        # noinspection unresolved-references
         return self._resample.GetTransform()
 
     @cython.ccall
@@ -3173,6 +3221,7 @@ class SisypheApplyTransform(object):
         """
         return self._transform is not None and self._transform.isDisplacementField()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def setMoving(self, img: SisypheVolume) -> None:
@@ -3373,6 +3422,7 @@ class SisypheApplyTransform(object):
         """
         self._sl = None
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def updateVolumeTransformsFromMoving(self, vol: SisypheVolume) -> None:
@@ -3400,6 +3450,7 @@ class SisypheApplyTransform(object):
                 if vol.hasFilename(): vol.saveTransforms()
             else: raise ValueError('Incorrect ID of the parameter volume.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def updateTransforms(self,
@@ -3562,6 +3613,7 @@ class SisypheApplyTransform(object):
             resliced moving volume
         """
         if self.hasMoving():
+            # noinspection unresolved-references
             cm = self._moving.getCenter()
             cr = [(size[i] - 1) * spacing[i] * 0.5 for i in range(3)]
             t = [cr[i] - cm[i] for i in range(3)]
@@ -3576,6 +3628,7 @@ class SisypheApplyTransform(object):
 
     # < Revision 24/09/2026
     # add resampleToSpacing
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def resampleToSpacing(self,
@@ -3615,6 +3668,7 @@ class SisypheApplyTransform(object):
         else: raise AttributeError('No moving SisypheVolume.')
     # Revision 24/09/2026 >
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def resampleMoving(self,
@@ -3768,12 +3822,16 @@ class SisypheApplyTransform(object):
                         if wait is not None:
                             wait.progressVisibilityOff()
                             wait.setInformationText('Save {}...'.format(basename(filename)))
+                        # < Revision 07/10/2026
+                        if self._compress: resampled.setCompressionOn()
+                        # Revision 07/10/2026 >
                         resampled.saveAs(filename)
                         if wait is not None: wait.hide()
                 return resampled
             else: raise AttributeError('No moving SisypheVolume.')
         else: raise AttributeError('No SisypheTransform.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def resampleROI(self,
@@ -3844,12 +3902,16 @@ class SisypheApplyTransform(object):
                         if wait is not None:
                             wait.progressVisibilityOff()
                             wait.setInformationText('Save {}...'.format(basename(filename)))
+                        # < Revision 07/10/2026
+                        if self._compress: resampled.setCompressionOn()
+                        # Revision 07/10/2026 >
                         resampled.saveAs(filename)
                         if wait is not None: wait.hide()
                 return resampled
             else: raise AttributeError('No moving SisypheROI.')
         else: raise AttributeError('No SisypheTransform.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def resampleMesh(self,
@@ -3932,6 +3994,7 @@ class SisypheApplyTransform(object):
             else: raise AttributeError('No moving SisypheMesh.')
         else: raise AttributeError('No SisypheTransform.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def resampleStreamlines(self,
@@ -4799,6 +4862,7 @@ class SisypheTransforms(SisypheTransformCollection):
             root = doc.documentElement
             # ID
             node = doc.createElement('referenceID')
+            # noinspection unresolved-references
             root.appendChild(node)
             txt = doc.createTextNode(str(self.getReferenceID()))
             node.appendChild(txt)
@@ -4809,6 +4873,7 @@ class SisypheTransforms(SisypheTransformCollection):
                     trf.createXML(doc, root)
         else: raise TypeError('parameter type {} is not xml.dom.minidom.Document.'.format(type(doc)))
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> None:
         """
         Read the current SisypheTransforms instance attributes from XML document instance.

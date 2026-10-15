@@ -389,6 +389,7 @@ class SisypheTract(object):
         r = SisypheTract()
         if self._polydata is not None:
             r._polydata = vtkPolyData()
+            # noinspection unresolved-references
             r._polydata.DeepCopy(self._polydata)
             r._updatePolydata()
             r._scalarnames = self._scalarnames
@@ -423,6 +424,7 @@ class SisypheTract(object):
         """
         return self._polydata is None
 
+    # noinspection unresolved-references
     def setPoints(self, sl: ndarray, reg: bool = True) -> None:
         """
         Set the tract points of the current SisypheTract instance.
@@ -491,6 +493,7 @@ class SisypheTract(object):
             scalars.SetNumberOfTuples(n)
             scalars.SetName('volume')
             for name in self._scalarnames:
+                # noinspection unresolved-references
                 self._scalarnames[name] = name == 'volume'
             # noinspection PyUnresolvedReferences
             i: cython.int
@@ -599,6 +602,7 @@ class SisypheTract(object):
             return c
         else: raise AttributeError('Polydata attribute is None.')
 
+    # noinspection unresolved-references
     def setLut(self, lut: str | SisypheVolume | SisypheLut | vtkLookupTable | None = None, update: bool = False) -> None:
         """
         Set the look-up table colormap attribute of the current SisypheTract instance. The look-up table colormap
@@ -651,6 +655,7 @@ class SisypheTract(object):
         """
         return self._lut
 
+    # noinspection unresolved-references
     def setColorRepresentation(self, r: int) -> None:
         """
         Set the tract representation attribute of the current SisypheTract instance.
@@ -707,6 +712,7 @@ class SisypheTract(object):
         if self._mapper.GetScalarVisibility() > 0:
             # noinspection PyInconsistentReturns
             for name in self._scalarnames:
+                # noinspection unresolved-references
                 if self._scalarnames[name]:
                     if name == 'RGB': return self._RGB
                     else: return self._CMAP
@@ -813,6 +819,7 @@ class SisypheTract(object):
         """
         return self.getColorRepresentation() == self._COLOR
 
+    # noinspection unresolved-references
     def setActiveScalars(self, sc: str) -> None:
         """
         Set the name of the active scalar value associated with points in the current SisypheTract instance.
@@ -839,6 +846,7 @@ class SisypheTract(object):
             scalar value name
         """
         for name in self._scalarnames:
+            # noinspection unresolved-references
             if self._scalarnames[name]: return name
         return None
 
@@ -851,6 +859,7 @@ class SisypheTract(object):
         list[str]
             scalar value names
         """
+        # noinspection unresolved-references
         return list(self._scalarnames.keys())
 
     def hasScalarNames(self) -> bool:
@@ -1355,6 +1364,7 @@ class SisypheTractCollection(object):
             if select is None or select.count() == sl.count(): r = SisypheStreamlines(sl=sl.getStreamlines())
             else: r = SisypheStreamlines(sl=sl.getStreamlines()[select.getList()])
             r.copyAttributesFrom(sl)
+            # noinspection unresolved-references
             r.setName(select.getName())
             tracts = list()
             if select is None:
@@ -3785,6 +3795,7 @@ class SisypheStreamlines(object):
             return reg, rss
         else: raise TypeError('parameter type {} is not SisypheStreamlines, Streamlines or ndarray.'.format(type(sl)))
 
+    # noinspection unresolved-references
     @classmethod
     def getReferenceIDfromFile(cls, filename: str) -> str:
         """
@@ -4887,8 +4898,7 @@ class SisypheStreamlines(object):
             bundle name or 'all' for all streamlines
         """
         if bundle == 'all': bundle = self._bundles[0].getName()
-        if bundle in self._bundles:
-            return self._bundles[bundle].setOpacity(v)
+        if bundle in self._bundles: self._bundles[bundle].setOpacity(v)
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
     def getOpacity(self, bundle: str = 'all') -> float:
@@ -4922,8 +4932,7 @@ class SisypheStreamlines(object):
             bundle name or 'all' for all streamlines
         """
         if bundle == 'all': bundle = self._bundles[0].getName()
-        if bundle in self._bundles:
-            return self._bundles[bundle].setLineWidth(v)
+        if bundle in self._bundles: self._bundles[bundle].setLineWidth(v)
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
     def getLineWidth(self, bundle: str = 'all') -> float:
@@ -5758,6 +5767,7 @@ class SisypheStreamlines(object):
             return r
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
+    # noinspection unresolved-references
     def bundleCosineDistanceBetweenEndVectors(self, bundle: str = 'all') -> ndarray:
         """
         Get the cosine distance between endpoint vectors of streamlines in a bundle of the current SisypheStreamlines
@@ -5814,6 +5824,7 @@ class SisypheStreamlines(object):
                 index = self._bundles[bundle][i]
                 sl = self._streamlines[index]
                 if len(sl) > 1:
+                    # noinspection unresolved-references
                     d = sqrt(((sl[0] - sl[-1]) ** 2).sum())
                     r.append(d)
                 else: r.append(0.0)
@@ -6032,6 +6043,7 @@ class SisypheStreamlines(object):
             return r
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
+    # noinspection argument-list
     def bundleRoiSelection(self,
                            rois: SisypheROICollection,
                            include: list[bool] | None = None,
@@ -6235,6 +6247,7 @@ class SisypheStreamlines(object):
             cl = cluster_bundle(sl, threshold, rng=None)
             cll = list(map(len, cl))
             i = cll.index(max(cll))
+            # noinspection unresolved-references
             return cl[i].centroid
         else: raise ValueError('{} invalid bundle name.'.format(bundle))
 
@@ -6940,6 +6953,7 @@ class SisypheStreamlines(object):
                 # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(len(self._streamlines)):
+                    # noinspection unresolved-references
                     n = int(self._streamlines[i].shape[0] * factor)
                     sl.append(set_number_of_points(self._streamlines[i], n))
                 sl = Streamlines(sl)
@@ -7207,7 +7221,8 @@ class SisypheStreamlines(object):
         for sl in self._streamlines:
             tag: bool = True
             # < Revision 30/07/2026
-            if wait.getStopped(): break
+            if wait is not None:
+                if wait.getStopped(): break
             # Revision 30/07/2026 >
             if len(excl) > 0:
                 for select in excl:
@@ -7218,7 +7233,8 @@ class SisypheStreamlines(object):
                         tag = False
                         break
             # < Revision 30/07/2026
-            if wait.getStopped(): break
+            if wait is not None:
+                if wait.getStopped(): break
             # Revision 30/07/2026 >
             if tag and len(incl) > 0:
                 for select in incl:
@@ -7651,6 +7667,7 @@ class SisypheStreamlines(object):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document, bundle: str) -> None:
         """
         Write a bundle of the current SisypheStreamlines instance attributes to XML instance. This method is called by
@@ -7870,7 +7887,7 @@ class SisypheStreamlines(object):
         """
         self._save(bundle, save_dpy)
 
-    # noinspection PyTypeChecker
+    # noinspection PyTypeChecker,unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read a bundle of the current SisypheStreamline instance attributes from XML instance. This method is called by
@@ -8127,10 +8144,11 @@ class SisypheDiffusionModel(object):
     object -> SisypheDiffusionModel
 
     Creation: 27/10/2023
-    Last revisions: 01/09/2026
+    Last revisions: 06/10/2026
     """
 
-    __slots__ = ['_bvals', '_bvecs', '_gtable', '_dwi', '_mask', '_mean', '_b0', '_ID', '_model', '_fmodel', '_spacing']
+    __slots__ = ['_bvals', '_bvecs', '_gtable', '_dwi', '_mask', '_mean', '_b0', '_ID', '_model', '_fmodel', '_spacing',
+                 '_compress']
 
     # Class constants
 
@@ -8140,7 +8158,7 @@ class SisypheDiffusionModel(object):
 
     # Class methods
 
-    # noinspection PyTypeChecker
+    # noinspection PyTypeChecker,unresolved-references
     @classmethod
     def _getModelType(cls, filename: str) -> str:
         ext = splitext(filename)[1]
@@ -8151,6 +8169,7 @@ class SisypheDiffusionModel(object):
                     line = ''
                     strdoc = ''
                     while line != '</{}>\n'.format(cls._FILEEXT[1:]):
+                        # noinspection PyUnresolvedReferences
                         line = f.readline().decode()  # Convert binary to utf-8
                         strdoc += line
                     doc = minidom.parseString(strdoc)
@@ -8249,6 +8268,7 @@ class SisypheDiffusionModel(object):
     _spacing    tuple[float, float, float], dwi image spacing
     _model      None, initialized by child classes
     _fmodel     None, initialized by child classes
+    _compress   bool, save xvol in a compressed format
     """
 
     def __init__(self) -> None:
@@ -8266,7 +8286,11 @@ class SisypheDiffusionModel(object):
         self._fmodel = None
         self._ID: str = ''
         self._spacing: list[float] = [1.0] * 3
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
+    # noinspection unresolved-references
     def __str__(self) -> str:
         """
         Special overloaded method called by the built-in str() python function.
@@ -8318,6 +8342,26 @@ class SisypheDiffusionModel(object):
         # Revision 08/04/2025
 
     # Public methods
+
+    # < Revision 07/10/2026
+    def setCompressionOn(self) -> None:
+        self._compress = True
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def setCompressionOff(self) -> None:
+        self._compress = False
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def setCompression(self, v: bool) -> None:
+        self._compress = v
+    # Revision 07/10/2026 >
+
+    # < Revision 07/10/2026
+    def getCompression(self) -> bool:
+        return self._compress
+    # Revision 07/10/2026 >
 
     def getReferenceID(self):
         """
@@ -8384,6 +8428,7 @@ class SisypheDiffusionModel(object):
             self._gtable = reorient_bvecs(self._gtable, affine)
         else: raise AttributeError('Gradient table is empty.')
 
+    # noinspection unresolved-references
     def loadGradients(self,
                       bvalsfile: str,
                       bvecsfile: str,
@@ -8550,6 +8595,7 @@ class SisypheDiffusionModel(object):
             else: raise ValueError('Mismatch between bvals/bvecs element count and DWI image count.')
         else: raise ValueError('Set bvals and bvecs before DWI images.')
 
+    # noinspection unresolved-references
     def setDWIFromNumpy(self,
                         dwi: ndarray,
                         spacing: vector3float | None = None) -> None:
@@ -8692,6 +8738,7 @@ class SisypheDiffusionModel(object):
             else: raise FileNotFoundError('no such file {}.'.format(filename))
         else: raise ValueError('No dwi image in the current {} instance.'.format(type(self)))
 
+    # noinspection unresolved-references
     def setMask(self, mask: ndarray | SisypheROI | SisypheVolume) -> None:
         """
         Set the brain mask attribute of the current SisypheDiffusionModel instance.
@@ -8803,6 +8850,7 @@ class SisypheDiffusionModel(object):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheDiffusionModel instance attributes to XML instance. This method is called by save()
@@ -8909,6 +8957,9 @@ class SisypheDiffusionModel(object):
                 v.setID(self._ID)
                 if isinstance(wait, DialogWait): wait.setInformationText('Save {}'.format(v.getBasename()))
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Save {}'.format(v.getBasename())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             # Save B0 mean
             if self._b0 is not None:
@@ -8919,6 +8970,9 @@ class SisypheDiffusionModel(object):
                 v.setID(self._ID)
                 if isinstance(wait, DialogWait): wait.setInformationText('Save {}'.format(v.getBasename()))
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Save {}'.format(v.getBasename())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             # Save mask
             if self._mask is not None:
@@ -8929,8 +8983,12 @@ class SisypheDiffusionModel(object):
                 v.setID(self._ID)
                 if isinstance(wait, DialogWait): wait.setInformationText('Save {}'.format(v.getBasename()))
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Save {}'.format(v.getBasename())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheDiffusionModel instance attributes from XML instance. This method is called by load()
@@ -8990,6 +9048,7 @@ class SisypheDiffusionModel(object):
             return attr
         else: raise IOError('XML file format is not supported.')
 
+    # noinspection unresolved-references
     def loadModel(self,
                   filename: str,
                   binary: bool = True,
@@ -9274,6 +9333,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
                 self._model = TensorModel(self._gtable, self._algfit)
         return super().getModel()
 
+    # noinspection method-overriding
     def computeFitting(self, algfit: str = '', wait: DialogWait | None = None) -> None:
         """
         Estimate the diffusion model of the current SisypheDTIModel instance.
@@ -9297,7 +9357,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
                 if algfit == '' or algfit not in self._ALG: algfit = self._algfit
                 else: self._algfit = algfit
                 self._model = TensorModel(gtab=self._gtable, fit_method=algfit)
-                # noinspection PyTypeChecker
+                # noinspection PyTypeChecker,unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getFA(self) -> SisypheVolume:
@@ -9659,6 +9719,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheDTIModel instance attributes to XML instance. This method is called by save() method,
@@ -9684,6 +9745,7 @@ class SisypheDTIModel(SisypheDiffusionModel):
             # Common attributes
             super().createXML(doc)
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheDTIModel instance attributes from XML instance. This method is called by load() method,
@@ -9878,9 +9940,10 @@ class SisypheIvimModel(SisypheDiffusionModel):
         """
         if self.hasGradients():
             if self._model is None:
-                self._model = IvimModel(self._gtable, self._algfit)
+                self._model = IvimModel(self._gtable, fit_method=self._algfit)
         return super().getModel()
 
+    # noinspection method-overriding
     def computeFitting(self, algfit: str = '', wait: DialogWait | None = None) -> None:
         """
         Estimate the diffusion model of the current SisypheIvimModel instance.
@@ -9903,7 +9966,7 @@ class SisypheIvimModel(SisypheDiffusionModel):
                 if algfit == '' or algfit not in self._ALG: algfit = self._algfit
                 else: self._algfit = algfit
                 self._model = IvimModel(gtab=self._gtable, fit_method=algfit)
-                # noinspection PyTypeChecker
+                # noinspection PyTypeChecker,unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getD(self):
@@ -9971,6 +10034,7 @@ class SisypheIvimModel(SisypheDiffusionModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheDiffusionModel instance attributes to XML instance. This method is called by save() method,
@@ -9996,6 +10060,7 @@ class SisypheIvimModel(SisypheDiffusionModel):
             # Common attributes
             super().createXML(doc)
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheDiffusionModel instance attributes from XML instance. This method is called by load() method,
@@ -10168,7 +10233,7 @@ class SisypheFreeWaterDTIModel(SisypheDTIModel):
                 if algfit == '' or algfit not in self._ALG: algfit = self._algfit
                 else: self._algfit = algfit
                 self._model = FreeWaterTensorModel(gtab=self._gtable, fit_method=algfit)
-                # noinspection PyTypeChecker
+                # noinspection PyTypeChecker,unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getFreeWaterFraction(self) -> SisypheVolume:
@@ -10195,6 +10260,7 @@ class SisypheFreeWaterDTIModel(SisypheDTIModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheFreeWaterDTIModel instance attributes to XML instance. This method is called by save() method,
@@ -10389,6 +10455,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
                 self._model = DiffusionKurtosisModel(self._gtable, fit_method=self._algfit)
         return super().getModel()
 
+    # noinspection method-overriding
     def computeFitting(self, algfit: str = '', wait: DialogWait | None = None) -> None:
         """
         Estimate the diffusion model of the current SisypheDKIModel instance.
@@ -10412,7 +10479,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
                 if algfit == '' or algfit not in self._ALG: algfit = self._algfit
                 else: self._algfit = algfit
                 self._model = DiffusionKurtosisModel(gtab=self._gtable, fit_method=algfit)
-                # noinspection PyTypeChecker
+                # noinspection PyTypeChecker,unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getFA(self) -> SisypheVolume:
@@ -10609,6 +10676,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheDKIModel instance attributes to XML instance. This method is called by save() method,
@@ -10634,6 +10702,7 @@ class SisypheDKIModel(SisypheDiffusionModel):
             # Common attributes
             super().createXML(doc)
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheDKIModel instance attributes from XML instance. This method is called by load() method,
@@ -10825,6 +10894,7 @@ class SisypheRumbaModel(SisypheDiffusionModel):
                 self._model = RumbaSDModel(self._gtable, recon_type=self._algfit)
         return super().getModel()
 
+    # noinspection method-overriding
     def computeFitting(self, algfit: str = '', wait: DialogWait | None = None) -> None:
         """
         Estimate the diffusion model of the current SisypheRumbaModel instance.
@@ -10846,7 +10916,7 @@ class SisypheRumbaModel(SisypheDiffusionModel):
                 if algfit == '' or algfit not in self._ALG: algfit = self._algfit.lower()
                 else: self._algfit = algfit.lower()
                 self._model = RumbaSDModel(gtab=self._gtable, recon_type=algfit)
-                # noinspection PyTypeChecker
+                # noinspection PyTypeChecker,unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getCerebroSpinalFluidFraction(self) -> SisypheVolume:
@@ -10936,6 +11006,7 @@ class SisypheRumbaModel(SisypheDiffusionModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheRumbaModel instance attributes to XML instance. This method is called by save() method,
@@ -10961,6 +11032,7 @@ class SisypheRumbaModel(SisypheDiffusionModel):
             # Common attributes
             super().createXML(doc)
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheDKIModel instance attributes from XML instance. This method is called by load() method,
@@ -11143,6 +11215,7 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
                 # Revision 22/03/2026 >
         return super().getModel()
 
+    # noinspection method-overriding
     def computeFitting(self, order: int = 6, wait: DialogWait | None = None) -> None:
         """
         Estimate the diffusion model of the current SisypheSHCSAModel instance.
@@ -11165,6 +11238,7 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
                 # new parameter name since dipy v1.9 sh_order -> sh_order_max
                 self._model = CsaOdfModel(gtab=self._gtable, sh_order_max=order)
                 # Revision 22/03/2026 >
+                # noinspection unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getGFA(self) -> SisypheVolume:
@@ -11190,6 +11264,7 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheSHCSAModel instance attributes to XML instance. This method is called by save()
@@ -11215,6 +11290,7 @@ class SisypheSHCSAModel(SisypheDiffusionModel):
             # Common attributes
             super().createXML(doc)
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheSHCSAModel instance attributes from XML instance. This method is called by load()
@@ -11397,6 +11473,7 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
                 # Revision 22/03/2026 >
         return super().getModel()
 
+    # noinspection method-overriding
     def computeFitting(self, order: int = 0, wait: DialogWait | None = None) -> None:
         """
         Estimate the diffusion model of the current SisypheSHCSDModel instance.
@@ -11420,6 +11497,7 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
                 # new parameter name since dipy v1.9 sh_order -> sh_order_max
                 self._model = ConstrainedSphericalDeconvModel(gtab=self._gtable, response=response, sh_order_max=order)
                 # Revision 22/03/2026 >
+                # noinspection unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getGFA(self) -> SisypheVolume:
@@ -11447,6 +11525,7 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheSHCSDModel instance attributes to XML instance. This method is called by save()
@@ -11472,6 +11551,7 @@ class SisypheSHCSDModel(SisypheDiffusionModel):
             # Common attributes
             super().createXML(doc)
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheSHCSDModel instance attributes from XML instance. This method is called by load()
@@ -11631,6 +11711,7 @@ class SisypheDSIModel(SisypheDiffusionModel):
                 if wait is not None:
                     wait.setInformationText('DSI model fitting...')
                 self._model = DiffusionSpectrumModel(gtab=self._gtable)
+                # noinspection unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getGFA(self) -> SisypheVolume:
@@ -11657,6 +11738,7 @@ class SisypheDSIModel(SisypheDiffusionModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheDSIModel instance attributes to XML instance. This method is called by save() method,
@@ -11677,6 +11759,7 @@ class SisypheDSIModel(SisypheDiffusionModel):
             # Common attributes
             super().createXML(doc)
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheDSIModel instance attributes from XML instance. This method is called by load() method,
@@ -11834,6 +11917,7 @@ class SisypheDSIDModel(SisypheDiffusionModel):
                 if wait is not None:
                     wait.setInformationText('DSID model fitting...')
                 self._model = DiffusionSpectrumDeconvModel(gtab=self._gtable)
+                # noinspection unresolved-references
                 self._fmodel = self._model.fit(data=self._dwi, mask=self._mask)
 
     def getGFA(self) -> SisypheVolume:
@@ -11860,6 +11944,7 @@ class SisypheDSIDModel(SisypheDiffusionModel):
 
     # Public IO methods
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document) -> None:
         """
         Write the current SisypheDSIDModel instance attributes to XML instance. This method is called by save() method,
@@ -11880,6 +11965,7 @@ class SisypheDSIDModel(SisypheDiffusionModel):
             # Common attributes
             super().createXML(doc)
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheDSIDModel instance attributes from XML instance. This method is called by load()
@@ -12367,7 +12453,7 @@ class SisypheTracking(object):
             array of seeds
         """
         affine = diag(list(self._model.getSpacing()) + [1.0])
-        return seeds_from_mask(self._seeds, affine, self._density)
+        return seeds_from_mask(self._seeds, affine, density=self._density)
 
     # < Revision 24/07/2026
     # add getSeedMask method

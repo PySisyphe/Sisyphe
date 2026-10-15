@@ -287,6 +287,7 @@ def getDPIScaleFactor() -> float:
         DPI scale factor
     """
     from PyQt5.QtWidgets import QApplication
+    # noinspection unresolved-references
     return QApplication.primaryScreen().logicalDotsPerInch() / 100.0
 # Revision 11/10/2025 >
 
@@ -335,12 +336,12 @@ class SisypheSettings(object):
     @classmethod
     def getDefaultSettings(cls) -> str:
         """
-        Get default settings xml file name (./Sisyphe/settings/settings.xml).
+        Get default settings XML file name (./Sisyphe/settings/settings.xml).
 
         Returns
         -------
         str
-            default settings xml file name
+            default settings XML file name
         """
         import Sisyphe.settings
         return join(dirname(abspath(Sisyphe.settings.__file__)), 'settings.xml')
@@ -658,6 +659,7 @@ class SisypheSettings(object):
         """
         return len(self.getSectionsList())
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(list[str])
     def getSectionsList(self) -> list[str]:
@@ -690,6 +692,7 @@ class SisypheSettings(object):
         """
         if not self.hasSection(section):
             root = self._doc.documentElement
+            # noinspection unresolved-references
             root.appendChild(self._doc.createElement(section))
 
     @cython.ccall
@@ -711,6 +714,7 @@ class SisypheSettings(object):
         sections = self.getSectionsList()
         return section in sections
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def getSectionNode(self, section: str) -> minidom.Element | None:
@@ -757,6 +761,7 @@ class SisypheSettings(object):
             while child:
                 if child.nodeType == minidom.Node.ELEMENT_NODE:
                     r.append(child.nodeName)
+                # noinspection unresolved-references
                 child = child.nextSibling
         return r
 
@@ -794,6 +799,7 @@ class SisypheSettings(object):
                     else: raise ValueError('{} incorrect attribute.')
                 txtnode = self._doc.createTextNode('')
                 fieldnode.appendChild(txtnode)
+                # noinspection unresolved-references
                 node.appendChild(fieldnode)
 
     @cython.ccall
@@ -838,6 +844,7 @@ class SisypheSettings(object):
         nodes = self._doc.getElementsByTagName(field)
         if nodes.length > 0:
             for node in nodes:
+                # noinspection unresolved-references
                 if node.parentNode.nodeName == section: return node
         return None
 
@@ -888,6 +895,7 @@ class SisypheSettings(object):
         if node is not None: return node.getAttribute('vartype')
         else: raise ValueError('Invalid node.')
 
+    # noinspection unreachable-code
     def getFieldValue(self, section: str, field: str) -> fieldTypes:
         """
         Get the value of a field in the current SisypheSettings instance.
@@ -980,8 +988,7 @@ class SisypheSettings(object):
                     if exists(filename) and isfile(filename):
                         f = open(filename, 'r')
                         try: r = f.readlines()
-                        except:
-                            f.close()
+                        except: f.close()
                     return r
                 # Revision 6/10/2024 >
                 else: return data

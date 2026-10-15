@@ -542,7 +542,7 @@ def saveBVec(filename: str,
             f.write(buffxml)
 
 
-# noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins,unreachable-code,unresolved-references
 def loadBVal(filename: str,
              format='txt',
              numpy=False) -> dict[str, float] | ndarray:
@@ -554,7 +554,7 @@ def loadBVal(filename: str,
     filename : str
         file name (.bval, .xbval or .txt)
     format : str
-        - 'xml', xml format <bvalue file=filename>v</bvector>
+        - 'xml', XML format <bvalue file=filename>v</bvector>
         - 'txt', txt format, v[0] -> v[1] ... -> v[n]
     numpy : bool
         return type is ndarray (True) or dict (False)
@@ -591,20 +591,21 @@ def loadBVal(filename: str,
             # Revision 23/09/2026 >
             doc = minidom.parseString(strdoc)
             root = doc.documentElement
-            if root.nodeName == 'xbval' and root.getAttribute('version') <= '1.0':
-                node = root.firstChild
-                while node:
-                    if node.nodeName == 'bvalue':
-                        v = node.firstChild.data
-                        if v is None: v = 0.0
-                        r[node.getAttribute('file')] = float(v)
-                    node = node.nextSibling
+            if root:
+                if root.nodeName == 'xbval' and root.getAttribute('version') <= '1.0':
+                    node = root.firstChild
+                    while node:
+                        if node.nodeName == 'bvalue':
+                            v = node.firstChild.data
+                            if v is None: v = 0.0
+                            r[node.getAttribute('file')] = float(v)
+                        node = node.nextSibling
             if numpy: r = array(list(r.values()))
             return r
     else: raise ValueError('{} is not a valid format parameter (xml, txtbydim, txtbyvec, txt).'.format(format))
 
 
-# noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins,unreachable-code,unresolved-references
 def loadBVec(filename: str,
              format='txtbydim',
              numpy=False) -> dict[str, list[float]] | ndarray:
@@ -672,20 +673,21 @@ def loadBVec(filename: str,
             # Revision 23/09/2026 >
             doc = minidom.parseString(strdoc)
             root = doc.documentElement
-            if root.nodeName == 'xbvec' and root.getAttribute('version') <= '1.0':
-                node = root.firstChild
-                while node:
-                    if node.nodeName == 'bvector':
-                        v = node.firstChild.data
-                        if v is None: v = [0.0, 0.0, 0.0]
-                        r[node.getAttribute('file')] = [float(i) for i in v.split(' ')]
-                    # < Revision 23/07/2026
-                    elif node.nodeName == 'direction' and not numpy:
-                        v = node.firstChild.data
-                        if v is None: v = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-                        r['direction'] = [float(i) for i in v.split(' ')]
-                    # Revision 23/07/2026 >
-                    node = node.nextSibling
+            if root:
+                if root.nodeName == 'xbvec' and root.getAttribute('version') <= '1.0':
+                    node = root.firstChild
+                    while node:
+                        if node.nodeName == 'bvector':
+                            v = node.firstChild.data
+                            if v is None: v = [0.0, 0.0, 0.0]
+                            r[node.getAttribute('file')] = [float(i) for i in v.split(' ')]
+                        # < Revision 23/07/2026
+                        elif node.nodeName == 'direction' and not numpy:
+                            v = node.firstChild.data
+                            if v is None: v = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+                            r['direction'] = [float(i) for i in v.split(' ')]
+                        # Revision 23/07/2026 >
+                        node = node.nextSibling
             if numpy: r = array(list(r.values()))
             return r
     else: raise ValueError('{} is not a valid format parameter (xml, txtbydim, txtbyvec, txt).'.format(format))
@@ -824,7 +826,7 @@ class DicomToXmlDicom(object):
 
     # Public methods
 
-    def setDicomSeriesFilenames(self, filenames: list[str]) -> None:
+    def setDicomSeriesFilenames(self, filenames: list[str] | str) -> None:
         """
         Set the list of DICOM file names to convert in XmlDicom format.
 
@@ -959,6 +961,7 @@ class DicomToXmlDicom(object):
         """
         return self._xmlfilename
 
+    # noinspection unreachable-code
     def execute(self) -> None:
         """
         Run Dicom to XmlDicom conversion.
@@ -1458,7 +1461,9 @@ class XmlDicom(object):
             Dicom instance count
         """
         k = self.getKeywordsWithValueVariation()
-        if len(k) > 0: return len(self.getDataElementValue(k[0]))
+        if len(k) > 0:
+            # noinspection unresolved-references
+            return len(self.getDataElementValue(k[0]))
         else: return 1
 
     def getDataset(self, index: int = 0) -> Dataset:
@@ -1479,7 +1484,9 @@ class XmlDicom(object):
             keys = self.getKeywords()
             for k in keys:
                 de = self.getDataElement(k)
-                if isinstance(k, list): ds.add(de[index])
+                if isinstance(k, list):
+                    # noinspection unresolved-references
+                    ds.add(de[index])
                 else: ds.add(de)
         return ds
 
@@ -2353,6 +2360,7 @@ class ExportToDicom(object):
 
     # Public methods
 
+    # noinspection unresolved-references
     def setVolume(self, vol: SisypheVolume) -> None:
         """
         Set PySisyphe volume (.xvol) to convert.
@@ -2408,6 +2416,7 @@ class ExportToDicom(object):
             filename = filename[0] + DicomToXmlDicom.getFileExt()
             if exists(filename):
                 self._xmlref = XmlDicom()
+                # noinspection unresolved-references
                 self._xmlref.loadXmlDicomFilename(filename)
             else: raise FileNotFoundError('No such file {}.'.format(filename))
         else: raise TypeError('parameter type {} is not str.'.format(type(filename)))
@@ -2483,7 +2492,7 @@ class ExportToDicom(object):
         self._xmlref = None
         self._dcmdirectory = ''
 
-    # noinspection PyUnboundLocalVariable
+    # noinspection PyUnboundLocalVariable,unresolved-references
     def execute(self, progress: DialogWait | None = None) -> None:
         """
         Run PySisyphe volume (.xvol) to Dicom conversion.
@@ -2878,6 +2887,7 @@ class ImportFromDicom(object):
         """
         return self._refvol is not None
 
+    # noinspection unresolved-references
     def saveReferenceVolume(self, progress: DialogWait | None = None) -> None:
         """
         Save converted PySisyphe volume.
@@ -3122,6 +3132,7 @@ class ImportFromRTDose(ImportFromDicom):
         self._rtdosefile = list()
         self._rtdosevol.clear()
 
+    # noinspection unresolved-references,method-overriding
     def execute(self, progress: DialogWait | None = None, getdirs: bool = False) -> SisypheVolumeCollection | None:
         """
         Run Dicom RTDose to PySisyphe volume (.xvol) conversion.
@@ -3340,6 +3351,7 @@ class ImportFromRTStruct(ImportFromDicom):
                 if QApplication.instance() is not None: QApplication.processEvents()
         else: raise ValueError('No ROI to save.')
 
+    # noinspection unresolved-references
     def getRTStructLabel(self) -> SisypheVolume:
         """
         Get converted PySisyphe label volume.
@@ -3373,6 +3385,7 @@ class ImportFromRTStruct(ImportFromDicom):
         self._rtstructfile = list()
         self._rtroi.clear()
 
+    # noinspection unresolved-references,method-overriding
     def execute(self, progress: DialogWait | None = None, getdirs: bool = False) -> SisypheROICollection:
         """
         Run Dicom RTStruct to PySisyphe roi (.xroi) conversion.
@@ -3543,11 +3556,12 @@ class ExportToRTStruct(object):
 
     # Private methods
 
+    # noinspection unresolved-references
     def _hasXmlDicomReference(self) -> bool:
         filename = splitext(self._refvol.getFilename())[0] + XmlDicom().getFileExt()
         return exists(filename)
 
-    # noinspection PyUnboundLocalVariable
+    # noinspection PyUnboundLocalVariable,unresolved-references
     def _convertReference(self, progress: DialogWait | None = None) -> None:
         if self.hasReferenceVolume():
             if progress: progress.setInformationText('{} reference Dicom conversion...'
@@ -3694,6 +3708,7 @@ class ExportToRTStruct(object):
             except: raise IOError('Dicom write error.')
         else: raise ValueError('No reference volume defined.')
 
+    # noinspection unresolved-references
     def _convertROI(self, progress: DialogWait | None = None) -> None:
         if self.hasROI():
             if progress: progress.setInformationText('Convert ROI(s) to Dicom RTStruct....')
@@ -3923,6 +3938,7 @@ class ExportToRTStruct(object):
         """
         return self._refvol is not None
 
+    # noinspection unresolved-references
     def addROI(self, roi: str | SisypheROI) -> None:
         """
         Add PySisyphe ROI to the list of conversion. PySisyphe ROI must have the same ID as the PySisyphe reference

@@ -77,6 +77,7 @@ class SisypheSheet(DataFrame):
         """
         return 'PySisyphe Sheet (*.{})'.format(cls._FILEEXT)
 
+    # noinspection unresolved-references
     @classmethod
     def parseXMLNode(cls, currentnode: minidom.Element) -> SisypheSheet:
         """
@@ -142,6 +143,7 @@ class SisypheSheet(DataFrame):
         """
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
+            # noinspection unresolved-references
             if root.nodeName == cls._FILEEXT[1:] and root.getAttribute('version') == '1.0':
                 sheet = doc.getElementsByTagName(cls.getFileExt()[1:])[0]
                 return cls.parseXMLNode(sheet)
@@ -283,14 +285,14 @@ class SisypheSheet(DataFrame):
 
     def createXML(self, doc: minidom.Document, currentnode: minidom.Element) -> None:
         """
-        Write the current SisypheSheet instance attributes to xml document instance.
+        Write the current SisypheSheet instance attributes to XML document instance.
 
         Parameters
         ----------
         doc : minidom.Document
-            xml document
+            XML document
         currentnode : minidom.Element
-            xml root node
+            XML root node
         """
         if isinstance(doc, minidom.Document):
             if isinstance(currentnode, minidom.Element):

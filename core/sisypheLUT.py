@@ -56,6 +56,7 @@ from Sisyphe.core.sisypheConstants import getLutExt
 # to avoid ImportError due to circular imports
 if TYPE_CHECKING:
     from Sisyphe.core.sisypheVolume import SisypheVolume
+    from Sisyphe.core.sisypheImageAttributes import SisypheDisplay
 
 
 __all__ = ['lutConversion',
@@ -449,6 +450,7 @@ class SisypheLut(object):
                 return True
         return False
 
+    # noinspection method-overriding
     def __eq__(self, buff: SisypheLut) -> bool:
         """
         Special overloaded relational operator ==. Look-up table colormap comparison.
@@ -492,7 +494,7 @@ class SisypheLut(object):
 
     @cython.ccall
     @cython.returns(cython.void)
-    def copyFrom(self, buff: SisypheLut) -> None:
+    def copyFrom(self, buff: SisypheLut | SisypheVolume | SisypheDisplay) -> None:
         """
         Copy SisypheLut attributes to the current SisypheLut instance (deep copy).
 
@@ -1264,12 +1266,12 @@ class SisypheLut(object):
     @cython.returns(cython.void)
     def saveToXML(self, filename: str) -> None:
         """
-        Save current SisypheLut instance attributes to xml file (.xlut).
+        Save current SisypheLut instance attributes to XML file (.xlut).
 
         Parameters
         ----------
         filename : str
-            xml file name (.xlut)
+            XML file name (.xlut)
         """
         i: cython.int
         j: cython.int
@@ -1411,6 +1413,7 @@ class SisypheLut(object):
         finally:
             f.close()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:
@@ -1595,7 +1598,7 @@ class SisypheColorTransfer(object):
         """
         SisypheColorTransfer instance constructor.
         """
-        self._ID: str = None
+        self._ID: str | None = None
         self._colortransfer: vtkColorTransferFunction = vtkColorTransferFunction()
         self._alphatransfer: vtkPiecewiseFunction = vtkPiecewiseFunction()
         self._gradienttransfer: vtkPiecewiseFunction = vtkPiecewiseFunction()
@@ -1656,6 +1659,7 @@ class SisypheColorTransfer(object):
                                                       str(id(self)),
                                                       self.__str__())
 
+    # noinspection method-overriding
     def __eq__(self, buff: SisypheColorTransfer) -> bool:
         """
         Special overloaded relational operator ==. Color transfer function comparison.
@@ -3031,6 +3035,7 @@ class SisypheColorTransfer(object):
         finally:
             f.close()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def loadFromXML(self, filename: str) -> None:

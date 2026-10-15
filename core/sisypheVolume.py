@@ -516,6 +516,7 @@ class SisypheVolume(SisypheImage):
 
     # Arithmetic operators
 
+    # noinspection unresolved-references
     def __add__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator +. self + other -> SisypheVolume.
@@ -547,6 +548,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __sub__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator -. self - other -> SisypheVolume.
@@ -578,6 +580,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __mul__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator *. self * other -> SisypheVolume.
@@ -609,6 +612,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __div__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator /. self / other -> SisypheVolume.
@@ -639,6 +643,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __floordiv__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator //. self // other -> SisypheVolume.
@@ -670,6 +675,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __truediv__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator /. self / other -> SisypheVolume.
@@ -701,6 +707,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __radd__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator +. other + self -> SisypheVolume.
@@ -732,6 +739,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __rsub__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator -. other - self -> SisypheVolume.
@@ -763,6 +771,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __rmul__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator *. other * self -> SisypheVolume.
@@ -794,6 +803,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __rdiv__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator /. other / self -> SisypheVolume.
@@ -825,6 +835,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __rfloordiv__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator //. other // self -> SisypheVolume.
@@ -856,6 +867,7 @@ class SisypheVolume(SisypheImage):
         r.acquisition.setSequenceToAlgebraMap()
         return r
 
+    # noinspection unresolved-references
     def __rtruediv__(self, other: listImages | int | float) -> SisypheVolume:
         """
         Special overloaded arithmetic operator /. other / self -> SisypheVolume.
@@ -896,6 +908,7 @@ class SisypheVolume(SisypheImage):
         SisypheVolume
             image = - self
         """
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__neg__())
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -931,6 +944,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__and__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -953,6 +967,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__rand__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -975,6 +990,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__or__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -997,6 +1013,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__ror__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -1019,6 +1036,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__xor__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -1041,6 +1059,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__rxor__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -1056,6 +1075,7 @@ class SisypheVolume(SisypheImage):
         SisypheVolume
             image = ~self
         """
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__invert__())
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -1080,6 +1100,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__lt__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -1102,6 +1123,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__le__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -1176,6 +1198,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__gt__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -1198,6 +1221,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(other, SisypheImage): other = other.getSITKImage()
         else: other = self._toSimpleITK(other)
+        # noinspection unresolved-references
         r = SisypheVolume(self._sitk_image.__ge__(other))
         r.copyAttributesFrom(self, display=False)
         r.acquisition.setModalityToOT()
@@ -1221,6 +1245,7 @@ class SisypheVolume(SisypheImage):
         int | float | tuple | SisypheVolume
             scalar value or SisypheVolume if slicing
         """
+        # noinspection unresolved-references
         r = self._sitk_image.__getitem__(idx)
         if isinstance(r, sitkImage):
             r = SisypheVolume(r)
@@ -1252,6 +1277,7 @@ class SisypheVolume(SisypheImage):
             elif i1 == 0 and i2 == 2 and i3 == 1: self._orientation = self._CORONAL
             elif i1 == 1 and i2 == 2 and i3 == 0: self._orientation = self._SAGITTAL
 
+    # noinspection unresolved-references
     def _updateRange(self) -> None:
         # bugfix, conversion numpy.float32 to float
         # < Revsion 25/06/2026
@@ -1272,6 +1298,7 @@ class SisypheVolume(SisypheImage):
             self._display.setDefaultWindow()
         else: self.display.updateVTKLUT()
 
+    # noinspection unresolved-references
     def _updateImages(self) -> None:
         super()._updateImages()
         self._updateOrientation()
@@ -1626,6 +1653,7 @@ class SisypheVolume(SisypheImage):
         """
         if isinstance(display, SisypheDisplay):
             self._display = display
+            # noinspection unresolved-references
             self._display.setParent(self)
         else: raise TypeError('parameter type {} is not SisypheDisplay.'.format(type(display)))
 
@@ -1719,6 +1747,7 @@ class SisypheVolume(SisypheImage):
             else: raise TypeError('parameter type {} is not int.'.format(type(c)))
         else: raise ValueError('Image has only one component.')
 
+    # noinspection method-overriding
     def cast(self, datatype: str) -> SisypheVolume:
         """
         SisypheVolume copy of the current SisypheVolume instance with a new datatype.
@@ -1777,7 +1806,9 @@ class SisypheVolume(SisypheImage):
             # Revision 21/02/2025 >
             if identity: img._identity.copyFrom(self._identity)
             if acquisition: img._acquisition.copyFrom(self._acquisition)
-            if display: img._display.copyFrom(self._display)
+            if display:
+                # noinspection unresolved-references
+                img._display.copyFrom(self._display)
             if acpc: img._acpc.copyFrom(self._acpc)
             img._compression = self._compression
             img._orientation = self._orientation
@@ -1818,7 +1849,9 @@ class SisypheVolume(SisypheImage):
             # Revision 21/02/2025 >
             if identity: self._identity.copyFrom(img._identity)
             if acquisition: self._acquisition.copyFrom(img._acquisition)
-            if display: self._display.copyFrom(img._display)
+            if display:
+                # noinspection unresolved-references
+                self._display.copyFrom(img._display)
             if acpc: self._acpc.copyFrom(img._acpc)
             self._compression = img._compression
             self._orientation = img._orientation
@@ -1955,6 +1988,7 @@ class SisypheVolume(SisypheImage):
         if self._intercept is None or not isinstance(self._intercept, float): self._intercept = 0.0
         return self._intercept
 
+    # noinspection method-overriding
     def setDirections(self, direction: tuple = tuple(getRegularDirections())) -> None:
         """
         Set vectors of image axes in RAS+ coordinates system. PySisyphe uses RAS+ world coordinates system convention
@@ -2667,6 +2701,7 @@ class SisypheVolume(SisypheImage):
         vol.acquisition.setSequenceToMask()
         return vol
 
+    # noinspection method-overriding
     def getMaskROI(self,
                    name: str = 'Mask',
                    algo: str = 'huang',
@@ -2770,6 +2805,7 @@ class SisypheVolume(SisypheImage):
         vol.acquisition.setSequenceToMask()
         return vol
 
+    # noinspection method-overriding
     def getMaskROI2(self,
                     name: str = 'Mask',
                     algo: str = 'huang',
@@ -3306,6 +3342,7 @@ class SisypheVolume(SisypheImage):
 
     # < Revision 01/08/2024
     # add getProjection method
+    # noinspection method-overriding
     def getProjection(self,
                       d: str = 'left',
                       thickness: float = 0.0,
@@ -3386,6 +3423,7 @@ class SisypheVolume(SisypheImage):
 
     # < Revision 30/08/2024
     # add getProjection method
+    # noinspection method-overriding
     def getCroppedProjection(self,
                              slc: int,
                              d: str = 'left',
@@ -4327,6 +4365,7 @@ class SisypheVolume(SisypheImage):
             filename = splitext(self.getFilename())[0] + XmlDicom.getFileExt()
             if exists(filename):
                 self._xdcm = XmlDicom()
+                # noinspection unresolved-references
                 self._xdcm.loadXmlDicomFilename(filename)
 
     def clearXmlDicom(self) -> None:
@@ -4442,6 +4481,7 @@ class SisypheVolume(SisypheImage):
             self.saveTransforms()
         else: raise AttributeError('Array image is empty.')
 
+    # noinspection unresolved-references
     def createXMLOld(self, doc: minidom.Document) -> None:
         if isinstance(doc, minidom.Document):
             root = doc.documentElement
@@ -4523,6 +4563,7 @@ class SisypheVolume(SisypheImage):
                 f.write(buff)
         else: raise TypeError('parameter functype is not xml.dom.minidom.Document.')
 
+    # noinspection unresolved-references
     def parseXMLOld(self, doc: minidom.Document) -> None:
         root = doc.documentElement
         if root.nodeName == self._FILEEXT[1:] and root.getAttribute('version') == '1.0':
@@ -4632,6 +4673,7 @@ class SisypheVolume(SisypheImage):
             else: raise AttributeError('filename attribute is empty.')
         else: raise AttributeError('Data array is empty.')
 
+    # noinspection unresolved-references
     def parseXML(self, doc: minidom.Document) -> dict:
         """
         Read the current SisypheVolume instance attributes from XML instance. This method is called by load() method,
@@ -4808,6 +4850,7 @@ class SisypheVolume(SisypheImage):
             self.getAcquisition().loadLabels()
         else: raise IOError('no such file : {}.'.format(filename))
 
+    # noinspection unresolved-references
     def createXML(self, doc: minidom.Document, single: bool = True) -> None:
         """
         Write the current SisypheVolume instance attributes to XML instance. This method is called by save() and
@@ -4946,6 +4989,7 @@ class SisypheVolume(SisypheImage):
     # Public IO methods, other formats
     # Sisyphe, Nifti, Nrrd, Minc, Vtk, Numpy
 
+    # noinspection method-overriding
     def loadFromSisyphe(self, filename: str) -> None:
         """
         Load the current SisypheVolume instance from an old Sisyphe Volume (.vol) file.
@@ -5029,6 +5073,7 @@ class SisypheVolume(SisypheImage):
         self._transforms.clear()
         self._transforms.setReferenceID(self)
 
+    # noinspection method-overriding
     def loadFromBrainVoyagerVMR(self, filename: str) -> None:
         """
         Load the current SisypheVolume instance from a BrainVoyager (.vmr) file.
@@ -5230,7 +5275,7 @@ class SisypheVolume(SisypheImage):
     acquisition = property(getAcquisition, setAcquisition)
     # noinspection PyTypeChecker
     display = property(getDisplay, setDisplay)
-    # noinspection PyTypeChecker
+    # noinspection PyTypeChecker,property-definition
     transforms = property(getTransforms, setTransforms)
     # noinspection PyTypeChecker
     acpc = property(getACPC, setACPC)

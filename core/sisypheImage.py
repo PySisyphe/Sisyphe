@@ -322,6 +322,7 @@ class SisypheImage(object):
 
     # Special methods
 
+    # noinspection unresolved-references
     def __init__(self,
                  image: str | listImages2 | SisypheImage | None = None,
                  **kargs) -> None:
@@ -453,6 +454,7 @@ class SisypheImage(object):
 
     # Arithmetic operators
 
+    # noinspection unresolved-references
     def __add__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator +. self + other -> SisypheImage.
@@ -478,6 +480,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__add__(other))
 
+    # noinspection unresolved-references
     def __sub__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator -. self - other -> SisypheImage.
@@ -503,6 +506,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__sub__(other))
 
+    # noinspection unresolved-references
     def __mul__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator *. self * other -> SisypheImage.
@@ -528,6 +532,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__mul__(other))
 
+    # noinspection unresolved-references
     def __div__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator /. self / other -> SisypheImage
@@ -552,6 +557,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__div__(other))
 
+    # noinspection unresolved-references
     def __floordiv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator //. self // other -> SisypheImage.
@@ -577,6 +583,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__floordiv__(other))
 
+    # noinspection unresolved-references
     def __truediv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator /. self / other -> SisypheImage.
@@ -602,6 +609,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__truediv__(other))
 
+    # noinspection unresolved-references
     def __radd__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator +. other + self -> SisypheImage.
@@ -627,6 +635,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__radd__(other))
 
+    # noinspection unresolved-references
     def __rsub__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator -. other - self -> SisypheImage.
@@ -652,6 +661,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rsub__(other))
 
+    # noinspection unresolved-references
     def __rmul__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator *. other * self -> SisypheImage.
@@ -677,6 +687,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rmul__(other))
 
+    # noinspection unresolved-references
     def __rdiv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator /. other / self -> SisypheImage.
@@ -702,6 +713,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rdiv__(other))
 
+    # noinspection unresolved-references
     def __rfloordiv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator //. other // self -> SisypheImage.
@@ -727,6 +739,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rfloordiv__(other))
 
+    # noinspection unresolved-references
     def __rtruediv__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded arithmetic operator /. other / self -> SisypheImage
@@ -752,6 +765,7 @@ class SisypheImage(object):
         # Revision 25/06/2026 >
         return SisypheImage(self._sitk_image.__rtruediv__(other))
 
+    # noinspection unresolved-references
     def __neg__(self) -> SisypheImage:
         """
         Special overloaded arithmetic unary operator -. - self -> SisypheImage
@@ -776,6 +790,7 @@ class SisypheImage(object):
 
     # Logic operators
 
+    # noinspection unresolved-references
     def __and__(self, other: listImages | SisypheImage) -> SisypheImage:
         """
         Special overloaded logic operator & (and). self & other -> SisypheImage.
@@ -794,6 +809,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__and__(other))
 
+    # noinspection unresolved-references
     def __rand__(self, other: listImages | SisypheImage) -> SisypheImage:
         """
         Special overloaded logic operator & (and). other & self -> SisypheImage.
@@ -812,6 +828,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__rand__(other))
 
+    # noinspection unresolved-references
     def __or__(self, other: listImages | SisypheImage) -> SisypheImage:
         """
         Special overloaded logic operator | (or). self | other -> SisypheImage.
@@ -830,6 +847,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__or__(other))
 
+    # noinspection unresolved-references
     def __ror__(self, other: listImages | SisypheImage) -> SisypheImage:
         """
         Special overloaded logic operator | (or). other | self -> SisypheImage.
@@ -848,6 +866,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__ror__(other))
 
+    # noinspection unresolved-references
     def __xor__(self, other: listImages | SisypheImage) -> SisypheImage:
         """
         Special overloaded logic operator ^ (xor). self ^ other -> SisypheImage.
@@ -866,6 +885,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__xor__(other))
 
+    # noinspection unresolved-references
     def __rxor__(self, other: listImages | SisypheImage) -> SisypheImage:
         """
         Special overloaded logic operator ^ (xor). other ^ self -> SisypheImage.
@@ -884,6 +904,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__rxor__(other))
 
+    # noinspection unresolved-references
     def __invert__(self) -> SisypheImage:
         """
         Special overloaded logic unary operator ~ (not). ~self -> SisypheImage.
@@ -897,6 +918,7 @@ class SisypheImage(object):
 
     # Relational operators
 
+    # noinspection unresolved-references
     def __lt__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded relational operator <. self < other -> SisypheImage.
@@ -915,6 +937,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__lt__(other))
 
+    # noinspection unresolved-references
     def __le__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded relational operator <=. self <= other -> SisypheImage.
@@ -933,6 +956,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__le__(other))
 
+    # noinspection method-overriding
     def __eq__(self, other: listImages | SisypheImage | int | float) -> bool | SisypheImage:
         """
         Special overloaded relational operator ==. self == other -> SisypheImage.
@@ -951,6 +975,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__eq__(other))
 
+    # noinspection method-overriding
     def __ne__(self, other: listImages | SisypheImage | int | float) -> bool | SisypheImage:
         """
         Special overloaded relational operator !=. self != other -> SisypheImage.
@@ -969,6 +994,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__ne__(other))
 
+    # noinspection unresolved-references
     def __gt__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded relational operator >. self > other -> SisypheImage.
@@ -987,6 +1013,7 @@ class SisypheImage(object):
         else: other = self._toSimpleITK(other)
         return SisypheImage(self._sitk_image.__gt__(other))
 
+    # noinspection unresolved-references
     def __ge__(self, other: listImages | SisypheImage | int | float) -> SisypheImage:
         """
         Special overloaded relational operator >=. self >= other -> SisypheImage.
@@ -1007,6 +1034,7 @@ class SisypheImage(object):
 
     # set/get pixel methods
 
+    # noinspection unresolved-references
     def __getitem__(self, idx):
         """
         Special overloaded container getter method. Get scalar value(s) with slicing ability.
@@ -1026,6 +1054,7 @@ class SisypheImage(object):
         if isinstance(r, sitkImage): r = SisypheImage(r)
         return r
 
+    # noinspection unresolved-references
     def __setitem__(self, idx, rvalue):
         """
         Special overloaded container setter method. Set scalar value(s) with slicing ability.
@@ -1060,6 +1089,7 @@ class SisypheImage(object):
         self._updateITKImageFromNumpy()
         self._updateVTKImageFromNumpy()
 
+    # noinspection unresolved-references
     @cython.cfunc
     @cython.returns(cython.void)
     def _updateNumpyFromSITKImage(self) -> None:
@@ -1070,6 +1100,7 @@ class SisypheImage(object):
         self._numpy_array.data = buff.data
         self._numpy_array = self._numpy_array.T  # default shape (z, y, x)
 
+    # noinspection unresolved-references
     @cython.cfunc
     @cython.returns(cython.void)
     def _updateVTKImageFromNumpy(self) -> None:
@@ -1093,6 +1124,7 @@ class SisypheImage(object):
                                         self._sitk_image.GetNumberOfComponentsPerPixel())
         self._vtk_image.GetPointData().SetScalars(data)
 
+    # noinspection unresolved-references
     @cython.cfunc
     @cython.returns(cython.void)
     def _updateITKImageFromNumpy(self) -> None:
@@ -1232,6 +1264,7 @@ class SisypheImage(object):
             self.setDirections()
         else: raise TypeError('parameter type {} is not ANTsImage class.'.format(type(img)))
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def copyFromNumpyArray(self,
@@ -1360,6 +1393,7 @@ class SisypheImage(object):
             return buff
         else: raise ValueError('SisypheImage array is empty.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def copyToITKImage(self) -> itkImage:
@@ -1382,6 +1416,7 @@ class SisypheImage(object):
             return buff
         else: raise ValueError('SisypheImage array is empty.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def copyToANTSImage(self, dtype: str = '', direction: bool = False) -> ANTsImage:
@@ -1430,6 +1465,7 @@ class SisypheImage(object):
             return img
         else: raise ValueError('SisypheImage array is empty.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(ndarray)
     def copyToNumpyArray(self, defaultshape: bool = True) -> ndarray:
@@ -1490,6 +1526,7 @@ class SisypheImage(object):
 
     # < Revision 08/12/2025
     # add copyToPillowImage method
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def copyToPillowImage(self,
@@ -1536,6 +1573,7 @@ class SisypheImage(object):
         return pimg.transpose(Transpose.ROTATE_180)
     # Revision 08/12/2025
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(tuple)
     def cast(self, datatype: str) -> tuple[SisypheImage, float, float]:  # recode with SimpleITK Clamp
@@ -1696,6 +1734,7 @@ class SisypheImage(object):
         if not self.isEmpty(): return self._itk_image
         else: raise ValueError('SisypheImage array is empty.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(ndarray)
     def getNumpy(self, defaultshape: bool = True) -> ndarray:
@@ -1738,6 +1777,7 @@ class SisypheImage(object):
             else: raise AttributeError('Invalid number of dimensions.')
         else: raise ValueError('SisypheImage array is empty.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(tuple[cython.int, cython.int, cython.int])
     def getSize(self) -> vectorInt3:
@@ -1831,6 +1871,7 @@ class SisypheImage(object):
         if r == 0: r = 1
         return r
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getSpacing(self) -> vectorFloat3:
@@ -1880,6 +1921,7 @@ class SisypheImage(object):
         # noinspection PyTypeChecker
         return all(s1 == s2)
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def setSpacing(self, sx: float, sy: float, sz: float) -> None:
@@ -2179,12 +2221,13 @@ class SisypheImage(object):
         return all(space1 == space2)
         # Revision 19/09/2024 >
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(str)
     def getDatatype(self) -> str:
         """
         Get image datatype as numpy datatype (i.e. 'uint8', 'int8', 'uint16', 'int16', 'int32', 'uint32', 'int64',
-        'uint64', 'float32', 'float62').
+        'uint64', 'float32', 'float62', 'None').
 
         Returns
         -------
@@ -2374,11 +2417,11 @@ class SisypheImage(object):
             # if not self.isEmpty(): return getLibraryDataType(str(self._numpy_array.dtype), lib)
             # else: return None
             dtype = self.getDatatype()
-            if dtype is not None: return getLibraryDataType(dtype, lib)
-            else: return None
+            return getLibraryDataType(dtype, lib)
             # Revision 17/11/2024 >
         else: raise ValueError('parameter {} is not a valid library name.'.format(lib))
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.int)
     def getNumberOfComponentsPerPixel(self) -> int:
@@ -2396,6 +2439,7 @@ class SisypheImage(object):
             if 'components' in self._attr: return self._attr['components']
             else: return 0
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.bint)
     def isMulticomponent(self) -> bool:
@@ -2409,6 +2453,7 @@ class SisypheImage(object):
         """
         return self._sitk_image.GetNumberOfComponentsPerPixel() > 1
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.int)
     def getNumberOfDimensions(self) -> int:
@@ -2428,6 +2473,7 @@ class SisypheImage(object):
                 else: return 3
             else: return 0
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(tuple)
     def getDirections(self) -> tuple[float, ...]:
@@ -2604,6 +2650,7 @@ class SisypheImage(object):
                 # Revision 22/07/2026 >
             else: return 0.0, 0.0, 0.0
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def setDirections(self, direction: list | tuple = tuple(getRegularDirections())) -> None:
@@ -2641,6 +2688,7 @@ class SisypheImage(object):
                 # noinspection PyUnresolvedReferences
                 self._itk_image.SetDirection(buff)
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(object)
     def getMemorySize(self, rep: str = 'B') -> int | float:
@@ -2680,6 +2728,7 @@ class SisypheImage(object):
         """
         self.setOrigin()
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def setOrigin(self, origin: vectorFloat3 = (0.0, 0.0, 0.0)) -> None:
@@ -2712,6 +2761,7 @@ class SisypheImage(object):
         """
         self.setOrigin(self.getCenter())
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(tuple[cython.double, cython.double, cython.double])
     def getOrigin(self) -> vectorFloat3:
@@ -2798,6 +2848,7 @@ class SisypheImage(object):
         tuple[float, float, float]
             world coordinates
         """
+        # noinspection unresolved-references
         return self._sitk_image.TransformIndexToPhysicalPoint(p)
 
     @cython.ccall
@@ -2816,6 +2867,7 @@ class SisypheImage(object):
         tuple[float, float, float]
             voxel coordinates (image reference)
         """
+        # noinspection unresolved-references
         return self._sitk_image.TransformPhysicalPointToIndex(p)
 
     # < Revision 07/11/2025
@@ -3954,6 +4006,7 @@ class SisypheImage(object):
             origin[0] -= xmin * s[0]
             origin[1] -= ymin * s[1]
             origin[2] -= zmin * s[2]
+            # noinspection unresolved-references
             r.setOrigin(origin)
             return r
         else: raise ValueError('Not implemented for multi-component images.')
@@ -4594,6 +4647,7 @@ class SisypheImage(object):
             # Revision 12/12/2024 >
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
         # Mean processing
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         if n == 1:
             img = self.getNumpy().flatten()
@@ -4655,6 +4709,7 @@ class SisypheImage(object):
                 m = m.astype('uint8').flatten()
             # Revision 12/12/2024 >
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         # Median processing
         if n == 1:
@@ -4717,6 +4772,7 @@ class SisypheImage(object):
                 m = m.astype('uint8').flatten()
             # Revision 12/12/2024 >
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         # Median processing
         if n == 1:
@@ -4764,6 +4820,7 @@ class SisypheImage(object):
             - min value for multi-component image, if component index c is int (default 0)
             - list of min values of each component of a multi-component image, if component index c is None
         """
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         if n == 1:
             img = self.getNumpy().flatten()
@@ -4831,6 +4888,7 @@ class SisypheImage(object):
                 m = m.astype('uint8').flatten()
             # Revision 12/12/2024 >
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         # Max processing
         if n == 1:
@@ -4961,6 +5019,7 @@ class SisypheImage(object):
                 m = m.astype('uint8').flatten()
             # Revision 12/12/2024 >
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         # Range processing
         if n == 1:
@@ -5026,6 +5085,7 @@ class SisypheImage(object):
                 m = m.astype('uint8').flatten()
             # Revision 12/12/2024 >
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         # Percentile processing
         if n == 1:
@@ -5088,6 +5148,7 @@ class SisypheImage(object):
                 m = m.astype('uint8').flatten()
             # Revision 12/12/2024 >
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         # Kurtosis processing
         if n == 1:
@@ -5150,6 +5211,7 @@ class SisypheImage(object):
                 m = m.astype('uint8').flatten()
             # Revision 12/12/2024 >
             else: raise TypeError('parameter type {} is not str or SisypheBinaryImage.'.format(type(mask)))
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         # Skewness processing
         if n == 1:
@@ -5206,6 +5268,7 @@ class SisypheImage(object):
         tuple[ndarray, ndarray]
             histogram, intervals
         """
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         if n > 1: img = self.getNumpy()[c, :, :, :].flatten()
         else: img = self.getNumpy().flatten()
@@ -5259,6 +5322,7 @@ class SisypheImage(object):
                 - 'kurtosis': kurtosis
                 - 'skewness': skewness
         """
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         if n > 1: img = self.getNumpy()[c, :, :, :].flatten()
         else: img = self.getNumpy().flatten()
@@ -5304,6 +5368,7 @@ class SisypheImage(object):
         int
             number of non-zero scalar values
         """
+        # noinspection unresolved-references
         n = self._sitk_image.GetNumberOfComponentsPerPixel()
         if n > 1: img = self.getNumpy()[c, :, :, :].flatten()
         else: img = self.getNumpy().flatten()
@@ -5332,6 +5397,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5369,6 +5435,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5406,6 +5473,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5444,6 +5512,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5484,6 +5553,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5526,6 +5596,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5565,6 +5636,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5602,6 +5674,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5639,6 +5712,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5667,6 +5741,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             img = self.getNumpy()
             r = img.argmax(axis=0)
@@ -5689,6 +5764,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             img = self.getNumpy()
             if nonzero:
@@ -5722,6 +5798,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -5759,6 +5836,7 @@ class SisypheImage(object):
         SisypheImage
             single-component image
         """
+        # noinspection unresolved-references
         if self._sitk_image.GetNumberOfComponentsPerPixel() > 1:
             # < Revision 19/12/2024
             # add component indices management
@@ -6385,6 +6463,7 @@ class SisypheImage(object):
 
     # IO public methods
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def saveToNIFTI(self, filename: str, compress: bool = False) -> None:
@@ -6404,6 +6483,7 @@ class SisypheImage(object):
             self._sitk_image.SetDirection(getRegularDirections())
         else: raise ValueError('SisypheImage array is empty.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def saveToNRRD(self, filename: str) -> None:
@@ -6421,6 +6501,7 @@ class SisypheImage(object):
             self._sitk_image.SetDirection(getRegularDirections())
         else: raise ValueError('SisypheImage array is empty.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def saveToMINC(self, filename: str) -> None:
@@ -6438,6 +6519,7 @@ class SisypheImage(object):
             self._sitk_image.SetDirection(getRegularDirections())
         else: raise ValueError('SisypheImage array is empty.')
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(cython.void)
     def saveToVTK(self, filename: str) -> None:
