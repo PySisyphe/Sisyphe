@@ -17,6 +17,7 @@ from os import mkdir
 from os import chdir
 from os import getcwd
 
+from os.path import exists
 from os.path import join
 from os.path import dirname
 from os.path import basename
@@ -544,6 +545,7 @@ class SliceViewWidget(AbstractViewWidget):
             # synchronisation
             if self.isSynchronised() and signal:
                 p = self.getCursorWorldPosition()
+                # noinspection unresolved-references
                 self.CursorPositionChanged.emit(self, p[0], p[1], p[2])
         else: raise TypeError('parameter type {} is not list, tuple or int.'.format(type(p)))
         self._updateCameraClipping()
@@ -722,6 +724,7 @@ class SliceViewWidget(AbstractViewWidget):
         return f.format(v)
     # Revision 30/07/2024 >
 
+    # noinspection unresolved-references
     def _getInfoValuesText(self, p: list[float] | tuple[float, float, float]) -> str:
         """
         Generates the text string for the bottom-right information display, including voxel value and various
@@ -1051,12 +1054,14 @@ class SliceViewWidget(AbstractViewWidget):
         """
         Enable the 'Orientation' submenu in the popup menu.
         """
+        # noinspection unresolved-references
         self._menuOrientation.menuAction().setVisible(True)
 
     def popupOrientationDisabled(self) -> None:
         """
         Disable the 'Orientation' submenu in the popup menu.
         """
+        # noinspection unresolved-references
         self._menuOrientation.menuAction().setVisible(False)
 
     def setVolume(self, volume: SisypheVolume) -> None:
@@ -1532,7 +1537,9 @@ class SliceViewWidget(AbstractViewWidget):
             self._info['bottomcenter'].SetVisibility(v)
             self._action['showorientation'].setChecked(v)
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setOrientationLabelsVisibility', v)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setOrientationLabelsVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setOrientationLabelsVisibilityOn(self, signal: bool = True) -> None:
@@ -1604,7 +1611,9 @@ class SliceViewWidget(AbstractViewWidget):
         if isinstance(v, bool):
             self._action['showvalue'].setChecked(v)
             self._updateBottomRightInfo()
-            if signal: self.ViewMethodCalled.emit(self, 'setInfoValueVisibility', v)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setInfoValueVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setInfoValueVisibilityOn(self, signal: bool = True) -> None:
@@ -1654,7 +1663,9 @@ class SliceViewWidget(AbstractViewWidget):
         if isinstance(v, bool):
             self._action['showpos'].setChecked(v)
             self._updateBottomRightInfo()
-            if signal: self.ViewMethodCalled.emit(self, 'setInfoPositionVisibility', v)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setInfoPositionVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setInfoPositionVisibilityOn(self, signal: bool = True) -> None:
@@ -1705,7 +1716,9 @@ class SliceViewWidget(AbstractViewWidget):
         if isinstance(v, bool):
             self._action['showac'].setChecked(v)
             self._updateBottomRightInfo()
-            if signal: self.ViewMethodCalled.emit(self, 'setRelativeACCoordinatesVisibility', v)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setRelativeACCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setRelativeACCoordinatesVisibilityOn(self, signal: bool = True) -> None:
@@ -1756,7 +1769,9 @@ class SliceViewWidget(AbstractViewWidget):
         if isinstance(v, bool):
             self._action['showpc'].setChecked(v)
             self._updateBottomRightInfo()
-            if signal: self.ViewMethodCalled.emit(self, 'setRelativePCCoordinatesVisibility', v)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setRelativePCCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setRelativePCCoordinatesVisibilityOn(self, signal: bool = True) -> None:
@@ -1807,7 +1822,9 @@ class SliceViewWidget(AbstractViewWidget):
         if isinstance(v, bool):
             self._action['showacpc'].setChecked(v)
             self._updateBottomRightInfo()
-            if signal: self.ViewMethodCalled.emit(self, 'setRelativeACPCCoordinatesVisibility', v)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setRelativeACPCCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setRelativeACPCCoordinatesVisibilityOn(self, signal: bool = True) -> None:
@@ -1857,7 +1874,9 @@ class SliceViewWidget(AbstractViewWidget):
         if isinstance(v, bool):
             self._action['showframe'].setChecked(v)
             self._updateBottomRightInfo()
-            if signal: self.ViewMethodCalled.emit(self, 'setFrameCoordinatesVisibility', v)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setFrameCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setFrameCoordinatesVisibilityOn(self, signal: bool = True) -> None:
@@ -1907,7 +1926,9 @@ class SliceViewWidget(AbstractViewWidget):
         if isinstance(v, bool):
             self._action['showicbm'].setChecked(v)
             self._updateBottomRightInfo()
-            if signal: self.ViewMethodCalled.emit(self, 'setICBMCoordinatesVisibility', v)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setICBMCoordinatesVisibility', v)
         else: raise TypeError('parameter type {} is not bool.'.format(type(v)))
 
     def setICBMCoordinatesVisibilityOn(self, signal: bool = True) -> None:
@@ -2081,7 +2102,7 @@ class SliceViewWidget(AbstractViewWidget):
                 r.append(plane.DistanceToPlane(key.getPosition2()))
         return r
 
-    def saveSeriesCaptures(self, step: int = 2) -> None:
+    def saveSeriesCaptures(self, step: int = 2, folder: str = '') -> None:
         """
         Saves a series of slice captures from the current SisypheVolume along the current orientation.
         The captures are saved to a user-specified directory, with each slice saved as an image file.
@@ -2090,18 +2111,24 @@ class SliceViewWidget(AbstractViewWidget):
         ----------
         step : int (optional)
             step size (in number of slices) between consecutive captures (default 2).
+        folder : str (optional)
+            save directory
         """
         if self.hasVolume():
             title = 'Save all slices capture'
-            name = QFileDialog.getSaveFileName(self, caption=title, directory=getcwd(),
-                                               filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
-                                               initialFilter='JPG (*.jpg)')[0]
+            if not exists(splitext(folder)[0]):
+                name = QFileDialog.getSaveFileName(self, caption=title, directory=getcwd(),
+                                                   filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
+                                                   initialFilter='JPG (*.jpg)')[0]
+            else:
+                name = folder
+                if splitext(folder)[1] == '': name += '.jpg'
             if name != '':
                 name = abspath(name)
                 chdir(dirname(name))
                 # Create directory
                 path, ext = splitext(name)
-                mkdir(path)
+                if not exists(path): mkdir(path)
                 # Number of slices to capture
                 d = 2 - self._orient
                 step = step * self._volume.getSpacing()[d]
@@ -2219,6 +2246,7 @@ class SliceViewWidget(AbstractViewWidget):
                 # Update cursor position
                 self.setCursorFromDisplayPosition(self._mousepos0[0], self._mousepos0[1])
                 p = self.getCursorWorldPosition()
+                # noinspection unresolved-references
                 self.CursorPositionChanged.emit(self, p[0], p[1], p[2])  # 3D position corrected by offset
             # Display information
             self._updateBottomRightInfo()
@@ -2237,6 +2265,7 @@ class SliceViewWidget(AbstractViewWidget):
         """
         super()._onMiddlePressEvent(obj, evt_name)
 
+    # noinspection unresolved-references
     def _onMouseMoveEvent(self,  obj: vtkObject, evt_name: str) -> None:
         """
         Handles the mouse move VTK event.
@@ -2256,7 +2285,7 @@ class SliceViewWidget(AbstractViewWidget):
                 interactorstyle = self._window.GetInteractorStyle()
                 last = interactorstyle.GetLastPos()
                 # k = interactorstyle.GetKeySym()
-                # Zoom, Control Key (Cmd key on mac)
+                # Zoom, Control Key (Cmd key on Mac)
                 # if k == 'Control_L' or self.getZoomFlag() is True:
                 # noinspection PySimplifyBooleanCheck
                 if self._interactor.GetControlKey() or self.getZoomFlag() is True:
@@ -2360,7 +2389,6 @@ class SliceViewWidget(AbstractViewWidget):
         evt_name : str
             name of the event (KeyPressEvent).
         """
-        super()._onKeyPressEvent(obj, evt_name)
         if self.hasVolume():
             interactorstyle = self._window.GetInteractorStyle()
             k = interactorstyle.GetKeySym()
@@ -2370,6 +2398,7 @@ class SliceViewWidget(AbstractViewWidget):
             else:
                 if k == 'Up' or k == 'Left': self.sliceMinus()
                 elif k == 'Down' or k == 'Right': self.slicePlus()
+        super()._onKeyPressEvent(obj, evt_name)
 
     def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
@@ -2725,6 +2754,7 @@ class SliceReorientViewWidget(SliceViewWidget):
             # noinspection PyUnresolvedReferences
             self.ResliceCursorChanged.emit(self, x, y, z, rx, ry, rz)
 
+    # noinspection method-overriding
     def _setCameraFocalDepth(self, f, signal: bool = True) -> None:
         """
         Overrides the base class method to also update the reslice cursor's position when the camera's focal depth
@@ -3294,6 +3324,7 @@ class SliceReorientViewWidget(SliceViewWidget):
         """
         return self._boxFovActor.GetProperty().GetLineWidth()
 
+    # noinspection method-overriding
     def setLineOpacity(self, v: bool, signal: bool = True) -> None:
         """
         Set the opacity for all line-based overlays, including the reslice cursor.
@@ -3651,6 +3682,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
 
     # Private method
 
+    # noinspection unresolved-references
     def _addReslice(self, volume: SisypheVolume, alpha: float) -> vtkImageSlice:
         """
         Creates a new vtkImageSlice actor from a SisypheVolume and add it to the vtkImageStack as an overlay.
@@ -3674,9 +3706,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
         mapper.SliceFacesCameraOn()
         mapper.SetInputData(volume.getVTKImage())
         slc = vtkImageSlice()
-        # noinspection PyTypeChecker
         slc.SetMapper(mapper)
-        # noinspection PyArgumentList
         slc.SetOrigin(volume.getCenter())
         """
             Apply centered transform if exists, center of rotation = center of volume (SisypheVolume.getCenter())
@@ -4030,6 +4060,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     self._isolabels.GetMapper().Update()
                     self._renderwindow.Render()
 
+    # noinspection unresolved-references
     def _updateMeshes(self) -> None:
         """
         Updates the display of mesh slices based on the current slice plane and mesh visibility settings.
@@ -4039,9 +4070,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 n = self._meshes.count()
                 if n > 0:
                     plane = self._volumeslice.GetMapper().GetSlicePlane()
-                    # noinspection PyArgumentList
                     self._cutplane.SetNormal(plane.GetNormal())
-                    # noinspection PyArgumentList
                     self._cutplane.SetOrigin(plane.GetOrigin())
                     self._cutplane.Push(0.5)
                     self._meshcutter.SetPlane(self._cutplane)
@@ -4051,7 +4080,6 @@ class SliceOverlayViewWidget(SliceViewWidget):
                         self._meshslices[k].SetVisibility(v)
                         if v:
                             self._meshcutter.SetInputData(mesh.getPolyData())
-                            # noinspection PyArgumentList
                             self._meshcutter.Update()
                             polydata = vtkPolyData()
                             polydata.DeepCopy(self._meshcutter.GetOutput())
@@ -4619,7 +4647,9 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     # Revision 19/10/2024 >
                     break
             self._updateBottomRightInfo()
-            if signal: self.ViewMethodCalled.emit(self, 'setInfoOverlayValueVisibility', name)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setInfoOverlayValueVisibility', name)
         else: raise TypeError('parameter type {} is not str.'.format(type(name)))
 
     def setInfoOverlayValueVisibilityOff(self, signal: bool = True) -> None:
@@ -4642,6 +4672,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
         str
             name of the active overlay for voxel value display, or 'No' if none.
         """
+        # noinspection unresolved-references
         return self._group_menuOverlayVoxel.checkedAction().text()
 
     def setOverlayColorbar(self, index: int = 0, signal: bool = True) -> None:
@@ -4667,7 +4698,9 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 else: self._colorbar.SetLabelFormat('%5.2f')
                 # < Revision 06/03/2026
                 self._renderwindow.Render()
-                if signal: self.ViewMethodCalled.emit(self, 'setOverlayColorbar', index)
+                if signal:
+                    # noinspection unresolved-references
+                    self.ViewMethodCalled.emit(self, 'setOverlayColorbar', index)
                 # Revision 06/03/2026 >
             else: raise IndexError('index parameter value {} is out of range.'.format(index))
 
@@ -4686,7 +4719,9 @@ class SliceOverlayViewWidget(SliceViewWidget):
             else: self._colorbar.SetLabelFormat('%5.2f')
             # < Revision 06/03/2026
             self._renderwindow.Render()
-            if signal: self.ViewMethodCalled.emit(self, 'setVolumeColorbar', None)
+            if signal:
+                # noinspection unresolved-references
+                self.ViewMethodCalled.emit(self, 'setVolumeColorbar', None)
             # Revision 06/03/2026 >
 
     def setTransform(self, trf: SisypheTransform, index: int = 0) -> None:
@@ -5087,6 +5122,7 @@ class SliceOverlayViewWidget(SliceViewWidget):
         bool
             True if at least one SisypheMesh instance exists, False otherwise.
         """
+        # noinspection unresolved-references
         return not self._meshes.isEmpty()
 
     def getNumberOfMeshes(self) -> int:
@@ -5764,6 +5800,7 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         self._regbox.GetEventTranslator().SetTranslation(vtkCommand.LeftButtonReleaseEvent, vtkWidgetEvent.EndSelect)
         self._regbox.SetEnabled(False)
 
+    # noinspection unresolved-references
     def _addReslice(self, volume: SisypheVolume, alpha: float) -> vtkImageSlice:
         """
         Creates a new vtkImageSlice actor from a SisypheVolume and add it to the vtkImageStack as an overlay.
@@ -5788,9 +5825,7 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         mapper.SliceFacesCameraOn()
         mapper.SetInputData(volume.getVTKImage())
         slc = vtkImageSlice()
-        # noinspection PyTypeChecker
         slc.SetMapper(mapper)
-        # noinspection PyArgumentList
         slc.SetOrigin(volume.getCenter())
         """
             Apply centered transform if exists, center of rotation = center of volume (SisypheVolume.getCenter())
@@ -5812,7 +5847,6 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
             if not (self._volume.isDefaultOrigin() or volume.isDefaultOrigin()):
                 vo = self._volume.getOrigin()
                 oo = volume.getOrigin()
-                # noinspection PyArgumentList,PyTypeChecker
                 slc.SetPosition((vo[0] - oo[0], vo[1] - oo[1], vo[2] - oo[2]))
             elif not volume.hasSameFieldOfView(self._volume):
                 # Revision 15/04/2023
@@ -5820,7 +5854,6 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
                 if self._aligncenters:
                     cv = self._volume.getCenter()
                     co = volume.getCenter()
-                    # noinspection PyArgumentList,PyTypeChecker
                     slc.SetPosition((cv[0]-co[0], cv[1]-co[1], cv[2]-co[2]))
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
@@ -5838,7 +5871,7 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         super()._updateCameraOrientation()
         self._cropboxChanged(None, None)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _cropboxChanged(self, widget: QWidget | None, event: Any) -> None:
         """
         Callback method triggered when the cropping box is manipulated.
@@ -5886,7 +5919,7 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
                 else: self._volumeslice.GetMapper().SetCroppingRegion(0, 500, y2, y1, z1, z2)
             except: pass
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _regboxChanged(self, widget: QWidget | None, event: Any) -> None:
         """
         Callback method triggered when the registration area box is manipulated.
@@ -6117,6 +6150,7 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         fov = volume.getFieldOfView()
         self._regarea = [0.0, 0.0, 0.0, fov[0], fov[1], fov[2]]
 
+    # noinspection method-overriding
     def addOverlay(self,
                    volume: SisypheVolume,
                    gradient: SisypheVolume | None = None,
@@ -7598,7 +7632,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         filenames : str | list[str] | None, optional
             single path or list of paths to SisypheROI files (.xroi). If None, a file dialog is shown.
         """
-        if isinstance(filenames, str): filenames = [filenames]
         if filenames is None:
             filt = 'SisypheROI (*{})'.format(SisypheROI.getFileExt())
             filenames = QFileDialog.getOpenFileNames(self, 'Load Sisyphe ROI',
@@ -9631,12 +9664,14 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         Enable the 'ROI' tools submenu in the popup menu.
         """
+        # noinspection unresolved-references
         self._roitools.menuAction().setVisible(True)
 
     def popupROIDisabled(self) -> None:
         """
         Disable the 'ROI' tools submenu in the popup menu.
         """
+        # noinspection unresolved-references
         self._roitools.menuAction().setVisible(False)
 
     # 2D ROI functions

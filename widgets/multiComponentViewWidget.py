@@ -17,11 +17,13 @@ import sys
 from os import getcwd
 from os import chdir
 from os import remove
+from os import mkdir
 
 from os.path import join
 from os.path import exists
 from os.path import dirname
 from os.path import splitext
+from os.path import abspath
 
 import cython
 
@@ -181,6 +183,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             self.setViewWidget(i // 3, i % 3, w)
         self.setVisibilityControlToAll()
 
+    # noinspection unresolved-references
     def _initActions(self) -> None:
         """
         Initializes specific QAction instances for each view widget and connects them to their respective slots.
@@ -227,11 +230,8 @@ class MultiComponentViewWidget(MultiViewWidget):
             self._group_nbviews.addAction(action['33'])
             popup = w.getPopup()
             menuNumberOfVisibleViews = QMenu('Number of views', popup)
-            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             menuNumberOfVisibleViews.setAttribute(Qt.WA_TranslucentBackground, True)
             menuNumberOfVisibleViews.addAction(action['11'])
             menuNumberOfVisibleViews.addAction(action['12'])
@@ -246,7 +246,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             action['showchart'].setCheckable(True)
             action['showchart'].setChecked(True)
             action['showchart'].triggered.connect(self.setChartVisibility)
-            # noinspection PyProtectedMember
+            # noinspection protected-member
             w._menuVisibility.insertAction(action['showall'], action['showchart'])
 
             action['addcurve'] = QAction('Add current curve...', self)
@@ -262,11 +262,8 @@ class MultiComponentViewWidget(MultiViewWidget):
             action['clipbrdchart'].triggered.connect(self.copyChartToClipboard)
             action['scrnshotchart'].triggered.connect(self.copyChartToScreenshot)
             menucurves = QMenu('Curves', popup)
-            # noinspection PyUnresolvedReferences
             menucurves.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             menucurves.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             menucurves.setAttribute(Qt.WA_TranslucentBackground, True)
             menucurves.addAction(action['addcurve'])
             menucurves.addAction(action['removecurve'])
@@ -281,6 +278,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             # Revision 12/12/2024 >
             if i == 0: self._menuCurves = menucurves
 
+    # noinspection unresolved-references
     def _initSynchronisationSignalConnect(self) -> None:
         """
         Initializes synchronization signal connections between view widgets.
@@ -290,21 +288,18 @@ class MultiComponentViewWidget(MultiViewWidget):
         for i in range(9):
             w1 = self.getViewWidgetAt(i // 3, i % 3)
             w1.synchronisationOn()
-            # noinspection PyUnresolvedReferences
             w1.CursorPositionChanged.connect(self._cursorPositionChanged)
             for j in range(9):
                 if j != i:
                     w2 = self.getViewWidgetAt(j // 3, j % 3)
-                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
                     w1.CameraPositionChanged.connect(w2.synchroniseCameraPositionChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
                     # w1.OpacityChanged.connect(w2.synchronisedOpacityChanged)
                     w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
-                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
 
+    # noinspection unresolved-references
     def _cursorPositionChanged(self) -> None:
         """
         Callback triggered when the cross-shaped cursor position changes in any of the slice view widgets.
@@ -315,14 +310,11 @@ class MultiComponentViewWidget(MultiViewWidget):
                 p = self[0, 0].getCursorArrayPosition()
                 n = self._multi.getNumberOfComponentsPerPixel()
                 xdata = list(range(n))
-                # noinspection PyTypeChecker
                 ydata = list(self._multi[p[0], p[1], p[2]])
                 if self._line is None:
                     self._line, = self._axe.plot(xdata, ydata, 'o-', label='voxel {} {} {}'.format(p[0], p[1], p[2]))
                 else:
-                    # noinspection PyTypeChecker
                     self._line.set_xdata(array(xdata))
-                    # noinspection PyTypeChecker
                     self._line.set_ydata(array(ydata))
                     self._line.set_label('voxel {} {} {}'.format(p[0], p[1], p[2]))
                 self._axe.relim()
@@ -569,6 +561,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         i: cython.int
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
+            # noinspection unresolved-references
             w.getAction()['showchart'].setChecked(v)
     # Revision 29/04/2025 >
 
@@ -586,6 +579,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         return self._canvas.visible()
     # Revision 29/04/2025 >
 
+    # noinspection unresolved-references
     def cleanChart(self) -> None:
         """
         Clear the chart, removing all plotted curves, and redraws the mean signal curve and the component span.
@@ -638,6 +632,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             self._span.set_x(self._first)
             # Revision 23/04/2026 >
             # Revision 23/03/2026 >
+            # noinspection unresolved-references
             n = self._multi.getNumberOfComponentsPerPixel()
             nbv = self.getViewsArrangement()
             nbv = nbv[0] * nbv[1]
@@ -661,6 +656,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             self._canvas.draw_idle()
             # Revision 23/03/2026 >
 
+    # noinspection unresolved-references
     def addCurrentCurveToChart(self) -> None:
         """
         Add a persistent copy of the current signal curve (at the cross-shaped cursor's position) to the chart.
@@ -705,6 +701,7 @@ class MultiComponentViewWidget(MultiViewWidget):
             try:
                 self._fig.savefig(tmp)
                 img = QPixmap(tmp)
+                # noinspection unresolved-references
                 QApplication.clipboard().setPixmap(img)
             except Exception as err:
                 messageBox(self, 'Copy chart to clipboard', text='error: {}'.format(err))
@@ -720,6 +717,7 @@ class MultiComponentViewWidget(MultiViewWidget):
                 self.copyChartToClipboard()
                 self._scrshot.pasteFromClipboard()
 
+    # noinspection unresolved-references
     def saveCurveDataset(self) -> None:
         """
         Open a file dialog to save the data of all curves currently plotted on the chart to a file. Supported formats
@@ -783,6 +781,26 @@ class MultiComponentViewWidget(MultiViewWidget):
                     except Exception as err:
                         messageBox(self, 'Save chart dataset', text='error: {}'.format(err))
 
+    # < Revision 08/10/2026
+    # add saveSeriesCaptures method
+    def saveSeriesCaptures(self) -> None:
+        title = 'Save all slices capture'
+        name = QFileDialog.getSaveFileName(self, caption=title, directory=getcwd(),
+                                           filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
+                                           initialFilter='JPG (*.jpg)')[0]
+        if name != '':
+            path, ext = splitext(name)
+            if not exists(path): mkdir(path)
+            idx = self.getFirstDisplayedComponent()
+            for w in self._views.values():
+                if w.isVisible():
+                    filename = abspath(join(path, 'component#{}'.format(idx)))
+                    if not exists(filename): mkdir(filename)
+                    filename += ext
+                    w.saveSeriesCaptures(folder=filename)
+                    idx += 1
+    # Revision 08/10/2026 >
+
     def setNumberOfVisibleViews(self, r: int, c: int) -> None:
         """
         Change the layout of the view grid.
@@ -844,6 +862,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         tuple[int, int]
             tuple containing the number of rows and columns.
         """
+        # noinspection unresolved-references
         action = self.getFirstSliceViewWidget().getAction()
         if action['11'].isChecked(): r = (1, 1)
         elif action['12'].isChecked(): r = (1, 2)
@@ -939,6 +958,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         i: cython.int
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
+            # noinspection unresolved-references
             w.getPopup().actions()[2].setVisible(True)
 
     def popupMenuNumberOfVisibleViewsHide(self) -> None:
@@ -948,6 +968,7 @@ class MultiComponentViewWidget(MultiViewWidget):
         i: cython.int
         for i in range(9):
             w = self.getViewWidgetAt(i // 3, i % 3)
+            # noinspection unresolved-references
             w.getPopup().actions()[2].setVisible(False)
 
 
@@ -996,6 +1017,7 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
 
     # Public methods
 
+    # noinspection unresolved-references
     def setViewWidget(self, widget: MultiComponentViewWidget):
         """
         Set the main MultiComponentViewWidget instance and connects its actions to the icon bar buttons.
@@ -1011,31 +1033,22 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
             self._widget.setParent(self)
             self._layout.addWidget(widget)
             view1 = widget.getFirstSliceViewWidget()
-            # noinspection PyUnresolvedReferences
             self._icons['expand'].clicked.connect(self._onExpand)
             self._connectExpandAction()
-            # noinspection PyUnresolvedReferences
             self._icons['screen'].clicked.connect(lambda _: self._onFullScreen())
-            # noinspection PyUnresolvedReferences
             self._icons['zoomin'].clicked.connect(view1.zoomIn)
-            # noinspection PyUnresolvedReferences
             self._icons['zoomout'].clicked.connect(view1.zoomOut)
-            # noinspection PyUnresolvedReferences
             self._icons['zoom1'].clicked.connect(view1.zoomDefault)
             self._icons['actions'].setMenu(view1.getPopupActions())
             self._icons['info'].setMenu(view1.getPopupInformation())
             self._icons['colorbar'].setMenu(view1.getPopupColorbarPosition())
             self._icons['ruler'].setMenu(view1.getPopupRulerPosition())
             submenu = QMenu()
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction('Copy grid capture to clipboard')
             submenu.addAction('Copy selected view capture to clipboard')
-            # noinspection PyUnresolvedReferences
             submenu.triggered.connect(self._onMenuCopyCapture)
             self._icons['clipboard'].setMenu(submenu)
             self._icons['compminus'] = self._createButton('wleft.png', 'left.png', checkable=False, autorepeat=False)
@@ -1050,23 +1063,14 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
             menu.actions()[0].triggered.connect(lambda dummy, v=0: self._onMenuOrientation(v))
             menu.actions()[1].triggered.connect(lambda dummy, v=1: self._onMenuOrientation(v))
             menu.actions()[2].triggered.connect(lambda dummy, v=2: self._onMenuOrientation(v))
-            # noinspection PyUnresolvedReferences
             self._shcutA.activated.connect(lambda: menu.actions()[0].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcutC.activated.connect(lambda: menu.actions()[1].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcutS.activated.connect(lambda: menu.actions()[2].trigger())
-            # noinspection PyUnresolvedReferences
             self._icons['compplus'].clicked.connect(self.nextComponent)
-            # noinspection PyUnresolvedReferences
             self._icons['compplus'].setShortcut(Qt.Key_PageDown)
-            # noinspection PyUnresolvedReferences
             self._icons['compminus'].clicked.connect(self.previousComponent)
-            # noinspection PyUnresolvedReferences
             self._icons['compminus'].setShortcut(Qt.Key_PageUp)
-            # noinspection PyUnresolvedReferences
             self._icons['sliceminus'].clicked.connect(view1.slicePlus)
-            # noinspection PyUnresolvedReferences
             self._icons['sliceplus'].clicked.connect(view1.sliceMinus)
             layout = self._bar.layout()
             layout.insertWidget(3, self._icons['sliceplus'])
@@ -1101,17 +1105,11 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
                                            '9 key 3x3')
             self._icons['grid'].setMenu(widget.getPopupMenuNumberOfVisibleViews())
             self._icons['grid'].setMenu(widget.getPopupMenuNumberOfVisibleViews())
-            # noinspection PyUnresolvedReferences
             self._shcut1.activated.connect(lambda: self._icons['grid'].menu().actions()[0].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcut2.activated.connect(lambda: self._icons['grid'].menu().actions()[1].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcut3.activated.connect(lambda: self._icons['grid'].menu().actions()[2].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcut4.activated.connect(lambda: self._icons['grid'].menu().actions()[3].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcut6.activated.connect(lambda: self._icons['grid'].menu().actions()[4].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcut9.activated.connect(lambda: self._icons['grid'].menu().actions()[5].trigger())
             layout.insertWidget(3, self._icons['grid'])
             self._icons['show'].setMenu(view1.getPopupVisibility())
@@ -1125,41 +1123,27 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
                                            't key show/hide tooltip\n'
                                            'g key show/hide chart\n'
                                            'f key line/font properties')
-            # noinspection PyUnresolvedReferences
             self._shcutx.activated.connect(lambda: self._icons['show'].menu().actions()[0].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcuti.activated.connect(lambda: self._icons['show'].menu().actions()[1].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcutl.activated.connect(lambda: self._icons['show'].menu().actions()[2].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcutm.activated.connect(lambda: self._icons['show'].menu().actions()[3].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcutb.activated.connect(lambda: self._icons['show'].menu().actions()[4].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcutr.activated.connect(lambda: self._icons['show'].menu().actions()[5].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[6].trigger())
-            # noinspection PyUnresolvedReferences
             self._shcutg.activated.connect(lambda: self._icons['show'].menu().actions()[7].trigger())
             # < Revision 04/05/2026
-            # noinspection PyUnresolvedReferences
             self._shcutf.activated.connect(lambda: self._icons['show'].menu().actions()[-1].trigger())
             # Revision 04/05/2026 >
             submenu = QMenu()
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction('Save grid capture...')
             submenu.addAction('Save selected view capture...')
             submenu.addAction('Save captures from slice series...')
             submenu.addSeparator()
             action = submenu.addAction('Send selected view capture to screenshots preview')
-            # noinspection PyUnresolvedReferences
             action.setShortcut(Qt.Key_Space)
-            # noinspection PyUnresolvedReferences
             submenu.triggered.connect(self._onMenuSaveCapture)
             self._icons['capture'].setMenu(submenu)
             layout.insertWidget(20, self._icons['curves'])
@@ -1175,6 +1159,7 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
             self._visibilityflags['iso'] = False
         else: raise TypeError('parameter type {} is not MultiComponentViewWidget.'.format(type(widget)))
 
+    # noinspection method-overriding
     def setVolume(self, multi: SisypheVolume) -> None:
         """
         Set the multi-component SisypeVolume for the managed view widget.
@@ -1280,6 +1265,7 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
         return False
 
     # mandatory method for compatibility with IconBarViewWidgetCollection
+    # noinspection method-overriding
     def getOverlayIndex(self, o: SisypheVolume) -> int | None:
         """
         Dummy method, overlays are not available in this widget.
@@ -1304,6 +1290,7 @@ class IconBarMultiComponentViewWidget(IconBarWidget):
         pass
 
     # mandatory method for compatibility with IconBarViewWidgetCollection
+    # noinspection method-overriding
     def getOverlayFromIndex(self, index: int) -> None:
         """
         Dummy method, overlays are not available in this widget.

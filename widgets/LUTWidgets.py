@@ -478,6 +478,7 @@ class LutWidget(QWidget):
 
     # Private methods
 
+    # noinspection unresolved-references
     def _draw(self) -> None:
         """
         Redraws the widget's canvas and updates the associated view.
@@ -524,6 +525,7 @@ class LutWidget(QWidget):
                     self._decimals = 1
                     self._format = '{:.1f}'
 
+    # noinspection unresolved-references
     def _initHistAxes(self) -> None:
         """
         Initializes the histogram plot, the span selector, and the window value annotations.
@@ -582,6 +584,7 @@ class LutWidget(QWidget):
                                                 rotation='vertical', verticalalignment='center',
                                                 horizontalalignment='center')
 
+    # noinspection unresolved-references
     def _initLutImage(self) -> None:
         """
         Initializes the LUT display image and the rectangles for out-of-window values.
@@ -610,6 +613,7 @@ class LutWidget(QWidget):
         self._rect1axe.add_patch(r1)
         self._rect2axe.add_patch(r2)
 
+    # noinspection unresolved-references
     def _initEdit(self) -> None:
         """
         Configures the QDoubleSpinBox widgets for min/max range editing.
@@ -642,13 +646,9 @@ class LutWidget(QWidget):
             # replace QLineEdit by QDoubleSpinBox
             # self._editmin.setValidator(QDoubleValidator(finfo(datatype).min, finfo(datatype).max, self._decimals))
             # self._editmax.setValidator(QDoubleValidator(finfo(datatype).min, finfo(datatype).max, self._decimals))
-            # noinspection PyTypeChecker
             self._editmin.setMinimum(finfo(datatype).min)
-            # noinspection PyTypeChecker
             self._editmin.setMaximum(finfo(datatype).max)
-            # noinspection PyTypeChecker
             self._editmax.setMinimum(finfo(datatype).min)
-            # noinspection PyTypeChecker
             self._editmax.setMaximum(finfo(datatype).max)
             self._editmin.setDecimals(self._decimals)
             self._editmax.setDecimals(self._decimals)
@@ -670,9 +670,7 @@ class LutWidget(QWidget):
         self._editmin.blockSignals(False)
         self._editmax.blockSignals(False)
         # Revision 23/07/2024 >
-        # noinspection PyUnresolvedReferences
         self._editmin.setAlignment(Qt.AlignHCenter)
-        # noinspection PyUnresolvedReferences
         self._editmax.setAlignment(Qt.AlignHCenter)
 
     def _get_span_left(self) -> float:
@@ -711,6 +709,7 @@ class LutWidget(QWidget):
         # Revision 23/04/2026 >
         # Revision 23/03/2026 >
 
+    # noinspection unresolved-references
     def _set_span_left(self, x: float) -> float:
         """
         Sets the left coordinate of the windowing span with boundary checks.
@@ -740,6 +739,7 @@ class LutWidget(QWidget):
         # Revision 23/03/2026 >
         return x
 
+    # noinspection unresolved-references
     def _set_span_right(self, x: float) -> float:
         """
         Sets the right coordinate of the windowing span with boundary checks.
@@ -790,6 +790,7 @@ class LutWidget(QWidget):
 
     # Matplolib events
 
+    # noinspection unresolved-references
     def _onMouseClickEvent(self, event: MouseEvent) -> None:
         """
         Handles mouse clicks on the histogram to initiate window/level dragging.
@@ -805,7 +806,6 @@ class LutWidget(QWidget):
                     self._on_move_left_span_flag = True
                     self._on_move_right_span_flag = False
                     self._on_move_span_flag = False
-                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag right line
@@ -813,7 +813,6 @@ class LutWidget(QWidget):
                     self._on_move_right_span_flag = True
                     self._on_move_left_span_flag = False
                     self._on_move_span_flag = False
-                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag rectangle
@@ -821,11 +820,11 @@ class LutWidget(QWidget):
                     self._on_move_span_flag = True
                     self._on_move_left_span_flag = False
                     self._on_move_right_span_flag = False
-                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.ClosedHandCursor)
                     self._canvas.setCursor(self._cursor)
                 self._xpos = float(event.xdata)
 
+    # noinspection unresolved-references
     def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         """
         Handles mouse movement to adjust the window/level based on the drag operation.
@@ -860,7 +859,6 @@ class LutWidget(QWidget):
                 self._volume.display.setWindow(xleft, xright)
                 # < Revision 17/10/2024
                 # emit lutWindowChanged signal
-                # noinspection PyUnresolvedReferences
                 self.lutWindowChanged.emit()
                 # Revision 17/10/2024 >
                 self._updateViewWidget()
@@ -880,25 +878,21 @@ class LutWidget(QWidget):
                 xleft = self._get_span_left()
                 xright = self._get_span_right()
                 if 0 < event.xdata - xleft < tol:
-                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag right line
                 elif 0 < xright - event.xdata < tol:
-                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.SplitHCursor)
                     self._canvas.setCursor(self._cursor)
                 # Drag rectangle
                 elif xleft < event.xdata < xright:
-                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.OpenHandCursor)
                     self._canvas.setCursor(self._cursor)
                 else:
-                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.ArrowCursor)
                     self._canvas.setCursor(self._cursor)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onMouseReleaseEvent(self, event: MouseEvent) -> None:
         """
         Handles mouse release to end the drag operation.
@@ -912,6 +906,7 @@ class LutWidget(QWidget):
 
     # Qt events
 
+    # noinspection unresolved-references
     def _onRangeChangedEvent(self) -> None:
         """
         Handles the editingFinished Qt signal from the range spin boxes.
@@ -943,7 +938,6 @@ class LutWidget(QWidget):
         self._volume.display.setWindow(wmin, wmax)
         # < Revision 17/10/2024
         # emit lutWindowChanged signal
-        # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
         # Revision 17/10/2024 >
         # Update hist and span box
@@ -951,6 +945,7 @@ class LutWidget(QWidget):
         # Update display
         self._draw()
 
+    # noinspection unresolved-references
     def _onLutChangedEvent(self, index: int) -> None:
         """
         Handles the currentIndexChanged Qt signal from the LUT combo box.
@@ -969,7 +964,6 @@ class LutWidget(QWidget):
             else: self._volume.display.getLUT().setInternalLut(name)
             # < Revision 17/10/2024
             # emit lutWindowChanged signal
-            # noinspection PyUnresolvedReferences
             self.lutChanged.emit()
             # Revision 17/10/2024 >
             # Update AxesImage, left and right rectangles of the lut axes
@@ -994,6 +988,7 @@ class LutWidget(QWidget):
         """
         Reverses the current LUT and updates the display.
         """
+        # noinspection unresolved-references
         self._volume.display.getLUT().reverseLut()
         self._initLutImage()
         self._draw()
@@ -1029,6 +1024,7 @@ class LutWidget(QWidget):
         SisypheDisplay
             SisypheDisplay instance.
         """
+        # noinspection unresolved-references
         return self._volume.display
 
     # < Revision 17/10/2024
@@ -1042,6 +1038,7 @@ class LutWidget(QWidget):
         SisypheLut
             SisypheLut instance.
         """
+        # noinspection unresolved-references
         return self._volume.display.getLUT()
     # Revision 17/10/2024 >
 
@@ -1054,6 +1051,7 @@ class LutWidget(QWidget):
         tuple[float, float] | tuple[int, int]
             minimum and maximum window values.
         """
+        # noinspection unresolved-references
         return self._volume.display.getWindow()
 
     def getWindowMin(self) -> float | int:
@@ -1065,6 +1063,7 @@ class LutWidget(QWidget):
         float | int
             minimum window value.
         """
+        # noinspection unresolved-references
         return self._volume.display.getWindowMin()
 
     def getWindowMax(self) -> float | int:
@@ -1076,6 +1075,7 @@ class LutWidget(QWidget):
         float | int
             maximum window value.
         """
+        # noinspection unresolved-references
         return self._volume.display.getWindowMax()
 
     def getRange(self) -> tuple[float, float] | tuple[int, int]:
@@ -1087,6 +1087,7 @@ class LutWidget(QWidget):
         tuple[float, float] | tuple[int, int]
             minimum and maximum range values.
         """
+        # noinspection unresolved-references
         return self._volume.display.getRange()
 
     def getRangeMin(self) -> float | int:
@@ -1098,6 +1099,7 @@ class LutWidget(QWidget):
         float | int
             minimum range value.
         """
+        # noinspection unresolved-references
         return self._volume.display.getRangeMin()
 
     def getRangeMax(self) -> float | int:
@@ -1109,6 +1111,7 @@ class LutWidget(QWidget):
         float | int
             maximum range value.
         """
+        # noinspection unresolved-references
         return self._volume.display.getRangeMin()
 
     def setVolume(self, volume: SisypheVolume) -> None:
@@ -1157,11 +1160,13 @@ class LutWidget(QWidget):
             self._initHistAxes()
             self._initLutImage()
             self._initEdit()
+            # noinspection unresolved-references
             index = self._combo.findData(self._volume.display.getLUT().getName())
             if index > -1: self._combo.setCurrentIndex(index)
             self._draw()
         else: raise TypeError('parameter type {} is not SisypheDisplay.'.format(type(display)))
 
+    # noinspection unresolved-references
     def setWindow(self, wmin: float | int, wmax: float | int) -> None:
         """
         Set the windowing values.
@@ -1177,7 +1182,6 @@ class LutWidget(QWidget):
         self._set_span_left(wmin)
         self._set_span_right(wmax)
         self._draw()
-        # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
 
     def setWindowMin(self, wmin: float | int) -> None:
@@ -1189,12 +1193,14 @@ class LutWidget(QWidget):
         wmin : float | int
             minimum window value.
         """
+        # noinspection unresolved-references
         self._volume.display.setWindowMin(wmin)
         self._set_span_left(wmin)
         self._draw()
         # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
 
+    # noinspection unresolved-references
     def setWindowMax(self, wmax: float | int) -> None:
         """
         Set the maximum windowing value.
@@ -1207,11 +1213,11 @@ class LutWidget(QWidget):
         self._volume.display.setWindowMax(wmax)
         self._set_span_right(wmax)
         self._draw()
-        # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
 
     # < Revision 24/10/2024
     # add autoWindow method
+    # noinspection unresolved-references
     def autoWindow(self, cmin: int = 1, cmax: int = 99) -> None:
         """
         Automatically adjust the window based on intensity percentiles.
@@ -1228,12 +1234,12 @@ class LutWidget(QWidget):
         self._set_span_left(wmin)
         self._set_span_right(wmax)
         self._draw()
-        # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
     # add autoWindow method
+    # noinspection unresolved-references
     def defaultWindow(self) -> None:
         """
         Reset the window to the full intensity range of the volume.
@@ -1243,12 +1249,12 @@ class LutWidget(QWidget):
         self._set_span_left(wmin)
         self._set_span_right(wmax)
         self._draw()
-        # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
     # add setCTBrainWindow method
+    # noinspection unresolved-references
     def setCTBrainWindow(self) -> None:
         """
         Apply a preset windowing for CT brain visualization.
@@ -1258,12 +1264,12 @@ class LutWidget(QWidget):
         self._set_span_left(wmin)
         self._set_span_right(wmax)
         self._draw()
-        # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
     # add setCTBoneWindow method
+    # noinspection unresolved-references
     def setCTBoneWindow(self) -> None:
         """
         Apply a preset windowing for CT bone visualization.
@@ -1273,12 +1279,12 @@ class LutWidget(QWidget):
         self._set_span_left(wmin)
         self._set_span_right(wmax)
         self._draw()
-        # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
     # add setCTMetallicWindow method
+    # noinspection unresolved-references
     def setCTMetallicWindow(self) -> None:
         """
         Apply a preset windowing for CT metallic implant visualization.
@@ -1288,7 +1294,6 @@ class LutWidget(QWidget):
         self._set_span_left(wmin)
         self._set_span_right(wmax)
         self._draw()
-        # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
 
@@ -1303,6 +1308,7 @@ class LutWidget(QWidget):
         rmax : float
             maximum range value.
         """
+        # noinspection unresolved-references
         self._volume.display.setRange(rmin, rmax)
         self._initEdit()
         self._onRangeChangedEvent()  # Automatic call ?
@@ -1316,6 +1322,7 @@ class LutWidget(QWidget):
         rmin : float
             minimum range value.
         """
+        # noinspection unresolved-references
         self._volume.display.setRangeMin(rmin)
         self._initEdit()
         self._onRangeChangedEvent()  # Automatic call ?
@@ -1329,6 +1336,7 @@ class LutWidget(QWidget):
         rmax : float
             maximum range value.
         """
+        # noinspection unresolved-references
         self._volume.display.setWindowMax(rmax)
         self._initEdit()
         self._onRangeChangedEvent()  # Automatic call ?
@@ -1751,6 +1759,7 @@ class LutEditWidget(QWidget):
                 # if widget in popup menu, display popup when QColorDialog closed
                 parent = self.parent()
                 if parent is not None and isinstance(parent, TransferWidget):
+                    # noinspection unresolved-references
                     parent.colorDialogClosed.emit()
 
     def _onMenuRemove(self) -> None:
@@ -1783,6 +1792,7 @@ class LutEditWidget(QWidget):
                 # if widget in popup menu, display popup when QColorDialog closed
                 parent = self.parent()
                 if parent is not None and isinstance(parent, TransferWidget):
+                    # noinspection unresolved-references
                     parent.colorDialogClosed.emit()
 
     def _onMenuSwapNext(self) -> None:
@@ -2399,6 +2409,7 @@ class AlphaTransferWidget(QWidget):
 
     # Private methods
 
+    # noinspection unresolved-references
     def _initHist(self) -> None:
         """
         Initializes the background histogram display.
@@ -2446,6 +2457,7 @@ class AlphaTransferWidget(QWidget):
 
         i: cython.int
         for i in range(0, len(self._xlist)):
+            # noinspection unresolved-references
             if self._volume.getDatatype() in getIntStdDatatypes():
                 v1 = str(int(self._xlist[i]))
             else:
@@ -2472,6 +2484,7 @@ class AlphaTransferWidget(QWidget):
             self._scatter.set_facecolor('brown')
         i: cython.int
         for i in range(0, len(self._xlist)):
+            # noinspection unresolved-references
             if self._volume.getDatatype() in getIntStdDatatypes():
                 v1 = str(int(self._xlist[i]))
             else:
@@ -2744,6 +2757,7 @@ class AlphaTransferWidget(QWidget):
         # Revision 12/06/2026 >
         # automatic _onMouseClickEvent call after _onPickEvent
 
+    # noinspection unresolved-references
     def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         """
         Handles dragging a selected control point.
@@ -2806,6 +2820,7 @@ class AlphaTransferWidget(QWidget):
             if self._xpos < x:
                 self._xlist.insert(index, self._xpos)
                 self._ylist.insert(index, self._ypos)
+                # noinspection unresolved-references
                 if self._volume.getDatatype() in getIntStdDatatypes():
                     v1 = str(int(self._xlist[index]))
                 else:
@@ -2856,6 +2871,7 @@ class AlphaTransferWidget(QWidget):
                 # Revision 23/03/2026 >
                 self._updateTransfer()
 
+    # noinspection unresolved-references
     def _onMenuClear(self) -> None:
         """
         Handles clearing all control points and resetting to the default.
@@ -2888,6 +2904,7 @@ class AlphaTransferWidget(QWidget):
                                            initialFilter='XML Color transfer (*.xtfer)')
         if name[0] != '':
             chdir(dirname(name[0]))
+            # noinspection unresolved-references
             self._transfer.setID(self._volume.getArrayID())
             self._transfer.saveToXML(name[0])
         self._selected = None
@@ -2943,6 +2960,7 @@ class TransferWidget(QWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  volume: SisypheVolume | None = None,
                  view: VolumeViewWidget | None = None,
@@ -2983,7 +3001,6 @@ class TransferWidget(QWidget):
 
         # Init event
 
-        # noinspection PyUnresolvedReferences
         self._color.colorTransferChanged.connect(self._updateColorTransfer)
 
         self._labelalpha = QLabel('Scalar transfer function')
@@ -2996,16 +3013,13 @@ class TransferWidget(QWidget):
             if self._view is not None:
                 self._view.gradientOpacityOff()
             # Revision 01/05/2025 >
-            # noinspection PyUnresolvedReferences
             self._labelgrad.stateChanged.connect(self._checkBoxChanged)
 
         lyout = QHBoxLayout()
         lyout.setSpacing(5)
         self._open = QPushButton('Open')
-        # noinspection PyUnresolvedReferences
         self._open.clicked.connect(self.load)
         self._save = QPushButton('Save')
-        # noinspection PyUnresolvedReferences
         self._save.clicked.connect(self.save)
         lyout.addStretch()
         lyout.addWidget(self._open)
@@ -3027,16 +3041,12 @@ class TransferWidget(QWidget):
         vlyout.addWidget(self._color)
         vlyout.addLayout(lyout)
 
-        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._labelalpha, Qt.AlignHCenter)
-        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._labelgrad, Qt.AlignHCenter)
-        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._color, Qt.AlignHCenter)
 
         vlyout.setSpacing(0)
         vlyout.setContentsMargins(5, 5, 5, 5)
-        # noinspection PyUnresolvedReferences
         vlyout.setSizeConstraint(QVBoxLayout.SetFixedSize)
         self.setLayout(vlyout)
 
@@ -3063,6 +3073,7 @@ class TransferWidget(QWidget):
         # noinspection PyProtectedMember
         self._alpha._updateLines()
 
+    # noinspection unresolved-references
     def _checkBoxChanged(self) -> None:
         """
         Handles the state change of the gradient transfer function visibility checkbox.
@@ -3100,6 +3111,7 @@ class TransferWidget(QWidget):
         """
         return self._volume
 
+    # noinspection unresolved-references
     def setVolume(self, volume: SisypheVolume, gradient: bool = True) -> None:
         """
         Associate a new SisypheVolume for all child editor widgets.
@@ -3310,6 +3322,7 @@ class ComboBoxLut(QComboBox):
         if pathname is not None: self.addFilesLut(pathname)  # Add file lut items
         else: self.addFilesLut(self.getDefaultLutDirectory())
         # < Revision 02/06/2025
+        # noinspection unresolved-references
         self.model().sort(0)
         # Revision 02/06/2025 >
 

@@ -142,7 +142,7 @@ class SelectionFilter(object):
 
     object -> SelectionFilter
 
-    Last Revision: 13/02/2026
+    Last Revision: 05/10/2026
     """
 
     # Class methods
@@ -2348,6 +2348,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     # Qt Drop events
 
+    # noinspection unresolved-references,method-overriding
     def dragEnterEvent(self, event: Optional[QDragEnterEvent]) -> None:
         """
         Handles drag enter events, accepting drops if the mime data contains text (e.g., file paths).
@@ -2362,6 +2363,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
         if event.mimeData().hasText(): event.accept()
         else: event.ignore()
 
+    # noinspection unresolved-references,method-overriding
     def dropEvent(self, event: Optional[QDropEvent]) -> None:
         """
         Handles drop events, attempting to open the dropped file(s).
@@ -2915,6 +2917,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             if isinstance(index, int):
                 if index < self._list.count():
                     item = self._list.item(index)
+                    # noinspection unresolved-references
                     item.setSelected(True)
             else: raise TypeError('parameter type {} is not int or str.'.format(type(index)))
 
@@ -2934,6 +2937,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 # replace widget by widget._list
                 row = widget._list.row(item)
                 if row < self._list.count():
+                    # noinspection unresolved-references
                     self._list.item(row).setSelected(True)
                 # Revision 26/03/2026 >
         else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
@@ -2954,6 +2958,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 # replace widget by widget._list
                 row = self._list.row(item)
                 if row < widget._list.count():
+                    # noinspection unresolved-references
                     widget._list.item(row).setSelected(True)
                 # Revision 26/03/2026 >
         else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
@@ -3039,6 +3044,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             filenames = list()
             i: cython.int
             for i in range(n):
+                # noinspection unresolved-references
                 filenames.append(self._list.item(i).data(256))
         return filenames
 
@@ -3059,6 +3065,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
                 filenames.append(item.data(256))
         return filenames
 
+    # noinspection unresolved-references
     def getCheckedFilenames(self) -> list[str]:
         """
         Get a list of filenames for all checked items in the list. If checkboxes are not enabled, it returns all
@@ -3092,6 +3099,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             r = list()
             i: cython.int
             for i in range(self._list.count()):
+                # noinspection unresolved-references
                 if self._list.item(i).checkState() > 0: r.append(i)
             return r
 
@@ -3110,6 +3118,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             r = list()
             i: cython.int
             for i in range(self._list.count()):
+                # noinspection unresolved-references
                 r.append(self._list.item(i).checkState() > 0)
             return r
 
@@ -3199,10 +3208,11 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
             filename at index i.
         """
         if isinstance(i, int):
+            # noinspection unresolved-references
             return self._list.item(i).data(256)
         else: raise TypeError('parameter type {} is not int.'.format(type(i)))
 
-    # noinspection PyUnboundLocalVariable
+    # noinspection PyUnboundLocalVariable,unresolved-references
     def add(self,
             filenames: str | list[str] = '',
             label: str = '',
@@ -4720,6 +4730,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
 
     # Qt Drop events
 
+    # noinspection unresolved-references,method-overriding
     def dragEnterEvent(self, event: Optional[QDragEnterEvent]) -> None:
         """
         Handles drag enter events, accepting drops if the mime data contains text (e.g., file paths).
@@ -4734,6 +4745,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         if event.mimeData().hasText(): event.accept()
         else: event.ignore()
 
+    # noinspection unresolved-references,method-overriding
     def dropEvent(self, event: Optional[QDropEvent]) -> None:
         """
         Handles drop events, attempting to open the dropped file(s).
@@ -4793,6 +4805,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, maxcount: int = 100, checkbox: bool = False, parent: QWidget | None = None)  -> None:
         """
         FilesSelectionWidget instance constructor.
@@ -4836,11 +4849,8 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         # < Revision 09/04/2026
         self._list.header().hide()
         # Revision 09/04/2026 >
-        # noinspection PyUnresolvedReferences
         self._list.itemSelectionChanged.connect(self._selectionChanged)
-        # noinspection PyTypeChecker
         self._list.setSelectionMode(3)  # Extended selection
-        # noinspection PyUnresolvedReferences
         self._list.itemDoubleClicked.connect(self._onDoubleClicked)
         self._current = QPushButton(QIcon(join(self.getDefaultIconDirectory(), 'left.png')), '')
         self._add = QPushButton('Add')
@@ -4858,7 +4868,6 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         self._load.setToolTip('Load parameter values from a file.')
         self._save.setToolTip('Save parameter values to a file.')
 
-        # noinspection PyUnresolvedReferences
         self._current.clicked.connect(self._onMenuThumbnailShow)
 
         self._layout.addWidget(self._label)
@@ -4877,14 +4886,11 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
 
         self._current.setVisible(False)
 
-        # noinspection PyUnresolvedReferences
         self._add.clicked.connect(lambda: self.add())
         # < Revision 19/06/2025
         # self._clear.clicked.connect(self.clear)
         # self._clearall.clicked.connect(self.clearall)
-        # noinspection PyUnresolvedReferences
         self._clear.clicked.connect(lambda: self.clear())
-        # noinspection PyUnresolvedReferences
         self._clearall.clicked.connect(lambda: self.clearall())
         # Revision 19/06/2025 >
 
@@ -5093,6 +5099,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
                     for i in range(self._list.topLevelItemCount()):
                         if i < values.shape[0]:
                             w = self._list.itemWidget(self._list.topLevelItem(i), idx)
+                            # noinspection unresolved-references
                             widget = w.layout().itemAt(0).widget()
                             if widget is not None:
                                 try:
@@ -5128,6 +5135,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
 
     # Public methods
 
+    # noinspection unresolved-references
     def addParameter(self,
                      name: str,
                      dtype: str,
@@ -5208,6 +5216,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             self._save.setVisible(True)
         else: raise ValueError('dtype parameter {} is not valid.'.format(dtype))
 
+    # noinspection unresolved-references
     def addDicomParameter(self,
                           name: str,
                           vmin: int | float | None = None,
@@ -5393,6 +5402,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             i: cython.int
             for i in range(self._list.topLevelItemCount()):
                 w = self._list.itemWidget(self._list.topLevelItem(i), idx)
+                # noinspection unresolved-references
                 widget = w.layout().itemAt(0).widget()
                 if widget is not None:
                     dtype = self._parameters[name]['dtype']
@@ -5713,12 +5723,12 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         """
         if not self.isEmpty():
             if isinstance(index, str):
-                # noinspection PyTypeChecker
                 index = self._list.findItems(index, 0)
                 if len(index) > 0: index = index[0]
             if isinstance(index, int):
                 if index < self._list.topLevelItemCount():
                     item = self._list.topLevelItem(index)
+                    # noinspection unresolved-references
                     item.setSelected(True)
             else: raise TypeError('parameter type {} is not int or str.'.format(type(index)))
 
@@ -5734,9 +5744,10 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         if isinstance(widget, FilesSelectionWidget):
             items = widget.selectedItems()
             for item in items:
-                # noinspection PyProtectedMember
+                # noinspection protected-member
                 row = widget._list.indexOfTopLevelItem(item)
                 if row < self._list.topLevelItemCount():
+                    # noinspection unresolved-references
                     self._list.topLevelItem(row).setSelected(True)
         else: raise TypeError('parameter type {} is not FilesSelectionWidget.'.format(type(widget)))
 
@@ -5840,6 +5851,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             filenames = list()
             i: cython.int
             for i in range(n):
+                # noinspection unresolved-references
                 filenames.append(self._list.topLevelItem(i).data(0, 256))
         return filenames
 
@@ -5860,6 +5872,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
                 filenames.append(item.data(0, 256))
         return filenames
 
+    # noinspection unresolved-references
     def getCheckedFilenames(self) -> list[str]:
         """
         Get a list of filenames for all checked items in the list. If checkboxes are not enabled, it returns all
@@ -5894,6 +5907,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             r = list()
             i: cython.int
             for i in range(self._list.topLevelItemCount()):
+                # noinspection unresolved-references
                 if self._list.topLevelItem(i).checkState(0) > 0: r.append(i)
             return r
 
@@ -5912,6 +5926,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             r = list()
             i: cython.int
             for i in range(self._list.topLevelItemCount()):
+                # noinspection unresolved-references
                 r.append(self._list.topLevelItem(i).checkState(0) > 0)
             return r
 
@@ -6001,10 +6016,11 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
             filename at index i.
         """
         if isinstance(i, int):
+            # noinspection unresolved-references
             return self._list.topLevelItem(i).data(0, 256)
         else: raise TypeError('parameter type {} is not int.'.format(type(i)))
 
-    # noinspection PyUnboundLocalVariable
+    # noinspection unresolved-references,unbound-local-variable
     def add(self,
             filenames: str | list[str] = '',
             label: str = '',
@@ -7539,6 +7555,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
 
     # Qt Drop events
 
+    # noinspection unresolved-references,method-overriding
     def dragEnterEvent(self, event: Optional[QDragEnterEvent]) -> None:
         """
         Handles drag enter events, accepting drops if the mime data contains text (e.g., file paths).
@@ -7553,6 +7570,7 @@ class FilesSelectionWithParametersWidget(QWidget, SelectionFilter):
         if event.mimeData().hasText(): event.accept()
         else: event.ignore()
 
+    # noinspection unresolved-references,method-overriding
     def dropEvent(self, event: Optional[QDropEvent]) -> None:
         """
         Handles drop events, attempting to open the dropped file(s).
@@ -7591,6 +7609,7 @@ class MultiExtFilesSelectionWidget(FilesSelectionWidget):
 
     # Public methods
 
+    # noinspection method-overriding
     def add(self,
             filenames: str = '',
             label: str = '',
@@ -7812,7 +7831,7 @@ class SynchronizedFilesSelectionWidget(QWidget):
                                    'PySisyphe volume file selector',
                                    'FOV discrepancy between file selectors.')
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _ListCleared(self, widget: QWidget) -> None:
         """
         Slot connected to the FieldCleared signal of contained file selection widgets.
@@ -7864,9 +7883,11 @@ class SynchronizedFilesSelectionWidget(QWidget):
         if self._single is not None:
             k0 = list(self._single.keys())[0]
             return self._single[k0].getToolbarThumbnail()
+        # noinspection unreachable-code
         if self._multiple is not None:
             k0 = list(self._multiple.keys())[0]
             return self._multiple[k0].getToolbarThumbnail()
+        # noinspection unreachable-code
         raise AttributeError('No single or multiple file selection widget.')
     # Revision 09/10/2024 >
 
@@ -7884,9 +7905,11 @@ class SynchronizedFilesSelectionWidget(QWidget):
         if self._single is not None:
             k0 = list(self._single.keys())[0]
             return self._single[k0].hasToolbarThumbnail()
+        # noinspection unreachable-code
         if self._multiple is not None:
             k0 = list(self._multiple.keys())[0]
             return self._multiple[k0].hasToolbarThumbnail()
+        # noinspection unreachable-code
         raise AttributeError('No single or multiple file selection widget.')
     # Revision 09/10/2024 >
 

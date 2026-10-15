@@ -151,7 +151,7 @@ class ItemAttributesWidget(QFrame):
 
     QFrame -> ItemAttributesWidget
 
-    Last revision: 19/03/2025
+    Last revision: 06/10/2026
     """
 
     _VSIZE: int = 24
@@ -162,6 +162,7 @@ class ItemAttributesWidget(QFrame):
     # < Revision 19/03/2025
     @classmethod
     def getDefaultIconSize(cls) -> int:
+        # noinspection unresolved-references
         dpi = QApplication.primaryScreen().logicalDotsPerInch()
         if dpi > 100: return int(cls._VSIZE * dpi / 800) * 8
         else: return cls._VSIZE
@@ -184,6 +185,7 @@ class ItemAttributesWidget(QFrame):
     _size       int, icon size 
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  item: Any | None = None,
                  views: IconBarViewWidgetCollection | None = None,
@@ -202,6 +204,10 @@ class ItemAttributesWidget(QFrame):
         self._size = self.getDefaultIconSize()
         # Revision 19/03/2024 >
         self._item = item
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         if views is not None:
             if not isinstance(views, IconBarViewWidgetCollection):
@@ -229,7 +235,6 @@ class ItemAttributesWidget(QFrame):
         self._remove.setVisible(False)
 
         lyout = QHBoxLayout()
-        # noinspection PyUnresolvedReferences
         lyout.setAlignment(Qt.AlignVCenter)
         lyout.setContentsMargins(5, 0, 5, 0)
         lyout.setSpacing(5)
@@ -250,6 +255,12 @@ class ItemAttributesWidget(QFrame):
         raise NotImplemented
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def setIconSize(self, size: int = _VSIZE) -> None:
         self._size = size
@@ -348,6 +359,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
     _opacity        QSlider, set opacity
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  overlay: SisypheVolume | None = None,
                  views: IconBarViewWidgetCollection | None = None,
@@ -375,14 +387,12 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
         font = QFont('Arial', 10)
         self._label.setFont(font)
 
-        # noinspection PyUnresolvedReferences
         self._opacity = QSlider(Qt.Horizontal)
         self._opacity.setTickPosition(QSlider.NoTicks)
         self._opacity.setMaximum(100)
         self._opacity.setMinimum(0)
         self._opacity.setValue(50)
         self._opacity.setToolTip('Opacity {} %'.format(self._opacity.value()))
-        # noinspection PyUnresolvedReferences
         self._opacity.valueChanged.connect(self._opacityChanged)
 
         self.checkBoxVisibilityOff()
@@ -396,7 +406,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _visibilityChanged(self, obj: QWidget) -> None:
         if self.hasViewCollection() and self.hasItem():
             v = self._visibility.getVisibilityStateIcon()
@@ -426,6 +436,7 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
                     except: pass
                 # Revision 17/12/2024 >
 
+    # noinspection unresolved-references
     def _updateSettingsFromItem(self) -> None:
         if self.hasViewCollection() and self.hasItem():
             view = self._views[0]().getFirstSliceViewWidget()
@@ -440,7 +451,9 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged(self)
-            if self._logger is not None: self._logger.info('Set visibility {} overlay {}'.format(v, self._item.getBasename()))
+            if self._logger is not None:
+                # noinspection unresolved-references
+                self._logger.info('Set visibility {} overlay {}'.format(v, self._item.getBasename()))
         else: raise TypeError('parameter type {} is not bool.'.format(v))
 
     def getVisibility(self) -> bool:
@@ -452,7 +465,9 @@ class ItemOverlayAttributesWidget(ItemAttributesWidget):
                 v = int(v * 100)
                 self._opacity.setValue(v)
                 self._opacityChanged(v)
-                if self._logger is not None: self._logger.info('Set opacity {} overlay {}'.format(v, self._item.getBasename()))
+                if self._logger is not None:
+                    # noinspection unresolved-references
+                    self._logger.info('Set opacity {} overlay {}'.format(v, self._item.getBasename()))
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
@@ -484,7 +499,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemROIAttributesWidget
 
-    Last revision: 16/02/2026
+    Last revision: 05/10/2026
     """
 
     # Special method
@@ -498,6 +513,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
     _opacity        OpacityPushButton, widget to set opacity    
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  roi: SisypheROI | None = None,
                  views: IconBarViewWidgetCollection | None = None,
@@ -526,7 +542,6 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
         # self._name.setFixedHeight(self._size)
         self._name.setToolTip('Set ROI name,\n'
                               'Accepted characters A...Z, a...z, 0...9, -, _, comma, space.')
-        # noinspection PyUnresolvedReferences
         self._name.getQLineEdit().editingFinished.connect(self._nameChanged)
 
         # Color
@@ -551,15 +566,10 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
         # Widget layout
 
         lyout = self.layout()
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._color)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._opacity)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._visibility)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._name)
-        # noinspection PyUnresolvedReferences
         lyout.insertSpacing(1, 5)
 
         self._updateSettingsFromItem()
@@ -567,6 +577,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
     # Private methods
 
     def _visibilityChanged(self) -> None:
+        # noinspection unresolved-references
         self._item.setVisibility(self._visibility.getVisibilityStateIcon())
         self._updateViews()
         # < Revision 29/07/2026
@@ -575,6 +586,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
 
     def _colorChanged(self) -> None:
         r, g, b = self._color.getColor()
+        # noinspection unresolved-references
         self._item.setColor(r, g, b)
         self._updateViews()
         # < Revision 29/07/2026
@@ -582,12 +594,14 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
         # Revision 29/07/2026 >
 
     def _opacityChanged(self) -> None:
+        # noinspection unresolved-references
         self._item.setAlpha(self._opacity.getOpacity())
         self._updateViews()
         # < Revision 29/07/2026
         self._updateToolTip()
         # Revision 29/07/2026 >
 
+    # noinspection unresolved-references
     def _nameChanged(self) -> None:
         if self.hasViewCollection():
             rois = self._views.getROICollection()
@@ -614,6 +628,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
                               '\n\n{}'.format(str(self._item)[:-1]))
     # Revision 29/07/2026 >
 
+    # noinspection unresolved-references
     def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
             self._name.setEditText(self._item.getName())
@@ -631,6 +646,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
 
     def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
+            # noinspection unresolved-references
             self._views.updateROIAttributes()
 
     # Public methods
@@ -646,7 +662,9 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
     def setColor(self, r: float, g: float, b: float) -> None:
         self._color.setFloatColor(r, g, b)
         self._colorChanged()
-        if self._logger is not None: self._logger.info('Set color {} ROI {}'.format((r, g, b), self._item.getName()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set color {} ROI {}'.format((r, g, b), self._item.getName()))
 
     def getColor(self) -> tuple[float, float, float]:
         return self._color.getFloatColor()
@@ -665,7 +683,9 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
                 self._opacityChanged()
-                if self._logger is not None: self._logger.info('Set opacity {} ROI {}'.format(v, self._item.getName()))
+                if self._logger is not None:
+                    # noinspection unresolved-references
+                    self._logger.info('Set opacity {} ROI {}'.format(v, self._item.getName()))
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
@@ -676,7 +696,9 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged()
-            if self._logger is not None: self._logger.info('Set visbility {} ROI {}'.format(v, self._item.getName()))
+            if self._logger is not None:
+                # noinspection unresolved-references
+                self._logger.info('Set visbility {} ROI {}'.format(v, self._item.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
     def getVisibility(self) -> bool:
@@ -688,6 +710,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
             # self._updateSettingsFromItem()
         else: raise TypeError('parameter type {} is not SisypheROI.'.format(type(roi)))
 
+    # noinspection unresolved-references
     def save(self, wait: DialogWait | None = None) -> None:
         if wait is None:
             wait = DialogWait()
@@ -701,6 +724,9 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
                 self._item.setFilename(join(self._views.getVolume().getDirname(),
                                             self._item.getName() + self._item.getFileExt()))
             # Revision 16/02/2026 >
+            # < Revision 05/10/2026
+            if self._compress: self._item.setCompressionOn()
+            # Revision 05/10/2026 >
             self._item.save()
             if self._logger is not None: self._logger.info('Save ROI {}'.format(self._item.getFilename()))
             if self.hasViewCollection(): self._views.clearUndo()
@@ -713,6 +739,7 @@ class ItemROIAttributesWidget(ItemAttributesWidget):
 
     # < Revision 29/07/2026
     # add enterEvent method
+    # noinspection method-overriding
     def enterEvent(self, event: QEnterEvent) -> None:
         self._updateToolTip()
     # Revision 29/07/2026 >
@@ -755,6 +782,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
     _dialogprop     DialogMeshProperties, dialog window to edit mesh properties
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  mesh: SisypheMesh | None = None,
                  views: IconBarViewWidgetCollection | None = None,
@@ -812,7 +840,6 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._properties.setFixedSize(self._size, self._size)
         # Revision 25/03/2025 >
         self._properties.setToolTip('Set mesh properties.')
-        # noinspection PyUnresolvedReferences
         self._properties.clicked.connect(lambda dummy: self.settings())
         self._dialogprop = DialogMeshProperties()
         if platform == 'win32':
@@ -821,6 +848,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             # cl = self.palette().base().color()
             if self._listattr is not None:
                 cl = self._listattr.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialogprop, c)
             # Revision 18/11/2025 >
@@ -828,7 +856,6 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
         self._updateSettingsFromItem()
         self._visibility.visibilityChanged.connect(self._visibilityChanged)
-        # noinspection PyUnresolvedReferences
         self._name.getQLineEdit().editingFinished.connect(self._nameChanged)
         self._color.colorChanged.connect(self._colorChanged)
         self._opacity.opacityChanged.connect(self._opacityChanged)
@@ -837,14 +864,10 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
         self._trf = IconPushButton('rotate.png', self._size)
         self._trf.setToolTip('Apply rigid transformation to mesh.')
-        # noinspection PyUnresolvedReferences
         self._trf.clicked.connect(lambda dummy: self.transform())
         trf = QMenu()
-        # noinspection PyUnresolvedReferences
         trf.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         trf.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         trf.setAttribute(Qt.WA_TranslucentBackground, True)
         self._tx = LabeledDoubleSpinBox(title='Tx', fontsize=12)
         self._tx.setDecimals(1)
@@ -852,7 +875,6 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._tx.setRange(-256.0, 256.0)
         self._tx.setValue(0.0)
         self._tx.setSuffix(' mm')
-        # noinspection PyUnresolvedReferences
         self._tx.valueChanged.connect(self._move)
         self._ty = LabeledDoubleSpinBox(title='Ty', fontsize=12)
         self._ty.setDecimals(1)
@@ -860,7 +882,6 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._ty.setRange(-256.0, 256.0)
         self._ty.setValue(0.0)
         self._ty.setSuffix(' mm')
-        # noinspection PyUnresolvedReferences
         self._ty.valueChanged.connect(self._move)
         self._tz = LabeledDoubleSpinBox(title='Tz', fontsize=12)
         self._tz.setDecimals(1)
@@ -868,7 +889,6 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._tz.setRange(-256.0, 256.0)
         self._tz.setValue(0.0)
         self._tz.setSuffix(' mm')
-        # noinspection PyUnresolvedReferences
         self._tz.valueChanged.connect(self._move)
         self._rx = LabeledDoubleSpinBox(title='Rx', fontsize=12)
         self._rx.setDecimals(1)
@@ -876,7 +896,6 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._rx.setRange(-180.0, 180.0)
         self._rx.setValue(0.0)
         self._rx.setSuffix(' °')
-        # noinspection PyUnresolvedReferences
         self._rx.valueChanged.connect(self._move)
         self._ry = LabeledDoubleSpinBox(title='Ry', fontsize=12)
         self._ry.setDecimals(1)
@@ -884,7 +903,6 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._ry.setRange(-180.0, 180.0)
         self._ry.setValue(0.0)
         self._ry.setSuffix(' °')
-        # noinspection PyUnresolvedReferences
         self._ry.valueChanged.connect(self._move)
         self._rz = LabeledDoubleSpinBox(title='Rz', fontsize=12)
         self._rz.setDecimals(1)
@@ -892,20 +910,16 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._rz.setRange(-180.0, 180.0)
         self._rz.setValue(0.0)
         self._rz.setSuffix(' °')
-        # noinspection PyUnresolvedReferences
         self._rz.valueChanged.connect(self._move)
         font = QFont('Arial', 10)
         clear = QPushButton('Clear')
         clear.setFont(font)
-        # noinspection PyUnresolvedReferences
         clear.clicked.connect(self._clearTransform)
         cursor = QPushButton('Align mesh center to cursor')
         cursor.setFont(font)
-        # noinspection PyUnresolvedReferences
         cursor.clicked.connect(self._goToCursorTransform)
         apply = QPushButton('Resample mesh')
         apply.setFont(font)
-        # noinspection PyUnresolvedReferences
         apply.clicked.connect(self.transform)
         a = QWidgetAction(trf)
         a.setDefaultWidget(self._tx)
@@ -939,21 +953,13 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         # Widget layout
 
         lyout = self.layout()
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._trf)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._properties)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._color)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._lut)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._opacity)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._visibility)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._name)
-        # noinspection PyUnresolvedReferences
         lyout.insertSpacing(1, 5)
 
         # Redirect child mouse double click event to self
@@ -974,6 +980,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._rx.setValue(0.0)
         self._ry.setValue(0.0)
         self._rz.setValue(0.0)
+        # noinspection unresolved-references
         self._item.setDefaultOrigin()
         # < Revision 29/07/2026
         # self._name.setToolTip('Set mesh name,\n'
@@ -983,6 +990,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._updateToolTip()
         # Revision 29/07/2026 >
 
+    # noinspection unresolved-references
     def _move(self) -> None:
         if self._item.isDefaultOrigin(): self._item.setOriginToCenter()
         self._item.setPosition(self._tx.value(), self._ty.value(), self._tz.value())
@@ -998,6 +1006,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             view = self.getViewCollection()
             view.getVolumeView().updateRender()
 
+    # noinspection unresolved-references
     def _goToCursorTransform(self) -> None:
         if self._views is not None:
             pc = self._views.getVolumeView().getCursorWorldPosition()
@@ -1010,9 +1019,11 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self._rz.setValue(0.0)
 
     def _visibilityChanged(self) -> None:
+        # noinspection unresolved-references
         self._item.setVisibility(self._visibility.getVisibilityStateIcon())
         self._updateViews()
 
+    # noinspection unresolved-references
     def _colorChanged(self) -> None:
         if self._item.getScalarColorVisibility() == 0:
             r, g, b = self._color.getFloatColor()
@@ -1027,6 +1038,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self._updateViews()
 
     def _opacityChanged(self) -> None:
+        # noinspection unresolved-references
         self._item.setOpacity(self._opacity.getOpacity())
         # < Revision 29/07/2026
         # self._name.setToolTip('Set mesh name,\n'
@@ -1037,6 +1049,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         # Revision 29/07/2026 >
         self._updateViews()
 
+    # noinspection unresolved-references
     def _nameChanged(self) -> None:
         if self.hasViewCollection():
             meshes = self._views.getMeshCollection()
@@ -1056,6 +1069,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
     def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
+            # noinspection unresolved-references
             volview = self._views.getVolumeView()
             if volview is not None:
                 volview.updateRender()
@@ -1070,6 +1084,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
                               '\n\n{}'.format(str(self._item)[:-1]))
     # Revision 29/07/2026 >
 
+    # noinspection unresolved-references
     def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
             self._name.setEditText(self._item.getName())
@@ -1088,6 +1103,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
     def _updateLut(self) -> None:
         if self._lutwidget is not None:
             r = self._lutwidget.getWindow()
+            # noinspection unresolved-references
             self._item.setLUTScalarRange(r[0], r[1])
 
     # Public methods
@@ -1108,10 +1124,12 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
     def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         super().setViewCollection(views)
         if views is not None:
+            # noinspection unresolved-references
             view = self._views.getVolumeView()
             if view is not None:
                 self._dialogprop.UpdateRender.connect(view.updateRender)
 
+    # noinspection unresolved-references
     def settings(self) -> None:
         self._dialogprop.setProperties(self._item.getActor().GetProperty())
         if self._logger is not None: self._logger.info('Dialog exec [gui.dialogMeshProperties.DialogMeshProperties]')
@@ -1123,6 +1141,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             # cl = self.palette().base().color()
             if self._listattr is not None:
                 cl = self._listattr.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialogprop, c)
             # Revision 18/11/2025 >
@@ -1132,6 +1151,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._color.setFloatColor(c[0], c[1], c[2])
         if self._logger is not None: self._logger.info('Change Properties ROI {}'.format(self._item.getName()))
 
+    # noinspection unresolved-references
     def transform(self) -> None:
         if self._tx.value() != 0.0 or self._ty.value() != 0.0 or self._tz.value() != 0.0 or \
                 self._rx.value() != 0.0 or self._ry.value() != 0.0 or self._rz.value() != 0.0:
@@ -1149,11 +1169,14 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
     def setColor(self, r: float, g: float, b: float) -> None:
         self._color.setFloatColor(r, g, b)
         self._colorChanged()
-        if self._logger is not None: self._logger.info('Set color {} Mesh {}'.format((r, g, b), self._item.getName()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set color {} Mesh {}'.format((r, g, b), self._item.getName()))
 
     def getColor(self) -> tuple[float, float, float]:
         return self._color.getFloatColor()
 
+    # noinspection unresolved-references
     def setLut(self, vol: SisypheVolume) -> None:
         if isinstance(vol, SisypheVolume):
             self._lutwidget = LutWidget(view=self._views.getVolumeView(), size=256)
@@ -1188,7 +1211,9 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
                 self._opacityChanged()
-                if self._logger is not None: self._logger.info('Set opacity {} Mesh {}'.format(v, self._item.getName()))
+                if self._logger is not None:
+                    # noinspection unresolved-references
+                    self._logger.info('Set opacity {} Mesh {}'.format(v, self._item.getName()))
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
 
@@ -1199,7 +1224,9 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             self._visibilityChanged()
-            if self._logger is not None: self._logger.info('Set visibility {} Mesh {}'.format(v, self._item.getName()))
+            if self._logger is not None:
+                # noinspection unresolved-references
+                self._logger.info('Set visibility {} Mesh {}'.format(v, self._item.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
     def getVisibility(self) -> bool:
@@ -1209,13 +1236,17 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         self._tx.setValue(t[0])
         self._ty.setValue(t[1])
         self._tz.setValue(t[2])
-        if self._logger is not None: self._logger.info('Set translations {} Mesh {}'.format(t, self._item.getName()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set translations {} Mesh {}'.format(t, self._item.getName()))
 
     def setRotations(self, r: list[float] | tuple[float, float, float]) -> None:
         self._rx.setValue(r[0])
         self._ry.setValue(r[1])
         self._rz.setValue(r[2])
-        if self._logger is not None: self._logger.info('Set rotations {} Mesh {}'.format(r, self._item.getName()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set rotations {} Mesh {}'.format(r, self._item.getName()))
 
     def setMesh(self, mesh: SisypheMesh) -> None:
         if isinstance(mesh, SisypheMesh):
@@ -1224,6 +1255,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             # self._updateSettingsFromItem()
         else: raise TypeError('parameter type {} is not SisypheMesh.'.format(type(mesh)))
 
+    # noinspection unresolved-references
     def save(self, wait: DialogWait | None = None) -> None:
         if wait is None:
             wait = DialogWait()
@@ -1247,6 +1279,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
 
     # Qt event
 
+    # noinspection method-overriding
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         from PyQt5.QtCore import QEvent
         # noinspection PyUnresolvedReferences
@@ -1255,6 +1288,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
             self.mouseDoubleClickEvent(event)
         return False
 
+    # noinspection method-overriding,unresolved-references
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
@@ -1277,7 +1311,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     QFrame -> ItemAttributesWidget -> ItemToolAttributesWidget
 
-    Last revision: 01/09/2026
+    Last revision: 14/10/2026
     """
 
     # Special method
@@ -1296,6 +1330,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
     _dialoglength   DialogFromXml, dialog window to set trajectory length
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  tool: HandleWidget | LineWidget | None = None,
                  views: IconBarViewWidgetCollection | None = None,
@@ -1318,7 +1353,6 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._toTarget.setFixedSize(self._size, self._size)
         # Revision 30/03/2025 >
         self._toTarget.setToolTip('Move cursor to target.')
-        # noinspection PyUnresolvedReferences
         self._toTarget.clicked.connect(lambda dummy: self.focusTarget())
 
         # Move to entry
@@ -1329,7 +1363,6 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._toEntry.setFixedSize(self._size, self._size)
         # Revision 30/03/2025 >
         self._toEntry.setToolTip('Move cursor to entry.')
-        # noinspection PyUnresolvedReferences
         self._toEntry.clicked.connect(lambda dummy: self.focusEntry())
 
         # Lock
@@ -1350,7 +1383,6 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._name.getQLineEdit().setValidator(validator)
         # self._name.setFixedHeight(self._size)
         self._name.setToolTip('Set tool name,\nAccepted characters A...Z, a...z, 0...9, \', -, _, comma, space.')
-        # noinspection PyUnresolvedReferences
         self._name.getQLineEdit().editingFinished.connect(self._nameChanged)
 
         # Color
@@ -1377,7 +1409,6 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._properties.setFixedSize(self._size, self._size)
         # Revision 30/03/2025 >
         self._properties.setToolTip('Set tool properties.')
-        # noinspection PyUnresolvedReferences
         self._properties.clicked.connect(lambda dummy: self.properties())
 
         self._dialogprop = DialogSetting('Tools')
@@ -1387,6 +1418,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             # cl = self.palette().base().color()
             if self._listattr is not None:
                 cl = self._listattr.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialogprop, c)
             # Revision 18/11/2025 >
@@ -1400,7 +1432,6 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._target.setFixedSize(self._size, self._size)
         # Revision 30/03/2025 >
         self._target.setToolTip('Set point position.')
-        # noinspection PyUnresolvedReferences
         self._target.clicked.connect(lambda dummy: self.target())
 
         self._dialogtarget = DialogTarget(tool, views)
@@ -1410,6 +1441,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             # cl = self.palette().base().color()
             if self._listattr is not None:
                 cl = self._listattr.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialogtarget, c)
             # Revision 18/11/2025 >
@@ -1422,7 +1454,6 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._length.setFixedSize(self._size, self._size)
         # Revision 30/03/2025 >
         self._length.setToolTip('Set trajectory length.')
-        # noinspection PyUnresolvedReferences
         self._length.clicked.connect(lambda dummy: self.length())
 
         self._dialoglength = DialogFromXml('Trajectory length', ['TrajectoryLength'])
@@ -1432,6 +1463,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             # cl = self.palette().base().color()
             if self._listattr is not None:
                 cl = self._listattr.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialoglength, c)
             # Revision 18/11/2025 >
@@ -1446,7 +1478,6 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         if tool is not None and isinstance(tool, HandleWidget): self._move.setToolTip('Move point.')
         else: self._move.setToolTip('Move trajectory.')
 
-        # noinspection PyUnresolvedReferences
         self._move.clicked.connect(lambda dummy: self.moving())
 
         self._dialogmove = DialogFromXml('Move point/trajectory', ['DuplicateTool'])
@@ -1456,6 +1487,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             # cl = self.palette().base().color()
             if self._listattr is not None:
                 cl = self._listattr.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialogmove, c)
             # Revision 18/11/2025 >
@@ -1463,29 +1495,17 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         # Widget layout
 
         lyout = self.layout()
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._properties)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._move)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._length)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._target)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._color)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._opacity)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._lock)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._toEntry)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._toTarget)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._visibility)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._name)
-        # noinspection PyUnresolvedReferences
         lyout.insertSpacing(1, 5)
 
         # Redirect child mouse double click event to self
@@ -1506,6 +1526,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     # Private methods
 
+    # noinspection unresolved-references
     def _visibilityChanged(self) -> None:
         if self.hasViewCollection():
             self._item.setVisibility(self._visibility.getVisibilityStateIcon())
@@ -1513,11 +1534,13 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             if view is not None: view.copyToolAttributes(self._item, None, signal=True)
 
     def _lockChanged(self) -> None:
+        # noinspection unresolved-references
         view = self._views.getVolumeView()
         if view is not None:
             if self._lock.getLockStateIcon(): view.lockTool(self._item, signal=True)
             else: view.unlockTool(self._item, signal=True)
 
+    # noinspection unresolved-references
     def _colorChanged(self) -> None:
         if self.hasViewCollection():
             r, g, b = self._color.getFloatColor()
@@ -1533,6 +1556,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             view = self._views.getVolumeView()
             if view is not None: view.copyToolAttributes(self._item, None, signal=True)
 
+    # noinspection unresolved-references
     def _opacityChanged(self) -> None:
         if self.hasViewCollection():
             v = self._opacity.getOpacity()
@@ -1550,6 +1574,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 view.updateRender()
                 view.copyToolAttributes(self._item, None, signal=True)
 
+    # noinspection unresolved-references
     def _nameChanged(self) -> None:
         if self.hasViewCollection():
             tools = self._views.getToolCollection()
@@ -1581,6 +1606,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                               '\n\n{}'.format(str(self._item)[:-1]))
     # Revision 29/07/2026 >
 
+    # noinspection unresolved-references
     def _updateSettingsFromItem(self) -> None:
         if self._item is not None:
             # Update widget from item properties
@@ -1600,6 +1626,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     # Public methods
 
+    # noinspection unresolved-references
     def updateSettingsFromAttributes(self) -> None:
         settings = self._dialogprop.getSettingsWidget()
         if isinstance(self._item, HandleWidget):
@@ -1657,6 +1684,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         settings.getParameterWidget('TextVisibility').setCheckState(v)
         settings.getParameterWidget('Tolerance').setValue(self._item.getTolerance())
 
+    # noinspection unresolved-references
     def setDefaultAttributesFromSettings(self) -> None:
         settings = self._dialogprop.getSettingsWidget()
         settings.resetSettings()
@@ -1695,7 +1723,11 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         v = settings.getParameterValue('SelectedColor')
         if v is not None: self._item.setSelectedColor(v)
         v = settings.getParameterValue('Opacity')
-        if v is not None: self._item.setOpacity(v)
+        if v is not None:
+            self._item.setOpacity(v)
+            # < Revision 14/10/2026
+            self._opacity.setOpacity(v, signal=False)
+            # Revision 14/10/2026 >
         v = settings.getParameterValue('HandleSize')
         if v is not None: self._item.setHandleSize(v)
         v = settings.getParameterValue('FontSize')
@@ -1713,6 +1745,68 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self.setToolTip(str(self._item))
         view = self._views.getVolumeView()
         if view is not None: view.copyToolAttributes(self._item, None, signal=True)
+
+    # < Revision 14/10/2026
+    # add copyAttributesFromWidget method
+    # noinspection unresolved-references
+    def copyAttributesFromWidget(self, widget: ItemToolAttributesWidget) -> None:
+        if self._item.GetObjectName() == widget._item.GetObjectName():
+            if isinstance(self._item, HandleWidget):
+                self._item.setLegend(widget._item.getLegend())
+                self._item.setLineWidth(widget._item.getLineWidth())
+                self._item.setSphereRadius(widget._item.getSphereRadius())
+                self._item.setSphereVisibility(widget._item.getSphereVisibility())
+            elif isinstance(self._item, LineWidget):
+                self._item.setLegend(widget._item.getLegend())
+                self._item.setPointSize(widget._item.getPointSize())
+                self._item.setLineWidth(widget._item.getLineWidth())
+                self._item.setHandleLineWidth(widget._item.getHandleLineWidth())
+                self._item.setTubeRadius(widget._item.getTubeRadius())
+                self._item.setTubeVisibility(widget._item.getTubeVisibility())
+        else:
+            settings = self._dialogprop.getSettingsWidget()
+            settings.resetSettings()
+            if isinstance(self._item, HandleWidget):
+                v = settings.getParameterValue('TextTarget')
+                if v is not None: self._item.setLegend(v)
+                v = settings.getParameterValue('HandleLineWidth')
+                if v is not None: self._item.setLineWidth(v)
+                v = settings.getParameterValue('SafetyRadius')
+                if v is not None: self._item.setSphereRadius(v)
+                v = settings.getParameterValue('SafetyVisibility')
+                if v is not None: self._item.setSphereVisibility(v)
+            elif isinstance(self._item, LineWidget):
+                v1 = settings.getParameterValue('TextTarget')
+                v2 = settings.getParameterValue('TextEntry')
+                if v1 is None and v2 is not None: self._item.setLegend([v1, v2])
+                v = settings.getParameterValue('PointSize')
+                if v is not None: self._item.setPointSize(v)
+                v = settings.getParameterValue('LineWidth')
+                if v is not None: self._item.setLineWidth(v)
+                v = settings.getParameterValue('HandleLineWidth')
+                if v is not None: self._item.setHandleLineWidth(v)
+                v = settings.getParameterValue('SafetyRadius')
+                if v is not None: self._item.setTubeRadius(v)
+                v = settings.getParameterValue('SafetyVisibility')
+                if v is not None: self._item.setTubeVisibility(v)
+        v = widget._item.getColor()
+        self._item.setColor(v)
+        self._color.setFloatColor(v[0], v[1], v[2], signal=False)
+        self._item.setSelectedColor(widget._item.getSelectedColor())
+        v = widget._item.getOpacity()
+        self._item.setOpacity(v)
+        self._opacity.setOpacity(v, signal=False)
+        self._item.setHandleSize(widget._item.getHandleSize())
+        self._item.setFontSize(widget._item.getFontSize())
+        v = widget._item.getTextProperty()
+        self._item.setTextProperty(v[0], v[1], v[2])
+        self._item.setTextOffset(widget._item.getTextOffset())
+        self._item.setTextVisibility(widget._item.getTextVisibility())
+        self._item.setTolerance(widget._item.getTolerance())
+        self.setToolTip(str(self._item))
+        view = self._views.getVolumeView()
+        if view is not None: view.copyToolAttributes(self._item, None, signal=True)
+    # Revision 14/10/2026 >
 
     def getDialogTarget(self) -> DialogTarget:
         return self._dialogtarget
@@ -1732,7 +1826,9 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
     def setColor(self, r: float, g: float, b: float, signal: bool = True) -> None:
         self._color.setFloatColor(r, g, b)
         if signal: self._colorChanged()
-        if self._logger is not None: self._logger.info('Set color {} Tool {}'.format((r, g, b), self._item.getName()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set color {} Tool {}'.format((r, g, b), self._item.getName()))
 
     def getColor(self) -> tuple[float, float, float]:
         return self._color.getFloatColor()
@@ -1742,6 +1838,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             if 0.0 <= v <= 1.0:
                 self._opacity.setOpacity(v)
                 if signal: self._opacityChanged()
+                # noinspection unresolved-references
                 self._logger.info('Set opacity {} Tool {}'.format(v, self._item.getName()))
             else: raise ValueError('parameter value {} is not between 0.0 and 1.0.'.format(v))
         else: raise TypeError('parameter type {} is not float.'.format(type(v)))
@@ -1749,6 +1846,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
     def getOpacity(self) -> float:
         return self._opacity.getOpacity()
 
+    # noinspection unresolved-references
     def setLock(self, v: bool) -> None:
         if isinstance(v, bool):
             self._lock.setLockStateIcon(v)
@@ -1777,6 +1875,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         if isinstance(v, bool):
             self._visibility.setVisibilitySateIcon(v)
             if signal: self._visibilityChanged()
+            # noinspection unresolved-references
             self._logger.info('Set visibility {} Tool {}'.format(v, self._item.getName()))
         else: raise TypeError('parameter type {} is not bool'.format(type(v)))
 
@@ -1792,6 +1891,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
     def getName(self) -> str:
         return self._name.getEditText()
 
+    # noinspection unresolved-references
     def focusTarget(self) -> None:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
@@ -1803,6 +1903,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     view.setCursorWorldPosition(p[0], p[1], p[2])
                     self._views.updateRender()
 
+    # noinspection unresolved-references
     def focusEntry(self) -> None:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
@@ -1812,6 +1913,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     if p is not None: view.setCursorWorldPosition(p[0], p[1], p[2])
                     self._views.updateRender()
 
+    # noinspection unresolved-references
     def properties(self) -> None:
         if self.hasViewCollection():
             settings = self._dialogprop.getSettingsWidget()
@@ -1828,6 +1930,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 # cl = self.palette().base().color()
                 if self._listattr is not None:
                     cl = self._listattr.palette().base().color()
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(self._dialogprop, c)
                 # Revision 18/11/2025 >
@@ -1897,6 +2000,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 if view is not None: view.copyToolAttributes(self._item, None, signal=True)
                 self._logger.info('Change propertiers Tool {}'.format(self._item.getName()))
 
+    # noinspection unresolved-references
     def target(self) -> None:
         if self.hasViewCollection():
             self._dialogtarget.setTrajectoryFieldsVisibility(isinstance(self._item, LineWidget))
@@ -1909,6 +2013,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 # cl = self.palette().base().color()
                 if self._listattr is not None:
                     cl = self._listattr.palette().base().color()
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(self._dialogtarget, c)
                 # Revision 18/11/2025 >
@@ -1922,6 +2027,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 self._updateToolTip()
                 # Revision 29/07/2026 >
 
+    # noinspection unresolved-references
     def length(self) -> None:
         if self.hasViewCollection():
             if isinstance(self._item, LineWidget):
@@ -1958,6 +2064,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     # cl = self.palette().base().color()
                     if self._listattr is not None:
                         cl = self._listattr.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._dialoglength, c)
                     # Revision 18/11/2025 >
@@ -1999,6 +2106,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     self._views.getVolumeView().moveTool(self._item,
                                                          target=self._item.getPosition2(),
                                                          entry=self._item.getPosition1())
+                    # noinspection unreachable-code
                     if e1 != 0 and e2 == 0: self.focusEntry()
                     elif e2 != 0: self.focusTarget()
                     # < Revision 29/07/2026
@@ -2006,6 +2114,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                     self._updateToolTip()
                     # Revision 29/07/2026 >
 
+    # noinspection unresolved-references
     def moving(self) -> None:
         if self.hasViewCollection():
             settings = self._dialogmove.getFieldsWidget(0)
@@ -2054,6 +2163,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 # cl = self.palette().base().color()
                 if self._listattr is not None:
                     cl = self._listattr.palette().base().color()
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(self._dialogmove, c)
                 # Revision 18/11/2025 >
@@ -2165,6 +2275,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
                 self._updateToolTip()
                 # Revision 29/07/2026 >
 
+    # noinspection unresolved-references
     def save(self, wait: DialogWait | None = None) -> None:
         if wait is None:
             wait = DialogWait()
@@ -2194,6 +2305,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     # Qt events
 
+    # noinspection method-overriding
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         from PyQt5.QtCore import QEvent
         # noinspection PyUnresolvedReferences
@@ -2203,6 +2315,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
             return True
         else: return False
 
+    # noinspection method-overriding,unresolved-references
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         if self.hasViewCollection():
             # < Revision 02/06/2026
@@ -2233,6 +2346,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
     # < Revision 29/07/2026
     # add enterEvent method
+    # noinspection method-overriding
     def enterEvent(self, event: QEnterEvent) -> None:
         self._updateToolTip()
     # Revision 29/07/2026 >
@@ -2271,6 +2385,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
     _width      WidthPushButton
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  bundle: SisypheStreamlines | None = None,
                  views: IconBarViewWidgetCollection | None = None,
@@ -2298,14 +2413,12 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
         self._name.getQLineEdit().setValidator(validator)
         self._name.setToolTip('Set streamlines name,\n'
                               'Accepted characters A...Z, a...z, 0...9, \', -, _, #, comma, space.')
-        # noinspection PyUnresolvedReferences
         self._name.getQLineEdit().editingFinished.connect(self._nameChanged)
 
         # Color
 
         self._color = IconPushButton('palette.png', self._size)
         self._color.setToolTip('Set streamlines color representation.')
-        # noinspection PyUnresolvedReferences
         self._color.clicked.connect(lambda dummy: self._editColor())
 
         self._dialogcolor = DialogFromXml('Streamlines color', ['TractColor'])
@@ -2315,6 +2428,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
             # cl = self.palette().base().color()
             if self._listattr is not None:
                 cl = self._listattr.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialogcolor, c)
             # Revision 18/11/2025 >
@@ -2330,7 +2444,6 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
 
         self._width = WidthPushButton(prefix='Streamlines width', vmin=0.5, vmax=10.0, step=0.5)
         self._width.setFixedSize(self._size, self._size)
-        # noinspection PyUnresolvedReferences
         self._width.popupHide.connect(self._widthChanged)
 
         self._save.setVisible(True)
@@ -2339,21 +2452,16 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
         # Widget layout
 
         lyout = self.layout()
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._width)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._color)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._opacity)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._visibility)
-        # noinspection PyUnresolvedReferences
         lyout.insertWidget(1, self._name)
-        # noinspection PyUnresolvedReferences
         lyout.insertSpacing(1, 5)
 
     # Private methods
 
+    # noinspection unresolved-references
     def _getTractCollection(self) -> SisypheTractCollection:
         if self.hasViewCollection():
             view = self._views.getVolumeView()
@@ -2413,6 +2521,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(self._dialogcolor, c)
         # Revision 28/08/2025 >
@@ -2451,6 +2560,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
 
     def _updateViews(self) -> None:
         if self.hasViewCollection() and self.hasItem():
+            # noinspection unresolved-references
             view = self._views.getVolumeView()
             if view is not None: view.updateRender()
 
@@ -2485,6 +2595,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
                        sl: SisypheStreamlines,
                        wait: DialogWait | None = None) -> None:
 
+        # noinspection unresolved-references
         tracts = self._views.getTractCollection()
         n = sl.count()
         # < Revision 20/02/2025
@@ -2509,6 +2620,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
 
     def updateStreamlines(self,
                           select: SisypheBundle) -> None:
+        # noinspection unresolved-references
         tracts = self._views.getTractCollection()
         if tracts is not None:
             self._sl = tracts.updateBundle(self._sl, select)
@@ -2517,6 +2629,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
     def duplicateStreamlines(self,
                              sl: SisypheStreamlines,
                              select: SisypheBundle | None) -> None:
+        # noinspection unresolved-references
         tracts = self._views.getTractCollection()
         if tracts is not None:
             self._sl = tracts.duplicateBundle(sl, select)
@@ -2526,6 +2639,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
     def unionStreamlines(self,
                          sl: list[SisypheStreamlines],
                          wait: DialogWait | None = None) -> None:
+        # noinspection unresolved-references
         tracts = self._views.getTractCollection()
         if tracts is not None:
             self._sl = tracts.unionBundle(self.getBundle(), sl, wait)
@@ -2613,6 +2727,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
 
     # < Revision 29/07/2026
     # add enterEvent method
+    # noinspection method-overriding
     def enterEvent(self, event: QEnterEvent) -> None:
         self._updateToolTip()
     # Revision 29/07/2026 >
@@ -2630,12 +2745,13 @@ class ListAttributesWidget(QWidget):
 
     QWidget -> ListAttributesWidget
 
-    Last revision: 29/11/2025
+    Last revision: 06/10/20256
     """
     _VSIZE: int = 32
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -2654,6 +2770,10 @@ class ListAttributesWidget(QWidget):
         self._maxcount = 20
         # Revision 02/11/2024 >
 
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
+
         self._views = views
         if views is not None:
             if views is not isinstance(views, IconBarViewWidgetCollection):
@@ -2665,30 +2785,22 @@ class ListAttributesWidget(QWidget):
             self._list.setStyleSheet('QListWidget::item:selected { background-color: rgb(0, 125, 255); }')
         # Revision 15/11/2025 >
         self._list.setSelectionMode(QListWidget.SingleSelection)
-        # noinspection PyUnresolvedReferences
         self._list.itemSelectionChanged.connect(self._selectionChanged)
 
         self._new = IconPushButton('add.png', size=self._VSIZE)
-        # noinspection PyUnresolvedReferences
         self._new.clicked.connect(lambda dummy: self.new())
         self._open = IconPushButton('open.png', size=self._VSIZE)
-        # noinspection PyUnresolvedReferences
         self._open.clicked.connect(self.open)
         self._saveall = IconPushButton('save.png', size=self._VSIZE)
-        # noinspection PyUnresolvedReferences
         self._saveall.clicked.connect(self.saveAll)
         self._removeall = IconPushButton('delete2.png', size=self._VSIZE)
-        # noinspection PyUnresolvedReferences
         self._removeall.clicked.connect(self.removeAll)
         self._checkall = IconPushButton('check.png', size=self._VSIZE)
-        # noinspection PyUnresolvedReferences
         self._checkall.clicked.connect(self.checkAll)
         self._uncheckall = IconPushButton('uncheck.png', size=self._VSIZE)
-        # noinspection PyUnresolvedReferences
         self._uncheckall.clicked.connect(self.uncheckAll)
         # < Revision 29/11/2025
         self._console = IconPushButton('console.png', size=self._VSIZE)
-        # noinspection PyUnresolvedReferences
         self._console.clicked.connect(self.copyToConsole)
         # Revision 29/11/2025 >
 
@@ -2776,6 +2888,7 @@ class ListAttributesWidget(QWidget):
             i: cython.int
             for i in range(0, n):
                 listitem = self._list.item(i)
+                # noinspection unresolved-references
                 citem = self._list.itemWidget(listitem).getItem()
                 if citem.getName() == item.getName(): return False
         return True
@@ -2796,7 +2909,7 @@ class ListAttributesWidget(QWidget):
             self._updateViews()
             return widget
         else:
-            # noinspection PyInconsistentReturns
+            # noinspection PyInconsistentReturns,unresolved-references
             messageBox(self, 'Add', text='{} is already open.'.format(item.getName()))
 
     def _updateList(self) -> None:
@@ -2810,6 +2923,7 @@ class ListAttributesWidget(QWidget):
                     listitem.setSizeHint(widget.sizeHint())
                     self._list.addItem(listitem)
                     self._list.setItemWidget(listitem, widget)
+                # noinspection unresolved-references
                 self._list.item(0).setSelected(True)
                 self._updateViews()
 
@@ -2823,6 +2937,7 @@ class ListAttributesWidget(QWidget):
         while parent is not None:
             if isinstance(parent, WindowSisyphe): return parent
             else:
+                # noinspection unresolved-references
                 parent = parent.parent()
 
     def _getStatusBar(self) -> QStatusBar:
@@ -2831,6 +2946,12 @@ class ListAttributesWidget(QWidget):
         else: return None
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def setIconSize(self, size: int =_VSIZE) -> None:
         self._new.setIconSize(QSize(size - 8, size - 8))
@@ -2896,6 +3017,7 @@ class ListAttributesWidget(QWidget):
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
+            # noinspection unresolved-references
             widget.setChecked(True)
 
     def uncheckAll(self) -> None:
@@ -2903,6 +3025,7 @@ class ListAttributesWidget(QWidget):
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
+            # noinspection unresolved-references
             widget.setChecked(False)
 
     def getChecked(self) -> list[ItemAttributesWidget]:
@@ -2911,6 +3034,7 @@ class ListAttributesWidget(QWidget):
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
+            # noinspection unresolved-references
             if widget.isChecked(): widgets.append(widget)
         return widgets
 
@@ -2921,10 +3045,12 @@ class ListAttributesWidget(QWidget):
         for i in range(0, self._list.count()):
             item = self._list.item(i)
             widget = self._list.itemWidget(item)
+            # noinspection unresolved-references
             if widget.isChecked(): index.append(i)
         return index
     # Revision 20/11/2025 >
 
+    # noinspection unresolved-references
     def remove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             n = self._list.count()
@@ -2945,6 +3071,7 @@ class ListAttributesWidget(QWidget):
                 self._updateViews()
                 self.setEnabled(True)
 
+    # noinspection unresolved-references
     def removeItem(self, w: ItemAttributesWidget) -> None:
         n = self._list.count()
         if n > 0:
@@ -2988,6 +3115,7 @@ class ListAttributesWidget(QWidget):
                         attritem = self._list.item(i)
                         witem = self._list.itemWidget(attritem)
                         wait.setCurrentProgressValue(i)
+                        # noinspection unresolved-references
                         witem.save(wait)
                 wait.close()
 
@@ -3016,6 +3144,7 @@ class ListAttributesWidget(QWidget):
     def getItem(self, index: int) -> SisypheROI | SisypheMesh | SisypheBundle | HandleWidget | LineWidget:
         if isinstance(index, int):
             if 0 <= index < self._list.count():
+                # noinspection unresolved-references
                 return self._list.itemWidget(self._list.item(index)).getItem()
             else: raise ValueError('parameter is out of range.')
         else: raise ValueError('parameter type {} is not int.'.format(type(index)))
@@ -3034,7 +3163,9 @@ class ListAttributesWidget(QWidget):
 
     # Qt event
 
+    # noinspection method-overriding
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
+        # noinspection unresolved-references
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
@@ -3051,11 +3182,12 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListROIAttributesWidget
 
-    Last revision: 02/06/2026
+    Last revision: 05/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -3078,25 +3210,18 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._visibility = VisibilityLabel()
         # Revision 17/11/2025 >
 
-        # noinspection PyUnresolvedReferences
         self._remove.clicked.connect(self.remove)
-        # noinspection PyUnresolvedReferences
         self._duplicate.clicked.connect(self.duplicate)
-        # noinspection PyUnresolvedReferences
         self._export.clicked.connect(self._exportMenu)
-        # noinspection PyUnresolvedReferences
         self._mesh.clicked.connect(self.toMesh)
         # < Revision 25/11/2025
-        # noinspection PyUnresolvedReferences
         # self._dist.clicked.connect(self.toDistance)
         # Revision 25/11/2025 >
-        # noinspection PyUnresolvedReferences
         self._features.clicked.connect(self.features)
         # < Revision 14/02/2026
         self._labeling.clicked.connect(self.labeling)
         # Revision 14/02/2026 >
         # < Revision 17/11/2025
-        # noinspection PyUnresolvedReferences
         self._visibility.visibilityChanged.connect(self.visibility)
         # Revision 17/11/2025 >
 
@@ -3127,11 +3252,8 @@ class ListROIAttributesWidget(ListAttributesWidget):
         # Revision 13/11/2025 >
 
         self._popup = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['xvol'] = QAction('Export to PySisyphe format')
@@ -3144,23 +3266,15 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._action['numpy'] = QAction('Export to Numpy format')
         self._action['vtk'] = QAction('Export to VTK format')
         self._action['dcm'] = QAction('Export to DICOM RT format')
-        # noinspection PyUnresolvedReferences
         self._action['xvol'].triggered.connect(self.saveSisyphe)
         # < Revision 14/04/2026
-        # noinspection PyUnresolvedReferences
         self._action['lbl'].triggered.connect(self.saveLabelSisyphe)
         # Revision 14/04/2026 >
-        # noinspection PyUnresolvedReferences
         self._action['nii'].triggered.connect(self.saveNifti)
-        # noinspection PyUnresolvedReferences
         self._action['nrrd'].triggered.connect(self.saveNRRD)
-        # noinspection PyUnresolvedReferences
         self._action['minc'].triggered.connect(self.saveMinc)
-        # noinspection PyUnresolvedReferences
         self._action['numpy'].triggered.connect(self.saveNumpy)
-        # noinspection PyUnresolvedReferences
         self._action['vtk'].triggered.connect(self.saveVTK)
-        # noinspection PyUnresolvedReferences
         self._action['dcm'].triggered.connect(self.saveDicomRT)
         self._popup.addAction(self._action['xvol'])
         self._popup.addAction(self._action['lbl'])
@@ -3174,17 +3288,12 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
         # < Revision 18/11/2025
         self._popupDist = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupDist.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupDist.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupDist.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['outside'] = QAction('Outside positive')
         self._action['inside'] = QAction('Inside positive')
-        # noinspection PyUnresolvedReferences
         self._action['outside'].triggered.connect(lambda _: self.toDistance(True))
-        # noinspection PyUnresolvedReferences
         self._action['inside'].triggered.connect(lambda _: self.toDistance(False))
         self._popupDist.addAction(self._action['outside'])
         self._popupDist.addAction(self._action['inside'])
@@ -3203,9 +3312,16 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # Private methods
 
+    # noinspection method-overriding
     def _createWidget(self, item: SisypheROI) -> ItemROIAttributesWidget:
-        return ItemROIAttributesWidget(item, views=self._views, listattr=self)
+        # < Revision 06/10/2026
+        # return ItemROIAttributesWidget(item, views=self._views, listattr=self)
+        item = ItemROIAttributesWidget(item, views=self._views, listattr=self)
+        item.setCompression(self._compress)
+        return item
+        # Revision 06/10/2026 >
 
+    # noinspection unresolved-references
     def _selectionChanged(self) -> None:
         QApplication.processEvents()
         select = self._getSelectedWidget()
@@ -3215,6 +3331,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     def _updateViews(self) -> None:
         if self.hasViewCollection():
+            # noinspection unresolved-references
             self._views.updateROIAttributes()
 
     def _getListMesh(self) -> ListMeshAttributesWidget | None:
@@ -3229,6 +3346,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._popup.popup(p)
 
     def _getNewName(self, name: str) -> str:
+        # noinspection unresolved-references
         while name in self._collection:
             parts = name.split('#')
             suffix = parts[-1]
@@ -3264,6 +3382,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         self._visibility.setFixedSize(size, size)
         # Revision 13/11/2025
 
+    # noinspection unresolved-references
     def getCheckedROI(self) -> list[SisypheROI]:
         rois = list()
         i: cython.int
@@ -3307,6 +3426,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
         if isinstance(views, IconBarViewWidgetCollection): self._collection = views.getROICollection()
         else: self._collection = None
 
+    # noinspection unresolved-references
     def new(self, name: str = '') -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
@@ -3346,6 +3466,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                'Close a ROI to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def add(self, roi: SisypheROI) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
@@ -3464,6 +3585,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                                     'Close a ROI to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def remove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             rois = self.getCheckedROI()
@@ -3489,6 +3611,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 # Revision 06/11/2025 >
             else: messageBox(self, 'Remove ROI', 'No ROI checked.')
 
+    # noinspection unresolved-references
     def removeItem(self, w: ItemROIAttributesWidget) -> None:
         if self.hasViewCollection() and self.hasCollection():
             roi = w.getROI()
@@ -3504,6 +3627,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 if mainwindow is not None:
                     mainwindow.setROIToolsEnabled(False)
 
+    # noinspection unresolved-references
     def removeAll(self) -> None:
         super().removeAll()
         self._views.setROIVisibility(False)
@@ -3518,12 +3642,14 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     def saveAll(self) -> None:
         super().saveAll()
+        # noinspection unresolved-references
         self._views.clearUndo()
         self._logger.info('Save all ROIs')
         mainwindow = self._getMainWindow()
         if mainwindow is not None:
             mainwindow.setStatusBarMessage('All ROI(s) saved.')
 
+    # noinspection unresolved-references
     def saveSisyphe(self) -> None:
         rois = self.getCheckedROI()
         n = len(rois)
@@ -3550,6 +3676,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 vol.acquisition.setModalityToOT()
                 vol.acquisition.setSequenceToMask()
                 # Revision 29/01/2026 >
+                # < Revision 05/10/2026
+                if self._compress: vol.setCompressionOn()
+                # Revision 05/10/2026 >
                 vol.saveAs(filename)
                 self._logger.info('Save ROI {} to {}'.format(roi.getName(), filename))
             wait.close()
@@ -3572,6 +3701,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
             c.setReferenceID(ref)
             for roi in rois: c.append(roi)
             vol = c.toLabelVolume()
+            # noinspection unresolved-references
             vol.setFilename(ref.getFilename())
             vol.setFilenameSuffix('LABEL')
             wait.hide()
@@ -3582,6 +3712,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
             QApplication.processEvents()
             if filename:
                 wait.show()
+                # < Revision 05/10/2026
+                if self._compress: vol.setCompressionOn()
+                # Revision 05/10/2026 >
                 vol.saveAs(filename)
                 wait.setInformationText('Save {}'.format(vol.getBasename()))
                 self._logger.info('Save Label volume {}'.format(vol.getFilename()))
@@ -3609,6 +3742,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 #     filename = join(path, roi.getName() + getNiftiExt()[0])
                 # else: filename = item.getFilename()
                 if not roi.hasFilename():
+                    # noinspection unresolved-references
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getNiftiExt()[0])
                 else: filename = roi.getFilename()
@@ -3640,6 +3774,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 #     filename = join(path, roi.getName() + getNrrdExt()[0])
                 # else: filename = item.getFilename()
                 if not roi.hasFilename():
+                    # noinspection unresolved-references
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getNrrdExt()[0])
                 else: filename = roi.getFilename()
@@ -3671,6 +3806,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 #     filename = join(path, roi.getName() + getMincExt()[0])
                 # else: filename = item.getFilename()
                 if not roi.hasFilename():
+                    # noinspection unresolved-references
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getMincExt()[0])
                 else: filename = roi.getFilename()
@@ -3702,6 +3838,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 #     filename = join(path, roi.getName() + getNumpyExt()[0])
                 # else: filename = item.getFilename()
                 if not roi.hasFilename():
+                    # noinspection unresolved-references
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getNumpyExt()[0])
                 else: filename = roi.getFilename()
@@ -3733,6 +3870,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                 #     filename = join(path, roi.getName() + getVtkExt()[0])
                 # else: filename = item.getFilename()
                 if not roi.hasFilename():
+                    # noinspection unresolved-references
                     path = self.getViewCollection().getVolume().getFilename()
                     filename = join(path, roi.getName() + getVtkExt()[0])
                 else: filename = roi.getFilename()
@@ -3814,6 +3952,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # < Revision 25/10/2024
     # add toDistance method
+    # noinspection unresolved-references
     def toDistance(self, outside: bool = True) -> None:
         if self.hasViewCollection():
             rois = self.getCheckedROI()
@@ -3844,6 +3983,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
                         r.setFilenamePrefix('distance')
                     wait.setInformationText('Save {}'.format(r.getBasename()))
                     wait.incCurrentProgressValue()
+                    # < Revision 05/10/2026
+                    if self._compress: r.setCompressionOn()
+                    # Revision 05/10/2026 >
                     r.save()
                     self._logger.info('ROI {} to distance map {}'.format(roi.getName(), r.getFilename()))
                     filenames.append(r.getFilename())
@@ -3860,7 +4002,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # < Revision 05/08/2025
     # add toDistance method
-    # noinspection PyProtectedMember
+    # noinspection PyProtectedMember,unresolved-references
     def features(self) -> None:
         rois = self.getCheckedROI()
         if len(rois) > 0:
@@ -3890,6 +4032,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
     # Revision 05/08/2025 >
 
     # < Revision 14/02/2026
+    # noinspection unresolved-references
     def labeling(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
@@ -3899,6 +4042,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self._list.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(dialog, c)
                     ref = self._views.getVolume()
@@ -3907,6 +4051,9 @@ class ListROIAttributesWidget(ListAttributesWidget):
                         if not roi.hasFilename():
                             filename = abspath(join(ref.getDirname(), roi.getName() + roi.getFileExt()))
                             roi.setFilename(filename)
+                            # < Revision 06/10/2026
+                            if self._compress: roi.setCompressionOn()
+                            # Revision 06/10/2026 >
                         if not exists(roi.getFilename()): roi.save()
                         dialog.addROI(roi.getFilename(), hide=True)
                     dialog.exec()
@@ -3922,6 +4069,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
                     i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
+                        # noinspection unresolved-references
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
     # Revision 17/11/2025 >
 
@@ -3955,6 +4103,7 @@ class ListROIAttributesWidget(ListAttributesWidget):
 
     # Qt event
 
+    # noinspection method-overriding,unresolved-references
     def dropEvent(self, event: QDropEvent) -> None:
         if self.hasViewCollection():
             if event.mimeData().hasText():
@@ -3995,11 +4144,12 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListMeshAttributesWidget
 
-    Last revision: 02/06/2026
+    Last revision: 05/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -4025,25 +4175,17 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._visibility = VisibilityLabel()
         # Revision 17/11/2025 >
 
-        # noinspection PyUnresolvedReferences
         self._remove.clicked.connect(self.remove)
-        # noinspection PyUnresolvedReferences
         self._out.clicked.connect(self.addOuterSurface)
-        # noinspection PyUnresolvedReferences
         self._iso.clicked.connect(self.addIsosurface)
-        # noinspection PyUnresolvedReferences
         self._roi.clicked.connect(self._roiMenu)
-        # noinspection PyUnresolvedReferences
         self._duplicate.clicked.connect(self.duplicate)
-        # noinspection PyUnresolvedReferences
         self._overlay.clicked.connect(self._overlayMenu)
-        # noinspection PyUnresolvedReferences
         self._2roi.clicked.connect(self.toRoi)
         # < Revision 14/02/2026
         self._labeling.clicked.connect(self.labeling)
         # Revision 14/02/2026 >
         # < Revision 17/11/2025
-        # noinspection PyUnresolvedReferences
         self._visibility.visibilityChanged.connect(self.visibility)
         # Revision 17/11/2025 >
 
@@ -4083,24 +4225,17 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         # Revision 13/11/2025 >
 
         self._popupExport = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupExport.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupExport.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupExport.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['obj'] = QAction('Export to OBJ format')
         self._action['stl'] = QAction('Export to STL format')
         self._action['vtk'] = QAction('Export to VTK format')
         self._action['xvtk'] = QAction('Export to XMLVTK format')
-        # noinspection PyUnresolvedReferences
         self._action['obj'].triggered.connect(self.saveOBJ)
-        # noinspection PyUnresolvedReferences
         self._action['stl'].triggered.connect(self.saveSTL)
-        # noinspection PyUnresolvedReferences
         self._action['vtk'].triggered.connect(self.saveVTK)
-        # noinspection PyUnresolvedReferences
         self._action['xvtk'].triggered.connect(self.saveXMLVTK)
         self._popupExport.addAction(self._action['obj'])
         self._popupExport.addAction(self._action['stl'])
@@ -4109,11 +4244,8 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._export.setMenu(self._popupExport)
 
         self._popupCube = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupCube.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupCube.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupCube.setAttribute(Qt.WA_TranslucentBackground, True)
         self._cubex = LabeledDoubleSpinBox()
         self._cubex.setTitle('Size x')
@@ -4150,17 +4282,13 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._popupCube.addAction(action)
         self._popupCube.addSeparator()
         self._action['cube'] = QAction('Add parallelepiped mesh')
-        # noinspection PyUnresolvedReferences
         self._action['cube'].triggered.connect(self.addCube)
         self._popupCube.addAction(self._action['cube'])
         self._cube.setMenu(self._popupCube)
 
         self._popupSphere = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupSphere.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupSphere.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupSphere.setAttribute(Qt.WA_TranslucentBackground, True)
         self._spherer = LabeledDoubleSpinBox()
         self._spherer.setTitle('Radius')
@@ -4175,37 +4303,27 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._popupSphere.addAction(action)
         self._popupSphere.addSeparator()
         self._action['sphere'] = QAction('Add sphere mesh')
-        # noinspection PyUnresolvedReferences
         self._action['sphere'].triggered.connect(self.addSphere)
         self._popupSphere.addAction(self._action['sphere'])
         self._sphere.setMenu(self._popupSphere)
 
         self._ractions = list()
         self._popupRoi = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupRoi.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupRoi.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupRoi.setAttribute(Qt.WA_TranslucentBackground, True)
-        # noinspection PyUnresolvedReferences
         self._popupRoi.aboutToShow.connect(self._roiMenu)
         self._roi.setMenu(self._popupRoi)
 
         self._oactions: list[QAction] = list()
         self._popupOverlay = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupOverlay.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupOverlay.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupOverlay.setAttribute(Qt.WA_TranslucentBackground, True)
-        # noinspection PyUnresolvedReferences
         self._popupOverlay.aboutToShow.connect(self._overlayMenu)
         self._overlay.setMenu(self._popupOverlay)
 
         self._depth = LabeledSpinBox('Depth', parent=self._popupOverlay)
-        # noinspection PyUnresolvedReferences
         self._depth.setAlignment(Qt.AlignCenter)
         self._depth.setSuffix(' mm')
         self._depth.setRange(0, 10)
@@ -4240,16 +4358,19 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(self._dialog, c)
 
     # Private methods
 
+    # noinspection method-overriding
     def _createWidget(self, item: SisypheMesh) -> ItemMeshAttributesWidget:
         return ItemMeshAttributesWidget(item, views=self._views, listattr=self)
 
     def _updateViews(self) -> None:
         if self.hasViewCollection():
+            # noinspection unresolved-references
             volview = self._views.getVolumeView()
             if volview is not None: volview.updateRender()
 
@@ -4283,6 +4404,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._popupOverlay.addAction(self._oactions[0])
         self._popupOverlay.addAction(self._oactions[1])
         self._popupOverlay.addSeparator()
+        # noinspection unresolved-references
         view = self._views.getOrthogonalSliceTrajectoryViewWidget()
         if view is not None:
             action = QAction(view.getVolume().getName())
@@ -4308,6 +4430,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._oactions.append(action)
 
     def _getNewName(self, name: str) -> str:
+        # noinspection unresolved-references
         while name in self._collection:
             parts = name.split('#')
             suffix = parts[-1]
@@ -4351,6 +4474,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._visibility.setFixedSize(size, size)
         # Revision 13/11/2025
 
+    # noinspection unresolved-references
     def getCheckedMesh(self) -> list[SisypheMesh]:
         meshes = list()
         i: cython.int
@@ -4394,6 +4518,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         if isinstance(views, IconBarViewWidgetCollection): self._collection = views.getMeshCollection()
         else: self._collection = None
 
+    # noinspection unresolved-references
     def add(self, mesh: SisypheMesh) -> ItemMeshAttributesWidget | None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
@@ -4449,6 +4574,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
+                    # noinspection unresolved-references
                     vol = self._views.getVolume()
                     if vol is not None:
                         mesh = SisypheMesh()
@@ -4493,6 +4619,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
                 if self.count() < self.getMaxCount():
+                    # noinspection unresolved-references
                     vol = self._views.getVolume()
                     if vol is not None:
                         self._dialog.setVolume(vol)
@@ -4503,6 +4630,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(self._dialog, c)
                         # Revision 28/08/2025 >
@@ -4544,6 +4672,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def addRoi(self, rois: list[SisypheROI] | tuple[SisypheROI, ...]) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
@@ -4641,6 +4770,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def addCube(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
@@ -4667,6 +4797,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def addSphere(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
@@ -4737,6 +4868,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                     'Close a Mesh to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def addOverlay(self, vol: str | SisypheVolume) -> None:
         if self.isEnabled():
             if self.hasViewCollection() and self.hasCollection():
@@ -4751,6 +4883,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                                 if platform == 'win32':
                                     import pywinstyles
                                     cl = self.palette().base().color()
+                                    # noinspection string-format
                                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                                     pywinstyles.change_header_color(dialog, c)
                                 dialog.setWindowTitle('Display mesh overlay')
@@ -5047,6 +5180,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(dialog, c)
                     dialog.newTab('Mesh features', capture=False, clipbrd=False, scrshot=None, dataset=True)
@@ -5110,6 +5244,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                 for mesh in meshes:
                     wait.setInformationText('Export {} mesh to OBJ format...'.format(mesh.getName()))
                     if not mesh.hasFilename():
+                        # noinspection unresolved-references
                         path = self.getViewCollection().getVolume().getFilename()
                         mesh.saveToOBJ(join(path, mesh.getName()))
                     mesh.saveToOBJ(mesh.getFilename())
@@ -5135,6 +5270,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     wait.setInformationText('Export {} mesh to STL format...'.format(mesh.getName()))
                     wait.incCurrentProgressValue()
                     if not mesh.hasFilename():
+                        # noinspection unresolved-references
                         path = self.getViewCollection().getVolume().getFilename()
                         mesh.saveToSTL(join(path, mesh.getName()))
                         self._logger.info('Save Mesh {} to STL format'.format(mesh.getName()))
@@ -5159,6 +5295,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     wait.setInformationText('Export {} mesh to VTK format...'.format(mesh.getName()))
                     wait.incCurrentProgressValue()
                     if not mesh.hasFilename():
+                        # noinspection unresolved-references
                         path = self.getViewCollection().getVolume().getFilename()
                         mesh.saveToVTK(join(path, mesh.getName()))
                     mesh.saveToVTK(mesh.getFilename())
@@ -5183,6 +5320,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     wait.setInformationText('Export {} mesh to XMLVTK format...'.format(mesh.getName()))
                     wait.incCurrentProgressValue()
                     if not mesh.hasFilename():
+                        # noinspection unresolved-references
                         path = self.getViewCollection().getVolume().getFilename()
                         mesh.saveToXMLVTK(join(path, mesh.getName()))
                     mesh.saveToXMLVTK(mesh.getFilename())
@@ -5234,6 +5372,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
             meshes = self.getCheckedMesh()
             n = len(meshes)
             if n > 0:
+                # noinspection unresolved-references
                 view = self._views.getOrthogonalSliceTrajectoryViewWidget()
                 if view is not None:
                     for mesh in meshes:
@@ -5248,6 +5387,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
     def removeItem(self, w: ItemMeshAttributesWidget) -> None:
         if self.hasViewCollection() and self.hasCollection():
             mesh = w.getMesh()
+            # noinspection unresolved-references
             view = self._views.getOrthogonalSliceTrajectoryViewWidget()
             if view is not None: view.removeMesh(mesh)
             super().removeItem(w)
@@ -5286,6 +5426,9 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                         if self._listroiwidget.isEnabled(): self._listroiwidget.add(roi)
                         if ref is not None:
                             wait.setInformationText('Save {}...'.format(basename(roi.getFilename())))
+                            # < Revision 05/10/2026
+                            if self._compress: roi.setCompressionOn()
+                            # Revision 05/10/2026 >
                             roi.save()
                             self._logger.info('Mesh {} to ROI {}'.format(mesh.getName(), roi.getFilename()))
                     wait.close()
@@ -5295,6 +5438,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     mainwindow.setStatusBarMessage('Mesh(es) converted to ROI(s).')
 
     # < Revision 14/02/2026
+    # noinspection unresolved-references
     def labeling(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
@@ -5304,6 +5448,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self._list.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(dialog, c)
                     ref = self._views.getVolume()
@@ -5326,6 +5471,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
                     i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
+                        # noinspection unresolved-references
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
     # Revision 17/11/2025 >
 
@@ -5359,6 +5505,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
 
     # Qt event
 
+    # noinspection method-overriding,unresolved-references
     def dropEvent(self, event: QDropEvent)  -> None:
         if self.hasViewCollection():
             if event.mimeData().hasText():
@@ -5394,11 +5541,12 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListToolAttributesWidget
 
-    Last revision: 18/06/2026
+    Last revision: 14/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None):
@@ -5410,6 +5558,14 @@ class ListToolAttributesWidget(ListAttributesWidget):
         if self._views is not None:
             view = self._views.getVolumeView()
             view.ToolColorChanged.connect(self._synchroniseToolColorChanged)
+            # < Revision 14/10/2026
+            view = self._views.getOrthogonalSliceTrajectoryViewWidget()
+            if view:
+                view[0, 0].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+                view[0, 1].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+                view[1, 0].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+                view[1, 1].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+            # Revision 14/10/2026 >
             # view.ToolRemoved.connect(self._synchroniseToolRemoved)
 
         self._target = IconPushButton('target.png', size=ListAttributesWidget._VSIZE)
@@ -5430,27 +5586,18 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._targets = IconPushButton('targets.png', size=ListAttributesWidget._VSIZE)
         # Revision 18/06/2026 >
 
-        # noinspection PyUnresolvedReferences
         self._target.clicked.connect(self.newHandle)
-        # noinspection PyUnresolvedReferences
         self._trajectory.clicked.connect(self.newLine)
-        # noinspection PyUnresolvedReferences
         self._remove.clicked.connect(self.remove)
-        # noinspection PyUnresolvedReferences
         self._duplicate.clicked.connect(self.duplicate)
-        # noinspection PyUnresolvedReferences
         self._features.clicked.connect(self.features)
-        # noinspection PyUnresolvedReferences
         self._features2.clicked.connect(self.features2)
         # < Revision 14/02/2026
         self._labeling.clicked.connect(self.labeling)
         # Revision 14/02/2026 >
         # < Revision 13/11/2025
-        # noinspection PyUnresolvedReferences
         self._visibility.visibilityChanged.connect(self.visibility)
-        # noinspection PyUnresolvedReferences
         self._lock.lockChanged.connect(self.lock)
-        # noinspection PyUnresolvedReferences
         self._properties.clicked.connect(self.properties)
         # Revision 13/11/2025 >
         # < Revision 18/06/2026
@@ -5520,6 +5667,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
             if self._list is not None:
                 # cl = self.palette().base().color()
                 cl = self._list.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialogtarget, c)
                 # < Revision 18/06/2026
@@ -5532,7 +5680,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _synchroniseToolColorChanged(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget):
         if not self.isEmpty():
             i: cython.int
@@ -5543,7 +5691,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     if w.getColor() != c:
                         w.setColor(c[0], c[1], c[2], signal=False)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _synchroniseToolRemoved(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget, removeall: bool):
         if not self.isEmpty() and tool is not None:
             i: cython.int
@@ -5552,14 +5700,23 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     w = self.getWidget(i)
                     ListAttributesWidget.removeItem(self, w)
 
+    # < Revision 14/10/2026
+    # add _synchroniseToolCreation method
+    def _synchroniseInteractiveClicked(self, v: int) -> None:
+        if v == 1: self.newHandle(True)
+        elif v == 2: self.newLine(True)
+    # Revision 14/10/2026 >
+
+    # noinspection method-overriding
     def _createWidget(self, item: HandleWidget | LineWidget) -> None:
         return ItemToolAttributesWidget(item, views=self._views, listattr=self)
 
     def _updateViews(self) -> None:
         if self.hasViewCollection():
+            # noinspection unresolved-references
             self._views.updateRender()
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _updateTargets(self, widget: ItemToolAttributesWidget, tool: HandleWidget | LineWidget) -> None:
         if self.hasViewCollection():
             if len(self._collection) > 0:
@@ -5610,6 +5767,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._targets.setFixedSize(size, size)
         # Revision 18/06/2026 >
 
+    # noinspection unresolved-references
     def getCheckedTool(self) -> list[HandleWidget | LineWidget]:
         tools = list()
         i: cython.int
@@ -5639,6 +5797,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
         from Sisyphe.widgets.tabToolsWidgets import TabTargetListWidget
         return isinstance(parent, TabTargetListWidget)
 
+    # noinspection unresolved-references
     def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         super().setViewCollection(views)
         if isinstance(views, IconBarViewWidgetCollection):
@@ -5647,9 +5806,18 @@ class ListToolAttributesWidget(ListAttributesWidget):
             view = self._views.getVolumeView()
             view.ToolColorChanged.connect(self._synchroniseToolColorChanged)
             # view.ToolRemoved.connect(self._synchroniseToolRemoved)
+            # < Revision 14/10/2026
+            view = self._views.getOrthogonalSliceTrajectoryViewWidget()
+            if view:
+                view[0, 0].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+                view[0, 1].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+                view[1, 0].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+                view[1, 1].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+            # Revision 14/10/2026 >
         else: self._collection = None
 
-    def newHandle(self) -> None:
+    # noinspection unresolved-references
+    def newHandle(self, interactive: bool = False) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -5662,33 +5830,49 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._dialogtarget, c)
                     # Revision 28/08/2025 >
-                    if self._dialogtarget.exec() == QDialog.Accepted:
-                        view = self._views.getVolumeView()
-                        if view is not None:
-                            p = self._dialogtarget.getTargetPosition()
-                            item = view.addTarget(p)
-                            if self._dialogtarget.isRelativeOrWeightedPosition(): item.setDynamic()
-                            widget = self._addItem(item)
-                            widget.setLock(item.isDynamic())
-                            widget.getDialogTarget().copyFieldsFrom(self._dialogtarget)
-                            widget.setDefaultAttributesFromSettings()
-                            widget.focusTarget()
-                            if not self._connected:
-                                # to update relative tools position
-                                view.ToolMoved.connect(self._updateTargets)
-                                slcviews = self._views.getOrthogonalSliceTrajectoryViewWidget()
-                                if slcviews is not None:
-                                    slcviews[0, 1].ToolMoved.connect(self._updateTargets)
-                                    slcviews[1, 0].ToolMoved.connect(self._updateTargets)
-                                    slcviews[1, 1].ToolMoved.connect(self._updateTargets)
-                            self._logger.info('New target tool {}'.format(item.getName()))
-                            mainwindow = self._getMainWindow()
-                            if mainwindow is not None:
-                                mainwindow.updateMemoryUsage()
-                                mainwindow.setStatusBarMessage('Add new target {}.'.format(item.getName()))
+                    # < Revision 14/10/2026
+                    # if self._dialogtarget.exec() == QDialog.Accepted:
+                    if interactive: self._dialogtarget.setCursorPosition()
+                    elif self._dialogtarget.exec() != QDialog.Accepted: return
+                    # Revision 14/10/2026 >
+                    view = self._views.getVolumeView()
+                    if view is not None:
+                        # < Revision 14/10/2026
+                        if self._dialogtarget.isInteractivePosition():
+                            view.setInteractiveMode(1)
+                            return
+                        # Revision 14/10/2026 >
+                        p = self._dialogtarget.getTargetPosition()
+                        item = view.addTarget(p)
+                        if self._dialogtarget.isRelativeOrWeightedPosition(): item.setDynamic()
+                        widget = self._addItem(item)
+                        widget.setLock(item.isDynamic())
+                        widget.getDialogTarget().copyFieldsFrom(self._dialogtarget)
+                        # < Revision 14/10/2026
+                        # widget.setDefaultAttributesFromSettings()
+                        n = self.count()
+                        if n > 1:
+                            widget.copyAttributesFromWidget(self.getWidget(n - 2))
+                        else: widget.setDefaultAttributesFromSettings()
+                        # Revision 14/10/2026 >
+                        widget.focusTarget()
+                        if not self._connected:
+                            # to update relative tools position
+                            view.ToolMoved.connect(self._updateTargets)
+                            slcviews = self._views.getOrthogonalSliceTrajectoryViewWidget()
+                            if slcviews is not None:
+                                slcviews[0, 1].ToolMoved.connect(self._updateTargets)
+                                slcviews[1, 0].ToolMoved.connect(self._updateTargets)
+                                slcviews[1, 1].ToolMoved.connect(self._updateTargets)
+                        self._logger.info('New target tool {}'.format(item.getName()))
+                        mainwindow = self._getMainWindow()
+                        if mainwindow is not None:
+                            mainwindow.updateMemoryUsage()
+                            mainwindow.setStatusBarMessage('Add new target {}.'.format(item.getName()))
                 else:
                     messageBox(self,
                                'Add new target',
@@ -5696,7 +5880,8 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     'Close a tool to add a new one.',
                                icon=QMessageBox.Information)
 
-    def newLine(self) -> None:
+    # noinspection unresolved-references
+    def newLine(self, interactive: bool = False) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
                 if self.count() < self.getMaxCount():
@@ -5709,33 +5894,49 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._dialogtarget, c)
                     # Revision 28/08/2025 >
-                    if self._dialogtarget.exec() == QDialog.Accepted:
-                        view = self._views.getVolumeView()
-                        if view is not None:
-                            r = self._dialogtarget.getAttributes()
-                            item = view.addTrajectory(p1=r['entry'], p2=r['target'])
-                            if self._dialogtarget.isRelativeOrWeightedPosition(): item.setDynamic()
-                            widget = self._addItem(item)
-                            widget.setLock(item.isDynamic())
-                            widget.getDialogTarget().copyFieldsFrom(self._dialogtarget)
-                            widget.setDefaultAttributesFromSettings()
-                            widget.focusTarget()
-                            if not self._connected:
-                                # to update relative tools position
-                                view.ToolMoved.connect(self._updateTargets)
-                                slcviews = self._views.getOrthogonalSliceTrajectoryViewWidget()
-                                if slcviews is not None:
-                                    slcviews[0, 1].ToolMoved.connect(self._updateTargets)
-                                    slcviews[1, 0].ToolMoved.connect(self._updateTargets)
-                                    slcviews[1, 1].ToolMoved.connect(self._updateTargets)
-                            self._logger.info('New trajectory tool {}'.format(item.getName()))
-                            mainwindow = self._getMainWindow()
-                            if mainwindow is not None:
-                                mainwindow.updateMemoryUsage()
-                                mainwindow.setStatusBarMessage('Add new trajectory {}.'.format(item.getName()))
+                    # < Revision 14/10/2026
+                    # if self._dialogtarget.exec() == QDialog.Accepted:
+                    if interactive: self._dialogtarget.setCursorPosition()
+                    elif self._dialogtarget.exec() != QDialog.Accepted: return
+                    # Revision 14/10/2026 >
+                    view = self._views.getVolumeView()
+                    if view is not None:
+                        # < Revision 14/10/2026
+                        if self._dialogtarget.isInteractivePosition():
+                            view.setInteractiveMode(2)
+                            return
+                        # Revision 14/10/2026 >
+                        r = self._dialogtarget.getAttributes()
+                        item = view.addTrajectory(p1=r['entry'], p2=r['target'])
+                        if self._dialogtarget.isRelativeOrWeightedPosition(): item.setDynamic()
+                        widget = self._addItem(item)
+                        widget.setLock(item.isDynamic())
+                        widget.getDialogTarget().copyFieldsFrom(self._dialogtarget)
+                        # < Revision 14/10/2026
+                        # widget.setDefaultAttributesFromSettings()
+                        n = self.count()
+                        if n > 0:
+                            widget.copyAttributesFromWidget(self.getWidget(n - 2))
+                        else: widget.setDefaultAttributesFromSettings()
+                        # Revision 14/10/2026 >
+                        widget.focusTarget()
+                        if not self._connected:
+                            # to update relative tools position
+                            view.ToolMoved.connect(self._updateTargets)
+                            slcviews = self._views.getOrthogonalSliceTrajectoryViewWidget()
+                            if slcviews is not None:
+                                slcviews[0, 1].ToolMoved.connect(self._updateTargets)
+                                slcviews[1, 0].ToolMoved.connect(self._updateTargets)
+                                slcviews[1, 1].ToolMoved.connect(self._updateTargets)
+                        self._logger.info('New trajectory tool {}'.format(item.getName()))
+                        mainwindow = self._getMainWindow()
+                        if mainwindow is not None:
+                            mainwindow.updateMemoryUsage()
+                            mainwindow.setStatusBarMessage('Add new trajectory {}.'.format(item.getName()))
                 else:
                     messageBox(self,
                                'Add new trajectory',
@@ -5743,6 +5944,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     'Close a tool to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def open(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
@@ -5959,6 +6161,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     'Close a tool to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def duplicate(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
@@ -5974,6 +6177,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(self._dialogduplicate, c)
                         # Revision 28/08/2025 >
@@ -6112,6 +6316,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                     'Close a tool to add a new one.',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def features(self) -> None:
 
         def toStr(v):
@@ -6339,6 +6544,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._dialogfeatures, c)
                     # Revision 28/08/2025 >
@@ -6353,6 +6559,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
             if self.hasViewCollection():
                 if len(self._collection) > 0:
                     self._dialogfeatures.clear()
+                    # noinspection unresolved-references
                     meshes = self._views.getMeshCollection()
                     if meshes is not None and len(meshes) > 0:
                         wait = DialogWait()
@@ -6419,6 +6626,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(self._dialogfeatures, c)
                         # Revision 28/08/2025 >
@@ -6433,6 +6641,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                                'No target or trajectory.')
 
     # < Revision 14/02/2026
+    # noinspection unresolved-references
     def labeling(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
@@ -6442,6 +6651,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self._list.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(dialog, c)
                     ref = self._views.getVolume()
@@ -6458,7 +6668,6 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     dialog.exec()
                     remove(collection.getFilename())
                 else: messageBox(self, 'Tool(s) atlas labeling', 'No tool checked.')
-
     # Revision 14/02/2026 >
 
     # < Revision 13/11/2025
@@ -6470,6 +6679,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
+                        # noinspection unresolved-references
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
     # Revision 13/11/2025 >
 
@@ -6482,11 +6692,13 @@ class ListToolAttributesWidget(ListAttributesWidget):
                     i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
+                        # noinspection unresolved-references
                         widget.setLock(self._lock.getLockStateIcon())
     # Revision 13/11/2025 >
 
     # < Revision 20/11/2025
     # add properties() method
+    # noinspection unresolved-references
     def properties(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
@@ -6612,6 +6824,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
     # Revision 20/11/2025 >
 
     # < Revision 18/06/2026
+    # noinspection unresolved-references
     def targets(self) -> None:
         tool = self.getSelectedTool()
         if tool is not None and isinstance(tool, LineWidget):
@@ -6657,6 +6870,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # Revision 18/06/2026 >
 
+    # noinspection unresolved-references
     def remove(self) -> None:
         if self.hasViewCollection():
             tools = self.getCheckedTool()
@@ -6681,6 +6895,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                 mainwindow.updateMemoryUsage()
                 mainwindow.setStatusBarMessage('Tool(s) removed.')
 
+    # noinspection unresolved-references
     def removeItem(self, w: ItemToolAttributesWidget) -> None:
         if self.hasViewCollection():
             tool = w.getTool()
@@ -6696,6 +6911,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
                 mainwindow.setStatusBarMessage('{} tool removed.'.format(tool.getName()))
             super().removeItem(w)
 
+    # noinspection unresolved-references
     def removeAll(self) -> None:
         if self.hasViewCollection():
             self._views.getVolumeView().removeAllTools()
@@ -6709,6 +6925,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
             mainwindow.updateMemoryUsage()
             mainwindow.setStatusBarMessage('All tool(s) removed.')
 
+    # noinspection unresolved-references
     def saveAll(self) -> None:
         if self.hasViewCollection():
             vol = self._views.getVolume()
@@ -6759,6 +6976,7 @@ class ListToolAttributesWidget(ListAttributesWidget):
 
     # Qt event
 
+    # noinspection method-overriding,unresolved-references
     def dropEvent(self, event: QDropEvent) -> None:
         if self.hasViewCollection():
             if event.mimeData().hasText():
@@ -6821,7 +7039,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     QWidget -> ListAttributesWidget -> ListBundleAttributesWidget
 
-    Last revision: 25/08/2026
+    Last revision: 05/10/2026
     """
 
     # Class constant
@@ -6830,6 +7048,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -6870,157 +7089,117 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._action = dict()
 
         self._popupInteractive = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupInteractive.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupInteractive.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupInteractive.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['excl0'] = QAction('Exclude streamlines that cross cursor sphere')
-        # noinspection PyUnresolvedReferences
         self._action['excl0'].triggered.connect(lambda _: self.interactive(0))
         self._popupInteractive.addAction(self._action['excl0'])
         self._action['excl1'] = QAction('Exclude streamlines that do not cross cursor sphere')
-        # noinspection PyUnresolvedReferences
         self._action['excl1'].triggered.connect(lambda _: self.interactive(1))
         self._popupInteractive.addAction(self._action['excl1'])
         self._action['excl2'] = QAction('Exclude streamlines that cross axial slice')
-        # noinspection PyUnresolvedReferences
         self._action['excl2'].triggered.connect(lambda _: self.interactive(2))
         self._popupInteractive.addAction(self._action['excl2'])
         self._action['excl3'] = QAction('Exclude streamlines that do not cross axial slice')
-        # noinspection PyUnresolvedReferences
         self._action['excl3'].triggered.connect(lambda _: self.interactive(3))
         self._popupInteractive.addAction(self._action['excl3'])
         self._action['excl4'] = QAction('Exclude streamlines that cross coronal slice')
-        # noinspection PyUnresolvedReferences
         self._action['excl4'].triggered.connect(lambda _: self.interactive(4))
         self._popupInteractive.addAction(self._action['excl4'])
         self._action['excl5'] = QAction('Exclude streamlines that do not cross coronal slice')
-        # noinspection PyUnresolvedReferences
         self._action['excl5'].triggered.connect(lambda _: self.interactive(5))
         self._popupInteractive.addAction(self._action['excl5'])
         self._action['excl6'] = QAction('Exclude streamlines that cross sagittal slice')
-        # noinspection PyUnresolvedReferences
         self._action['excl6'].triggered.connect(lambda _: self.interactive(6))
         self._popupInteractive.addAction(self._action['excl6'])
         self._action['excl7'] = QAction('Exclude streamlines that do not cross sagittal slice')
-        # noinspection PyUnresolvedReferences
         self._action['excl7'].triggered.connect(lambda _: self.interactive(7))
         self._popupInteractive.addAction(self._action['excl7'])
         self._popupInteractive.addSeparator()
         self._interactive.setMenu(self._popupInteractive)
 
         self._popupToROI = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupToROI.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupToROI.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupToROI.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._treshroi)
         self._popupToROI.addAction(a)
         self._action['toroi'] = QAction('Convert to ROI(s)...')
-        # noinspection PyUnresolvedReferences
         self._action['toroi'].triggered.connect(self.toROI)
         self._popupToROI.addAction(self._action['toroi'])
         self._toroi.setMenu(self._popupToROI)
 
         self._popupToMesh = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupToMesh.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupToMesh.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupToMesh.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._treshmesh)
         self._popupToMesh.addAction(a)
         self._action['tomesh'] = QAction('Convert to Mesh(es)...')
-        # noinspection PyUnresolvedReferences
         self._action['tomesh'].triggered.connect(self.toMesh)
         self._popupToMesh.addAction(self._action['tomesh'])
         self._tomesh.setMenu(self._popupToMesh)
 
         self._popupDuplicate = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupDuplicate.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupDuplicate.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupDuplicate.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['dup1'] = QAction('with original step...')
-        # noinspection PyUnresolvedReferences
         self._action['dup1'].triggered.connect(lambda _: self.duplicate(0))
         self._popupDuplicate.addAction(self._action['dup1'])
         self._action['dup2'] = QAction('with 0.5 mm regular step...')
-        # noinspection PyUnresolvedReferences
         self._action['dup2'].triggered.connect(lambda _: self.duplicate(1))
         self._popupDuplicate.addAction(self._action['dup2'])
         self._action['dup3'] = QAction('with 1.0 mm regular step...')
-        # noinspection PyUnresolvedReferences
         self._action['dup3'].triggered.connect(lambda _: self.duplicate(2))
         self._popupDuplicate.addAction(self._action['dup3'])
         self._action['dup4'] = QAction('with 2.0 mm regular step...')
-        # noinspection PyUnresolvedReferences
         self._action['dup4'].triggered.connect(lambda _: self.duplicate(3))
         self._popupDuplicate.addAction(self._action['dup4'])
         self._action['dup5'] = QAction('compressed with non-regular step...')
-        # noinspection PyUnresolvedReferences
         self._action['dup5'].triggered.connect(lambda _: self.duplicate(4))
         self._popupDuplicate.addAction(self._action['dup5'])
         self._duplicate.setMenu(self._popupDuplicate)
 
         # < Revision 25/08/2026
         self._popupFilter = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupFilter.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupFilter.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupFilter.setAttribute(Qt.WA_TranslucentBackground, True)
         # < Revision 31/07/2026
         self._action['filter1'] = QAction('Cluster confidence filtering...')
         self._action['filter2'] = QAction('Fiber to bundle coherence filtering...')
         self._popupFilter.addAction(self._action['filter1'])
         self._popupFilter.addAction(self._action['filter2'])
-        # noinspection PyUnresolvedReferences
         self._action['filter1'].triggered.connect(self.filtercc)
         self._action['filter2'].triggered.connect(self.filterbcf)
         self._filter.setMenu(self._popupFilter)
         # Revision 25/08/2026 >
 
         self._popupStatistics = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popupStatistics.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupStatistics.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupStatistics.setAttribute(Qt.WA_TranslucentBackground, True)
         # < Revision 31/07/2026
         self._action['stat1'] = QAction('Cluster confidence statistics...')
-        # noinspection PyUnresolvedReferences
         self._action['stat1'].triggered.connect(lambda _: self.statistics(0))
         # self._popupStatistics.addAction(self._action['stat1'])
         self._action['stat2'] = QAction('Length statistics...')
-        # noinspection PyUnresolvedReferences
         self._action['stat2'].triggered.connect(lambda _: self.statistics(1))
         # self._popupStatistics.addAction(self._action['stat2'])
         self._action['stat3'] = QAction('Mean curvature statistics...')
-        # noinspection PyUnresolvedReferences
         self._action['stat3'].triggered.connect(lambda _: self.statistics(2))
         # self._popupStatistics.addAction(self._action['stat3'])
         self._action['stat4'] = QAction('Cosine distance between end vectors statistics...')
-        # noinspection PyUnresolvedReferences
         self._action['stat4'].triggered.connect(lambda _: self.statistics(3))
         # self._popupStatistics.addAction(self._action['stat4'])
         self._action['stat5'] = QAction('Euclidean distance between end points statistics...')
-        # noinspection PyUnresolvedReferences
         self._action['stat5'].triggered.connect(lambda _: self.statistics(4))
         # self._popupStatistics.addAction(self._action['stat5'])
         self._action['stat6'] = QAction('Fiber to bundle coherence statitics...')
-        # noinspection PyUnresolvedReferences
         self._action['stat6'].triggered.connect(lambda _: self.statistics(5))
         self._popupStatistics.addAction(self._action['stat1'])
         self._popupStatistics.addAction(self._action['stat6'])
@@ -7031,24 +7210,16 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         # Revision 31/07/2026
         self._stat.setMenu(self._popupStatistics)
 
-        # noinspection PyUnresolvedReferences
         self._dissection.clicked.connect(self.dissection)
         # < Revision 25/08/2026
-        # noinspection PyUnresolvedReferences
         # self._filter.clicked.connect(self.filter)
         # Revision 25/08/2026 >
-        # noinspection PyUnresolvedReferences
         self._cluster.clicked.connect(self.cluster)
-        # noinspection PyUnresolvedReferences
         self._centroid.clicked.connect(self.centroid)
-        # noinspection PyUnresolvedReferences
         self._remove.clicked.connect(self.remove)
-        # noinspection PyUnresolvedReferences
         self._tomap.clicked.connect(self.toMap)
-        # noinspection PyUnresolvedReferences
         self._union.clicked.connect(self.union)
         # < Revision 17/11/2025
-        # noinspection PyUnresolvedReferences
         self._visibility.visibilityChanged.connect(self.visibility)
         # Revision 17/11/2025 >
 
@@ -7101,6 +7272,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(self._roidialog, c)
             pywinstyles.change_header_color(self._fltdialog, c)
@@ -7109,6 +7281,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     # Private methods
 
+    # noinspection method-overriding
     def _createWidget(self, item: SisypheStreamlines) -> ItemBundleAttributesWidget:
         if self.hasViewCollection():
             return ItemBundleAttributesWidget(item, views=self._views, listattr=self)
@@ -7116,9 +7289,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     def _updateViews(self) -> None:
         if self.hasViewCollection():
+            # noinspection unresolved-references
             view = self._views.getVolumeView()
             if view is not None: view.updateRender()
 
+    # noinspection method-overriding
     def _notAlreadyInList(self, item: str) -> None:
         return not (item in self._collection)
 
@@ -7210,6 +7385,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
     def hasReferenceID(self) -> bool:
         return self._ID != ''
 
+    # noinspection unresolved-references
     def getCheckedBundle(self) -> list[SisypheStreamlines]:
         bundles = list()
         i: cython.int
@@ -7392,6 +7568,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     wait.open()
                     wait.setInformationText('Remove bundle(s)...')
                     QApplication.processEvents()
+                    # noinspection unresolved-references
                     tracts = self._views.getTractCollection()
                     if tracts is not None:
                         for bundle in bundles:
@@ -7416,6 +7593,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 wait.open()
                 wait.setInformationText('Remove {} bundle...'.format(w.getName()))
                 QApplication.processEvents()
+                # noinspection unresolved-references
                 tracts = self._views.getTractCollection()
                 if tracts is not None:
                     tracts.removeBundle(w.getName())
@@ -7437,6 +7615,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 wait.open()
                 wait.setInformationText('Remove all bundles...')
                 QApplication.processEvents()
+                # noinspection unresolved-references
                 tracts = self._views.getTractCollection()
                 if tracts is not None:
                     tracts.removeAllBundles()
@@ -7498,6 +7677,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._roidialog, c)
                     # Revision 28/08/2025 >
@@ -7791,6 +7971,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
     # < Revision 25/08/2026
     # filter method was renamed to filtercc
     # Revision 25/08/2026 >
+    # noinspection unresolved-references
     def filtercc(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
@@ -7803,6 +7984,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._fltdialog, c)
                     # Revision 28/08/2025 >
@@ -7874,9 +8056,11 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                 else: messageBox(self,
                                  'Cluster confidence filtering',
                                  'No checked bundle.')
+    # Revision 25/08/2026 >
 
     # < Revision 25/08/2026
     # add filterbcf method
+    # noinspection unresolved-references
     def filterbcf(self) -> None:
         if self.isEnabled():
             if self.hasViewCollection():
@@ -7889,6 +8073,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._fltdialog, c)
                     # Revision 28/08/2025 >
@@ -7976,6 +8161,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(self._cltdialog, c)
                         # Revision 28/08/2025 >
@@ -8057,6 +8243,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(self._cltdialog, c)
                         # Revision 28/08/2025 >
@@ -8121,6 +8308,9 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                         wait.show()
                         if filename:
                             wait.setInformationText('save {}...'.format(basename(filename)))
+                            # < Revision 05/10/2026
+                            if self._compress: vol.setCompressionOn()
+                            # Revision 05/10/2026 >
                             vol.saveAs(filename)
                             self._logger.info('Bundle {} to density map {}'.format(sl.getName(), filename))
                     wait.close()
@@ -8164,6 +8354,9 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                             wait.show()
                             if filename:
                                 wait.setInformationText('save {}...'.format(basename(filename)))
+                                # < Revision 05/10/2026
+                                if self._compress: roi.setCompressionOn()
+                                # Revision 05/10/2026 >
                                 roi.saveAs(filename)
                                 self._logger.info('Bundle {} to ROI {}'.format(sl.getName(), filename))
                             if self.hasListROIAttributeWidget():
@@ -8323,6 +8516,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(self._statdialog, c)
                     # Revision 28/08/2025 >
@@ -8418,6 +8612,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
                     i: cython.int
                     for i in range(0, self._list.count()):
                         widget = self._list.itemWidget(self._list.item(i))
+                        # noinspection unresolved-references
                         widget.setVisibility(self._visibility.getVisibilityStateIcon())
     # Revision 17/11/2025 >
 
@@ -8451,6 +8646,7 @@ class ListBundleAttributesWidget(ListAttributesWidget):
 
     # Qt event
 
+    # noinspection method-overriding,unresolved-references
     def dropEvent(self, event: QDropEvent) -> None:
         if self.hasViewCollection():
             if event.mimeData().hasText():

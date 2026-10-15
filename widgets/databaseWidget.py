@@ -118,6 +118,7 @@ class DatabaseWidget(QWidget):
     + other GUI attributes (button, edit...) not detailed
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
@@ -415,12 +416,14 @@ class DatabaseWidget(QWidget):
 
     def _sortIdentityByColumn(self, c: int) -> str:
         if isinstance(c, int):
+            # noinspection unresolved-references
             order = self._patients.header().sortIndicatorOrder()
             self._patients.sortItems(c, order)
         else: raise TypeError('parameter type {} is not int.'.format(type(c)))
 
     def _sortFilesByColumn(self, c: int) -> str:
         if isinstance(c, int):
+            # noinspection unresolved-references
             order = self._files.header().sortIndicatorOrder()
             self._files.sortItems(c, order)
         else: raise TypeError('parameter type {} is not int.'.format(type(c)))
@@ -447,7 +450,7 @@ class DatabaseWidget(QWidget):
                 # Revision 27/10/2024 >
         else: raise TypeError('parameter type {} is not QPoint.'.format(type(p)))
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _doubleClicked(self, item: QTreeWidgetItem, c: int) -> None:
         filename = self._getFilenameFromItem(item)
         if exists(filename):
@@ -600,6 +603,7 @@ class DatabaseWidget(QWidget):
                     if platform == 'win32':
                         import pywinstyles
                         cl = self.palette().base().color()
+                        # noinspection string-format
                         c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                         pywinstyles.change_header_color(dialog, c)
                     dialog.exec()
@@ -720,6 +724,7 @@ class DatabaseWidget(QWidget):
             if platform == 'win32':
                 import pywinstyles
                 cl = self.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(dialog, c)
             if dialog.exec():
@@ -870,10 +875,13 @@ class DatabaseWidget(QWidget):
 
     # QEvents
 
+    # noinspection method-overriding
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
+        # noinspection unresolved-references
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
+    # noinspection method-overriding,unresolved-references
     def dropEvent(self, event: QDropEvent) -> None:
         if event.mimeData().hasText():
             event.acceptProposedAction()

@@ -160,6 +160,7 @@ class DateValidator(QValidator):
 
     # Public method
 
+    # noinspection method-overriding
     def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         """
         Validate the input string as a DICOM date.
@@ -215,6 +216,7 @@ class DateTimeValidator(QValidator):
 
     # Public method
 
+    # noinspection method-overriding
     def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         """
         Validate the input string as a DICOM date-time.
@@ -270,6 +272,7 @@ class TimeValidator(QValidator):
 
     # Public method
 
+    # noinspection method-overriding
     def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         """
         Validate the input string as a DICOM time.
@@ -348,6 +351,7 @@ class MultiIntValidator(QValidator):
 
     # public method
 
+    # noinspection method-overriding
     def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         """
         Validate the input string containing multiple integers.
@@ -424,6 +428,7 @@ class MultiDoubleValidator(QValidator):
 
     # Public method
 
+    # noinspection method-overriding
     def validate(self, value: str, pos: int) -> tuple[int, str, int]:
         """
         Validate the input string containing multiple doubles.
@@ -499,6 +504,7 @@ class LineEditDelegate(QStyledItemDelegate):
 
     # Public methods
 
+    # noinspection unresolved-references
     def createEditor(self, parent: QWidget | None, option:  QStyleOptionViewItem | None, index: QModelIndex) -> QLineEdit:
         """
         Create the DicomVRLineEdit editor for the given index.
@@ -516,11 +522,11 @@ class LineEditDelegate(QStyledItemDelegate):
         QLineEdit
         """
         index0 = index.model().index(index.row(), 0)
-        # noinspection PyUnresolvedReferences
         item0 = index.model().itemFromIndex(index0)
         de = self._dataset[item0.data()]
         return DicomVRLineEdit(de, parent)
 
+    # noinspection method-overriding
     def setEditorData(self, editor: QWidget, index: QModelIndex) -> None:
         """
         Set the editor's text from the model's data for the given index.
@@ -534,6 +540,7 @@ class LineEditDelegate(QStyledItemDelegate):
         # noinspection PyUnresolvedReferences
         editor.setText(index.model().itemFromIndex(index).text())
 
+    # noinspection method-overriding, unresolved-references
     def setModelData(self, editor: QWidget, model: QAbstractItemModel | None, index: QModelIndex) -> None:
         """
         Set the model's data from the editor's text for the given index.
@@ -546,7 +553,6 @@ class LineEditDelegate(QStyledItemDelegate):
         index : QModelIndex
         """
         index0 = model.index(index.row(), 0)
-        # noinspection PyUnresolvedReferences
         item0 = model.itemFromIndex(index0)
         de = self._dataset[item0.data()]
         if de.VR in ['FL', 'FD']:
@@ -566,9 +572,7 @@ class LineEditDelegate(QStyledItemDelegate):
                 de.value = editor.text()
             else:
                 de.value = editor.text().split(' ')
-        # noinspection PyUnresolvedReferences
         model.itemFromIndex(index).setText(editor.text())
-        # noinspection PyUnresolvedReferences
         model.itemFromIndex(index).setData(1, 3)  # 0 not edited, 1 edited set in key.data()
 
 
@@ -842,6 +846,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
     _dataset    Dataset, current DICOM dataset.
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  dataset: Dataset | None = None,
                  private: bool = True,
@@ -883,11 +888,9 @@ class DicomHeaderTreeViewWidget(QTreeView):
         self._dataset = dataset
 
         # Init TreeView
-        # noinspection PyTypeChecker
+
         self.setSelectionMode(3)      # ExtendedSelection mode
-        # noinspection PyTypeChecker
         self.setSelectionBehavior(1)  # Select only rows
-        # noinspection PyTypeChecker
         self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.setItemDelegate(LineEditDelegate(self._dataset, self))
         self.setAlternatingRowColors(True)
@@ -989,6 +992,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
             self._datasetToModel(self._dataset, self.model().invisibleRootItem())
             self.expandAll()
 
+    # noinspection unresolved-references
     def _setSectionVisibility(self, section: int = 0, v: bool = True) -> None:
         """
         Helper method to show or hide a header section.
@@ -1106,6 +1110,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
         """
         self._setSectionVisibility(4, v)
 
+    # noinspection unresolved-references
     def getSelectedDicomDataElements(self) -> list[DataElement]:
         """
         Return the list of selected DICOM Data Elements.
@@ -1118,7 +1123,6 @@ class DicomHeaderTreeViewWidget(QTreeView):
         de = []
         if len(indexes) > 0:
             for index in indexes:
-                # noinspection PyUnresolvedReferences
                 item = self.model().itemFromIndex(index)
                 if isinstance(item, QStandardItem):
                     de.append(self._dataset[item.data()])  # get DICOM Tag in key.data()
@@ -1169,6 +1173,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
                 valuelist.append(str(d.value))
         return valuelist
 
+    # noinspection unresolved-references
     def getCheckedDicomNames(self) -> list[str] | None:
         """
         Return keywords of data elements with checked boxes.
@@ -1182,15 +1187,14 @@ class DicomHeaderTreeViewWidget(QTreeView):
             r = list()
             i: cython.int
             for i in range(n):
-                # noinspection PyUnresolvedReferences
                 items = self.model().item(i)
                 if items.checkState() == 2:
-                    # noinspection PyUnresolvedReferences
                     r.append(self.model().item(i, 1).data(3))
             return r
         else:
             return None
 
+    # noinspection unresolved-references
     def getEditedDataElements(self) -> list[str] | None:
         """
         Return keywords of data elements that have been modified by the user.
@@ -1204,11 +1208,8 @@ class DicomHeaderTreeViewWidget(QTreeView):
             r = list()
             i: cython.int
             for i in range(n):
-                # noinspection PyUnresolvedReferences
                 if self.model().item(i, 4):
-                    # noinspection PyUnresolvedReferences
                     if self.model().item(i, 4).data(3) == 1:
-                        # noinspection PyUnresolvedReferences
                         r.append(self.model().item(i, 1).data(3))
             return r
         else: return None
@@ -1224,6 +1225,7 @@ class DicomHeaderTreeViewWidget(QTreeView):
         if isinstance(de, DataElement):
             self.scrollToDicomTag(de.tag)
 
+    # noinspection unresolved-references
     def scrollToDicomTag(self, tag: int | str | tuple[int, int] | BaseTag) -> None:
         """
         Scroll the view to a specific DICOM tag.
@@ -1234,13 +1236,12 @@ class DicomHeaderTreeViewWidget(QTreeView):
             DICOM tag
         """
         if isinstance(tag, BaseTag):
-            # noinspection PyUnresolvedReferences
             items = self.model().findItems(str(tag), Qt.MatchExactly, 0)
             if len(items) > 0:
                 self.scrollTo(items[0].index())
-                # noinspection PyTypeChecker
                 self.selectionModel().select(items[0].index(), self._SELECTROWS)
 
+    # noinspection unresolved-references
     def scrollToDicomName(self, name: str) -> None:
         """
         Scroll the view to a specific DICOM keyword/name.
@@ -1251,11 +1252,9 @@ class DicomHeaderTreeViewWidget(QTreeView):
             DICOM keyword/name
         """
         if isinstance(name, str):
-            # noinspection PyUnresolvedReferences
             items = self.model().findItems(name, Qt.MatchExactly, 1)
             if len(items) > 0:
                 self.scrollTo(items[0].index())
-                # noinspection PyTypeChecker
                 self.selectionModel().select(items[0].index(), self._SELECTROWS)
 
     def checkSelectedRows(self) -> None:
@@ -1395,6 +1394,7 @@ class DicomComboBoxWidget(QComboBox):
         """
         c = self.currentData()
         if c:
+            # noinspection unresolved-references
             de = self._dataset[c]
             if isinstance(de, DataElement):
                 return de
@@ -1503,7 +1503,7 @@ class DicomFilesTreeWidget(QTreeWidget):
     _modalityfilter str, dicom modality filter ('CT', 'MR', 'PT', 'NM' ...)
     """
 
-    # noinspection PyShadowingBuiltins
+    # noinspection PyShadowingBuiltins,unresolved-references
     def __init__(self,
                  path: str | None = None,
                  filter: str = '.*',
@@ -1528,16 +1528,12 @@ class DicomFilesTreeWidget(QTreeWidget):
 
         # Init TreeWidget
 
-        # noinspection PyTypeChecker
         self.setSelectionMode(QTreeWidget.ExtendedSelection)  # ExtendedSelection mode
-        # noinspection PyTypeChecker
         self.setSelectionBehavior(QTreeWidget.SelectRows)     # Selecting only rows
         self.setHeaderLabels(['Series UID ➤ Acquisition ➤ Files', 'Modality', 'Description',
                               'Acq. Date', 'Lastname', 'Firstname', 'Birth Date'])
-        # noinspection PyTypeChecker
         self.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.setAlternatingRowColors(True)
-        # noinspection PyUnresolvedReferences
         self.itemChanged.connect(self._onToggleCheckbox)
 
         if path is not None:
@@ -1561,6 +1557,7 @@ class DicomFilesTreeWidget(QTreeWidget):
             if item.childCount() > 0:
                 i: cython.int
                 for i in range(item.childCount()):
+                    # noinspection unresolved-references
                     item.child(i).setCheckState(0, checkstate)
                     if item.childCount() > 0: self._onToggleCheckbox(item.child(i))
 
@@ -1932,6 +1929,7 @@ class DicomFilesTreeWidget(QTreeWidget):
             if item.checkState(0) == Qt.Checked: c += 1
         return c
 
+    # noinspection unresolved-references
     def getSelectedAcquisitionsCount(self) -> int:
         """
         Return count of checked acquisition items.
@@ -1949,7 +1947,6 @@ class DicomFilesTreeWidget(QTreeWidget):
             na = sitem.childCount()
             for j in range(na):
                 aitem = sitem.child(j)
-                # noinspection PyUnresolvedReferences
                 if aitem.checkState(0) == Qt.Checked: c += 1
         return c
 
@@ -2575,6 +2572,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         """
         return self._dcm
 
+    # noinspection unresolved-references
     def loadXmlDicom(self, filename: str) -> None:
         """
         Load an XML DICOM file and populate the tree.
@@ -2586,13 +2584,11 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 data = self._dcm.getDataElement(k)
                 if not isinstance(data, list):
                     item = QTreeWidgetItem([str(data.tag), data.keyword, data.VR, str(data.VM), str(data.value)])
-                    # noinspection PyUnresolvedReferences
                     item.setCheckState(0, Qt.Unchecked)
                     self.addTopLevelItem(item)
                 else:
                     if len(data) > 0:
                         root = QTreeWidgetItem([str(data[0].tag), data[0].keyword])
-                        # noinspection PyUnresolvedReferences
                         root.setCheckState(0, Qt.Unchecked)
                         self.addTopLevelItem(root)
                         for d in data:
@@ -2644,6 +2640,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 # noinspection PyUnresolvedReferences
                 item.setCheckState(0, Qt.Unchecked)
 
+    # noinspection unresolved-references
     def saveCheckedDataElementsToXml(self, filename: str = '') -> None:
         """
         Save checked elements to a Sisyphe XML sheet.
@@ -2659,7 +2656,6 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(keys[i])
         if len(skeys) > 0:
@@ -2671,6 +2667,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToXml(skeys, filename)
 
+    # noinspection unresolved-references
     def saveCheckedDataElementsToTxt(self, filename: str = '') -> None:
         """
         Save checked elements to a text file.
@@ -2685,7 +2682,6 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -2697,6 +2693,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToTxt(skeys, filename)
 
+    # noinspection unresolved-references
     def saveCheckedDataElementsToCSV(self, filename: str = '') -> None:
         """
         Save checked elements to a CSV file.
@@ -2711,7 +2708,6 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -2723,6 +2719,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToCSV(skeys, filename)
 
+    # noinspection unresolved-references
     def saveCheckedDataElementsToMatfile(self, filename: str = '') -> None:
         """
         Save checked elements to a MATLAB .mat file.
@@ -2737,7 +2734,6 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -2749,6 +2745,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToMatfile(skeys, filename)
 
+    # noinspection unresolved-references
     def saveCheckedDataElementsToExcel(self, filename: str = '') -> None:
         """
         Save checked elements to an Excel .xlsx file.
@@ -2763,7 +2760,6 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -2794,6 +2790,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                                        'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
                     # Revision 19/02/2026 >
 
+    # noinspection unresolved-references
     def saveCheckedDataElementsToLATEX(self, filename: str = '') -> None:
         """
         Save checked elements to a LaTeX table format.
@@ -2808,7 +2805,6 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:
@@ -2820,6 +2816,7 @@ class XmlDicomTreeViewWidget(QTreeWidget):
                 chdir(dirname(filename))
                 self._dcm.saveDataElementValuesToLATEX(skeys, filename)
 
+    # noinspection unresolved-references
     def copyCheckedDataElementsToClipboard(self) -> None:
         """
         Copy checked data elements to the system clipboard.
@@ -2829,7 +2826,6 @@ class XmlDicomTreeViewWidget(QTreeWidget):
         i: cython.int
         for i in range(n):
             item = self.topLevelItem(i)
-            # noinspection PyUnresolvedReferences
             if item.checkState(0) == Qt.Checked:
                 skeys.append(item.text(1))
         if len(skeys) > 0:

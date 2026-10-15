@@ -85,6 +85,7 @@ class SheetWidgetEditingDelegate(QItemDelegate):
         self._decimals = decimals
         if isinstance(sheet, SisypheSheet): self._sheet = sheet
 
+    # noinspection unresolved-references
     def setModelData(self,
                      editor: QWidget | None,
                      model: QAbstractItemModel | None,
@@ -112,6 +113,7 @@ class SheetWidgetEditingDelegate(QItemDelegate):
         if self._sheet is not None:
             r = list(self._sheet.index)[index.row()]
             c = list(self._sheet.columns)[index.column() - 1]
+            # noinspection unresolved-references
             editor.setText(str(self._sheet.loc[r, c]))
         super().setEditorData(editor, index)
 
@@ -208,6 +210,7 @@ class SheetWidget(QWidget):
 
     # Private methods
 
+    # noinspection unresolved-references
     def _initTreeWidget(self) -> None:
 
         fmt = '{' + ':.{}f'.format(self._decimals) + '}'
@@ -732,6 +735,7 @@ class SheetChartWidget(SheetStatisticsWidget):
                 try:
                     self._fig.savefig(tmp)
                     img = QPixmap(tmp)
+                    # noinspection unresolved-references
                     QApplication.clipboard().setPixmap(img)
                 except Exception as err:
                     messageBox(self, 'Copy chart to clipboard', text='error: {}'.format(err))

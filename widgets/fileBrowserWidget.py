@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 import sys
 
 from os import remove
-from os import mkdir
+from os import rename
 from os import chdir
 
 from os.path import join
@@ -27,6 +27,8 @@ from os.path import isdir
 from os.path import expanduser
 
 import cython
+
+from datetime import date
 
 from io import BytesIO
 
@@ -51,12 +53,14 @@ from PyQt5.QtCore import QDir
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QRegExp
-from PyQt5.QtCore import QSortFilterProxyModel
-# from PyQt5.QtCore import QFile
+from PyQt5.QtCore import QFileSystemWatcher
 from PyQt5.QtCore import QFileInfo
+from PyQt5.QtCore import QItemSelectionModel
+from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QSplitter
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QCheckBox
@@ -138,23 +142,65 @@ class LineEditDelegate(QStyledItemDelegate):
 
     # Public methods
 
+    # noinspection unresolved-references
     def createEditor(self,
                      parent: QWidget | None,
                      option:  QStyleOptionViewItem | None,
                      index: QModelIndex) -> QLineEdit:
         model = index.model()
-        # noinspection PyUnresolvedReferences
         return BrowserLineEdit(model.data(index, Qt.EditRole), parent)
 
+    # noinspection method-overriding, unresolved-references
     def setEditorData(self, editor: QWidget, index: QModelIndex) -> None:
         model = index.model()
-        # noinspection PyUnresolvedReferences
         editor.setText(model.data(index, Qt.EditRole))
 
+    # noinspection method-overriding, unresolved-references
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex) -> None:
-        model = index.model()
-        # noinspection PyUnresolvedReferences
-        model.setData(index, editor.text(), Qt.EditRole)
+        if editor.text() != '':
+            if self.parent().objectName() == 'files':
+                src = model.data(index, Qt.UserRole)
+                dst = abspath(join(dirname(src), editor.text()))
+                if exists(src): rename(src, dst)
+            elif self.parent().objectName() == 'folders':
+                chdir(expanduser('~'))
+                model.setData(index, editor.text(), Qt.EditRole)
+
+
+# < Revision 11/05/2026
+# new IconProvider class
+class IconProvider(QFileIconProvider):
+
+    def __init__(self):
+        super().__init__()
+        import darkdetect
+        if darkdetect.isDark(): icondir = 'darkroi'
+        else: icondir = 'lightroi'
+        import Sisyphe.gui
+        path = join(dirname(Sisyphe.gui.__file__), icondir)
+        self._icn_folder = QIcon(join(path, 'folder.png'))
+        self._icn_head = QIcon(join(path, 'head.png'))
+        self._icn_bitmap = QIcon(join(path, 'bitmap.png'))
+        self._icn_xml = QIcon(join(path, 'xml.png'))
+        self._icn_json = QIcon(join(path, 'json.png'))
+        self._icn_roi = QIcon(join(path, 'roi.png'))
+        self._icn_mesh = QIcon(join(path, 'mesh.png'))
+        self._icn_tracking = QIcon(join(path, 'tracking-atlas.png'))
+        self._icn_360 = QIcon(join(path, '360.png'))
+        self._icn_labels = QIcon(join(path, 'labels.png'))
+        self._icn_target = QIcon(join(path, 'target.png'))
+        self._icn_palette = QIcon(join(path, 'palette.png'))
+        self._icn_sheet = QIcon(join(path, 'sheet.png'))
+        self._icn_scan = QIcon(join(path, 'scan.png'))
+        self._icn_model = QIcon(join(path, 'model.png'))
+        self._icn_frame = QIcon(join(path, 'frame.png'))
+        self._icn_workflow = QIcon(join(path, 'workflow.png'))
+        self._icn_page = QIcon(join(path, 'page.png'))
+
+    # noinspection method-overriding
+    def icon(self, fileInfo: QFileInfo) -> QIcon:
+        return self._icn_folder
+# Revision 11/05/2026 >
 
 
 class PandasTableModel(QStandardItemModel):
@@ -200,6 +246,7 @@ class PandasTableModel(QStandardItemModel):
     def hasDataFrame(self) -> bool:
         return self._data is not None
 
+    # noinspection method-overriding
     def flags(self, index: QModelIndex) -> int:
         if self._editflag:
             # noinspection PyUnresolvedReferences
@@ -208,7 +255,7 @@ class PandasTableModel(QStandardItemModel):
             # noinspection PyUnresolvedReferences
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
-    # noinspection PyUnresolvedReferences
+    # noinspection method-overriding,unresolved-references
     def setData(self,
                 index: QModelIndex,
                 value: QVariant,
@@ -232,74 +279,51 @@ class PandasTableModel(QStandardItemModel):
         return self._editflag
 
 
-class FileFilterProxyModel(QSortFilterProxyModel):
-
-    def __init__(self, parent: QObject | None = None) -> None:
-        super().__init__(parent)
-        self._rootpath = None
-
-    # Public methods
-
-    def setFilterRootPath(self, path: str) -> None:
-        self._rootpath = path
-        self.invalidateFilter()
-
-    def filterAcceptsRow(self, srcrow: int, srcparent: QModelIndex) -> bool:
-        index = self.sourceModel().index(srcrow, 0, srcparent)
-        # return not self.sourceModel().isDir(index)
-        # < Revision 21/05/2026
-        # noinspection PyUnresolvedReferences
-        path = self.sourceModel().filePath(index)
-        if path == self._rootpath: return True
-        # Revision 21/05/2026 >
-        # noinspection PyUnresolvedReferences
-        if not self.sourceModel().isDir(index): return True
-        if self._rootpath:
-            # noinspection PyUnresolvedReferences
-            path = self.sourceModel().filePath(index)
-            if self._rootpath.startswith(path): return True
-        return False
-
-    def filePath(self, index: QModelIndex) -> str:
-        # noinspection PyUnresolvedReferences
-        return self.sourceModel().filePath(self.mapToSource(index))
-
-    def fileName(self, index: QModelIndex) -> str:
-        # noinspection PyUnresolvedReferences
-        return self.sourceModel().fileName(self.mapToSource(index))
-
-    def rootPath(self) -> str:
-        # noinspection PyUnresolvedReferences
-        return self._rootpath
-
-
 class FileDragDropTreeView(QTreeView):
+
+    # Private method
+
+    def _getParent(self) -> FileBrowserWidget | None:
+        parent = self.parent()
+        while parent:
+            if isinstance(parent, FileBrowserWidget): return parent
+            # noinspection unresolved-references
+            parent = parent.parent()
+        return None
 
     # Qt events methods
 
+    # noinspection method-overriding
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         event.accept()
 
+    # noinspection method-overriding
     def dragMoveEvent(self, event: QDragMoveEvent) -> None:
         m = event.mimeData()
+        # noinspection unresolved-references
         if m.hasUrls():
             event.accept()
             return
         event.ignore()
 
+    # noinspection method-overriding,unresolved-references,protected-member
     def dropEvent(self, event: QDropEvent) -> None:
         accepted = False
         m = event.mimeData()
         if m.hasUrls():
+            dst = ''
             p = event.pos()
             index = self.indexAt(p)
-            # noinspection PyUnresolvedReferences
-            if self.model().data(index, Qt.DisplayRole) is None:
-                # noinspection PyUnresolvedReferences
-                dst = self.model().rootPath()
-            else:
-                # noinspection PyUnresolvedReferences
-                dst = self.model().filePath(index)
+            if self.objectName() == 'folders': dst = self.model().filePath(index)
+            elif self.objectName() == 'files':
+                parent = self._getParent()
+                if parent:
+                    try:
+                        index = parent._treedir.selectedIndexes()
+                        if index: dst = parent._treedir.model().filePath(index[0])
+                    except: accepted = False
+            else: accepted = False
+            # if dst == m.absoluteFilePath(): accepted = True
             if exists(dst):
                 urls = [url for url in m.urls() if url.isLocalFile()]
                 for url in urls:
@@ -317,43 +341,27 @@ class FileDragDropTreeView(QTreeView):
         if accepted: event.acceptProposedAction()
 
 
-# < Revision 11/05/2026
-# new IconProvider class
-class IconProvider(QFileIconProvider):
+# < Revision 12/10/2026
+# new FileItemModel class
+class FileItemModel(QStandardItemModel):
 
-    def icon(self, fileInfo: QFileInfo) -> QIcon:
-        import darkdetect
-        if darkdetect.isDark(): icondir = 'darkroi'
-        else: icondir = 'lightroi'
-        import Sisyphe.gui
-        path = join(dirname(Sisyphe.gui.__file__), icondir)
-        if fileInfo.isDir(): return QIcon(join(path, 'folder.png'))
-        elif fileInfo.isFile():
-            from Sisyphe.core.sisypheConstants import (getImageExt,
-                                                       getBitmapExt)
-            try:
-                ext = '.' + fileInfo.completeSuffix()
-                if ext == '.xvol': return QIcon(join(path, 'head.png'))
-                elif ext in getImageExt(): return QIcon(join(path, 'head.png'))
-                elif ext in getBitmapExt(): return QIcon(join(path, 'bitmap.png'))
-                elif ext == '.xml': return QIcon(join(path, 'xml.png'))
-                elif ext == '.json': return QIcon(join(path, 'json.png'))
-                elif ext == '.xroi': return QIcon(join(path, 'roi.png'))
-                elif ext == '.xmesh': return QIcon(join(path, 'mesh.png'))
-                elif ext == '.xtracts': return QIcon(join(path, 'tracking-atlas.png'))
-                elif ext in ('.xtrf', '.xtrfs'): return QIcon(join(path, '360.png'))
-                elif ext == '.xlabels': return QIcon(join(path, 'labels.png'))
-                elif ext in ('.xtools', '.xline', '.xpoint'): return QIcon(join(path, 'target.png'))
-                elif ext in ('.lut', '.xlut'): return QIcon(join(path, 'palette.png'))
-                elif ext in ('.xlsx', '.csv', '.xsheet', '.npy'): return QIcon(join(path, 'sheet.png'))
-                elif ext in ('.xdcm', '.dcm', '.dicom', '.nema'): return QIcon(join(path, 'scan.png'))
-                elif ext == '.xmodel': return QIcon(join(path, 'model.png'))
-                elif ext == '.xfid': return QIcon(join(path, 'frame.png'))
-                elif ext == '.xwflow': return QIcon(join(path, 'workflow.png'))
-                else: return QIcon(join(path, 'page.png'))
-            except: pass
-        return QFileIconProvider.icon(self, fileInfo)
-# Revision 11/05/2026 >
+    def mimeTypes(self):
+        types = super().mimeTypes()
+        types.append("text/uri-list")
+        return types
+
+    # noinspection unresolved-references
+    def mimeData(self, indexes):
+        mime_data = super().mimeData(indexes)
+        urls = []
+        for index in indexes[::3]:
+            if index.isValid():
+                item = self.itemFromIndex(index)
+                file_path = abspath(item.data(Qt.UserRole))
+                if file_path: urls.append(QUrl.fromLocalFile(file_path))
+        if urls: mime_data.setUrls(urls)
+        return mime_data
+# Revision 12/10/2026 >
 
 
 class FileBrowserWidget(QWidget):
@@ -371,11 +379,12 @@ class FileBrowserWidget(QWidget):
     QWidget -> FileBrowserWidget
 
     Creation: 09/02/2026
-    Last revision: 10/09/2026
+    Last revision: 12/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
@@ -391,100 +400,66 @@ class FileBrowserWidget(QWidget):
         self._cutflag: bool = False
         self._copyflag: bool = False
         self._clipboard: list[str] | None = None
-        self._popupindex: list[QModelIndex] | None = None
+        self._filter: str = '*'
 
         # Init widgets
 
-        # < Revision 11/05/2026
         self._iconProvider = IconProvider()
-        # Revision 11/05/2026 >
+        self._watcher = QFileSystemWatcher(self)
 
-        self._filemodel1 = QFileSystemModel(self)
-        self._filemodel1.setRootPath(QDir.rootPath())
-        self._filemodel1.setFilter(QDir.AllDirs | QDir.NoDotAndDotDot)
-        # < Revision 11/02/2026
-        self._filemodel1.setReadOnly(False)
-        # Revision 11/02/2026 >
-        # < Revision 11/05/2026
-        self._filemodel1.setIconProvider(self._iconProvider)
-        # Revision 11/05/2026 >
-
-        self._filemodel2 = QFileSystemModel(self)
-        # < Revision 21/05/2026
-        self._filemodel2.setFilter(QDir.AllEntries | QDir.NoDotAndDotDot)
-        # self._filemodel2.setRootPath(QDir.rootPath())
-        # self._filemodel2.setFilter(QDir.Files | QDir.NoDotAndDotDot)
-        # Revision 21/05/2026 >
-        # < Revision 11/02/2026
-        self._filemodel2.setReadOnly(False)
-        self._proxymodel = FileFilterProxyModel(self)
-        self._proxymodel.setSourceModel(self._filemodel2)
-        # Revision 11/02/2026 >
-        # < Revision 11/05/2026
-        self._filemodel2.setIconProvider(self._iconProvider)
-        # Revision 11/05/2026 >
-        # < Revision 21/05/2026
-        self._filemodel2.setRootPath(QDir.rootPath())
-        # Revision 21/05/2026 >
+        self._filemodel = QFileSystemModel(self)
+        self._filemodel.setRootPath('')
+        self._filemodel.setFilter(QDir.AllDirs | QDir.NoDotAndDotDot)
+        self._filemodel.setReadOnly(False)
+        self._filemodel.setIconProvider(self._iconProvider)
+        rootindex = self._filemodel.index('')
 
         self._treedir = FileDragDropTreeView(self)
         self._treedir.setObjectName('folders')
-        self._treedir.setModel(self._filemodel1)
-        # < Revision 21/05/2026
+        self._treedir.setModel(self._filemodel)
+        self._treedir.setRootIndex(rootindex)
         self._treedir.setUniformRowHeights(True)
-        # Revision 21/05/2026 >
+        self._treedir.header().hide()
+        # self._treedir.header().model().setHeaderData(0, Qt.Orientation.Horizontal, 'Directories')
         self._treedir.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self._treedir.header().hideSection(1)
         self._treedir.header().hideSection(2)
         self._treedir.header().hideSection(3)
         self._treedir.setSelectionMode(QTreeView.SingleSelection)
-        self._treedir.clicked.connect(self._dirClicked)
         self._treedir.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self._treedir.customContextMenuRequested.connect(self._popupFolder)
-        # < Revision 11/02/2026
         self._treedir.setAcceptDrops(True)
         self._treedir.setDragEnabled(True)
         self._treedir.setDropIndicatorShown(True)
         self._treedir.setItemDelegate(LineEditDelegate(self._treedir))
         self._treedir.setEditTriggers(QTreeView.EditTrigger.SelectedClicked)
-        # Revision 11/02/2026 >
-        # < Revision 12/02/2026
         self._treedir.setStyleSheet('QTreeView::item { border: 1px solid transparent; } '
                                     'QTreeView::item:hover { border: 1px solid #CDE8FF; }')
-        # Revision 12/02/2026 >
 
         self._listfiles = FileDragDropTreeView(self)
         self._listfiles.setObjectName('files')
-        # < Revision 11/02/2026
-        # self._listfiles.setModel(self._filemodel2)
-        self._listfiles.setModel(self._proxymodel)
-        # Revision 11/02/2026 >
-        # < Revision 21/05/2026
         self._listfiles.setUniformRowHeights(True)
-        # Revision 21/05/2026 >
+        self._listfiles.setRootIsDecorated(False)
+        # < Revision 12/10/2026
+        # model = QStandardItemModel()
+        model = FileItemModel()
+        # Revision 12/10/2026 >
+        model.setHorizontalHeaderLabels(['Name', 'Size', 'Last modified'])
+        self._listfiles.setModel(model)
         self._listfiles.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self._listfiles.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        self._listfiles.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        self._listfiles.header().hideSection(2)
+        self._listfiles.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        self._listfiles.header().setStretchLastSection(False)
         self._listfiles.setSortingEnabled(True)
         self._listfiles.setSelectionMode(QTreeView.ExtendedSelection)
-        # self._listfiles.clicked.connect(self._fileClicked)
-        self._listfiles.doubleClicked.connect(self._open)
         self._listfiles.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self._listfiles.customContextMenuRequested.connect(self._popupFiles)
-        # noinspection PyUnresolvedReferences
-        self._listfiles.selectionModel().currentChanged.connect(self._currentChanged)
-        # < Revision 11/02/2026
         self._listfiles.setAcceptDrops(True)
         self._listfiles.setDragEnabled(True)
         self._listfiles.setDropIndicatorShown(True)
-        self._listfiles.setItemDelegate(LineEditDelegate(self._treedir))
+        self._listfiles.setItemDelegate(LineEditDelegate(self._listfiles))
         self._listfiles.setEditTriggers(QTreeView.EditTrigger.SelectedClicked)
-        # Revision 11/02/2026 >
-        # < Revision 12/02/2026
         self._listfiles.setStyleSheet('QTreeView::item { border: 1px solid transparent; } '
                                       'QTreeView::item:hover { border: 1px solid #CDE8FF; }')
-        # Revision 12/02/2026 >
 
         # text preview tab
 
@@ -504,7 +479,6 @@ class FileBrowserWidget(QWidget):
         menu.addAction('";" separator')
         menu.addAction('"|" separator')
         self._btimport.setMenu(menu)
-        # noinspection PyUnresolvedReferences
         self._btimport.menu().triggered.connect(self._importTable)
         # Revision 12/02/2026 >
         self._chksource = QCheckBox()
@@ -647,12 +621,10 @@ class FileBrowserWidget(QWidget):
 
         self.actions = dict()
         self.actions['open'] = QAction('Open')
-        # < Revision 16/06/2026
         if sys.platform == 'win32': self.actions['explorer'] = QAction('Open current folder in file explorer...')
         else: self.actions['explorer'] = QAction('Open current folder in finder...')
         self.actions['user'] = QAction('Go to user folder...')
         self.actions['template'] = QAction('Go to template folder...')
-        # Revision 16/06/2026 >
         self.actions['edit'] = QAction('Edit attributes...')
         self.actions['console'] = QAction('Copy to console')
         self.actions['acpc'] = QAction('AC-PC selection...')
@@ -681,11 +653,9 @@ class FileBrowserWidget(QWidget):
         self.actions['selectall'] = QAction('Select All')
         self.actions['selectall'].setShortcut('Ctrl+A')
         self.actions['open'].triggered.connect(lambda _: self._open())
-        # < Revision 16/06/2026
         self.actions['explorer'].triggered.connect(self._openExplorer)
         self.actions['user'].triggered.connect(self._userFolder)
         self.actions['template'].triggered.connect(self._templateFolder)
-        # Revision 16/06/2026 >
         self.actions['edit'].triggered.connect(self._editAttributes)
         self.actions['console'].triggered.connect(self._console)
         self.actions['acpc'].triggered.connect(self._acpc)
@@ -707,19 +677,82 @@ class FileBrowserWidget(QWidget):
         self.actions['paste'].triggered.connect(self._paste)
         self.actions['selectall'].triggered.connect(self._selectAll)
 
+        self._filters = QMenu(title='File extension filtering')
+        self.actions['fall'] = QAction('No filter (*)')
+        self.actions['fxvol'] = QAction('PySisyphe volume (*.xvol)')
+        self.actions['fxroi'] = QAction('PySisyphe ROI (*.xroi)')
+        self.actions['fnii'] = QAction('Nifti (*.nii)')
+        self.actions['fniigz'] = QAction('Nifti (*.nii.gz)')
+        self.actions['fall'].setData('*')
+        self.actions['fxvol'].setData('*.xvol')
+        self.actions['fxroi'].setData('*.xroi')
+        self.actions['fnii'].setData('*.nii')
+        self.actions['fniigz'].setData('*.nii.gz')
+        self.actions['fall'].setCheckable(True)
+        self.actions['fxvol'].setCheckable(True)
+        self.actions['fxroi'].setCheckable(True)
+        self.actions['fnii'].setCheckable(True)
+        self.actions['fniigz'].setCheckable(True)
+        self._filtergroup = QActionGroup(self._filters)
+        self._filtergroup.addAction(self.actions['fall'])
+        self._filtergroup.addAction(self.actions['fxvol'])
+        self._filtergroup.addAction(self.actions['fxroi'])
+        self._filtergroup.addAction(self.actions['fnii'])
+        self._filtergroup.addAction(self.actions['fniigz'])
+        self._filtergroup.setExclusionPolicy(QActionGroup.ExclusionPolicy.Exclusive)
+        self._filters.addAction(self.actions['fall'])
+        self._filters.addAction(self.actions['fxvol'])
+        self._filters.addAction(self.actions['fxroi'])
+        self._filters.addAction(self.actions['fnii'])
+        self._filters.addAction(self.actions['fniigz'])
+        self.actions['fall'].setChecked(True)
+        self._filters.triggered.connect(self._filterUpdate)
+
         self._treedir.addAction(self.actions['copyd'])
         self._treedir.addAction(self.actions['cutd'])
 
         self._listfiles.addAction(self.actions['copyf'])
         self._listfiles.addAction(self.actions['cutf'])
 
+        # Icons
+
+        import darkdetect
+        if darkdetect.isDark(): icondir = 'darkroi'
+        else: icondir = 'lightroi'
+        import Sisyphe.gui
+        path = join(dirname(Sisyphe.gui.__file__), icondir)
+        self._icn_folder = QIcon(join(path, 'folder.png'))
+        self._icn_head = QIcon(join(path, 'head.png'))
+        self._icn_bitmap = QIcon(join(path, 'bitmap.png'))
+        self._icn_xml = QIcon(join(path, 'xml.png'))
+        self._icn_json = QIcon(join(path, 'json.png'))
+        self._icn_roi = QIcon(join(path, 'roi.png'))
+        self._icn_mesh = QIcon(join(path, 'mesh.png'))
+        self._icn_tracking = QIcon(join(path, 'tracking-atlas.png'))
+        self._icn_360 = QIcon(join(path, '360.png'))
+        self._icn_labels = QIcon(join(path, 'labels.png'))
+        self._icn_target = QIcon(join(path, 'target.png'))
+        self._icn_palette = QIcon(join(path, 'palette.png'))
+        self._icn_sheet = QIcon(join(path, 'sheet.png'))
+        self._icn_scan = QIcon(join(path, 'scan.png'))
+        self._icn_model = QIcon(join(path, 'model.png'))
+        self._icn_frame = QIcon(join(path, 'frame.png'))
+        self._icn_workflow = QIcon(join(path, 'workflow.png'))
+        self._icn_page = QIcon(join(path, 'page.png'))
+
+        self._treedir.selectionModel().currentChanged.connect(self._currentDirChanged)
+        self._listfiles.selectionModel().currentChanged.connect(self._currentFileChanged)
+        self._listfiles.doubleClicked.connect(self._open)
+        self._listfiles.customContextMenuRequested.connect(self._popupFiles)
+        self._watcher.directoryChanged.connect(self._updateDir)
+
         # Select current directory (~/.PySisyphe)
 
-        home = join(QDir.homePath(), '.PySisyphe')
-        index = self._filemodel1.index(home, 0)
+        home = abspath(join(QDir.homePath(), '.PySisyphe'))
+        index = self._filemodel.index(home, 0)
         self._treedir.expand(index)
         self._treedir.setCurrentIndex(index)
-        self._dirClicked(index)
+        self._treedir.scrollTo(index)
 
         self.setLayout(self._layout)
 
@@ -729,8 +762,8 @@ class FileBrowserWidget(QWidget):
     _currentfile        str, current filename
     _preview            QTabWidget
     _layout             QHBoxLayout, widget main layout
-    _filemodel1         QFileSystemModel, file model of the directories
-    _filemodel1         QFileSystemModel, file model of the files
+    _filemodel          QFileSystemModel, model of the directories
+    _proxymodel         FileFilterProxyModel, model of the files
     _treedir            QTreeView of directories
     _listfiles          QTreeView of files
     _fig                Figure, image preview
@@ -751,6 +784,14 @@ class FileBrowserWidget(QWidget):
 
     # Private methods
 
+    def _filterUpdate(self, action: QAction) -> None:
+        self._filter = action.data()
+        index = self._treedir.selectedIndexes()
+        if index:
+            if len(index) > 0:
+                index = index[0]
+                self._currentDirChanged(index, None)
+
     def _tabVisibility(self,
                        text: bool = False,
                        table: bool = False,
@@ -763,33 +804,66 @@ class FileBrowserWidget(QWidget):
         self._preview.setTabVisible(3, source)
         # Revision 12/02/2026 >
 
-    # noinspection PyUnusedLocal
-    def _currentChanged(self, current: QModelIndex, previous: QModelIndex) -> None:
-        self._fileClicked(current)
+    def _updateDir(self, path: str) -> None:
+        if exists(path):
+            index = self._filemodel.index(path)
+            if index == self._treedir.currentIndex():
+                self._currentDirChanged(index, None)
 
-    def _dirClicked(self, index: QModelIndex) -> None:
-            path = self._filemodel1.filePath(index)
-            if exists(path):
-                self._treedir.setExpanded(index, True)
-                # < Revision 12/02/2026
-                # self._listfiles.setRootIndex(self._filemodel2.setRootPath(path))
-                # self._proxymodel.setFilterRootPath(path)
-                # srcindex = self._filemodel2.setRootPath(path)
-                # self._listfiles.setRootIndex(self._proxymodel.mapFromSource(srcindex))
-                # Revision 12/02/2026 >
-                # < Revision 21/05/2026
-                self._proxymodel.setFilterRootPath(path)
-                srcindex = self._filemodel2.index(path)
-                proxyindex = self._proxymodel.mapFromSource(srcindex)
-                self._listfiles.setRootIndex(proxyindex)
-                # Revision 21/05/2026 >
-                chdir(path)
+    # noinspection unused-parameter, unresolved-references
+    def _currentDirChanged(self, current: QModelIndex, previous: QModelIndex) -> None:
+        path = self._filemodel.filePath(current)
+        self._watcher.removePaths(self._watcher.directories())
+        if exists(path):
+            chdir(path)
+            self._watcher.addPath(path)
+            from Sisyphe.core.sisypheConstants import (getImageExt,
+                                                       getBitmapExt)
+            kb = 1024
+            mb = 1024 ** 2
+            model = self._listfiles.model()
+            model.removeRows(0, model.rowCount())
+            paths = list(Path(path).glob(self._filter))
+            if len(paths) > 0:
+                for filepath in paths:
+                    if filepath.is_file():
+                        ext = filepath.suffix
+                        if ext == '': icn = self._icn_page
+                        elif ext == '.xvol': icn =self._icn_head
+                        elif ext in getImageExt(): icn = self._icn_head
+                        elif ext in getBitmapExt(): icn = self._icn_bitmap
+                        elif ext == '.xml': icn = self._icn_xml
+                        elif ext == '.json': icn = self._icn_json
+                        elif ext == '.xroi': icn = self._icn_roi
+                        elif ext == '.xmesh': icn = self._icn_mesh
+                        elif ext == '.xtracts': icn = self._icn_tracking
+                        elif ext in ('.xtrf', '.xtrfs'): icn = self._icn_360
+                        elif ext == '.xlabels': icn = self._icn_labels
+                        elif ext in ('.xtools', '.xline', '.xpoint'): icn = self._icn_target
+                        elif ext in ('.lut', '.xlut'): icn = self._icn_palette
+                        elif ext in ('.xlsx', '.csv', '.xsheet', '.npy'): icn = self._icn_sheet
+                        elif ext in ('.xdcm', '.dcm', '.dicom', '.nema'): icn = self._icn_scan
+                        elif ext == '.xmodel': icn = self._icn_model
+                        elif ext == '.xfid': icn = self._icn_frame
+                        elif ext == '.xwflow': icn = self._icn_workflow
+                        else: icn = self._icn_page
+                        item = QStandardItem(icn, filepath.name)
+                        item.setData(filepath, Qt.UserRole)
+                        size = filepath.stat().st_size
+                        if size < kb: size = '{} B'.format(size)
+                        elif kb <= size < mb: size = '{:.2f} KB'.format(size / kb)
+                        else: size = '{:.2f} MB'.format(size / mb)
+                        last = date.fromtimestamp(filepath.stat().st_mtime).strftime('%d-%m-%Y')
+                        model.appendRow(item)
+                        row = item.row()
+                        model.setItem(row, 1, QStandardItem(size))
+                        model.setItem(row, 2, QStandardItem(last))
+            self._treedir.expand(current)
 
-    def _fileClicked(self, index: QModelIndex) -> None:
-        # < Revision 11/02/2026
-        # filename = self._filemodel2.filePath(index)
-        filename = self._proxymodel.filePath(index)
-        # Revision 11/02/2026 >
+    # noinspection unused-parameter, unresolved-references
+    def _currentFileChanged(self, current: QModelIndex, previous: QModelIndex):
+        try: filename = abspath(self._listfiles.model().data(current, Qt.UserRole))
+        except: return
         self._currentfile = filename
         ext = splitext(filename)[1].lower()
         if ext in ('.xml', '.md', '.rst', '.txt', '.json', '.log', '.xlut', '.xfid', '.xtrf', '.xtrfs',
@@ -894,7 +968,7 @@ class FileBrowserWidget(QWidget):
                 self._textpreview.setPlainText(str(r))
             # Revision 30/09/2026 >
             # XML tab
-            if ext in ('.xml', '.xwflow', '.md', '.rst', '.txt', '.json', '.log', '.bvec', '.bval'):
+            if ext in ('.xml', '.md', '.rst', '.txt', '.json', '.log', '.bvec', '.bval'):
                 with open(filename, 'r') as f:
                     lines = f.read()
                 if ext == '.xml':
@@ -913,6 +987,7 @@ class FileBrowserWidget(QWidget):
                 with open(filename, 'r') as f:
                     lines = f.read()
                 self._xmlpreview.setPlainText(lines)
+            else: self._xmlpreview.clear()
         elif ext in ('.xvol', '.xroi'):
             self._tabVisibility(text=True, source=self._chksource.isChecked())
             self._preview.setCurrentIndex(0)
@@ -936,7 +1011,7 @@ class FileBrowserWidget(QWidget):
                 v = SisypheROI()
                 v.load(filename)
             self._textpreview.setPlainText(str(v))
-        elif ext in ('.nii', '.hdr', '.img', '.nia', '.nii.gz', '.img.gz'):
+        elif ext in ('.nii', '.hdr', '.img', '.nia', '.gz'):
             from Sisyphe.core.sisypheImageIO import readFromNIFTI
             wait = DialogWait()
             wait.open()
@@ -1245,7 +1320,6 @@ class FileBrowserWidget(QWidget):
 
     def _popupFolder(self, pos: QPoint) -> None:
         index = self._treedir.indexAt(pos)
-        self._popupindex = [index]
         if index:
             popup = QMenu(self._treedir)
             if self._clipboard:
@@ -1265,21 +1339,26 @@ class FileBrowserWidget(QWidget):
             # Revision 16/06/2026 >
             popup.exec_(self._treedir.mapToGlobal(pos))
 
+    # noinspection unresolved-references
     def _popupFiles(self, pos: QPoint) -> None:
         sindex = self._listfiles.selectedIndexes()
         popup = QMenu(self._listfiles)
+        popup.addMenu(self._filters)
         if len(sindex) > 0:
-            ext = splitext(self._proxymodel.fileName(sindex[0]))[1]
+            try: filename = abspath(self._listfiles.model().data(sindex[0], Qt.UserRole))
+            except: return
+            ext = splitext(filename)[1]
             if ext in ('.xlabels', '.nii', '.hdr', '.img', '.nia', '.nrrd', '.nhdr', '.mnc',
-                       '.minc', '.mgh', '.mgz', '.vol', '.vmr', '.vtk', '.vti', '.xmodel', '.xwflow'):
+                       '.minc', '.mgh', '.mgz', '.vol', '.vmr', '.vtk', '.vti', '.xmodel',
+                       '.xlabels', '.xdcm', '.xwflow'):
                 popup.addAction(self.actions['open'])
                 popup.addSeparator()
             elif ext == '.gz':
-                filename = self._proxymodel.fileName(sindex[0])
                 if filename.split('.')[-2] in ('nii', 'img'):
                     popup.addAction(self.actions['open'])
                     popup.addSeparator()
             elif ext in ('.dcm', '.dicom', '.ima', '.nema'):
+                popup.addAction(self.actions['open'])
                 popup.addAction(self.actions['edit'])
                 popup.addSeparator()
             elif ext == '.xvol':
@@ -1296,7 +1375,6 @@ class FileBrowserWidget(QWidget):
             popup.addSeparator()
             popup.addAction(self.actions['rename2'])
             popup.addAction(self.actions['remove'])
-            self._popupindex = sindex
         else:
             if self._clipboard:
                 popup.addAction(self.actions['paste'])
@@ -1304,11 +1382,8 @@ class FileBrowserWidget(QWidget):
             popup.addAction(self.actions['selectall'])
             popup.addSeparator()
             popup.addAction(self.actions['folder'])
-            # < Revision 16/06/2026
             popup.addSeparator()
             popup.addAction(self.actions['explorer'])
-            # Revision 16/06/2026 >
-            self._popupindex = [self._treedir.selectedIndexes()[0]]
         popup.exec_(self._listfiles.mapToGlobal(pos))
 
     def _popupTable(self, pos: QPoint) -> None:
@@ -1320,18 +1395,15 @@ class FileBrowserWidget(QWidget):
             popup.addAction(self.actions['copyt'])
         popup.exec_(self._tabtablepreview.mapToGlobal(pos))
 
+    # noinspection unresolved-references
     def _open(self, index: QModelIndex | None = None) -> None:
         if self.hasMainWindow():
-            # < Revision 13/02/2026
             if index is None:
                 index = self._listfiles.selectedIndexes()
                 if len(index) > 0: index = index[0]
                 else: return
-            # Revision 13/02/2026 >
-            # < Revision 11/02/2026
-            # filename = self._filemodel2.filePath(index)
-            filename = self._proxymodel.filePath(index)
-            # Revision 11/02/2026 >
+            try: filename = abspath(self._listfiles.model().data(index, Qt.UserRole))
+            except: return
             ext = splitext(filename)[1].lower()
             v = None
             wait = DialogWait()
@@ -1417,32 +1489,34 @@ class FileBrowserWidget(QWidget):
                 wait.close()
 
     def _openExplorer(self) -> None:
-        folder = abspath(self._filemodel1.filePath(self._treedir.currentIndex()))
+        folder = abspath(self._filemodel.filePath(self._treedir.currentIndex()))
         if sys.platform == 'win32': subprocess.Popen('explorer "{}"'.format(folder))
         elif sys.platform == 'darwin': subprocess.call(["open", folder])
 
     def _userFolder(self) -> None:
         folder = abspath(join(expanduser('~'), '.PySisyphe'))
-        index = self._filemodel1.index(folder, 0)
+        index = self._filemodel.index(folder, 0)
         self._treedir.expand(index)
-        self._treedir.setCurrentIndex(index)
-        self._dirClicked(index)
         self._treedir.scrollTo(index)
+        self._treedir.setCurrentIndex(index)
+        self._currentDirChanged(index, None)
 
     def _templateFolder(self) -> None:
         import Sisyphe
         folder = abspath(join(dirname(Sisyphe.__file__), 'templates'))
-        index = self._filemodel1.index(folder, 0)
+        index = self._filemodel.index(folder, 0)
         self._treedir.expand(index)
-        self._treedir.setCurrentIndex(index)
-        self._dirClicked(index)
         self._treedir.scrollTo(index)
+        self._treedir.setCurrentIndex(index)
+        self._currentDirChanged(index, None)
 
+    # noinspection unresolved-references
     def _editAttributes(self) -> None:
         index = self._listfiles.selectedIndexes()
         if len(index) > 0:
             index = index[0]
-            filename = self._proxymodel.filePath(index)
+            try: filename = abspath(self._listfiles.model().data(index, Qt.UserRole))
+            except: return
             ext = splitext(filename)[1]
             if ext == '.xvol':
                 v = SisypheVolume()
@@ -1451,27 +1525,34 @@ class FileBrowserWidget(QWidget):
                 dialog = DialogVolumeAttributes(vol=v)
                 if sys.platform == 'win32':
                     import pywinstyles
-                    if self.hasMainWindow(): cl = self._mainWindow.palette().base().color()
+                    if self.hasMainWindow():
+                        # noinspection unresolved-references
+                        cl = self._mainWindow.palette().base().color()
                     else: cl = self.palette().base().color()
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(dialog, c)
                 dialog.exec()
                 v.save()
             elif ext in ('.dcm', '.dicom', '.ima', '.nema'):
                 if self.hasMainWindow():
+                    # noinspection unresolved-references
                     self._mainWindow.datasetDicom(filename)
         else: return
 
+    # noinspection unresolved-references
     def _console(self) -> None:
         if self.hasMainWindow():
             index = self._listfiles.selectedIndexes()
             if len(index) > 0:
                 index = index[0]
-                filename = self._proxymodel.filePath(index)
+                try: filename = abspath(self._listfiles.model().data(index, Qt.UserRole))
+                except: return
                 ext = splitext(filename)[1]
                 if ext == '.xvol':
                     v = SisypheVolume()
                     v.load(filename)
+                    # noinspection unresolved-references
                     console = self._mainWindow.getConsole()
                     console.pushVariables({'v': v})
                     console.update()
@@ -1479,40 +1560,49 @@ class FileBrowserWidget(QWidget):
                                text='Copy {} to console as "v".'.format(basename(filename)),
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def _acpc(self) -> None:
         if self.hasMainWindow():
             index = self._listfiles.selectedIndexes()
             if len(index) > 0:
                 index = index[0]
-                filename = self._proxymodel.filePath(index)
+                try: filename = abspath(self._listfiles.model().data(index, Qt.UserRole))
+                except: return
                 ext = splitext(filename)[1]
                 if ext == '.xvol':
                     v = SisypheVolume()
                     v.load(filename)
+                    # noinspection unresolved-references
                     self._mainWindow.acpcSelection(v)
 
+    # noinspection unresolved-references
     def _frame(self) -> None:
         if self.hasMainWindow():
             index = self._listfiles.selectedIndexes()
             if len(index) > 0:
                 index = index[0]
-                filename = self._proxymodel.filePath(index)
+                try: filename = abspath(self._listfiles.model().data(index, Qt.UserRole))
+                except: return
                 ext = splitext(filename)[1]
                 if ext == '.xvol':
                     v = SisypheVolume()
                     v.load(filename)
+                    # noinspection unresolved-references
                     self._mainWindow.frameDetection(v)
 
+    # noinspection unresolved-references
     def _reorient(self) -> None:
         if self.hasMainWindow():
             index = self._listfiles.selectedIndexes()
             if len(index) > 0:
                 index = index[0]
-                filename = self._proxymodel.filePath(index)
+                try: filename = abspath(self._listfiles.model().data(index, Qt.UserRole))
+                except: return
                 ext = splitext(filename)[1]
                 if ext == '.xvol':
                     v = SisypheVolume()
                     v.load(filename)
+                    # noinspection unresolved-references
                     self._mainWindow.reorient(v)
 
     def _zoomin(self) -> None:
@@ -1650,16 +1740,15 @@ class FileBrowserWidget(QWidget):
                                                'Please install it using "pip install openpyxl==3.1.5" from your venv console.')
                             # Revision 19/02/2026 >
 
+    # noinspection unresolved-references
     def _saveTableSelection(self) -> None:
         model = self._tablepreview.model()
-        # noinspection PyUnresolvedReferences
         if model.hasDataFrame():
             selectmodel = self._tablepreview.selectionModel()
             if selectmodel.hasSelection():
                 index = selectmodel.selectedColumns(0)
                 if len(index) > 0:
                     col = index[0].column()
-                    # noinspection PyUnresolvedReferences
                     df = model.getDataFrame()
                     hdr = df.columns[col]
                     if isinstance(hdr, int): hdr = 'col{}'.format(hdr)
@@ -1690,14 +1779,13 @@ class FileBrowserWidget(QWidget):
                 img = Image.open(buff)
                 img.save(filename)
 
+    # noinspection unresolved-references
     def _copyTableToConsole(self) -> None:
         if self.hasMainWindow():
             model = self._tablepreview.model()
-            # noinspection PyUnresolvedReferences
             if model.hasDataFrame():
                 console = self._mainWindow.getConsole()
                 if console is not None:
-                    # noinspection PyUnresolvedReferences
                     df = model.getDataFrame()
                     console.pushVariables({'df': df})
                     console.update()
@@ -1705,6 +1793,7 @@ class FileBrowserWidget(QWidget):
                                text='Copy table to console as pandas DataFrame "df".',
                                icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def _copyColumnToConsole(self) -> None:
         if self.hasMainWindow():
             model = self._tablepreview.model()
@@ -1732,6 +1821,7 @@ class FileBrowserWidget(QWidget):
                                        text='Copy selected column to console as numpy array "{}".'.format(hdr),
                                        icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def _ocr(self) -> None:
         index = self._listfiles.currentIndex()
         if index:
@@ -1784,128 +1874,124 @@ class FileBrowserWidget(QWidget):
             wait.close()
 
     def _renameInTreeFolders(self) -> None:
-        if self._popupindex:
-            # noinspection PyTypeChecker
-            self._treedir.edit(self._popupindex[0])
-            self._popupindex = None
+        index =  self._treedir.selectedIndexes()[0]
+        if index: self._treedir.edit(index)
 
     def _renameInListFiles(self) -> None:
-        if self._popupindex:
-            # noinspection PyTypeChecker
-            self._listfiles.edit(self._popupindex[0])
-            self._popupindex = None
+        index =  self._listfiles.selectedIndexes()[0]
+        if index: self._listfiles.edit(index)
 
+    # noinspection unresolved-references
     def _removeFile(self) -> None:
-        if self._popupindex: sindex = self._popupindex
-        else: sindex = self._listfiles.selectedIndexes()
-        if len(sindex) > 0:
-            r = messageBox(self,
-                           'Remove directory',
-                           'Do you want to delete selected file(s) ?',
-                           icon=QMessageBox.Question,
-                           buttons=QMessageBox.Yes | QMessageBox.No)
-            if r == QMessageBox.Yes:
-                files = list()
-                previous = ''
-                for index in sindex:
-                    # noinspection PyUnresolvedReferences
-                    path = self._listfiles.model().filePath(index)
-                    if path != previous:files.append(path)
-                    previous = path
-                for f in files:
-                    remove(f)
-        self._popupindex = None
+        sindex = self._listfiles.selectedIndexes()
+        if sindex:
+            if len(sindex) > 0:
+                r = messageBox(self,
+                               'Remove File(s)',
+                               'Do you want to delete selected file(s) ?',
+                               icon=QMessageBox.Question,
+                               buttons=QMessageBox.Yes | QMessageBox.No)
+                if r == QMessageBox.Yes:
+                    previous = ''
+                    files = list()
+                    for index in sindex[::3]:
+                        try:
+                            path = abspath(self._listfiles.model().data(index, Qt.UserRole))
+                        except: break
+                        if path != previous: files.append(path)
+                        previous = path
+                    for f in files:
+                        remove(f)
 
+    # noinspection unresolved-references
     def _removeDir(self) -> None:
-        if self._popupindex: index = self._popupindex[0]
-        else: index = self._treedir.selectedIndexes()[0]
+        index = self._treedir.selectedIndexes()[0]
         if index:
-            path = self._filemodel1.filePath(index)
+            path = self._filemodel.filePath(index)
             r = messageBox(self,
                            'Remove directory',
                            'Do you want to delete {} and its contents ?'.format(path),
                            icon=QMessageBox.Question,
                            buttons=QMessageBox.Yes | QMessageBox.No)
             if r == QMessageBox.Yes:
-                parent = abspath(Path(path).parent)
-                if exists(parent):
-                    # noinspection PyArgumentList
-                    self._dirClicked(self._treedir.model().index(parent))
+                above = self._treedir.indexAbove(index)
+                if above:
+                    self._treedir.selectionModel().setCurrentIndex(above, QItemSelectionModel.ClearAndSelect)
                 rmtree(path)
-        self._popupindex = None
 
+    # noinspection unresolved-references
     def _newFolder(self) -> None:
-        if self._popupindex: index = self._popupindex[0]
-        else: index =  self._treedir.selectedIndexes()[0]
+        index = self._treedir.selectedIndexes()
         if index:
-            path = abspath(join(self._filemodel1.filePath(index), 'new folder'))
+            index = index[0]
+            path = abspath(join(self._filemodel.filePath(index), 'new folder'))
             i = 0
             while exists(path):
                 i += 1
-                path = abspath(join(self._filemodel1.filePath(index), 'new folder#'.format(i)))
-            mkdir(path)
-        self._popupindex = None
+                path = abspath(join(self._filemodel.filePath(index), 'new folder#{}'.format(i)))
+            self._treedir.expand(index)
+            index = self._filemodel.mkdir(index, basename(path))
+            self._treedir.scrollTo(index)
+            self._treedir.selectionModel().setCurrentIndex(index, QItemSelectionModel.ClearAndSelect)
+            self._renameInTreeFolders()
 
     def _copyDir(self) -> None:
-        if self._popupindex is None:
-            self._popupindex = [self._treedir.selectedIndexes()[0]]
-        # noinspection PyUnresolvedReferences
-        self._clipboard = [index.model().filePath(index) for index in self._popupindex[::3]]
-        self._copyflag = True
-        self._cutflag = False
-        self._popupindex = None
+        index = self._treedir.selectedIndexes()
+        if index:
+            index = index[0]
+            self._clipboard = [self._filemodel.filePath(index)]
+            self._copyflag = True
+            self._cutflag = False
 
     def _cutDir(self) -> None:
-        if self._popupindex is None:
-            self._popupindex = [self._treedir.selectedIndexes()[0]]
-        # noinspection PyUnresolvedReferences
-        self._clipboard = [index.model().filePath(index) for index in self._popupindex[::3]]
-        self._copyflag = False
-        self._cutflag = True
-        self._popupindex = None
-
-    def _copyFile(self) -> None:
-        if self._popupindex is None:
-            self._popupindex = self._listfiles.selectedIndexes()
-        # noinspection PyUnresolvedReferences
-        self._clipboard = [index.model().filePath(index) for index in self._popupindex[::3]]
-        self._copyflag = True
-        self._cutflag = False
-        self._popupindex = None
-
-    def _cutFile(self) -> None:
-        if self._popupindex is None:
-            self._popupindex = self._listfiles.selectedIndexes()
-        # noinspection PyUnresolvedReferences
-        self._clipboard = [index.model().filePath(index) for index in self._popupindex[::3]]
-        self._copyflag = False
-        self._cutflag = True
-        self._popupindex = None
-
-    def _paste(self) -> None:
-        if self._popupindex is None:
-            self._popupindex = [self._treedir.selectedIndexes()[0]]
-        if self._clipboard:
-            dst = self._filemodel1.filePath(self._popupindex[0])
-            i: cython.int
-            for i in range(len(self._clipboard)):
-                # noinspection PyTypeChecker
-                src: str = self._clipboard[i]
-                if exists(src):
-                    try:
-                        if src != dst:
-                            if self._copyflag:
-                                if isdir(src):
-                                    # noinspection PyUnresolvedReferences
-                                    dst = abspath(join(dst, Path(src).parts[-1]))
-                                    copytree(src, dst)
-                                else: copy(src, dst)
-                            elif self._cutflag: move(src, dst)
-                    except: pass
+        index = self._treedir.selectedIndexes()
+        if index:
+            index = index[0]
+            self._clipboard = [self._filemodel.filePath(index)]
             self._copyflag = False
-            self._cutflag = False
-            self._clipboard = None
-            self._popupindex = None
+            self._cutflag = True
+
+    # noinspection unresolved-references
+    def _copyFile(self) -> None:
+        indexes = self._listfiles.selectedIndexes()
+        if indexes:
+            if len(indexes) > 0:
+                self._clipboard = [self._listfiles.model().data(index, Qt.UserRole) for index in indexes[::3]]
+                self._copyflag = True
+                self._cutflag = False
+
+    # noinspection unresolved-references
+    def _cutFile(self) -> None:
+        indexes = self._listfiles.selectedIndexes()
+        if indexes:
+            if len(indexes) > 0:
+                self._clipboard = [self._listfiles.model().data(index, Qt.UserRole) for index in indexes[::3]]
+                self._copyflag = False
+                self._cutflag = True
+
+    # noinspection unresolved-references
+    def _paste(self) -> None:
+        index = self._treedir.selectedIndexes()
+        if index:
+            index = index[0]
+            if self._clipboard:
+                dst = self._filemodel.filePath(index)
+                i: cython.int
+                for i in range(len(self._clipboard)):
+                    src: str = self._clipboard[i]
+                    if exists(src):
+                        try:
+                            if src != dst:
+                                if self._copyflag:
+                                    if isdir(src):
+                                        dst = abspath(join(dst, Path(src).parts[-1]))
+                                        copytree(src, dst)
+                                    else: copy(src, dst)
+                                elif self._cutflag: move(src, dst)
+                        except: pass
+                self._copyflag = False
+                self._cutflag = False
+                self._clipboard = None
 
     def _selectAll(self) -> None:
         self._listfiles.selectAll()

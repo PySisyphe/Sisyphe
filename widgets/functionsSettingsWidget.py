@@ -221,6 +221,7 @@ class SettingsWidget(QWidget):
         int
             icon size in pixels.
         """
+        # noinspection unresolved-references
         dpi = QApplication.primaryScreen().logicalDotsPerInch()
         if dpi > 100: return int(cls._VSIZE * dpi / 800) * 8
         else: return cls._VSIZE
@@ -375,7 +376,7 @@ class SettingsWidget(QWidget):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _parameterChanged(self, value: Any) -> None:
         """
         Slot for handling parameter changes. Emits the ParameterChanged signal.
@@ -388,6 +389,7 @@ class SettingsWidget(QWidget):
         # noinspection PyUnresolvedReferences
         self.ParameterChanged.emit(self)
 
+    # noinspection unresolved-references,unreachable-code
     def _initSettingsLayout(self, function: str) -> None:
         """
         Initialize the settings layout based on the function's parameters from the XML settings file.
@@ -440,24 +442,20 @@ class SettingsWidget(QWidget):
                 if vartype not in ('dirs', 'vols', 'rois', 'dcms'):
                     if node.hasAttribute('label'): lb = QLabel(node.getAttribute('label'))
                     else: lb = QLabel(self.formatLabel(parameter), parent=self)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(lb, i, 0, alignment=Qt.AlignRight)
                 else:
                     if node.hasAttribute('label'): lb = node.getAttribute('label')
                     else: lb = self.formatLabel(parameter)
                 if node.hasChildNodes():
                     child = node.firstChild
-                    # noinspection PyUnresolvedReferences
                     data = child.data
                 else: data = ''
                 if vartype == 'str':
                     edit = QLineEdit(parent=self)
                     edit.setFixedWidth(300)
                     edit.setText(data)
-                    # noinspection PyUnresolvedReferences
                     edit.textChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'int':
@@ -475,14 +473,11 @@ class SettingsWidget(QWidget):
                         edit.setMaximum(varmax)
                     if data == '': data = varmin  # Default
                     edit.setValue(int(data))
-                    # noinspection PyUnresolvedReferences
                     edit.setAlignment(Qt.AlignCenter)
-                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(self._parameterChanged)
                     if tooltip is not None:
                         edit.setToolTip('{}\n\nValue range from {} to {}'.format(tooltip, varmin, varmax))
                     else: edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'float':
@@ -510,19 +505,15 @@ class SettingsWidget(QWidget):
                         edit.setMaximum(varmax)
                     if data == '': data = varmin  # Default
                     edit.setValue(float(data))
-                    # noinspection PyUnresolvedReferences
                     edit.setAlignment(Qt.AlignCenter)
-                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(self._parameterChanged)
                     if tooltip is not None:
                         edit.setToolTip('{}\n\nValue range from {} to {}'.format(tooltip, varmin, varmax))
                     else: edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'percent':
                     lbl2 = QLabel('100 %', parent=self)
-                    # noinspection PyUnresolvedReferences
                     edit = QSlider(Qt.Horizontal, parent=self)
                     edit.setToolTip('100 %')
                     edit.setMinimum(0)
@@ -530,11 +521,8 @@ class SettingsWidget(QWidget):
                     edit.setFixedWidth(100)
                     if data == '': data = 0.0  # Default
                     edit.setValue(int(float(data)*100))
-                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(self._parameterChanged)
-                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(lambda v, w=edit: w.setToolTip('{} %'.format(v)))
-                    # noinspection PyUnresolvedReferences
                     edit.valueChanged.connect(lambda v, w=lbl2: w.setText('{} %'.format(v)))
                     if tooltip is not None: edit.setToolTip(tooltip)
                     lyout = QHBoxLayout()
@@ -542,7 +530,6 @@ class SettingsWidget(QWidget):
                     lyout.setContentsMargins(0, 0, 0, 0)
                     lyout.addWidget(edit)
                     lyout.addWidget(lbl2)
-                    # noinspection PyUnresolvedReferences
                     layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'bool':
@@ -555,10 +542,8 @@ class SettingsWidget(QWidget):
                     if data == 'True': edit.setChecked(True)
                     else: edit.setChecked(False)
                     # Revision 02/06/2025 >
-                    # noinspection PyUnresolvedReferences
                     edit.stateChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'visibility':
@@ -576,7 +561,6 @@ class SettingsWidget(QWidget):
                     lyout.setContentsMargins(0, 0, 0, 0)
                     if exists(icn): lyout.addWidget(IconPushButton(icon=icn, size=size))
                     lyout.addWidget(edit)
-                    # noinspection PyUnresolvedReferences
                     layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'lstr':
@@ -587,10 +571,8 @@ class SettingsWidget(QWidget):
                             edit.addItem(d)
                         edit.setEditable(False)
                         edit.setCurrentIndex(0)
-                        # noinspection PyUnresolvedReferences
                         edit.currentIndexChanged.connect(self._parameterChanged)
                         if tooltip is not None: edit.setToolTip(tooltip)
-                        # noinspection PyUnresolvedReferences
                         layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                         self._parameters[parameter] = edit
                 elif vartype == 'lint':
@@ -614,16 +596,12 @@ class SettingsWidget(QWidget):
                                 edit.setMaximum(varmax)
                                 edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
                             edit.setValue(int(d))
-                            # noinspection PyUnresolvedReferences
                             edit.setAlignment(Qt.AlignCenter)
-                            # noinspection PyUnresolvedReferences
                             edit.valueChanged.connect(self._parameterChanged)
                             if tooltip is not None: edit.setToolTip('{}\n\nValue range from {} to {}'.format(tooltip, varmin, varmax))
                             else: edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
-                            # noinspection PyUnresolvedReferences
                             lyout.addWidget(edit, alignment=Qt.AlignLeft)
                             self._parameters[parameter].append(edit)
-                        # noinspection PyUnresolvedReferences
                         layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
                 elif vartype == 'lfloat':
                     if data != '':
@@ -656,16 +634,12 @@ class SettingsWidget(QWidget):
                                 edit.setMaximum(varmax)
                                 edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
                             edit.setValue(float(d))
-                            # noinspection PyUnresolvedReferences
                             edit.setAlignment(Qt.AlignCenter)
-                            # noinspection PyUnresolvedReferences
                             edit.valueChanged.connect(self._parameterChanged)
                             if tooltip is not None: edit.setToolTip('{}\n\nValue range from {} to {}'.format(tooltip, varmin, varmax))
                             else: edit.setToolTip('Value range from {} to {}'.format(varmin, varmax))
-                            # noinspection PyUnresolvedReferences
                             lyout.addWidget(edit, alignment=Qt.AlignLeft)
                             self._parameters[parameter].append(edit)
-                        # noinspection PyUnresolvedReferences
                         layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
                 elif vartype == 'lbool':
                     if data != '':
@@ -682,13 +656,10 @@ class SettingsWidget(QWidget):
                             if d == 'True': edit.setCurrentIndex(0)
                             else: edit.setCurrentIndex(1)
                             edit.setEditable(False)
-                            # noinspection PyUnresolvedReferences
                             edit.currentIndexChanged.connect(self._parameterChanged)
                             if tooltip is not None: edit.setToolTip(tooltip)
-                            # noinspection PyUnresolvedReferences
                             lyout.addWidget(edit, alignment=Qt.AlignLeft)
                             self._parameters[parameter].append(edit)
-                        # noinspection PyUnresolvedReferences
                         layout.addLayout(lyout, i, 1, alignment=Qt.AlignLeft)
                 elif vartype == 'color':
                     edit = ColorSelectPushButton(parent=self)
@@ -698,17 +669,14 @@ class SettingsWidget(QWidget):
                     edit.setFloatColor(float(data[0]), float(data[1]), float(data[2]), False)
                     edit.colorChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'lut':
                     edit = ComboBoxLut(parent=self)
                     if data == '': data = 'gray'  # Default
                     edit.setCurrentText(data)
-                    # noinspection PyUnresolvedReferences
                     edit.currentTextChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 # < Revision 15/03/2025
@@ -716,10 +684,8 @@ class SettingsWidget(QWidget):
                     edit = FontSelect(parent=self)
                     if data == '': edit.setDefaultFont()
                     else: edit.setFont(data)
-                    # noinspection PyUnresolvedReferences
                     edit.fontChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 # Revision 15/03/2025 >
@@ -729,16 +695,13 @@ class SettingsWidget(QWidget):
                     edit.setDisplayFormat('dd/MM/yyyy')
                     # Revision 11/06/2026 >
                     edit.setFixedWidth(100)
-                    # noinspection PyUnresolvedReferences
                     edit.setAlignment(Qt.AlignCenter)
                     edit.setCalendarPopup(True)
                     try: data = datetime.strptime(data, '%Y-%m-%d').date()
                     except: data = datetime.today().date()
                     edit.setDate(data)
-                    # noinspection PyUnresolvedReferences
                     edit.dateChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'vol':
@@ -767,7 +730,6 @@ class SettingsWidget(QWidget):
                         edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'roi':
@@ -777,7 +739,6 @@ class SettingsWidget(QWidget):
                     if exists(data): edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 # < Revision 23/12/2024
@@ -789,7 +750,6 @@ class SettingsWidget(QWidget):
                     if exists(data): edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 # Revision 23/12/2024 >
@@ -800,7 +760,6 @@ class SettingsWidget(QWidget):
                     if exists(data): edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 elif vartype == 'vols':
@@ -878,7 +837,6 @@ class SettingsWidget(QWidget):
                     if exists(data): edit.open(data)
                     edit.FieldChanged.connect(self._parameterChanged)
                     if tooltip is not None: edit.setToolTip(tooltip)
-                    # noinspection PyUnresolvedReferences
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 else: raise TypeError('Unknown vartype {}'.format(vartype))
@@ -1260,6 +1218,7 @@ class SettingsWidget(QWidget):
                 self.setParameterValue(k, d[k])
     # Revision 13/02/2025 >
 
+    # noinspection unresolved-references
     def resetSettings(self, filename: str = '', default: bool = False) -> None:
         """
         Reset the settings to their default values from a settings file.

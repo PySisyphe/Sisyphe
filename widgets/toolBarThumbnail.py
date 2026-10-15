@@ -76,7 +76,7 @@ class ToolBarThumbnail(QToolBar):
     QToolBar -> ToolBarThumbnail
 
     Creation: 02/11/2022
-    Last revision: 21/07/2026
+    Last revision: 05/10/2026
     """
 
     # Special method
@@ -85,9 +85,14 @@ class ToolBarThumbnail(QToolBar):
     Private attributes
 
     _actions    list[SisypheVolumeThumbnailButtonWidget]
+    _size       int, widget height
+    _group      QButtonGroup
+    _popup      QMenu, popup menu
+    _compress   bool, save volume in compressed format
     _parent     QWidget
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  size: int = 128,
                  mainwindow: WindowSisyphe | None = None,
@@ -139,31 +144,35 @@ class ToolBarThumbnail(QToolBar):
         # Init popup menu
 
         self._popup = QMenu(self)
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['open'] = QAction('Open volume', self)
         self._action['saveall'] = QAction('Save all volume(s)', self)
         self._action['closeall'] = QAction('Close all volume(s)', self)
-        # noinspection PyUnresolvedReferences
         self._action['open'].triggered.connect(lambda dummy: self.open())
-        # noinspection PyUnresolvedReferences
         self._action['saveall'].triggered.connect(self.saveAll)
-        # noinspection PyUnresolvedReferences
         self._action['closeall'].triggered.connect(self.removeAll)
         self._popup.addAction(self._action['open'])
         self._popup.addAction(self._action['saveall'])
         self._popup.addAction(self._action['closeall'])
+
+        # < Revision 05/10/2026
+        self._compress = False
+        # Revision 05/10/2026 >
 
         # Drag and Drop
 
         self.setAcceptDrops(True)
 
     # Public method
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def setSize(self, s: int) -> None:
         if isinstance(s, int):
@@ -208,7 +217,7 @@ class ToolBarThumbnail(QToolBar):
             i: cython.int
             for i in range(0, len(self.actions())):
                 # widget = self._actions[i].defaultWidget()
-                # noinspection PyUnresolvedReferences
+                # noinspection unresolved-references
                 widget = self.actions()[i].defaultWidget()
                 if not widget.isChecked():
                     widget.getActions()['slices'].setChecked(False)
@@ -229,27 +238,25 @@ class ToolBarThumbnail(QToolBar):
             i: cython.int
             for i in range(0, len(self.actions())):
                 # if self._actions[i].defaultWidget().isChecked(): return i
-                # noinspection PyUnresolvedReferences
+                # noinspection unresolved-references
                 if self.actions()[i].defaultWidget().isChecked(): return i
         return None
 
-    def getSelectedWidget(self) -> SisypheVolumeThumbnailButtonWidget:
+    # noinspection unresolved-references
+    def getSelectedWidget(self) -> SisypheVolumeThumbnailButtonWidget | None:
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
                 if action.defaultWidget().isChecked():
-                    # noinspection PyUnresolvedReferences
                     return action.defaultWidget()
         return None
 
-    def getSelectedVolume(self) -> SisypheVolume:
+    # noinspection unresolved-references
+    def getSelectedVolume(self) -> SisypheVolume | None:
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
                 if action.defaultWidget().isChecked():
-                    # noinspection PyUnresolvedReferences
                     return action.defaultWidget().getVolume()
         return None
 
@@ -257,17 +264,16 @@ class ToolBarThumbnail(QToolBar):
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
+                # noinspection unresolved-references
                 if action.defaultWidget().isChecked(): return True
         return False
 
-    def getReference(self) -> SisypheVolume:
+    # noinspection unresolved-references
+    def getReference(self) -> SisypheVolume | None:
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
                 if action.defaultWidget().isChecked():
-                    # noinspection PyUnresolvedReferences
                     return action.defaultWidget().getVolume()
         return None
 
@@ -276,7 +282,7 @@ class ToolBarThumbnail(QToolBar):
     def removeReference(self) -> None:
         if not self.isEmpty():
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
+                # noinspection unresolved-references
                 w = action.defaultWidget()
                 if w.isChecked():
                     w.removeFromAllViews()
@@ -288,24 +294,23 @@ class ToolBarThumbnail(QToolBar):
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
+                # noinspection unresolved-references
                 if action.defaultWidget().isDown(): return True
         return False
     # Revision 15/10/2024 >
 
     # < Revision 15/10/2024
     # add getOverlays method
+    # noinspection unresolved-references
     def getOverlays(self) -> list[SisypheVolume]:
         r = list()
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
                 if action.defaultWidget().isDown():
                     # < Revision 25/10/2024
                     # bugfix
                     # return action.defaultWidget().getVolume()
-                    # noinspection PyUnresolvedReferences
                     r.append(action.defaultWidget().getVolume())
                     # Revision 25/10/2024 >
         return r
@@ -318,7 +323,7 @@ class ToolBarThumbnail(QToolBar):
         if not self.isEmpty():
             # for action in self._actions:
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
+                # noinspection unresolved-references
                 if action.defaultWidget().isDown(): n += 1
         return n
     # Revision 06/11/2024 >
@@ -334,7 +339,7 @@ class ToolBarThumbnail(QToolBar):
             # if 0 <= index < len(self._actions):
             if 0 <= index < len(self.actions()):
                 # return self._actions[index].defaultWidget()
-                # noinspection PyUnresolvedReferences
+                # noinspection unresolved-references
                 return self.actions()[index].defaultWidget()
             else: raise ValueError('parameter is out of range.')
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
@@ -344,7 +349,7 @@ class ToolBarThumbnail(QToolBar):
             # if 0 <= index < len(self._actions):
             if 0 <= index < len(self.actions()):
                 # return self._actions[index].defaultWidget().getVolume()
-                # noinspection PyUnresolvedReferences
+                # noinspection unresolved-references
                 return self.actions()[index].defaultWidget().getVolume()
             else: raise ValueError('parameter is out of range.')
         else: raise TypeError('parameter type {} is not int.'.format(type(index)))
@@ -366,17 +371,17 @@ class ToolBarThumbnail(QToolBar):
             if not self.isEmpty():
                 # for action in self._actions:
                 for action in self.actions():
-                    # noinspection PyUnresolvedReferences
+                    # noinspection unresolved-references
                     if action.defaultWidget().getVolume().getArrayID() == vol.getArrayID(): return True
             return False
         else: raise TypeError('parameter type {} is not SisypheVolume.'.format(type(vol)))
 
+    # noinspection unresolved-references
     def removeVolume(self, vol: SisypheVolume) -> None:
         if isinstance(vol, SisypheVolume):
             if not self.isEmpty():
                 # for action in self._actions:
                 for action in self.actions():
-                    # noinspection PyUnresolvedReferences
                     w = action.defaultWidget()
                     if w.getVolume() == vol:
                         if w.isChecked():
@@ -408,14 +413,21 @@ class ToolBarThumbnail(QToolBar):
                 self.getWidgetFromIndex(i).setDown(False)
         if self._logger is not None: self._logger.info('Remove all overlays')
 
+    # noinspection unresolved-references
     def addVolume(self,
                   vol: SisypheVolume,
-                  wait: DialogWait | None = None) -> None:
+                  wait: DialogWait | None = None) -> bool:
         if isinstance(vol, SisypheVolume):
+            # < Revision 05/10/2026
+            if self._compress: vol.setCompressionOn()
+            # Revision 05/10/2026 >
             # noinspection PyInconsistentReturns
             if not self.containsVolume(vol):
                 if not self.isFull():
                     widget = SisypheVolumeThumbnailButtonWidget(vol, size=self._size, thumbnail=self, views=self._views)
+                    # < Revision 07/10/2026
+                    widget.setCompression(self._compress)
+                    # Revision 07/10/2026 >
                     QApplication.processEvents()
                     self._group.addButton(widget)
                     action = QWidgetAction(self)
@@ -443,6 +455,7 @@ class ToolBarThumbnail(QToolBar):
                                     'Close a volume to open a new one.',
                                icon=QMessageBox.Information)
                     return False
+            else: return False
         else: raise TypeError('parameter type {} is not str or SisypheVolume.'.format(type(vol)))
 
     def open(self, filenames: str | list[str] | None = None) -> None:
@@ -525,6 +538,7 @@ class ToolBarThumbnail(QToolBar):
                        'No displayed volume to save.',
                        icon=QMessageBox.Information)
         if self.hasMainWindow():
+            # noinspection unresolved-references
             self._mainwindow.setStatusBarMessage('Reference volume saved.')
 
     def saveSelectedAs(self) -> None:
@@ -540,6 +554,7 @@ class ToolBarThumbnail(QToolBar):
                        'No displayed volume to save.',
                        icon=QMessageBox.Information)
         if self.hasMainWindow():
+            # noinspection unresolved-references
             self._mainwindow.setStatusBarMessage('Reference volume saved.')
 
     def saveAll(self) -> None:
@@ -551,6 +566,7 @@ class ToolBarThumbnail(QToolBar):
                 v.save()
                 if self._logger is not None: self._logger.info('Save {}'.format(v.getBasename()))
             if self.hasMainWindow():
+                # noinspection unresolved-references
                 self._mainwindow.setStatusBarMessage('All volumes saved.')
 
     def editAttributesSelected(self) -> None:
@@ -567,13 +583,13 @@ class ToolBarThumbnail(QToolBar):
                        'No displayed volume to edit.',
                        icon=QMessageBox.Information)
 
+    # noinspection unresolved-references
     def removeSelected(self) -> None:
         if not self.isEmpty():
             if self.hasMainWindow():
                 self._mainwindow.clearDockListWidgets()
             # for action in self._actions:
             for action in self.actions():
-                # noinspection PyUnresolvedReferences
                 if action.defaultWidget().isChecked():
                     self._views.removeVolume()
                     self.removeAction(action)
@@ -582,7 +598,6 @@ class ToolBarThumbnail(QToolBar):
                 # < Revision 19/03/2025
                 # disable overlays
                 elif action.defaultWidget().isDown():
-                    # noinspection PyUnresolvedReferences
                     action.defaultWidget().setDown(False)
                 # Revision 19/03/2025 >
             if self.hasMainWindow():
@@ -594,6 +609,7 @@ class ToolBarThumbnail(QToolBar):
                 self._mainwindow.hideViewWidgets()
                 # Revision 16/10/2024 >
 
+    # noinspection unresolved-references
     def removeAll(self) -> None:
         if not self.isEmpty():
             if self.hasMainWindow():
@@ -616,6 +632,7 @@ class ToolBarThumbnail(QToolBar):
         return len(self.actions()) == 0
 
     def isFull(self) -> bool:
+        # noinspection unresolved-references
         s = self.layout().spacing()
         nmax = self.width() // (self._size + s)
         # return len(self._actions) == nmax
@@ -634,10 +651,13 @@ class ToolBarThumbnail(QToolBar):
 
     # Qt events
 
+    # noinspection method-overriding
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
+        # noinspection unresolved-references
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
+    # noinspection method-overriding,unresolved-references
     def dropEvent(self, event: QDropEvent) -> None:
         if event.mimeData().hasText():
             event.acceptProposedAction()
@@ -662,9 +682,11 @@ class ToolBarThumbnail(QToolBar):
                             messageBox(window, 'Open PySisyphe volume', text='{}'.format(err))
         else: event.ignore()
 
+    # noinspection method-overriding
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         # Popup
         self._popup.popup(event.globalPos())
 
+    # noinspection method-overriding
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         self.open()

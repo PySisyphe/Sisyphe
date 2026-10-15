@@ -168,6 +168,7 @@ def colorDialog(parent: QWidget | None = None,
         dialog.setOption(QColorDialog.DontUseNativeDialog)
         try: __main__.updateWindowTitleBarColor(dialog)
         except: pass
+    # noinspection unresolved-references
     dialog.move(QApplication.primaryScreen().availableGeometry().center() - dialog.rect().center())
     if dialog.exec() > 0: return dialog.currentColor()
     else: return None
@@ -202,6 +203,7 @@ def fontDialog(parent: QWidget | None = None,
         dialog.setOption(QFontDialog.DontUseNativeDialog)
         try: __main__.updateWindowTitleBarColor(dialog)
         except: pass
+    # noinspection unresolved-references
     dialog.move(QApplication.primaryScreen().availableGeometry().center() - dialog.rect().center())
     if dialog.exec() > 0: return dialog.currentFont()
     else: return None
@@ -854,6 +856,7 @@ class ColorSelectPushButton(QLabel):
 
     # < Revision 30/03/2025
     # add mousePressEvent method
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event to trigger color selection.
@@ -1007,6 +1010,7 @@ class FontSelect(QWidget):
         return findFontPath(font.family())
     # Revision 03/05/2026 >
 
+    # noinspection method-overriding
     def setFont(self, name: str | QFont, signal: bool = False) -> None:
         """
         Set a new font based on its name or a QFont object.
@@ -1116,6 +1120,7 @@ class MenuPushButton(QPushButton):
 
     # Public methods
 
+    # noinspection method-overriding
     def addAction(self, txt: str) -> QAction:
         """
         Add a new action to the popup menu using its text description.
@@ -1136,6 +1141,7 @@ class MenuPushButton(QPushButton):
             return action
         else: raise TypeError('parameter type {} is not str.'.format(type(txt)))
 
+    # noinspection method-overriding
     def insertAction(self, before: QAction, txt: str) -> QAction:
         """
         Insert a new action into the popup menu before a specific existing action.
@@ -1420,6 +1426,7 @@ class LabeledLineEdit(QWidget):
 
     # Overridden Qt event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent | None) -> None:
         """
         Handle mouse press events and emit the pressed signal.
@@ -1429,6 +1436,7 @@ class LabeledLineEdit(QWidget):
         self.pressed.emit()
         super().mousePressEvent(event)
 
+    # noinspection method-overriding
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         """
         Intercept events from child widgets to handle them at the parent level.
@@ -1568,6 +1576,7 @@ class LabeledSpinBox(QWidget):
 
     # Overridden Qt event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and emit the pressed signal.
@@ -1753,6 +1762,7 @@ class LabeledDoubleSpinBox(QWidget):
 
     # Overridden Qt event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and emit the pressed signal.
@@ -2084,6 +2094,7 @@ class LabeledSlider(QWidget):
 
     # Qt event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and trigger a slider SliderSingleStep action.
@@ -2232,6 +2243,7 @@ class LabeledComboBox(QWidget):
 
     # Overridden Qt event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and emit the pressed signal.
@@ -2334,6 +2346,7 @@ class IconLabel(QLabel):
 
     # Overridden Qt event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and emit the pressed signal.
@@ -2585,6 +2598,7 @@ class VisibilityLabel(QLabel):
 
     # Overridden Qt event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and emit the pressed signal.
@@ -2747,6 +2761,7 @@ class LockLabel(QLabel):
 
     # Override Qt event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and emit the pressed signal.
@@ -2841,6 +2856,7 @@ class OpacityPushButton(QLabel):
     _popup      QMenu
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None) -> None:
         """
         OpacityPushButton instance constructor.
@@ -2912,7 +2928,7 @@ class OpacityPushButton(QLabel):
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _opacityChanged(self, value: int) -> None:
         """
         Internal method to update opacity and tooltips when the slider value changes.
@@ -2962,6 +2978,7 @@ class OpacityPushButton(QLabel):
 
     # Qt Event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and emit the pressed signal.
@@ -3060,6 +3077,7 @@ class WidthPushButton(QLabel):
     _popup      QMenu
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  vmin: float = 1.0,
                  vmax: float = 10.0,
@@ -3153,7 +3171,7 @@ class WidthPushButton(QLabel):
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _widthChanged(self, value: int) -> None:
         """
         Internal method to update width and tooltips when the slider value changes.
@@ -3268,6 +3286,7 @@ class WidthPushButton(QLabel):
 
     # Qt Event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
         Handle the mouse press event and emit the pressed signal.

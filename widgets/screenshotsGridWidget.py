@@ -111,6 +111,7 @@ class ScreenshotsGridWidget(QWidget):
     _dragpos0       list[int, int], starting drag event, first mouse position
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
@@ -134,7 +135,6 @@ class ScreenshotsGridWidget(QWidget):
         self._table.setShowGrid(False)
         # < Revision 26/04/2025
         # self._table.setEnabled(False)
-        # noinspection PyUnresolvedReferences
         self._table.setAttribute(Qt.WA_TransparentForMouseEvents)
         # Revision 26/04/2025 >
         i: cython.int
@@ -145,7 +145,6 @@ class ScreenshotsGridWidget(QWidget):
                 w = QLabel()
                 w.setFrameShape(QLabel.Box)
                 w.setScaledContents(False)
-                # noinspection PyTypeChecker
                 w.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
                 w.setEnabled(True)
                 if i == 0 and j == 0: w.setStyleSheet('background-color: black; border-width: 5px; border-color: rgb(0, 125, 255); margin: 0px;')
@@ -161,30 +160,21 @@ class ScreenshotsGridWidget(QWidget):
         # Init QMenu
 
         self._popup = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         a = self._popup.addAction('Copy')
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.copyToClipboard)
         a = self._popup.addAction('Cut')
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.cutToClipboard)
         a = self._popup.addAction('Paste')
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.pasteFromClipboard)
         self._popup.addSeparator()
         a = self._popup.addAction('Add bitmap(s)...')
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.pasteFromDisk)
         a = self._popup.addAction('Clear selected')
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.deleteSelection)
         a = self._popup.addAction('Clear all')
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.clearAll)
         self._popup.addSeparator()
         submenu = self._popup.addMenu('Orientation')
@@ -194,12 +184,10 @@ class ScreenshotsGridWidget(QWidget):
         a.setCheckable(True)
         a.setActionGroup(group)
         a.setChecked(True)
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.setOrientationToPortrait)
         a = submenu.addAction('Landscape')
         a.setCheckable(True)
         a.setActionGroup(group)
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(self.setOrientationToLandscape)
         submenu = self._popup.addMenu('Row count')
         group = QActionGroup(self)
@@ -209,7 +197,6 @@ class ScreenshotsGridWidget(QWidget):
             a.setCheckable(True)
             a.setActionGroup(group)
             if i == 5: a.setChecked(True)
-            # noinspection PyUnresolvedReferences
             a.triggered.connect(lambda dummy, v=i: self.setRows(v))
         submenu = self._popup.addMenu('Column count')
         group = QActionGroup(self)
@@ -219,14 +206,11 @@ class ScreenshotsGridWidget(QWidget):
             a.setCheckable(True)
             a.setActionGroup(group)
             if i == 5: a.setChecked(True)
-            # noinspection PyUnresolvedReferences
             a.triggered.connect(lambda dummy, v=i: self.setCols(v))
         self._popup.addSeparator()
         a = self._popup.addAction('Save bitmap...')
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(lambda dummy: self.saveToBitmap())
         a = self._popup.addAction('Save...')
-        # noinspection PyUnresolvedReferences
         a.triggered.connect(lambda dummy: self.save())
 
         # Init buttons
@@ -234,7 +218,6 @@ class ScreenshotsGridWidget(QWidget):
         btlyout = QHBoxLayout()
         btlyout.setContentsMargins(0, 0, 0, 0)
         btlyout.setSpacing(5)
-        # noinspection PyUnresolvedReferences
         btlyout.setAlignment(Qt.AlignCenter)
 
         w = QComboBox()
@@ -242,14 +225,12 @@ class ScreenshotsGridWidget(QWidget):
         w.addItem('Portrait')
         w.addItem('Landscape')
         w.setCurrentIndex(0)
-        # noinspection PyUnresolvedReferences
         w.currentIndexChanged.connect(self.setOrientation)
         btlyout.addWidget(w)
         self._backg = LabeledComboBox(title='Background', fontsize=14)
         self._backg.addItem('black')
         self._backg.addItem('white')
         self._backg.setCurrentIndex(0)
-        # noinspection PyUnresolvedReferences
         self._backg.currentIndexChanged.connect(self._backgroundChanged)
         btlyout.addWidget(self._backg)
         w = QLabel('Rows')
@@ -261,7 +242,6 @@ class ScreenshotsGridWidget(QWidget):
         w.setRange(1, 5)
         # Revision 13/12/2024 >
         w.setValue(5)
-        # noinspection PyUnresolvedReferences
         w.valueChanged.connect(self.setRows)
         btlyout.addWidget(w)
         w = QLabel('Columns')
@@ -273,32 +253,26 @@ class ScreenshotsGridWidget(QWidget):
         w.setRange(1, 5)
         # Revision 13/12/2024 >
         w.setValue(5)
-        # noinspection PyUnresolvedReferences
         w.valueChanged.connect(self.setCols)
         btlyout.addWidget(w)
         w = QPushButton('Add...')
         w.setToolTip('Add bitmap from disk.')
-        # noinspection PyUnresolvedReferences
         w.clicked.connect(self.pasteFromDisk)
         btlyout.addWidget(w)
         w = QPushButton('Clear')
         w.setToolTip('Clear selected screenshot.')
-        # noinspection PyUnresolvedReferences
         w.clicked.connect(self.deleteSelection)
         btlyout.addWidget(w)
         w = QPushButton('Clear all')
         w.setToolTip('Clear screenshots grid.')
-        # noinspection PyUnresolvedReferences
         w.clicked.connect(self.clearAll)
         btlyout.addWidget(w)
         w = QPushButton('Save...')
         w.setToolTip('Save screenshots grid to word document, html or pdf.')
-        # noinspection PyUnresolvedReferences
         w.clicked.connect(lambda dummy: self.save())
         btlyout.addWidget(w)
         w = QPushButton('Save bitmap...')
         w.setToolTip('Save screenshots grid to bitmap.')
-        # noinspection PyUnresolvedReferences
         w.clicked.connect(lambda dummy: self.saveToBitmap())
         btlyout.addWidget(w)
 
@@ -395,6 +369,7 @@ class ScreenshotsGridWidget(QWidget):
                     w.setPixmap(img.scaled(w.width(), w.height(), Qt.KeepAspectRatio))
             else: raise TypeError('image parameter type {} is not QPixmap.'.format(type(img)))
         else:
+            # noinspection unresolved-references
             w.clear()
             self._pixmaps[self._getIndex(r, c)] = None
 
@@ -456,6 +431,7 @@ class ScreenshotsGridWidget(QWidget):
     # Public methods
 
     # < Revision 13/12/2024
+    # noinspection unresolved-references
     def setWhiteBackground(self) -> None:
         self._background = 1
         si, sj = self.getSelection()
@@ -469,6 +445,7 @@ class ScreenshotsGridWidget(QWidget):
     # Revision 13/12/2024 >
 
     # < Revision 13/12/2024
+    # noinspection unresolved-references
     def setBlackBackground(self) -> None:
         self._background = 0
         si, sj = self.getSelection()
@@ -559,6 +536,7 @@ class ScreenshotsGridWidget(QWidget):
     def isLandscapeOrientation(self) -> bool:
         return self._orientation == self._LANDSCAPE
 
+    # noinspection unresolved-references
     def setSelection(self, r: int, c: int) -> None:
         if all(isinstance(i, int) for i in [r, c]):
             if 0 <= r < self._rows and 0 <= c < self._columns:
@@ -605,15 +583,19 @@ class ScreenshotsGridWidget(QWidget):
     def copyToClipboard(self) -> None:
         clipboard = QApplication.clipboard()
         img = self._getSelectedPixmap()
-        if img is not None: clipboard.setPixmap(img)
+        if img is not None:
+            # noinspection unresolved-references
+            clipboard.setPixmap(img)
 
     def cutToClipboard(self) -> None:
         clipboard = QApplication.clipboard()
         img = self._getSelectedPixmap()
         if img is not None:
+            # noinspection unresolved-references
             clipboard.setPixmap(img)
             self.deleteSelection()
 
+    # noinspection unresolved-references
     def pasteFromClipboard(self) -> None:
         clipboard = QApplication.clipboard()
         img = clipboard.image()
@@ -663,6 +645,7 @@ class ScreenshotsGridWidget(QWidget):
             c = i // self._ROWS
             r = i - c * self._ROWS
             w = self._table.cellWidget(r, c)
+            # noinspection unresolved-references
             w.clear()
 
     def createHtml(self, filepath: str = '', dpi: int = 100) -> str:
@@ -862,14 +845,17 @@ class ScreenshotsGridWidget(QWidget):
 
     # Qt events
 
+    # noinspection method-overriding
     def paintEvent(self, event: QPaintEvent) -> None:
         self._updateSize()
         super().paintEvent(event)
 
+    # noinspection method-overriding
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
         self._updateSize()
 
+    # noinspection method-overriding
     def keyPressEvent(self, event: QKeyEvent) -> None:
         # noinspection PyUnresolvedReferences
         if event.matches(QKeySequence.Copy): self.copyToClipboard()
@@ -887,10 +873,12 @@ class ScreenshotsGridWidget(QWidget):
             self._previousCell()
         super().keyPressEvent(event)
 
+    # noinspection unresolved-references,method-overriding
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasText() or event.mimeData().hasImage(): event.accept()
         else: event.ignore()
 
+    # noinspection unresolved-references,method-overriding
     def dropEvent(self, event: QDropEvent) -> None:
         img = None
         if event.mimeData().hasText():
@@ -914,10 +902,12 @@ class ScreenshotsGridWidget(QWidget):
                 event.accept()
             else: self._setPixmapToSelection(img)
 
+    # noinspection method-overriding
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         # Popup
         self._popup.exec(event.globalPos())
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         idx = self._table.indexAt(self._mapToTableViewport(event.pos()))
         # Selection
@@ -928,9 +918,11 @@ class ScreenshotsGridWidget(QWidget):
         if event.button() == Qt.LeftButton:
             self._dragpos0 = event.pos()
 
+    # noinspection method-overriding
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self._dragpos0 = None
 
+    # noinspection unresolved-references,method-overriding
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self._dragpos0 is not None:
             if (event.pos() - self._dragpos0).manhattanLength() > 20:
@@ -945,6 +937,5 @@ class ScreenshotsGridWidget(QWidget):
                     icn = w.pixmap()
                     drag.setPixmap(icn)
                     drag.setHotSpot(QPoint(icn.width() // 2, icn.height() // 2))
-                    # noinspection PyUnresolvedReferences
                     drag.exec(Qt.MoveAction)
                     self._dragpos0 = None

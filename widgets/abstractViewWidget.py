@@ -151,6 +151,7 @@ class AbstractViewWidget(QFrame):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None) -> None:
         """
         AbstractViewWidget instance constructor.
@@ -210,27 +211,17 @@ class AbstractViewWidget(QFrame):
         # Init VTK events, mouse and keyboard events
 
         style = vtkInteractorStyleUser()
-        # noinspection PyTypeChecker
         style.AddObserver('MouseMoveEvent', self._onMouseMoveEvent)
-        # noinspection PyTypeChecker
         style.AddObserver('MouseWheelForwardEvent', self._onWheelForwardEvent)
-        # noinspection PyTypeChecker
         style.AddObserver('MouseWheelBackwardEvent', self._onWheelBackwardEvent)
-        # noinspection PyTypeChecker
         style.AddObserver('LeftButtonPressEvent', self._onLeftPressEvent)
-        # noinspection PyTypeChecker
         style.AddObserver('LeftButtonReleaseEvent', self._onLeftReleaseEvent)
-        # noinspection PyTypeChecker
         style.AddObserver('RightButtonPressEvent', self._onRightPressEvent)
         # < Revision 05/03/2026
-        # noinspection PyTypeChecker
         style.AddObserver('RightButtonReleaseEvent', self._onRightReleaseEvent)
         # Revision 05/03/2026 >
-        # noinspection PyTypeChecker
         style.AddObserver('MiddleButtonPressEvent', self._onMiddlePressEvent)
-        # noinspection PyTypeChecker
         style.AddObserver('KeyPressEvent', self._onKeyPressEvent)
-        # noinspection PyTypeChecker
         style.AddObserver('KeyReleaseEvent', self._onKeyReleaseEvent)
         style.KeyPressActivationOff()
         self._window.SetInteractorStyle(style)
@@ -297,11 +288,8 @@ class AbstractViewWidget(QFrame):
         """
 
         self._popup = QMenu('Main menu')
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action = dict()
         self._action['noflag'] = QAction('No action', self)
@@ -389,109 +377,65 @@ class AbstractViewWidget(QFrame):
         self._action['showimg'].setCheckable(True)
         self._action['showacq'].setCheckable(True)
 
-        # noinspection PyUnresolvedReferences
         self._action['showcursor'].triggered.connect(
             lambda: self.setCursorVisibility(self._action['showcursor'].isChecked()))
-        # noinspection PyUnresolvedReferences
         self._action['showinfo'].triggered.connect(
             lambda: self.setInfoVisibility(self._action['showinfo'].isChecked()))
-        # noinspection PyUnresolvedReferences
         self._action['showmarker'].triggered.connect(
             lambda: self.setOrientationMakerVisibility(self._action['showmarker'].isChecked()))
-        # noinspection PyUnresolvedReferences
         self._action['showcolorbar'].triggered.connect(
             lambda: self.setColorbarVisibility(self._action['showcolorbar'].isChecked()))
-        # noinspection PyUnresolvedReferences
         self._action['showruler'].triggered.connect(
             lambda: self.setRulerVisibility(self._action['showruler'].isChecked()))
-        # noinspection PyUnresolvedReferences
         self._action['showtooltip'].triggered.connect(
             lambda: self.setTooltipVisibility(self._action['showtooltip'].isChecked()))
-        # noinspection PyUnresolvedReferences
         self._action['showident'].triggered.connect(
             lambda: self.setInfoIdentityVisibility(self._action['showident'].isChecked()))
-        # noinspection PyUnresolvedReferences
         self._action['showimg'].triggered.connect(
             lambda: self.setInfoVolumeVisibility(self._action['showimg'].isChecked()))
-        # noinspection PyUnresolvedReferences
         self._action['showacq'].triggered.connect(
             lambda: self.setInfoAcquisitionVisibility(self._action['showacq'].isChecked()))
         # < Revision 02/05/2026
         self._action['lineprop'].triggered.connect(self._updateLineProperties)
-        # Revisiob 02/05/2026 >
+        # Revision 02/05/2026 >
 
-        # noinspection PyUnresolvedReferences
         self._action['noflag'].triggered.connect(lambda: self.setNoActionFlag(True))
-        # noinspection PyUnresolvedReferences
         self._action['moveflag'].triggered.connect(lambda: self.setMoveFlag(True))
-        # noinspection PyUnresolvedReferences
         self._action['zoomflag'].triggered.connect(lambda: self.setZoomFlag(True))
-        # noinspection PyUnresolvedReferences
         self._action['levelflag'].triggered.connect(lambda: self.setLevelFlag(True))
-        # noinspection PyUnresolvedReferences
         self._action['followflag'].triggered.connect(lambda: self.setFollowFlag(True))
         # < Revision 09/01/2025
         # add centered cursor action
-        # noinspection PyUnresolvedReferences
         self._action['centeredflag'].triggered.connect(lambda: self.setCenteredCursorFlag(True))
         # Revision 09/01/2025 >
-        # noinspection PyUnresolvedReferences
         self._action['hideall'].triggered.connect(lambda: self.hideAll(True))
-        # noinspection PyUnresolvedReferences
         self._action['showall'].triggered.connect(lambda: self.showAll(True))
-        # noinspection PyUnresolvedReferences
         self._action['zoomin'].triggered.connect(self.zoomIn)
-        # noinspection PyUnresolvedReferences
         self._action['zoomout'].triggered.connect(self.zoomOut)
-        # noinspection PyUnresolvedReferences
         self._action['defaultzoom'].triggered.connect(self.zoomDefault)
-        # noinspection PyUnresolvedReferences
         self._action['leftcolorbar'].triggered.connect(self.setColorbarPositionToLeft)
-        # noinspection PyUnresolvedReferences
         self._action['rightcolorbar'].triggered.connect(self.setColorbarPositionToRight)
-        # noinspection PyUnresolvedReferences
         self._action['topcolorbar'].triggered.connect(self.setColorbarPositionToTop)
-        # noinspection PyUnresolvedReferences
         self._action['bottomcolorbar'].triggered.connect(self.setColorbarPositionToBottom)
-        # noinspection PyUnresolvedReferences
         self._action['leftruler'].triggered.connect(self.setRulerPositionToLeft)
-        # noinspection PyUnresolvedReferences
         self._action['rightruler'].triggered.connect(self.setRulerPositionToRight)
-        # noinspection PyUnresolvedReferences
         self._action['topruler'].triggered.connect(self.setRulerPositionToTop)
-        # noinspection PyUnresolvedReferences
         self._action['bottomruler'].triggered.connect(self.setRulerPositionToBottom)
-        # noinspection PyUnresolvedReferences
         self._action['shapecube'].triggered.connect(self.setOrientationMarkerToCube)
-        # noinspection PyUnresolvedReferences
         self._action['shapehead'].triggered.connect(self.setOrientationMarkerToHead)
-        # noinspection PyUnresolvedReferences
         self._action['shapebust'].triggered.connect(self.setOrientationMarkerToBust)
-        # noinspection PyUnresolvedReferences
         self._action['shapebody'].triggered.connect(self.setOrientationMarkerToBody)
-        # noinspection PyUnresolvedReferences
         self._action['shapeaxes'].triggered.connect(self.setOrientationMarkerToAxes)
-        # noinspection PyUnresolvedReferences
         self._action['shapebrain'].triggered.connect(self.setOrientationMarkerToBrain)
-        # noinspection PyUnresolvedReferences
         self._action['capture'].triggered.connect(self.saveCapture)
-        # noinspection PyUnresolvedReferences
         self._action['clipboard'].triggered.connect(self.copyToClipboard)
-        # noinspection PyUnresolvedReferences
         self._action['distance'].triggered.connect(lambda: self.addDistanceTool())
-        # noinspection PyUnresolvedReferences
         self._action['orthodistance'].triggered.connect(lambda: self.addOrthogonalDistanceTool())
-        # noinspection PyUnresolvedReferences
         self._action['angle'].triggered.connect(lambda: self.addAngleTool())
-        # noinspection PyUnresolvedReferences
         self._action['removeall'].triggered.connect(lambda: self.removeAll2DTools())
-        # noinspection PyUnresolvedReferences
         self._action['box'].triggered.connect(lambda: self.addBoxTool())
-        # noinspection PyUnresolvedReferences
         self._action['text'].triggered.connect(lambda: self.addTextTool())
-        # noinspection PyUnresolvedReferences
         self._action['target'].triggered.connect(lambda: self.addTarget(p=None, name='', signal=True))
-        # noinspection PyUnresolvedReferences
         self._action['trajectory'].triggered.connect(lambda: self.addTrajectory(p1=None, p2=None, name='', signal=True))
         self._popup.addAction(self._action['synchronisation'])
         self._group_colorbar = QActionGroup(self)
@@ -600,23 +544,16 @@ class AbstractViewWidget(QFrame):
         # Init tool popup menu
 
         self._toolpopup = QMenu()
-        # noinspection PyUnresolvedReferences
         self._toolpopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._toolpopup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._toolpopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['toolcolor'] = QAction('Color...', self)
         self._action['textprop'] = QAction('Text properties...', self)
         self._action['edittext'] = QAction('Edit text...', self)
         self._action['tooldelete'] = QAction('Delete', self)
-        # noinspection PyUnresolvedReferences
         self._action['toolcolor'].triggered.connect(self._toolColor)
-        # noinspection PyUnresolvedReferences
         self._action['textprop'].triggered.connect(self._textProperties)
-        # noinspection PyUnresolvedReferences
         self._action['edittext'].triggered.connect(self._editPickedText)
-        # noinspection PyUnresolvedReferences
         self._action['tooldelete'].triggered.connect(self._removePickedTool)
         self._toolpopup.addAction(self._action['toolcolor'])
         self._toolpopup.addAction(self._action['textprop'])
@@ -633,7 +570,6 @@ class AbstractViewWidget(QFrame):
         self._dialog.setWindowOpacity(1.0)
         self._dialog.setVisible(False)
         self._edit = QLineEdit(self._dialog)
-        # noinspection PyUnresolvedReferences
         self._edit.editingFinished.connect(self._textEditFinished)
 
         # User settings
@@ -682,9 +618,7 @@ class AbstractViewWidget(QFrame):
         self._colorbar.AnnotationTextScalingOff()
         self._colorbar.SetOrientationToVertical()
         self._colorbar.SetTextPositionToSucceedScalarBar()
-        # noinspection PyUnresolvedReferences
         self._colorbar.GetLabelTextProperty().SetFontSize(int(self._fsize * self._fscale))
-        # noinspection PyUnresolvedReferences
         self._colorbar.GetTitleTextProperty().SetFontSize(int(self._fsize * self._fscale))
         if self._ffamily in ('Arial', 'Courier', 'Times'):
             self._colorbar.GetLabelTextProperty().SetFontFamilyAsString(self._ffamily)
@@ -704,7 +638,6 @@ class AbstractViewWidget(QFrame):
         self._colorbar.SetHeight(0.5)
         self.setColorbarPosition(self.getColorbarPosition(), False)
         self._colorbar.SetVisibility(False)
-        # noinspection PyTypeChecker
         self._renderer2D.AddActor2D(self._colorbar)
 
         # Init ruler actor
@@ -714,11 +647,8 @@ class AbstractViewWidget(QFrame):
         self._ruler.SetRulerDistance(0.1)
         self._ruler.SetTickLength(10)
         self._ruler.SetNumberOfMinorTicks(0)
-        # noinspection PyTypeChecker
         self._ruler.GetProperty().SetLineWidth(self._lwidth)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._ruler.GetProperty().SetColor(self._lcolor[0], self._lcolor[1], self._lcolor[2])
-        # noinspection PyTypeChecker
         self._ruler.GetProperty().SetOpacity(self._lalpha)
         self._ruler.LabelVisibilityOff()
         self._ruler.TitleVisibilityOff()
@@ -728,33 +658,25 @@ class AbstractViewWidget(QFrame):
         self._ruler.GetPoint2Coordinate().SetValue(0.01, 0.7)
         self.setRulerPosition(self.getRulerPosition(), False)
         self._ruler.SetVisibility(False)
-        # noinspection PyTypeChecker
         self._renderer2D.AddActor2D(self._ruler)
 
         # Init orientation marker actor
 
         self._orientmarker = None
         self.setOrientationMarker(self.getOrientationMarker(), False)
-        # noinspection PyUnresolvedReferences
         self._orientmarker.EnabledOff()
 
         # list of tools
 
         self._tools = ToolWidgetCollection()
-        # noinspection PyTypeChecker
         self._tools.setFontFamily(self._ffamily)
-        # noinspection PyTypeChecker
         self._tools.setLineWidth(self._lwidth)
-        # noinspection PyTypeChecker
         self._tools.setOpacity(self._lalpha)
-        # noinspection PyTypeChecker
         self._tools.setColor(self._lcolor)
-        # noinspection PyTypeChecker
         self._tools.setSelectedColor(self._slcolor)
         self._tools.setInteractor(self._interactor)
         self._tooltip = vtkBalloonWidget()
         self._tooltip.CreateDefaultRepresentation()
-        # noinspection PyUnresolvedReferences
         self._tooltip.GetBalloonRepresentation().GetTextProperty().SetFontSize(int(self._fsize * self._fscale))
         self._tooltip.GetBalloonRepresentation().GetTextProperty().BoldOff()
         self._tooltip.SetInteractor(self._interactor)
@@ -772,9 +694,7 @@ class AbstractViewWidget(QFrame):
 
         # Init frame
 
-        # noinspection PyTypeChecker
         self.setFrameShadow(QFrame.Plain)
-        # noinspection PyTypeChecker
         self.setFrameShape(QFrame.NoFrame)
 
         # Init QLayout
@@ -840,6 +760,7 @@ class AbstractViewWidget(QFrame):
 
     # Private methods
 
+    # noinspection unresolved-references
     def _initSettings(self) -> None:
         """
         Initialize widget attributes from the SisypheSettings instance.
@@ -1320,6 +1241,7 @@ class AbstractViewWidget(QFrame):
         else:
             # bug mapToGlobal in win32 platform
             px, py = self._renderwindow.GetPosition()
+            # noinspection unresolved-references
             scale = QApplication.primaryScreen().devicePixelRatio()
             x2 = px + int(x / scale)
             y2 = py + int((self._renderwindow.GetSize()[1] - y - 1) / scale)
@@ -1489,6 +1411,7 @@ class AbstractViewWidget(QFrame):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(dialog, c)
         if dialog.exec() == dialog.Accepted:
@@ -1505,6 +1428,7 @@ class AbstractViewWidget(QFrame):
                                     settings.getParameterValue('FontSizeScale')))
     # Revision 02/05/2026 >
 
+    # noinspection unresolved-references
     def _updateToolMenu(self) -> None:
         """
         Update the 'Move to target' submenu in the popup menu.
@@ -1603,6 +1527,7 @@ class AbstractViewWidget(QFrame):
                 # else: raise TypeError('parameter type {} is not HandleWidget or LineWidget.'.format(type(tool)))
             # Revision 02/05/2025 >
 
+    # noinspection unresolved-references
     def synchroniseToolMoved(self, obj: QWidget, tool: HandleWidget | LineWidget) -> None:
         """
         Method of synchronization between AbstractViewWidget instances.
@@ -1771,6 +1696,7 @@ class AbstractViewWidget(QFrame):
         float
             scale factor
         """
+        # noinspection unresolved-references
         return self.screen().devicePixelRatio()
 
     def displayOn(self) -> None:
@@ -2223,48 +2149,56 @@ class AbstractViewWidget(QFrame):
         """
         Enable the popup submenu **Visibility** of the AbstractViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuVisibility.menuAction().setVisible(True)
 
     def popupVisibilityDisabled(self) -> None:
         """
         Disable the popup submenu **Visibility** of the AbstractViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuVisibility.menuAction().setVisible(False)
 
     def popupActionsEnabled(self) -> None:
         """
         Enable the popup submenu **Actions** of the AbstractViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuActions.menuAction().setVisible(True)
 
     def popupActionsDisabled(self) -> None:
         """
         Disable the popup submenu **Actions** of the AbstractViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuActions.menuAction().setVisible(False)
 
     def popupColorbarPositionEnabled(self) -> None:
         """
         Enable the popup submenu **Colorbar position** of the AbstractViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuColorbarPos.menuAction().setVisible(True)
 
     def popupColorbarPositionDisabled(self) -> None:
         """
         Disable the popup submenu **Colorbar position** of the AbstractViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuColorbarPos.menuAction().setVisible(False)
 
     def popupToolsEnabled(self) -> None:
         """
         Enable the popup submenu **Tools** of the AbstractViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuTools.menuAction().setVisible(True)
 
     def popupToolsDisabled(self) -> None:
         """
         Disable the popup submenu **Tools** of the AbstractViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuTools.menuAction().setVisible(False)
 
     def getCamera(self) -> vtkCamera:
@@ -3787,6 +3721,7 @@ class AbstractViewWidget(QFrame):
         """
         return self._lalpha
 
+    # noinspection method-overriding
     def setLineWidth(self, v: float, signal: bool = True) -> None:
         """
         Set the line width for all line-based overlays (cursors, tools).
@@ -4301,6 +4236,7 @@ class AbstractViewWidget(QFrame):
             try:
                 w.Write()
                 p = QPixmap(temp)
+                # noinspection unresolved-references
                 QApplication.clipboard().setPixmap(p)
             except Exception as err:
                 messageBox(self, 'Copy view capture to clipboard', text='error : {}'.format(err))
@@ -5134,7 +5070,7 @@ class AbstractViewWidget(QFrame):
         """
         pass
 
-    # noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal,unused-parameter
     def _onTargetEndInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
         """
         Callback for HandleWidget end interaction VTK events.
@@ -5353,7 +5289,23 @@ class AbstractViewWidget(QFrame):
         evt_name : str
             The name of the event (KeyPressEvent).
         """
-        pass
+        # < Revision 09/10/2026
+        # pass
+        interactorstyle = self._window.GetInteractorStyle()
+        k = interactorstyle.GetKeySym()
+        if k == 'Escape' or k =='F11':
+            w = None
+            w2 = self.parent()
+            while w2 is not None:
+                w = w2
+                # noinspection unresolved-references
+                w2 = w.parent()
+            if w is not None:
+                try:
+                    # noinspection unresolved-references
+                    w.toggleFullscreen()
+                except: pass
+        # Revision 09/10/2026 >
 
     def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
         """

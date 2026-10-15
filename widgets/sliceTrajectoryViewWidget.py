@@ -29,6 +29,8 @@ from vtk import vtkPlane
 from vtk import vtkCamera
 from vtk import vtkImageSlice
 from vtk import vtkImageResliceMapper
+from vtk import VTK_CURSOR_DEFAULT
+from vtk import VTK_CURSOR_CROSSHAIR
 
 from Sisyphe.core.sisypheTransform import SisypheTransform
 from Sisyphe.widgets.sliceViewWidgets import SliceOverlayViewWidget
@@ -69,7 +71,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
 
     QWidget -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> SliceTrajectoryViewWidget
 
-    Last revision: 18/09/2026
+    Last revision: 14/10/2026
     """
     # Custom Qt signals
 
@@ -80,9 +82,14 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
     TrajectoryDefaultAligned: pyqtSignal = pyqtSignal(QWidget)
     SlabChanged: pyqtSignal = pyqtSignal(QWidget, float, str)  # float slab thickness, str slab type
     StepChanged: pyqtSignal = pyqtSignal(QWidget, float)  # float slice step
+    # < Revision 14/10/2026
+    InteractiveModeChanged: pyqtSignal = pyqtSignal(QWidget, int)  # Interactive mode for tool creation
+    InteractiveClicked: pyqtSignal = pyqtSignal(int)
+    # Revision 14/10/2026 >
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  overlays: SisypheVolumeCollection | None = None,
                  meshes: SisypheMeshCollection | None = None,
@@ -105,17 +112,17 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         self._step = 1.0
         self._target = None
         self._cursorpos = [0.0, 0.0, 0.0]
+        # < Revision 14/10/2026
+        self._interactive: int = 0
+        # Revision 14/10/2026 >
 
         self._action['axial'].setText('First orientation')
         self._action['coronal'].setText('Second orientation')
         self._action['sagittal'].setText('Third orientation')
 
         self._menuAlign = QMenu('Alignment', self._popup)
-        # noinspection PyUnresolvedReferences
         self._menuAlign.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuAlign.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menuAlign.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuAlignGroup = None
         self._popup.insertMenu(self._popup.actions()[6], self._menuAlign)
@@ -216,6 +223,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
                 self._cursorpos = r
                 # synchronisation
                 if self.isSynchronised() and signal:
+                    # noinspection unresolved-references
                     self.CursorPositionChanged.emit(self, r[0], r[1], r[2])
         else: raise TypeError('parameter type {} is not int.'.format(type(p)))
         self._updateCameraClipping()
@@ -353,6 +361,7 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         for a in self._menuAlignGroup.actions():
             a.setChecked(a.text() == name)
 
+    # noinspection unresolved-references
     def _getInfoValuesText(self, p: list[float] | tuple[float, float, float]) -> str:
         """
         Generates additional information text, including the distance from the current slice to the active target tool.
@@ -498,7 +507,60 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         if obj != self:
             self.setSliceStep(step, signal=False)
 
+    # < Revision 14/10/2026
+    # add synchroniseInteractiveModeChanged
+    def synchroniseInteractiveModeChanged(self, obj: QWidget, mode: int) -> None:
+        """
+        Synchronizes interactive mode for tool creation between SliceTrajectoryViewWidget/VolumeViewWidget instances.
+        This method is called by the InteractiveModeChanged PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceTrajectoryViewWidget/VolumeViewWidget instance that emitted the InteractiveModeChanged signal.
+        mode : int
+            interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)
+        """
+        if obj != self:
+            self.setInteractiveMode(mode, signal=False)
+    # Revision 14/10/2026 >
+
     # Public methods
+
+    # < Revision 14/10/2026
+    # add setInteractiveMode method
+    def setInteractiveMode(self, v : int, signal: bool = True) -> None:
+        """
+        Set the interactive mode for tool creation.
+
+        Parameters
+        ----------
+        v : int
+            interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)
+        signal : bool (optional)
+            If True, emits the `InteractiveModeChanged` signal for synchronization (default True).
+        """
+        self._interactive = v
+        if v > 0: self._renderwindow.SetCurrentCursor(VTK_CURSOR_CROSSHAIR)
+        else: self._renderwindow.SetCurrentCursor(VTK_CURSOR_DEFAULT)
+        if signal:
+            # noinspection unresolved-references
+            self.InteractiveModeChanged.emit(self, v)
+    # Revision 14/10/2026 >
+
+    # < Revision 14/10/2026
+    # add getInteractiveMode method
+    def getInteractiveMode(self) -> int:
+        """
+        Get the interactive mode for tool creation.
+
+        Returns
+        -------
+        int
+            interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)
+        """
+        return self._interactive
+    # Revision 14/10/2026 >
 
     def setVolume(self, volume: SisypheVolume) -> None:
         """
@@ -551,12 +613,14 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         """
         Enable the popup submenu 'Alignment' of the SliceTrajectoryViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuAlign.menuAction().setVisible(True)
 
     def popupAlignmentDisabled(self) -> None:
         """
         Disable the popup submenu 'Alignment' of the SliceTrajectoryViewWidget instance.
         """
+        # noinspection unresolved-references
         self._menuAlign.menuAction().setVisible(False)
 
     def setSliceStep(self, v: float, signal: bool = True) -> None:
@@ -644,7 +708,9 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         if isinstance(key, (int, str)):
             if key in self._tools:
                 self._target = self._tools[key]
-                if signal: self.ViewMethodCalled.emit(self, 'setTarget', key)
+                if signal:
+                    # noinspection unresolved-references
+                    self.ViewMethodCalled.emit(self, 'setTarget', key)
             else: raise KeyError('invalid tool key, tool {} is not in current view.'.format(key))
         else: raise TypeError('parameter type {} is not int or str')
 
@@ -671,8 +737,10 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
             # Synchronising
             if self.isSynchronised() and signal:
                 x, y, z = self._cursorpos
+                # noinspection unresolved-references
                 self.CursorPositionChanged.emit(self, x, y, z)
 
+    # noinspection method-overriding
     def getCursorWorldPosition(self) -> list[float]:
         """
         Get the 3D world position of the cross-shaped cursor.
@@ -1113,6 +1181,48 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
 
     # Private event methods
 
+    # < Revision 14/10/2026
+    # add _onLeftPressEvent method
+    def _onLeftPressEvent(self,  obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the left mouse button press VTK event.
+        Manages tool creation when interactive mode is on.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonPressEvent).
+        """
+        super()._onLeftPressEvent(obj, evt_name)
+        if self._interactive > 0:
+            # noinspection unresolved-references
+            self.InteractiveClicked.emit(self._interactive)
+            self.setInteractiveMode(0)
+    # Revision 14/10/2026 >
+
+    # < Revision 14/10/2026
+    # add _onRightPressEvent method
+    def _onRightPressEvent(self, obj: vtkObject, evt_name: str) -> None:
+        """
+        Handles the right mouse button press VTK event.
+        Cancel tool creation when interactive mode is on.
+        Currently, this method calls the superclass's implementation.
+
+        Parameters
+        ----------
+        obj : vtkObject
+            VTK object that triggered the event.
+        evt_name : str
+            name of the event (LeftButtonPressEvent).
+        """
+        if self._interactive > 0: self.setInteractiveMode(0)
+        else: super()._onRightPressEvent(obj, evt_name)
+    # Revision 14/10/2026 >
+
+    # noinspection unresolved-references
     def _onMouseMoveEvent(self, obj: vtkObject , evt_name: str) -> None:
         """
         Handle mouse move VTK events for slice manipulation.

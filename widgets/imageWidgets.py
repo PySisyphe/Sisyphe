@@ -419,6 +419,7 @@ class SisypheImageViewWidget(ImagePreviewWidget):
 
     # Public method
 
+    # noinspection method-overriding
     def updateImage(self, image: SisypheImage | SisypheVolume) -> None:
         if isinstance(image, (SisypheImage, SisypheVolume)):
             super().updateImage(image.getNumpy())
@@ -448,8 +449,8 @@ class SisypheVolumeViewWidget(SisypheImageViewWidget):
                  size: int = 128,
                  parent: QWidget | None = None) -> None:
         if isinstance(image, (SisypheImage, SisypheVolume)):
+            # noinspection unresolved-references
             lut = image.display.getLUT().copyToMatplotlibColormap()
-            # noinspection PyTypeChecker
             super().__init__(image, lut, size, parent)
             self._parent = parent
         else: raise TypeError('constructor image parameter {} is not SisypheImage or SisypheVolume.'.format(type(image)))
@@ -503,7 +504,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     QPushButton - > SisypheVolumeThumbnailButtonWidget
 
-    Last revision: 24/07/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -523,8 +524,10 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     _attributes     ItemOverlayAttributesWidget
     _lutwidget      LutWidget
     _logger         logging.Logger
+    _compress       bool, save xvol in compressed format
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  image: SisypheImage | SisypheVolume | None = None,
                  size: int = 128,
@@ -567,13 +570,16 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             QApplication.processEvents()
             self._dragpos0 = None
 
+            # < Revision 07/10/2026
+            self._compress = False
+            # Revision 07/10/2026 >
+
             # Init layout
 
             lyout = QVBoxLayout()
             lyout.setSpacing(0)
             lyout.setContentsMargins(0, 0, 0, 0)
             lyout.addWidget(self._preview)
-            # noinspection PyUnresolvedReferences
             lyout.setAlignment(self._preview, Qt.AlignHCenter | Qt.AlignVCenter)
             widget = QWidget()
             widget.setFixedSize(QSize(size-32, size-32))
@@ -582,7 +588,6 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             lyout.setSpacing(0)
             lyout.setContentsMargins(0, 0, 0, 0)
             lyout.addWidget(widget)
-            # noinspection PyUnresolvedReferences
             lyout.setAlignment(widget, Qt.AlignHCenter | Qt.AlignVCenter)
             self.setLayout(lyout)
             self.setFixedSize(size, size)
@@ -602,7 +607,6 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._component.adjustSize()
             self._component.setContentsMargins(0, 5, 0, 5)
             # Revision 12/12/2024 >
-            # noinspection PyUnresolvedReferences
             self._component.valueChanged.connect(self._componentChanged)
             # Revision 08/12/2024 >
 
@@ -614,11 +618,8 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             # Init popup menu
 
             self._popup = QMenu(self)
-            # noinspection PyUnresolvedReferences
             self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
             self._action = dict()
             self._action['slices'] = QAction('Display in slice view', self)
@@ -678,50 +679,29 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._action['wbrain'].setVisible(v)
             self._action['wbone'].setVisible(v)
             self._action['wmetal'].setVisible(v)
-            # noinspection PyUnresolvedReferences
             self._action['slices'].triggered.connect(self.displayInSliceView)
-            # noinspection PyUnresolvedReferences
             self._action['orthogonal'].triggered.connect(self.displayInOrthogonalView)
-            # noinspection PyUnresolvedReferences
             self._action['synchronised'].triggered.connect(self.displayInSynchronisedView)
-            # noinspection PyUnresolvedReferences
             self._action['projections'].triggered.connect(self.displayInProjectionView)
-            # noinspection PyUnresolvedReferences
             self._action['multi'].triggered.connect(self.displayInMultiComponentView)
-            # noinspection PyUnresolvedReferences
             self._action['display'].triggered.connect(self.displayInAllViews)
             # < Revision 26/05/2026
-            # noinspection PyUnresolvedReferences
             self._action['hide'].triggered.connect(self.removeFromAllViews)
             # Revision 26/05/2026 >
-            # noinspection PyUnresolvedReferences
             self._action['overlay'].triggered.connect(self.overlay)
-            # noinspection PyUnresolvedReferences
             self._action['anonymize'].triggered.connect(self.anonymize)
-            # noinspection PyUnresolvedReferences
             self._action['attributes'].triggered.connect(self.editAttributes)
-            # noinspection PyUnresolvedReferences
             self._action['origin'].triggered.connect(self.removeOrigin)
-            # noinspection PyUnresolvedReferences
             self._action['direction'].triggered.connect(self.removeDirection)
-            # noinspection PyUnresolvedReferences
             self._action['neck'].triggered.connect(self.removeNeck)
-            # noinspection PyUnresolvedReferences
             self._action['dicom'].triggered.connect(self.viewDicomAttributes)
-            # noinspection PyUnresolvedReferences
             self._action['labels'].triggered.connect(self.editLabels)
-            # noinspection PyUnresolvedReferences
             self._action['database'].triggered.connect(self.addToDatabase)
-            # noinspection PyUnresolvedReferences
             self._action['save'].triggered.connect(self.save)
-            # noinspection PyUnresolvedReferences
             self._action['saveas'].triggered.connect(self.saveas)
-            # noinspection PyUnresolvedReferences
             self._action['savecomp'].triggered.connect(self.saveCurrentComponent)
-            # noinspection PyUnresolvedReferences
             self._action['savecompas'].triggered.connect(self.saveCurrentComponentAs)
             # < Revision 29/11/2025
-            # noinspection PyUnresolvedReferences
             self._action['console1'].triggered.connect(lambda _: self.copyToConsole(0))
             self._action['console2'].triggered.connect(lambda _: self.copyToConsole(1))
             self._action['console3'].triggered.connect(lambda _: self.copyToConsole(2))
@@ -731,27 +711,16 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._action['console7'].triggered.connect(lambda _: self.copyToConsole(6))
             self._action['console8'].triggered.connect(lambda _: self.copyToConsole(7))
             # Revision 29/11/2025 >
-            # noinspection PyUnresolvedReferences
             self._action['split'].triggered.connect(self.split)
-            # noinspection PyUnresolvedReferences
             self._action['close'].triggered.connect(self.remove)
-            # noinspection PyUnresolvedReferences
             self._action['acpc'].triggered.connect(self.acpc)
-            # noinspection PyUnresolvedReferences
             self._action['frame'].triggered.connect(self.frame)
-            # noinspection PyUnresolvedReferences
             self._action['orient'].triggered.connect(self.reorientation)
-            # noinspection PyUnresolvedReferences
             self._action['stats'].triggered.connect(self.statistics)
-            # noinspection PyUnresolvedReferences
             self._action['wbrain'].triggered.connect(self.brainWindow)
-            # noinspection PyUnresolvedReferences
             self._action['wbone'].triggered.connect(self.boneWindow)
-            # noinspection PyUnresolvedReferences
             self._action['wmetal'].triggered.connect(self.metallicWindow)
-            # noinspection PyUnresolvedReferences
             self._action['wdefault'].triggered.connect(self.defaultWindow)
-            # noinspection PyUnresolvedReferences
             self._action['wauto'].triggered.connect(self.autoWindow)
             self._popup.addAction(self._action['slices'])
             self._popup.addAction(self._action['orthogonal'])
@@ -770,11 +739,8 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._popup.addAction(self._action['savecompas'])
             # < Revision 29/11/2025
             submenu = self._popup.addMenu('Copy to console')
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction(self._action['console1'])
             submenu.addAction(self._action['console2'])
@@ -789,11 +755,8 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._popup.addAction(self._action['close'])
             self._popup.addSeparator()
             submenu = self._popup.addMenu('Windowing')
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction(self._action['wauto'])
             submenu.addAction(self._action['wdefault'])
@@ -807,69 +770,46 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._popup.addAction(self._action['origin'])
             self._popup.addAction(self._action['direction'])
             submenu = self._popup.addMenu('Set modality')
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             self._action['CT'] = submenu.addAction('CT (Computed Tomography)')
-            # noinspection PyUnresolvedReferences
             self._action['CT'].triggered.connect(lambda dummy, m='CT': self.changeModality(m))
             self._action['LB'] = submenu.addAction('LB (Label)')
-            # noinspection PyUnresolvedReferences
             self._action['LB'].triggered.connect(lambda dummy, m='LB': self.changeModality(m))
             self._action['MR'] = submenu.addAction('MR (Magnetic Resonance)')
-            # noinspection PyUnresolvedReferences
             self._action['MR'].triggered.connect(lambda dummy, m='MR': self.changeModality(m))
             self._action['NM'] = submenu.addAction('NM (SPECT)')
-            # noinspection PyUnresolvedReferences
             self._action['NM'].triggered.connect(lambda dummy, m='NM': self.changeModality(m))
             self._action['OT'] = submenu.addAction('OT (Other)')
-            # noinspection PyUnresolvedReferences
             self._action['OT'].triggered.connect(lambda dummy, m='OT': self.changeModality(m))
             self._action['PT'] = submenu.addAction('PT (PET)')
-            # noinspection PyUnresolvedReferences
             self._action['PT'].triggered.connect(lambda dummy, m='PT': self.changeModality(m))
             self._action['TP'] = submenu.addAction('TP (Template)')
-            # noinspection PyUnresolvedReferences
             self._action['TP'].triggered.connect(lambda dummy, m='TP': self.changeModality(m))
             submenu = self._popup.addMenu('Datatype conversion')
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             self._action['int8'] = submenu.addAction('int8')
-            # noinspection PyUnresolvedReferences
             self._action['int8'].triggered.connect(lambda dummy, dtype='int8': self.changeDatatype(dtype))
             self._action['int16'] = submenu.addAction('int16')
-            # noinspection PyUnresolvedReferences
             self._action['int16'].triggered.connect(lambda dummy, dtype='int16': self.changeDatatype(dtype))
             self._action['int32'] = submenu.addAction('int32')
-            # noinspection PyUnresolvedReferences
             self._action['int32'].triggered.connect(lambda dummy, dtype='int32': self.changeDatatype(dtype))
             self._action['int64'] = submenu.addAction('int64')
-            # noinspection PyUnresolvedReferences
             self._action['int64'].triggered.connect(lambda dummy, dtype='int64': self.changeDatatype(dtype))
             self._action['uint8'] = submenu.addAction('uint8')
-            # noinspection PyUnresolvedReferences
             self._action['uint8'].triggered.connect(lambda dummy, dtype='uint8': self.changeDatatype(dtype))
             self._action['uint16'] = submenu.addAction('uint16')
-            # noinspection PyUnresolvedReferences
             self._action['uint16'].triggered.connect(lambda dummy, dtype='uint16': self.changeDatatype(dtype))
             self._action['uint32'] = submenu.addAction('uint32')
-            # noinspection PyUnresolvedReferences
             self._action['uint32'].triggered.connect(lambda dummy, dtype='uint32': self.changeDatatype(dtype))
             self._action['uint64'] = submenu.addAction('uint64')
-            # noinspection PyUnresolvedReferences
             self._action['uint64'].triggered.connect(lambda dummy, dtype='uint64': self.changeDatatype(dtype))
             self._action['float32'] = submenu.addAction('float32')
-            # noinspection PyUnresolvedReferences
             self._action['float32'].triggered.connect(lambda dummy, dtype='float32': self.changeDatatype(dtype))
             self._action['float64'] = submenu.addAction('float64')
-            # noinspection PyUnresolvedReferences
             self._action['float64'].triggered.connect(lambda dummy, dtype='float64': self.changeDatatype(dtype))
             self._popup.addSeparator()
             self._popup.addAction(self._action['stats'])
@@ -881,43 +821,29 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._popup.addAction(self._action['frame'])
             self._popup.addSeparator()
             submenu = self._popup.addMenu('Flip')
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             self._action['flipx'] = submenu.addAction('Flip left/right axis')
-            # noinspection PyUnresolvedReferences
             self._action['flipx'].triggered.connect(lambda dummy, axis=0: self.flip(axis))
             self._action['flipy'] = submenu.addAction('Flip antero-posterior axis')
-            # noinspection PyUnresolvedReferences
             self._action['flipy'].triggered.connect(lambda dummy, axis=1: self.flip(axis))
             self._action['flipz'] = submenu.addAction('Flip cranio-caudal axis')
-            # noinspection PyUnresolvedReferences
             self._action['flipz'].triggered.connect(lambda dummy, axis=2: self.flip(axis))
             submenu.setEnabled(n == 1)
             submenu = self._popup.addMenu('Swap axis')
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             self._action['yxz'] = submenu.addAction('Swap axis to y,z,x')
-            # noinspection PyUnresolvedReferences
             self._action['yxz'].triggered.connect(lambda dummy, axes=(1, 0, 2): self.swapAxis(axes))
             self._action['zxy'] = submenu.addAction('Swap axis to z,x,y')
-            # noinspection PyUnresolvedReferences
             self._action['zxy'].triggered.connect(lambda dummy, axes=(2, 0, 1): self.swapAxis(axes))
             self._action['xzy'] = submenu.addAction('Swap axis to x,z,y')
-            # noinspection PyUnresolvedReferences
             self._action['xzy'].triggered.connect(lambda dummy, axes=(0, 2, 1): self.swapAxis(axes))
             self._action['yzx'] = submenu.addAction('Swap axis to y,z,x')
-            # noinspection PyUnresolvedReferences
             self._action['yzx'].triggered.connect(lambda dummy, axes=(1, 2, 0): self.swapAxis(axes))
             self._action['zyx'] = submenu.addAction('Swap axis to z,y,x')
-            # noinspection PyUnresolvedReferences
             self._action['zyx'].triggered.connect(lambda dummy, axes=(2, 1, 0): self.swapAxis(axes))
             submenu.setEnabled(n == 1)
             self._popup.addAction(self._action['neck'])
@@ -969,9 +895,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self._action['lut'].setDefaultWidget(self._lutwidget)
             self._popup.addAction(self._action['lut'])
 
-            # noinspection PyUnresolvedReferences
             self._popup.aboutToShow.connect(self._onMenuShow)
-            # noinspection PyUnresolvedReferences
             self._popup.aboutToHide.connect(self._onMenuHide)
 
             self._action['attributes'].setVisible(False)
@@ -995,11 +919,13 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         self._action['overlay'].setVisible(self.hasReference() and not self.isReference())
         self._action['attributes'].setVisible(self.isOverlaid())
         # < Revision 30/07/2024
+        # noinspection unresolved-references
         self._action['labels'].setVisible(self._multi.acquisition.isLB())
         # Revision 30/07/2024 >
         # self._action['lut'].setVisible(self.isReference() or self.isOverlaid())
         # if self._volume is not None: self._lutwidget.setVolume(self._volume)
 
+    # noinspection unresolved-references
     def _onMenuHide(self) -> None:
         if self._volume is not None:
             vmin, vmax = self._volume.display.getWindow()
@@ -1009,6 +935,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def _getWidgetCenter(self):
         return self.mapToGlobal(self.rect().center())
 
+    # noinspection unresolved-references
     def _registration(self, moving: SisypheVolume) -> None:
         r = None
         if self.hasMainWindow():
@@ -1036,6 +963,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 17/10/2024
     # add _lutChanged method
+    # noinspection unresolved-references
     def _lutChanged(self) -> None:
         if self.isDisplayedInProjectionView():
             if self.hasViewsWidget():
@@ -1051,6 +979,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 16/10/2024
     # add _lutWindowChanged method
+    # noinspection unresolved-references
     def _lutWindowChanged(self) -> None:
         if self.isDisplayedInProjectionView():
             if self.hasViewsWidget():
@@ -1093,6 +1022,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 09/12/2024
     # add _componentChanged method
+    # noinspection unresolved-references
     def _componentChanged(self, v: int) -> None:
         previous = self._volume
         self._volume = self._multi.copyComponent(v - 1)
@@ -1115,6 +1045,13 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # Public methods
 
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, v: bool) -> None:
+        self._compress = v
+    # Revision 07/10/2026 >
+
+    # noinspection unresolved-references
     def setSize(self, s: int) -> None:
         if isinstance(s, int):
             self.setFixedSize(s, s)
@@ -1154,6 +1091,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         else: return None
 
     def hasMainWindow(self) -> bool:
+        # noinspection unresolved-references
         return self._thumbnail.getMainWindow() is not None
 
     def getActions(self) -> dict[str, QAction]:
@@ -1161,8 +1099,12 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
+
     def editAttributes(self) -> None:
         dialog = DialogVolumeAttributes(vol=self._multi)
+        # < Revision 07/10/2026
+        dialog.setCompression(self._compress)
+        # Revision 07/10/2026 >
         if platform == 'win32':
             import pywinstyles
             # < Revision 03/09/2025
@@ -1170,17 +1112,21 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             if self._thumbnail is not None: cl = self._thumbnail.palette().base().color()
             else: cl = self.palette().base().color()
             # Revision 03/09/2025 >
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(dialog, c)
         dialog.exec()
         self._preview.setToolTip(str(self._multi))
         if self._multi.getNumberOfComponentsPerPixel() > 1:
+            # noinspection unresolved-references
             self._volume.copyAttributesFrom(self._multi)
         else: self._volume = self._multi
     # Revision 10/12/2024 >
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
+
+    # noinspection unresolved-references
     def viewDicomAttributes(self) -> None:
         if self._volume.hasXmlDicom():
             filename = splitext(self._multi.getFilename())[0] + XmlDicom.getFileExt()
@@ -1192,6 +1138,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 if self._thumbnail is not None: cl = self._thumbnail.palette().base().color()
                 else: cl = self.palette().base().color()
                 # Revision 03/09/2025 >
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(dialog, c)
             dialog.exec()
@@ -1199,6 +1146,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     def editLabels(self) -> None:
         if self._multi.getNumberOfComponentsPerPixel() == 1:
+            # noinspection unresolved-references
             if self._volume.getAcquisition().isLB():
                 dialog = DialogEditLabels()
                 if platform == 'win32':
@@ -1208,6 +1156,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     if self._thumbnail is not None: cl = self._thumbnail.palette().base().color()
                     else: cl = self.palette().base().color()
                     # Revision 03/09/2025 >
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(dialog, c)
                 dialog.setVolume(self._volume)
@@ -1224,12 +1173,16 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
+    # noinspection unresolved-references
     def save(self) -> None:
         if self._multi.hasFilename():
             # < Revision 13/12/2024
             if self._multi != self._volume:
                 self._multi.display.setLUT(self._lutwidget.getLut())
             # Revision 13/12/2024 >
+            # < Revision 07/10/2026
+            if self._compress: self._multi.setCompressionOn()
+            # Revision 07/10/2026 >
             try: self._multi.save()
             except Exception as err: messageBox(self, 'Save PySisyphe volume', '{}'.format(err))
             mainwindow = self.getMainWindow()
@@ -1241,6 +1194,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
+    # noinspection unresolved-references
     def saveas(self) -> None:
         title = 'Save PySisyphe volume'
         if self._multi.hasFilename(): filename = self._multi.getFilename()
@@ -1253,6 +1207,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             if self._multi != self._volume:
                 self._multi.display.setLUT(self._lutwidget.getLut())
             # Revision 13/12/2024 >
+            # < Revision 07/10/2026
+            if self._compress: self._multi.setCompressionOn()
+            # Revision 07/10/2026 >
             try: self._multi.saveAs(filename)
             except Exception as err:
                 messageBox(self, 'Save PySisyphe volume', 'error : {}'.format(err))
@@ -1264,8 +1221,12 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # add saveComponent method
+    # noinspection unresolved-references
     def saveCurrentComponent(self) -> None:
         if self._volume.hasFilename():
+            # < Revision 07/10/2026
+            if self._compress: self._multi.setCompressionOn()
+            # Revision 07/10/2026 >
             try: self._multi.save()
             except Exception as err: messageBox(self, 'Save PySisyphe volume', '{}'.format(err))
             mainwindow = self.getMainWindow()
@@ -1275,6 +1236,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # add saveComponentAs method
+    # noinspection unresolved-references
     def saveCurrentComponentAs(self) -> None:
         title = 'Save PySisyphe volume'
         if self._volume.hasFilename(): filename = self._volume.getFilename()
@@ -1283,6 +1245,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         if filename:
             chdir(dirname(filename))
             QApplication.processEvents()
+            # < Revision 07/10/2026
+            if self._compress: self._volume.setCompressionOn()
+            # Revision 07/10/2026 >
             try: self._volume.saveAs(filename)
             except Exception as err:
                 messageBox(self, 'Save PySisyphe volume', 'error : {}'.format(err))
@@ -1292,6 +1257,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 29/11/2025
     # add copyToConsole method
+    # noinspection unresolved-references
     def copyToConsole(self, f: int = 0) -> None:
         if self.hasMainWindow():
             names = ['vol', 'sitkv', 'vtkv', 'antsv', 'itkv', 'nibv', 'npv', 'npv']
@@ -1334,6 +1300,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # add split method
+    # noinspection unresolved-references
     def split(self) -> None:
         n = self._multi.getNumberOfComponentsPerPixel()
         if n > 1:
@@ -1354,6 +1321,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     vol.setFilenameSuffix(suffix)
                     wait.setInformationText('Split {}\nSave {}'.format(self._multi.getBasename(), vol.getBasename()))
                     wait.incCurrentProgressValue()
+                    # < Revision 07/10/2026
+                    if self._compress: vol.setCompressionOn()
+                    # Revision 07/10/2026 >
                     vol.save()
                     if self._logger is not None: self._logger.info('  Save {}'.format(vol.getBasename()))
                 except Exception as err:
@@ -1387,6 +1357,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 26/05/2026
     # add removeFromAllViews method
+    # noinspection unresolved-references
     def removeFromAllViews(self) -> None:
         if self.isChecked():
             if self._action['slices'].isChecked():
@@ -1438,6 +1409,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             if n > 0:
                 wait = DialogWait(title='Display volume...')
                 wait.open()
+                # noinspection unresolved-references
                 wait.setInformationText('{} display...'.format(self._volume.getBasename()))
                 wait.setProgressRange(0, n)
                 wait.setCurrentProgressValue(0)
@@ -1494,6 +1466,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 if wait is None:
                     wait = DialogWait(title='Display volume...')
                     wait.open()
+                    # noinspection unresolved-references
                     wait.setInformationText('{} slice view display...'.format(self._volume.getBasename()))
                     QApplication.processEvents()
                     flag = True
@@ -1599,7 +1572,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             if moveto:
                                 self.getMainWindow().showSliceView()
                                 self.getMainWindow().updateTimers()
-                    if self._logger is not None: self._logger.info('Slice view display {}'.format(self._volume.getBasename()))
+                    if self._logger is not None:
+                        # noinspection unresolved-references
+                        self._logger.info('Slice view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
                 self._action['slices'].blockSignals(True)
                 self._action['slices'].setChecked(True)
@@ -1628,6 +1603,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 if wait is None:
                     wait = DialogWait(title='Display volume...')
                     wait.open()
+                    # noinspection unresolved-references
                     wait.setInformationText('{} orthogonal view display...'.format(self._volume.getBasename()))
                     QApplication.processEvents()
                     flag = True
@@ -1727,7 +1703,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             if moveto:
                                 self.getMainWindow().showOrthogonalView()
                                 self.getMainWindow().updateTimers()
-                    if self._logger is not None: self._logger.info('Orthogonal view display {}'.format(self._volume.getBasename()))
+                    if self._logger is not None:
+                        # noinspection unresolved-references
+                        self._logger.info('Orthogonal view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
                 self._action['orthogonal'].blockSignals(True)
                 self._action['orthogonal'].setChecked(True)
@@ -1756,6 +1734,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 if wait is None:
                     wait = DialogWait(title='Display volume...')
                     wait.open()
+                    # noinspection unresolved-references
                     wait.setInformationText('{} synchronised view display...'.format(self._volume.getBasename()))
                     QApplication.processEvents()
                     flag = True
@@ -1861,7 +1840,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             if moveto:
                                 self.getMainWindow().showSynchronisedView()
                                 self.getMainWindow().updateTimers()
-                    if self._logger is not None: self._logger.info('Synchronized view display {}'.format(self._volume.getBasename()))
+                    if self._logger is not None:
+                        # noinspection unresolved-references
+                        self._logger.info('Synchronized view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
                 self._action['synchronised'].blockSignals(True)
                 self._action['synchronised'].setChecked(True)
@@ -1890,6 +1871,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 if wait is None:
                     wait = DialogWait(title='Display volume...')
                     wait.open()
+                    # noinspection unresolved-references
                     wait.setInformationText('{} projection view display...'.format(self._volume.getBasename()))
                     QApplication.processEvents()
                     flag = True
@@ -1969,7 +1951,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                             if moveto:
                                 self.getMainWindow().showProjectionView()
                                 self.getMainWindow().updateTimers()
-                    if self._logger is not None: self._logger.info('Projection view display {}'.format(self._volume.getBasename()))
+                    if self._logger is not None:
+                        # noinspection unresolved-references
+                        self._logger.info('Projection view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
                 self._action['projections'].blockSignals(True)
                 self._action['projections'].setChecked(True)
@@ -2000,6 +1984,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 if wait is None:
                     wait = DialogWait(title='Display multi-component volume...')
                     wait.open()
+                    # noinspection unresolved-references
                     wait.setInformationText('{} multi-component view display...'.format(self._volume.getBasename()))
                     QApplication.processEvents()
                     flag = True
@@ -2031,7 +2016,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     if moveto:
                         self.getMainWindow().showComponentView()
                         self.getMainWindow().updateTimers()
-                if self._logger is not None: self._logger.info('Multi-component view display {}'.format(self._volume.getBasename()))
+                if self._logger is not None:
+                    # noinspection unresolved-references
+                    self._logger.info('Multi-component view display {}'.format(self._volume.getBasename()))
                 if flag: wait.close()
             self._action['multi'].blockSignals(True)
             self._action['multi'].setChecked(True)
@@ -2060,6 +2047,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         if self._action['projections'].isChecked(): self.displayInProjectionView(moveto=False, update=replace)
     # Revision 15/10/2024 >
 
+    # noinspection unresolved-references
     def overlay(self) -> None:
         # Add overlay
         if self._action['overlay'].isChecked():
@@ -2117,6 +2105,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                            icon=QMessageBox.Information)
             # Revision 06/11/2024 >
         else:
+            # noinspection unresolved-references
             if messageBox(self,
                           'Display volume',
                           '{} is already displayed as overlay.\n'
@@ -2131,7 +2120,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def defaultWindow(self) -> None:
         self._lutwidget.defaultWindow()
         self._onMenuHide()
-        if self._logger is not None: self._logger.info('Set default window {}'.format(self._volume.getBasename()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set default window {}'.format(self._volume.getBasename()))
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
@@ -2139,7 +2130,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def autoWindow(self) -> None:
         self._lutwidget.autoWindow()
         self._onMenuHide()
-        self._logger.info('Auto window {}'.format(self._volume.getBasename()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Auto window {}'.format(self._volume.getBasename()))
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
@@ -2147,7 +2140,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def brainWindow(self) -> None:
         self._lutwidget.setCTBrainWindow()
         self._onMenuHide()
-        self._logger.info('Set brain parenchyma window {}'.format(self._volume.getBasename()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set brain parenchyma window {}'.format(self._volume.getBasename()))
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
@@ -2155,7 +2150,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def boneWindow(self) -> None:
         self._lutwidget.setCTBoneWindow()
         self._onMenuHide()
-        self._logger.info('Set bone window {}'.format(self._volume.getBasename()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set bone window {}'.format(self._volume.getBasename()))
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
@@ -2163,7 +2160,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
     def metallicWindow(self) -> None:
         self._lutwidget.setCTMetallicWindow()
         self._onMenuHide()
-        self._logger.info('Set metallic window {}'.format(self._volume.getBasename()))
+        if self._logger is not None:
+            # noinspection unresolved-references
+            self._logger.info('Set metallic window {}'.format(self._volume.getBasename()))
     # Revision 24/10/2024 >
 
     def flip(self, axis: int) -> None:
@@ -2173,7 +2172,9 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                     if axis == 0: a = [True, False, False]
                     elif axis == 1: a = [False, True, False]
                     else: a = [False, False, True]
-                    if self.isOverlaid(): self._views.removeOverlay(self._volume)
+                    if self.isOverlaid():
+                        # noinspection unresolved-references
+                        self._views.removeOverlay(self._volume)
                     img = sitkFlip(self._volume.getSITKImage(), a)
                     vol = SisypheVolume()
                     vol.setSITKImage(img)
@@ -2204,6 +2205,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         """
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if self.isOverlaid():
+                # noinspection unresolved-references
                 self._views.removeOverlay(self._volume)
                 self.setDown(False)
             img = sitkPermuteAxes(self._volume.getSITKImage(), axes)
@@ -2225,6 +2227,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 19/10/2024
     # add removeNeck method
+    # noinspection unresolved-references
     def removeNeck(self) -> None:
         if self._multi.getNumberOfComponentsPerPixel() == 1:
             if self.isOverlaid():
@@ -2245,6 +2248,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
+    # noinspection unresolved-references
     def changeDatatype(self, dtype: str) -> None:
         if isinstance(dtype, str):
             if self._volume.getDatatype() != dtype:
@@ -2276,6 +2280,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
+    # noinspection unresolved-references
     def changeModality(self, m: str) -> None:
         if isinstance(m, str):
             if m in self._multi.acquisition.getModalityToCodeDict():
@@ -2323,12 +2328,14 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
         self._multi.setDefaultOrigin()
         if self._multi.getNumberOfComponentsPerPixel() > 1: self._volume.setDefaultOrigin()
         else: self._volume = self._multi
+        # noinspection unresolved-references
         self._logger.info('Remove origin {}'.format(self._multi.getBasename()))
         self._preview.setToolTip(str(self._multi))
     # Revision 10/12/2024 >
 
     # < Revision 10/12/2024
     # replace self._volume by self._multi
+    # noinspection unresolved-references
     def removeDirection(self) -> None:
         self._multi.setDefaultDirections()
         if self._multi.getNumberOfComponentsPerPixel() > 1: self._volume.setDefaultDirections()
@@ -2339,6 +2346,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # < Revision 05/11/2024
     # add anonymize method
+    # noinspection unresolved-references
     def anonymize(self) -> None:
         self._multi.setDefaultDirections()
         if self._multi.getNumberOfComponentsPerPixel() > 1: self._volume.identity.anonymize()
@@ -2365,6 +2373,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 # noinspection PyTypeChecker
                 self.getMainWindow().reorient(self._volume)
 
+    # noinspection unresolved-references
     def statistics(self) -> None:
         wait = DialogWait(info='{} statistics...'.format(self._volume.getName()))
         wait.open()
@@ -2376,6 +2385,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             if self._thumbnail is not None: cl = self._thumbnail.palette().base().color()
             else: cl = self.palette().base().color()
             # Revision 03/09/2025 >
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(dialog, c)
         if self._volume.acquisition.hasUnit(): unit = self._volume.acquisition.getUnit()
@@ -2444,6 +2454,7 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
 
     # Qt Drag event
 
+    # noinspection method-overriding
     def mousePressEvent(self, event: QMouseEvent) -> None:
         # noinspection PyUnresolvedReferences
         if event.button() == Qt.LeftButton:
@@ -2457,9 +2468,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                 QToolTip.showText(self.mapToGlobal(event.pos()), str(self._volume), self, self.geometry(), 5000)
             # Revision 21/03/2025 >
 
+    # noinspection method-overriding
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         self._popup.exec(self._getWidgetCenter())
 
+    # noinspection method-overriding
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         if not self.isChecked():
             # < Revision 27/05/2026
@@ -2467,9 +2480,11 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
             self.displayInSliceView()
             # Revision 27/05/2026 >
 
+    # noinspection method-overriding
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self._dragpos0 = None
 
+    # noinspection method-overriding
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         # noinspection PyUnresolvedReferences
         if event.button() == Qt.LeftButton and self._dragpos0 is not None:
@@ -2490,10 +2505,13 @@ class SisypheVolumeThumbnailButtonWidget(QPushButton):
                         drag.exec(Qt.MoveAction)
                         self._dragpos0 = None
 
+    # noinspection method-overriding
     def dragEnterEvent(self, event: QDragEnterEvent) -> None:
+        # noinspection unresolved-references
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
+    # noinspection method-overriding,unresolved-references
     def dropEvent(self, event: QDropEvent) -> None:
         if event.mimeData().hasText():
             event.acceptProposedAction()

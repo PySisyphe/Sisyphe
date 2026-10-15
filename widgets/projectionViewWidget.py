@@ -87,6 +87,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
 
     # Private method
 
+    # noinspection unresolved-references
     def _updateProjection(self) -> None:
         """
         Updates the projection display.
@@ -446,6 +447,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
 
     # < Revision 21/11/2024
     # add mask parameter
+    # noinspection method-overriding, unresolved-references
     def setVolume(self,
                   foreground: SisypheVolume,
                   background: SisypheVolume | None = None,
@@ -645,6 +647,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
 
     # < Revision 18/10/2024
     # add replaceVolume method
+    # noinspection method-overriding
     def replaceVolume(self, foreground: SisypheVolume) -> None:
         """
         Replace the reference SisypheVolume instance for the projection.
@@ -678,6 +681,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
         """
         return self._volume
 
+    # noinspection method-overriding
     def getVolume(self) -> SisypheVolume | None:
         """
         Get the original, un-projected SisypheVolume reference.
@@ -1070,6 +1074,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
             if self._interactor.GetControlKey():
                 if k == 'Up' or k == 'Left': self.zoomIn()
                 elif k == 'Down' or k == 'Right': self.zoomOut()
+        super()._onKeyPressEvent(obj, evt_name)
 
     def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
@@ -1162,6 +1167,7 @@ class MultiProjectionViewWidget(MultiViewWidget):
         self.setViewWidget(1, 3, ProjectionViewWidget('bottom'))
         self.setVisibilityControlToAll()
 
+    # noinspection unresolved-references
     def _initSynchronisationSignalConnect(self) -> None:
         """
         Initializes signal connections for synchronizing camera and other view properties across all projection view
@@ -1176,12 +1182,10 @@ class MultiProjectionViewWidget(MultiViewWidget):
             for j in range(8):
                 if j != i:
                     w2 = self.getViewWidgetAt(j // 4, j % 4)
-                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
                     w1.CameraPositionChanged.connect(w2.synchroniseCameraPositionChanged)
                     w1.OpacityChanged.connect(w2.synchronisedOpacityChanged)
                     w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
-                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
 
     # Public methods
@@ -1222,6 +1226,7 @@ class MultiProjectionViewWidget(MultiViewWidget):
                 path = join(getICBM152Path(), 'icbm152_asym_template_mask.xvol')
                 if exists(path):
                     self._mask = SisypheVolume()
+                    # noinspection unresolved-references
                     self._mask.load(path)
             else:
                 self._mask = foreground.getMask('otsu', fill='3d')
@@ -1386,6 +1391,7 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  widget: MultiProjectionViewWidget | None = None,
                  parent: QWidget | None = None):
@@ -1414,33 +1420,23 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
                                        'b key show/hide colorbar\n'
                                        't key show/hide tooltip\n'
                                        'f key line/font properties')
-        # noinspection PyUnresolvedReferences
         self._shcuti.activated.connect(lambda: self._icons['show'].menu().actions()[1].trigger())
-        # noinspection PyUnresolvedReferences
         self._shcutl.activated.connect(lambda: self._icons['show'].menu().actions()[2].trigger())
-        # noinspection PyUnresolvedReferences
         self._shcutb.activated.connect(lambda: self._icons['show'].menu().actions()[5].trigger())
-        # noinspection PyUnresolvedReferences
         self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[7].trigger())
-        # noinspection PyUnresolvedReferences
         self._shcutf.activated.connect(lambda: self._icons['show'].menu().actions()[-1].trigger())
 
         # Capture button
 
         submenu = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction('Save grid capture...')
         submenu.addAction('Save selected view capture...')
         submenu.addSeparator()
         action = submenu.addAction('Send selected view capture to screenshots preview')
-        # noinspection PyUnresolvedReferences
         action.setShortcut(Qt.Key_Space)
-        # noinspection PyUnresolvedReferences
         submenu.triggered.connect(self._onMenuSaveCapture)
         self._icons['capture'].setMenu(submenu)
 
@@ -1448,7 +1444,6 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
 
         self._icons['opacity'] = self._createButton('wopacity.png', 'opacity.png', checkable=True, autorepeat=False)
         self._icons['opacity'].setToolTip('Opacity')
-        # noinspection PyUnresolvedReferences
         self._slider = QSlider(Qt.Vertical)
         self._slider.setFixedHeight(80)
         self._slider.setTickPosition(QSlider.NoTicks)
@@ -1457,14 +1452,10 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         self._slider.setValue(100)
         self._slider.setInvertedAppearance(True)
         self._slider.setToolTip('Opacity {} %'.format(self._slider.value()))
-        # noinspection PyUnresolvedReferences
         self._slider.valueChanged.connect(self._opacityChanged)
         submenu = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._slider)
@@ -1484,14 +1475,10 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         self._depth = LabeledSpinBox(title='Projection depth')
         self._depth.setRange(5, 20)
         self._depth.setValue(int(widget.getDepthOfProjection()))
-        # noinspection PyUnresolvedReferences
         self._depth.editingFinished.connect(self._depthChanged)
         submenu = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._depth)
@@ -1505,11 +1492,8 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
         self._icons['operator'] = self._createButton('wintegral.png', 'integral.png', checkable=True, autorepeat=False)
         self._icons['operator'].setToolTip('Operator applied to voxels on a projection line')
         submenu = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         amax = submenu.addAction('Maximum')
         amean = submenu.addAction('Mean')
@@ -1603,6 +1587,7 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
 
     # < Revision 21/11/2024
     # add mask parameter
+    # noinspection method-overriding
     def setVolume(self,
                   foreground: SisypheVolume,
                   background: SisypheVolume | None = None,
@@ -1687,6 +1672,7 @@ class IconBarMultiProjectionViewWidget(IconBarWidget):
     # < Revision 15/10/2024
     # override getOverlayIndex (inherited from IconBarWidget class) as dummy method, no overlay in projection
     # mandatory method for compatibility with IconBarViewWidgetCollection
+    # noinspection method-overriding
     def getOverlayIndex(self, o: SisypheVolume) -> int | None:
         """
         Dummy method, overlays are not available in this widget.

@@ -421,6 +421,7 @@ class ThresholdViewWidget(QWidget):
         # Revision 23/04/2026 >
         # Revision 23/03/2026 >
 
+    # noinspection unresolved-references
     def _set_span_left(self, x: float) -> float:
         if x < self._volume.display.getRangeMin():
             x = self._volume.display.getRangeMin()
@@ -442,6 +443,7 @@ class ThresholdViewWidget(QWidget):
         # Revision 23/03/2026 >
         return x
 
+    # noinspection unresolved-references
     def _set_span_right(self, x: float) -> float:
         if x > self._volume.display.getRangeMax():
             x = self._volume.display.getRangeMax()
@@ -465,6 +467,7 @@ class ThresholdViewWidget(QWidget):
 
     # Private event methods
 
+    # noinspection unresolved-references
     def _onMouseClickEvent(self, event: MouseEvent) -> None:
         if event.inaxes == self._histaxe:
             minflag = self._minflag.isChecked()
@@ -501,6 +504,7 @@ class ThresholdViewWidget(QWidget):
                     self._canvas.setCursor(self._cursor)
                 self._xpos = float(event.xdata)
 
+    # noinspection unresolved-references
     def _onMouseMoveEvent(self, event: MouseEvent) -> None:
         if event.inaxes == self._histaxe:
             minflag = self._minflag.isChecked()
@@ -593,7 +597,7 @@ class ThresholdViewWidget(QWidget):
                     self._cursor.setShape(Qt.ArrowCursor)
                     self._canvas.setCursor(self._cursor)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _onMouseReleaseEvent(self, event: MouseEvent) -> None:
         # noinspection PyUnresolvedReferences
         self._cursor.setShape(Qt.ArrowCursor)
@@ -627,6 +631,7 @@ class ThresholdViewWidget(QWidget):
         # Update display
         self._canvas.draw_idle()
 
+    # noinspection unresolved-references
     def _onThresholdChangedEvent(self) -> None:
         if self._volume.getDatatype() in _INTDATATYPES:
             tmin = int(self._editmin.value())
@@ -652,12 +657,13 @@ class ThresholdViewWidget(QWidget):
         # Update display
         self._canvas.draw_idle()
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onThresholdFlagChangeEvent(self, event: QMouseEvent) -> None:
         if self._minflag.isChecked(): self.setThresholdFlagToMinimum()
         elif self._maxflag.isChecked(): self.setThresholdFlagToMaximum()
         else: self.setThresholdFlagToTwo()
 
+    # noinspection unresolved-references
     def _onButtonAutoEvent(self) -> None:
         otsu = OtsuThresholdImageFilter()
         otsu.Execute(self._volume.getSITKImage())
@@ -674,6 +680,7 @@ class ThresholdViewWidget(QWidget):
     # < Revision 29/08/2025
     # add _onButtonResetEvent() method
     def _onButtonResetEvent(self) -> None:
+        # noinspection unresolved-references
         vmin, vmax = self._volume.getRange()
         self._editmin.setValue(vmin)
         self._editmax.setValue(vmax)
@@ -713,6 +720,7 @@ class ThresholdViewWidget(QWidget):
     def getViewWidget(self) -> IconBarSliceViewWidget:
         return self._view
 
+    # noinspection unresolved-references
     def setThreshold(self, tmin: float | int, tmax: float | int) -> None:
         if tmin > tmax:
             tmax = tmin
@@ -743,6 +751,7 @@ class ThresholdViewWidget(QWidget):
         self._thresholdinftext.xyann = (tmin, self._histaxe.get_ylim()[1] / 2)
         self._thresholdsuptext.xyann = (tmax, self._histaxe.get_ylim()[1] / 2)
 
+    # noinspection unresolved-references
     def setMinThreshold(self, tmin: float | int) -> None:
         if tmin < self._volume.display.getRangeMin(): tmin = self._volume.display.getRangeMin()
         if self._volume.getDatatype() in _INTDATATYPES:
@@ -754,6 +763,7 @@ class ThresholdViewWidget(QWidget):
         self._set_span_left(tmin)
         self._thresholdinftext.xyann = (tmin, self._histaxe.get_ylim()[1] / 2)
 
+    # noinspection unresolved-references
     def setMaxThreshold(self, tmax: float | int) -> None:
         if tmax > self._volume.display.getRangeMax(): tmax = self._volume.display.getRangeMax()
         if self._volume.getDatatype() in _INTDATATYPES:
@@ -896,7 +906,7 @@ class GradientThresholdViewWidget(ThresholdViewWidget):
         super().setVolume(self._calcGradient(volume))
 
     @staticmethod
-    def _calcGradient(volume) -> None:
+    def _calcGradient(volume) -> SisypheVolume:
         if isinstance(volume, SisypheVolume):
             simg = volume.getSITKImage()
             fimg = GradientMagnitudeRecursiveGaussian(simg, sigma=1.0)

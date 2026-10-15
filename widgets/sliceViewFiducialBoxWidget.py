@@ -15,8 +15,8 @@ import cython
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QMenu
 
 from Sisyphe.core.sisypheSettings import SisypheSettings
 # noinspection PyCompatibility
@@ -29,7 +29,6 @@ from Sisyphe.widgets.iconBarViewWidgets import IconBarWidget
 
 # to avoid ImportError due to circular imports
 if TYPE_CHECKING:
-    from PyQt5.QtWidgets import QWidget
     from Sisyphe.core.sisypheVolume import SisypheVolume
 
 __all__ = ['SliceViewFiducialBoxWidget',
@@ -78,6 +77,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
     _fid    SisypheFiducialBox
     """
 
+    # noinspection unresolved-references
     def __init__(self, fid: SisypheFiducialBox, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
@@ -117,6 +117,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
         camera = self.getCamera()
         return camera.GetFocalPoint()[2]
 
+    # noinspection unresolved-references
     def _updateDisplayedMarkers(self):
         if not self._fid.isEmpty():
             sz = self._volume.getSpacing()[2]
@@ -141,6 +142,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
                 i: cython.int
                 for i in range(self._fid.getMarkersCount()):
                     tool = self.getTool(i)
+                    # noinspection unresolved-references
                     p = tool.getPosition()
                     self._fid[z, i] = (p[0], p[1])
 
@@ -174,6 +176,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             return r
         else: raise AttributeError('No volume.')
 
+    # noinspection unresolved-references
     def setVolume(self, volume: SisypheVolume) -> None:
         super().setVolume(volume)
         # < Revision 21/05/2025
@@ -200,6 +203,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
         super().slicePlus()
         self._updateDisplayedMarkers()
 
+    # noinspection unresolved-references
     def zoomOnMarker(self, n: int) -> None:
         if not self._fid.isEmpty():
             if n < self._fid.getMarkersCount():
@@ -237,12 +241,14 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
         if not self._fid.isEmpty():
             self._fid.removeTransformFromVolume()
 
+    # noinspection unresolved-references
     def showErrorStatistics(self) -> None:
         if self._fid.hasErrors():
             self._dialog = DialogGenericResults()
             if platform == 'win32':
                 import pywinstyles
                 cl = self.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._dialog, c)
             self._dialog.setWindowTitle('Stereotactic frame detection accuracy')
@@ -305,6 +311,7 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
             self._updateDisplayedMarkers()
             self.updateRender()
 
+    # noinspection unresolved-references
     def removeFrontPlateMarkers(self) -> None:
         if not self._fid.isEmpty():
             if self._fid.getMarkersCount() == 9:
@@ -392,6 +399,7 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
             elif s == 'O': w.addOrthogonalDistanceTool()
             else: w.addAngleTool()
 
+    # noinspection unresolved-references
     def _setViewWidget(self, widget):
         if isinstance(widget, SliceViewFiducialBoxWidget):
             self._widget = widget
@@ -416,7 +424,6 @@ class IconBarSliceViewFiducialBoxWidget(IconBarWidget):
             self._markermenu.addAction('Marker#6 Anterior right')
             self._markermenu.addAction('Marker#7 Anterior mid')
             self._markermenu.addAction('Marker#8 Anterior left')
-            # noinspection PyUnresolvedReferences
             self._markermenu.triggered.connect(self._onMarkerZoom)
             self._icons['zoom'].setMenu(self._markermenu)
 

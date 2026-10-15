@@ -15,10 +15,13 @@ from typing import TYPE_CHECKING
 from os import getcwd
 from os import chdir
 from os import remove
+from os import mkdir
 
 from os.path import join
 from os.path import exists
 from os.path import dirname
+from os.path import abspath
+from os.path import splitext
 
 import cython
 
@@ -256,6 +259,7 @@ class MultiViewWidget(QWidget):
             w.finalize()
     # Revision 08/03/2025 >
 
+    # noinspection unresolved-references
     def setViewWidget(self, r: int, c: int, widget: AbstractViewWidget) -> None:
         """
         Add a view widget to the grid at a specified coordinate.
@@ -312,6 +316,7 @@ class MultiViewWidget(QWidget):
             widget.Selected.connect(self._synchroniseSelection)
             # addBundle view to layout
             widget.setParent(self)
+            # noinspection string-conversion-without-dunder-method
             widget.setObjectName('{} {} {}'.format(str(type(widget)), str(r), str(c)))
             self._views[(r, c)] = widget
             self._layout.addWidget(widget, r, c)
@@ -1190,12 +1195,12 @@ class MultiViewWidget(QWidget):
                                        'Save grid capture error: ',
                                        text='{}\n{}.'.format(type(err), str(err)))
 
+    # noinspection unresolved-references
     def copyToClipboard(self) -> None:
         """
         Copy a montage of all visible views to the system clipboard.
         """
         if self.isNotEmpty():
-            # noinspection PyUnresolvedReferences
             if self.getFirstViewWidget().hasVolume():
                 imglist = list()
                 c = vtkWindowToImageFilter()
@@ -1203,7 +1208,6 @@ class MultiViewWidget(QWidget):
                     if self._views[view].isVisible():
                         c.SetInput(self._views[view].getRenderWindow())
                         r = vtkImageExportToArray()
-                        # noinspection PyArgumentList
                         r.SetInputConnection(c.GetOutputPort())
                         img = r.GetArray()
                         img = flip(img.reshape(img.shape[1:]), axis=0)
@@ -1219,7 +1223,6 @@ class MultiViewWidget(QWidget):
                         if s2[1] < s[1]: s[1] = s2[1]
                         if s2[2] < s[2]: s[2] = s2[2]
                     for i in range(n):
-                        # noinspection PyUnresolvedReferences
                         imglist[i] = imglist[i][:s[0], :s[1], :s[2]]
                     # Layout
                     if n == 1: img = imglist[0]
@@ -1306,6 +1309,7 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
         self[0, 2].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
+    # noinspection unresolved-references
     def _initSynchronisationSignalConnect(self) -> None:
         """
         Initializes synchronization signal connections between view widgets.
@@ -1313,29 +1317,18 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
         i: cython.int
         j: cython.int
         for i in range(3):
-            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
             for j in range(3):
                 if j != i:
-                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(0, j)
-                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolMoved.connect(w2.synchroniseToolMoved)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolRemoved.connect(w2.synchroniseToolRemoved)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolColorChanged.connect(w2.synchroniseToolColorChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolAttributesChanged.connect(w2.synchroniseToolAttributesChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolRenamed.connect(w2.synchroniseToolRenamed)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolAdded.connect(w2.synchroniseToolAdded)
-                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -1543,6 +1536,24 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
         return self[0, 0].getMeshCollection()
         # Revision 20/10/2025 >
 
+    # < Revision 08/10/2026
+    # add saveSeriesCaptures method
+    def saveSeriesCaptures(self) -> None:
+        title = 'Save all slices capture'
+        name = QFileDialog.getSaveFileName(self, caption=title, directory=getcwd(),
+                                           filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
+                                           initialFilter='JPG (*.jpg)')[0]
+        if name != '':
+            path, ext = splitext(name)
+            if not exists(path): mkdir(path)
+            orient = ('axial', 'coronal', 'sagittal')
+            for i in range(3):
+                filename = abspath(join(path, orient[i]))
+                if not exists(filename): mkdir(filename)
+                filename += ext
+                self[0, i].saveSeriesCaptures(folder=filename)
+    # Revision 08/10/2026 >
+
     # View methods
 
     def getAxialView(self) -> SliceViewWidget:
@@ -1639,6 +1650,7 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
         self[0, 2].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
+    # noinspection unresolved-references
     def _initSynchronisationSignalConnect(self) -> None:
         """
         Initializes synchronization signal connections between view widgets.
@@ -1647,11 +1659,9 @@ class OrthogonalRegistrationViewWidget(OrthogonalSliceViewWidget):
         i: cython.int
         j: cython.int
         for i in range(3):
-            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
             for j in range(3):
                 if j != i:
-                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(0, j)
                     if isinstance(w1, SliceRegistrationViewWidget) and isinstance(w2, SliceRegistrationViewWidget):
                         w1.CropChanged.connect(w2.synchroniseCropChanged)
@@ -1748,6 +1758,7 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         self[0, 2].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
+    # noinspection unresolved-references
     def _initSynchronisationSignalConnect(self) -> None:
         """
         Initializes synchronization signal connections between view widgets.
@@ -1755,27 +1766,17 @@ class OrthogonalReorientViewWidget(OrthogonalSliceViewWidget):
         i: cython.int
         j: cython.int
         for i in range(3):
-            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(0, i)
             for j in range(3):
                 if j != i:
-                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(0, j)
-                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ResliceCursorChanged.connect(w2.synchroniseResliceCursorChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.SpacingChanged.connect(w2.synchroniseSpacingChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.SizeChanged.connect(w2.synchroniseSizeChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.TranslationsChanged.connect(w2.synchroniseTranslationsChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.RotationsChanged.connect(w2.synchroniseRotationsChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -2107,7 +2108,7 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
     QWidget -> MultiViewWidget -> OrthogonalSliceVolumeViewWidget
 
     Creation: 03/04/2022
-    Last revision: 20/10/2025
+    Last revision: 14/10/2026
     """
 
     # Special method
@@ -2152,6 +2153,7 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
         self[1, 1].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
+    # noinspection unresolved-references
     def _initSynchronisationSignalConnect(self) -> None:
         """
         Initializes synchronization signal connections between view widgets.
@@ -2159,30 +2161,22 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
         i: cython.int
         j: cython.int
         for i in range(4):
-            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 2, i % 2)
             for j in range(4):
                 if j != i:
-                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(j // 2, j % 2)
-                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolMoved.connect(w2.synchroniseToolMoved)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolRemoved.connect(w2.synchroniseToolRemoved)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolColorChanged.connect(w2.ToolColorChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolAttributesChanged.connect(w2.synchroniseToolAttributesChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolRenamed.connect(w2.synchroniseToolRenamed)
-                    # noinspection PyUnresolvedReferences
                     w1.ToolAdded.connect(w2.synchroniseToolAdded)
-                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
+                    # < Revision 14/10/2026
+                    w1.InteractiveModeChanged.connect(w2.synchroniseInteractiveModeChanged)
+                    # Revision 14/10/2026 >
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
                         w1.CameraPositionChanged.connect(w2.synchroniseCameraPositionChanged)
@@ -2273,6 +2267,12 @@ class OrthogonalSliceVolumeViewWidget(MultiViewWidget):
             True if a volume is displayed, False otherwise.
         """
         return self[0, 0].hasVolume()
+
+    # < Revision 08/10/2026
+    # add saveSeriesCaptures method
+    def saveSeriesCaptures(self) -> None:
+        self[0, 0].saveSeriesCaptures()
+    # Revision 08/10/2026 >
 
     # Overlay methods
 
@@ -2562,6 +2562,7 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
         self[1, 1].setName('Sagittal view')
         self.setVisibilityControlToAll()
 
+    # noinspection unresolved-references
     def _initSynchronisationSignalConnect(self) -> None:
         """
         Initializes synchronization signal connections between view widgets.
@@ -2570,7 +2571,6 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
         i: cython.int
         j: cython.int
         for i in range(4):
-            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 2, i % 2)
             if isinstance(w1, SliceTrajectoryViewWidget):
                 w1.TrajectoryCameraAligned.connect(self.synchroniseTrajectoryCameraAligned)
@@ -2578,7 +2578,6 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
                 w1.CameraChanged.connect(self.synchroniseCameraChanged)
             for j in range(4):
                 if j != i:
-                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(j // 2, j % 2)
                     if isinstance(w1, SliceTrajectoryViewWidget) and isinstance(w2, SliceTrajectoryViewWidget):
                         w1.TrajectoryToolAligned.connect(w2.synchroniseTrajectoryToolAligned)
@@ -2619,9 +2618,10 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
             VolumeViewWidget that emitted the signal.
         """
         view = self.getFirstSliceViewWidget()
+        # noinspection unresolved-references
         if view.isCameraAligned(): self.synchroniseTrajectoryCameraAligned(obj)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def synchroniseTrajectoryCameraAligned(self, obj: QWidget):
         """
         Align all slice view widgets to the camera of the 3D view.
@@ -2632,6 +2632,7 @@ class OrthogonalTrajectoryViewWidget(OrthogonalSliceVolumeViewWidget):
         obj : QWidget
             view widget that emitted the signal.
         """
+        # noinspection unresolved-references
         camera = self.getFirstVolumeViewWidget().getRenderer().GetActiveCamera()
         views = self.getSliceViewWidgets()
         for view in views:
@@ -2788,6 +2789,7 @@ class GridViewWidget(MultiViewWidget):
             popup.insertMenu(popup.actions()[2], menuNumberOfVisibleViews)
             if i == 0: self._menuNumberOfVisibleViews = menuNumberOfVisibleViews
 
+    # noinspection unresolved-references
     def _initSynchronisationSignalConnect(self) -> None:
         """
         Initializes synchronization signal connections between view widgets.
@@ -2795,17 +2797,12 @@ class GridViewWidget(MultiViewWidget):
         i: cython.int
         j: cython.int
         for i in range(9):
-            # noinspection PyNoneFunctionAssignment
             w1 = self.getViewWidgetAt(i // 3, i % 3)
             for j in range(9):
                 if j != i:
-                    # noinspection PyNoneFunctionAssignment
                     w2 = self.getViewWidgetAt(j // 3, j % 3)
-                    # noinspection PyUnresolvedReferences
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
-                    # noinspection PyUnresolvedReferences
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -3006,6 +3003,7 @@ class GridViewWidget(MultiViewWidget):
         tuple[int, int]
             (rows, columns) of the visible grid.
         """
+        # noinspection unresolved-references
         action = self.getFirstSliceViewWidget().getAction()
         if action['11'].isChecked(): r = (1, 1)
         elif action['12'].isChecked(): r = (1, 2)
@@ -3349,6 +3347,12 @@ class MultiSliceGridViewWidget(GridViewWidget):
         """
         return self[0, 0].getOverlayFromIndex(index)
 
+    # < Revision 08/10/2026
+    # add saveSeriesCaptures method
+    def saveSeriesCaptures(self) -> None:
+        self[0, 0].saveSeriesCaptures()
+    # Revision 08/10/2026 >
+
 
 class SynchronisedGridViewWidget(GridViewWidget):
     """
@@ -3384,6 +3388,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
     _nbv    int, volume count
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  rois: SisypheROICollection | None = None,
                  draw: SisypheROIDraw | None = None,
@@ -3403,12 +3408,10 @@ class SynchronisedGridViewWidget(GridViewWidget):
         super().__init__(rois, draw, parent)
         i: cython.int
         for i in range(9):
-            # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
             # < Revision 10/03/2026
             w.setOverlayColorbarAvailability(False, signal=False)
             # Revision 10/03/2026 >
-            # noinspection PyUnresolvedReferences
             action = w.getAction()
             action['expand'].setVisible(True)
 
@@ -3541,7 +3544,7 @@ class SynchronisedGridViewWidget(GridViewWidget):
         int
             number of synchronized volumes.
         """
-        return self[0, 0].getOverlayCount()()
+        return self[0, 0].getOverlayCount()
 
     def hasSynchronisedVolume(self) -> bool:
         """
@@ -3585,6 +3588,26 @@ class SynchronisedGridViewWidget(GridViewWidget):
             synchronized volume at the specified index.
         """
         return self[0, 0].getOverlayFromIndex(index)
+
+    # < Revision 08/10/2026
+    # add saveSeriesCaptures method
+    def saveSeriesCaptures(self) -> None:
+        title = 'Save all slices capture'
+        name = QFileDialog.getSaveFileName(self, caption=title, directory=getcwd(),
+                                           filter='BMP (*.bmp);;JPG (*.jpg);;PNG (*.png);;TIFF (*.tiff)',
+                                           initialFilter='JPG (*.jpg)')[0]
+        if name != '':
+            path, ext = splitext(name)
+            if not exists(path): mkdir(path)
+            idx = 1
+            for w in self._views.values():
+                if w.isVisible():
+                    filename = abspath(join(path, 'volume#{}'.format(idx)))
+                    if not exists(filename): mkdir(filename)
+                    filename += ext
+                    w.saveSeriesCaptures(folder=filename)
+                    idx += 1
+    # Revision 08/10/2026 >
 
     #  Public method aliases
 

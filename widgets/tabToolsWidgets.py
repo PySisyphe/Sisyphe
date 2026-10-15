@@ -108,7 +108,7 @@ class TabWidget(QWidget):
 
     QWidget -> TabWidget
 
-    Last revision: 03/12/2025
+    Last revision: 05/10/2026
     """
     _VSIZE: int = 32
 
@@ -135,6 +135,10 @@ class TabWidget(QWidget):
         self._collection = None
         self._mainwindow = None
 
+        # < Revision 06/10/2026
+        self._compress = False
+        # Revision 06/10/2026 >
+
         # Layout
 
         lyout = QVBoxLayout()
@@ -144,6 +148,12 @@ class TabWidget(QWidget):
         self.setLayout(lyout)
 
     # Public methods
+
+    # < Revision 06/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 06/10/2026 >
 
     def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         if isinstance(views, IconBarViewWidgetCollection): self._views = views
@@ -189,7 +199,7 @@ class TabROIListWidget(TabWidget):
 
     QWidget -> TabROIListWidget
 
-    Last revision: 05/06/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
@@ -206,6 +216,7 @@ class TabROIListWidget(TabWidget):
     _btdiff             IconPushButton, ROIs difference button
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -214,6 +225,10 @@ class TabROIListWidget(TabWidget):
         self._draw = None
         self._list = ListROIAttributesWidget(parent=self)
 
+        # < Revision 06/10/2026
+        self._list.setCompression(self._compress)
+        # Revision 06/10/2026 >
+
         # Widgets
 
         self._btunion = IconPushButton('union.png', size=TabWidget._VSIZE)
@@ -221,13 +236,9 @@ class TabROIListWidget(TabWidget):
         self._btsymdiff = IconPushButton('differencesym.png', size=TabWidget._VSIZE)
         self._btdiff = IconPushButton('difference.png', size=TabWidget._VSIZE)
 
-        # noinspection PyUnresolvedReferences
         self._btunion.clicked.connect(self.union)
-        # noinspection PyUnresolvedReferences
         self._btinter.clicked.connect(self.intersection)
-        # noinspection PyUnresolvedReferences
         self._btsymdiff.clicked.connect(self.symmetricDifference)
-        # noinspection PyUnresolvedReferences
         self._btdiff.clicked.connect(self.difference)
 
         self._btunion.setToolTip('Selected and checked ROI union (OR)')
@@ -263,6 +274,7 @@ class TabROIListWidget(TabWidget):
 
     def _updateROIDisplay(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
+            # noinspection unresolved-references
             self._views.updateROIDisplay()
 
     # Public methods
@@ -312,6 +324,7 @@ class TabROIListWidget(TabWidget):
     def union(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw.hasROI():
+                # noinspection unresolved-references
                 if self._collection.count() > 1:
                     if self._list.count() < self._list.getMaxCount():
                         rois = self._list.getCheckedROI()
@@ -345,6 +358,7 @@ class TabROIListWidget(TabWidget):
     def intersection(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw.hasROI():
+                # noinspection unresolved-references
                 if self._collection.count() > 1:
                     if self._list.count() < self._list.getMaxCount():
                         rois = self._list.getCheckedROI()
@@ -379,6 +393,7 @@ class TabROIListWidget(TabWidget):
     def symmetricDifference(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw.hasROI():
+                # noinspection unresolved-references
                 if self._collection.count() > 1:
                     if self._list.count() < self._list.getMaxCount():
                         rois = self._list.getCheckedROI()
@@ -413,6 +428,7 @@ class TabROIListWidget(TabWidget):
     def difference(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw.hasROI():
+                # noinspection unresolved-references
                 if self._collection.count() > 1:
                     if self._list.count() < self._list.getMaxCount():
                         rois = self._list.getCheckedROI()
@@ -452,6 +468,7 @@ class TabROIListWidget(TabWidget):
 
     # < Revision 20/02/2025
     # add setEnabled method
+    # noinspection method-overriding
     def setEnabled(self, v: bool) -> None:
         super().setEnabled(v)
         self._list.setEnabled(v)
@@ -510,6 +527,7 @@ class TabROIToolsWidget(TabWidget):
     _lastaction         last ROI tool method that was called
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -535,6 +553,7 @@ class TabROIToolsWidget(TabWidget):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(self._contourdialog, c)
         self._updateActiveContourParameters()
@@ -550,6 +569,7 @@ class TabROIToolsWidget(TabWidget):
             if platform == 'win32':
                 import pywinstyles
                 cl = self.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._geminiDialog, c)
             # Revision 11/12/2025 >
@@ -666,141 +686,104 @@ class TabROIToolsWidget(TabWidget):
         # Popup menu
 
         # self._menuThreshold = QMenu(self)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuThreshold.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuThreshold.setWindowFlag(Qt.FramelessWindowHint, True)
         # self._menuThreshold.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuThreshold.addAction(self._athreshold)
-        # noinspection PyUnresolvedReferences
         self._menuThreshold.aboutToHide.connect(self._brushThresholdChanged)
         # < Revision 29/08/2025
-        # noinspection PyUnresolvedReferences
         self._menuThreshold.aboutToShow.connect(self._menuThresholdShow)
         # Revision 29/08/2025 >
         self._btn['threshold'].setMenu(self._menuThreshold)
 
         self._menu2DRegion = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu2DRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu2DRegion.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menu2DRegion.setAttribute(Qt.WA_TranslucentBackground, True)
         self._rg2DRegion = self._menu2DRegion.addAction('Region growing')
         self._rg2DRegion.setCheckable(True)
         self._rg2DRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
         self._rg2DRegion.triggered.connect(self.slcRegionGrowing)
         self._cc2DRegion = self._menu2DRegion.addAction('Confidence connected')
         self._cc2DRegion.setCheckable(True)
         self._cc2DRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
+
         self._cc2DRegion.triggered.connect(self.slcRegionConfidence)
         self._btn['2Dregion'].setMenu(self._menu2DRegion)
         self._btn['2Dregion'].clicked.connect(self._2DregionClicked)
 
         self._menu2DBlobRegion = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu2DBlobRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu2DBlobRegion.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menu2DBlobRegion.setAttribute(Qt.WA_TranslucentBackground, True)
         self._rg2DBlobRegion = self._menu2DBlobRegion.addAction('Region growing')
         self._rg2DBlobRegion.setCheckable(True)
         self._rg2DBlobRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
         self._rg2DBlobRegion.triggered.connect(self.slcBlobRegionGrowing)
         self._cc2DBlobRegion = self._menu2DBlobRegion.addAction('Confidence connected')
         self._cc2DBlobRegion.setCheckable(True)
         self._cc2DBlobRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
         self._cc2DBlobRegion.triggered.connect(self.slcBlobRegionConfidence)
         self._btn['2Dblobregion'].setMenu(self._menu2DBlobRegion)
         self._btn['2Dblobregion'].clicked.connect(self._2DBlobregionClicked)
 
         self._menu3DRegion = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DRegion.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menu3DRegion.setAttribute(Qt.WA_TranslucentBackground, True)
         self._rg3DRegion = self._menu3DRegion.addAction('Region growing')
         self._rg3DRegion.setCheckable(True)
         self._rg3DRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
         self._rg3DRegion.triggered.connect(self.voiRegionGrowing)
         self._cc3DRegion = self._menu3DRegion.addAction('Confidence connected')
         self._cc3DRegion.setCheckable(True)
         self._cc3DRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
         self._cc3DRegion.triggered.connect(self.voiRegionConfidence)
         self._menu3DRegion.addSeparator()
         self._ac3DRegion = self._menu3DRegion.addAction('Active contour')
         self._ac3DRegion.setCheckable(True)
         self._ac3DRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
         self._ac3DRegion.triggered.connect(self.voiActiveContour)
         action = self._menu3DRegion.addAction('Active contour settings...')
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(self._dialogActiveContour)
         self._btn['3Dregion'].setMenu(self._menu3DRegion)
         self._btn['3Dregion'].clicked.connect(self._3DregionClicked)
 
         self._menu3DBlobRegion = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DBlobRegion.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DBlobRegion.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menu3DBlobRegion.setAttribute(Qt.WA_TranslucentBackground, True)
         self._rg3DBlobRegion = self._menu3DBlobRegion.addAction('Region growing')
         self._rg3DBlobRegion.setCheckable(True)
         self._rg3DBlobRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
         self._rg3DBlobRegion.triggered.connect(self.voiBlobRegionGrowing)
         self._cc3DBlobRegion = self._menu3DBlobRegion.addAction('Confidence connected')
         self._cc3DBlobRegion.setCheckable(True)
         self._cc3DBlobRegion.setChecked(False)
-        # noinspection PyUnresolvedReferences
         self._cc3DBlobRegion.triggered.connect(self.voiBlobRegionConfidence)
         self._btn['3Dblobregion'].setMenu(self._menu3DBlobRegion)
         self._btn['3Dblobregion'].clicked.connect(self._3DBlobregionClicked)
 
         self._menu3DHoles = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DHoles.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menu3DHoles.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menu3DHoles.setAttribute(Qt.WA_TranslucentBackground, True)
         action = self._menu3DHoles.addAction('3D fill holes')
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(self.voi3DHoles)
         action = self._menu3DHoles.addAction('2D axial fill holes')
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda: self.voi2DHoles(0))
         action = self._menu3DHoles.addAction('2D coronal fill holes')
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda: self.voi2DHoles(1))
         action = self._menu3DHoles.addAction('2D sagittal fill holes')
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda: self.voi2DHoles(2))
         self._btn['3Dholes'].setMenu(self._menu3DHoles)
 
         # < Revision 10/12/2025
         self._menuGemini = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuGemini.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuGemini.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menuGemini.setAttribute(Qt.WA_TranslucentBackground, True)
-        # noinspection PyUnresolvedReferences
         self._menuGemini.aboutToShow.connect(self._popupGeminiMenu)
-        # noinspection PyUnresolvedReferences
         self._menuGemini.triggered.connect(self._geminiClicked)
         self._btn['gemini'].setMenu(self._menuGemini)
         # Revision 10/12/2025 >
@@ -808,7 +791,6 @@ class TabROIToolsWidget(TabWidget):
         # Layout
 
         lyout = self.layout()
-        # noinspection PyUnresolvedReferences
         lyout.addStretch()
         lyout.addWidget(self._brushgroupbox)
         lyout.addWidget(self._slicegroupbox)
@@ -816,7 +798,6 @@ class TabROIToolsWidget(TabWidget):
         lyout.addWidget(self._volumegroupbox)
         lyout.addWidget(self._volumeblobgroupbox)
         lyout.addWidget(self._settings)
-        # noinspection PyUnresolvedReferences
         lyout.addStretch()
 
     # Private methods
@@ -1335,6 +1316,7 @@ class TabROIToolsWidget(TabWidget):
         vlyout.addLayout(lyout)
         self._volumeblobgroupbox.setLayout(vlyout)
 
+    # noinspection unresolved-references
     def _popupGeminiMenu(self) -> None:
         path = join(getUserPySisyphePath(), 'prompts')
         if not exists(path): mkdir(path)
@@ -1388,6 +1370,7 @@ class TabROIToolsWidget(TabWidget):
         self._menuGemini.addAction('New prompt...')
 
     # < Revision 11/12/2025
+    # noinspection unresolved-references
     def _geminiClicked(self, action: QAction | None) -> None:
         self._geminiDialog.clear()
         self._geminiDialog.setReferenceVolume(self._views.getVolume())
@@ -1410,6 +1393,7 @@ class TabROIToolsWidget(TabWidget):
 
     def _updateROIDisplay(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
+            # noinspection unresolved-references
             self._views.updateROIDisplay()
 
     def _brushThresholdChanged(self) -> None:
@@ -1431,16 +1415,18 @@ class TabROIToolsWidget(TabWidget):
                 self._menuThreshold.removeAction(self._athreshold)
             # Revision 29/08/2025 >
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _brushSizeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
+            # noinspection unresolved-references
             self._views.setBrushRadiusROI(self._brushsize.value())
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _brushSizeMoved(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             for widget in self._views:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setBrushVisibilityOn()
 
@@ -1453,10 +1439,11 @@ class TabROIToolsWidget(TabWidget):
         if self._draw is not None and self.hasViewCollection():
             for widget in self._views:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setBrushVisibilityOff()
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _brushTypeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setBrushType(self._brushtype.currentIndex())
@@ -1472,9 +1459,10 @@ class TabROIToolsWidget(TabWidget):
             # Revision 10/03/2026 >
             self._brushtype.setToolTip('Brush shape and behavior\n' + self._brushtype.currentText())
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _brushFillChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
+            # noinspection unresolved-references
             self._views.setFillHolesROIFlag(self._fill.isChecked())
             # < Revision 17/03/2026
             self._draw.setDrawThresholdedRectangleFillHoles(self._fill.isChecked())
@@ -1482,13 +1470,13 @@ class TabROIToolsWidget(TabWidget):
 
     # < Revision 17/03/2026
     # add _majorBlobChanged method
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _majorBlobChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setDrawThresholdedRectangleMajorBlob(self._major.isChecked())
     # Revision 17/03/2026 >
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _structSizeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setMorphologyRadius(self._structsize.value())
@@ -1511,7 +1499,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dblobopen'].setToolTip('Blob morphology opening' + info)
         self._btn['3Dblobclose'].setToolTip('Blob morphology closing' + info)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _structTypeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             struct = ('ball', 'box', 'cross', 'annulus')
@@ -1536,7 +1524,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dblobopen'].setToolTip('Blob morphology opening' + info)
         self._btn['3Dblobclose'].setToolTip('Blob morphology closing' + info)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _moveChanged(self, v: int) -> None:
         info = '\n{} mm step'.format(self._move.value())
         self._btn['2Dup'].setToolTip('Move up current slice and orientation' + info)
@@ -1548,14 +1536,14 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dleft'].setToolTip('Move left in current orientation' + info)
         self._btn['3Dright'].setToolTip('Move right in current orientation' + info)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _extentChanged(self, v: int) -> None:
         info = '\nBlob size threshold {} voxels'.format(self._extent.value())
         self._btn['2Dblobextent'].setToolTip('Remove blob with number of voxels smaller\n'
                                              'than threshold in current slice' + info)
         self._btn['3Dblobextent'].setToolTip('Remove blob with number of voxels smaller then threshold' + info)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _thicknessChanged(self, v: float) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setThickness(self._thick.value())
@@ -1565,7 +1553,7 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dblobexpand'].setToolTip('Euclidean distance blob expand' + info)
         self._btn['3Dblobshrink'].setToolTip('Euclidean distance blob shrink' + info)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _algoChanged(self, v: int) -> None:
         info = '\n{} algorithm'.format(self._algo.currentText())
         self._btn['2Dobject'].setToolTip('Object segmentation in current slice' + info)
@@ -1573,12 +1561,12 @@ class TabROIToolsWidget(TabWidget):
         self._btn['3Dobject'].setToolTip('Object segmentation' + info)
         self._btn['3Dback'].setToolTip('Background segmentation' + info)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _confidenceChanged(self, v: float) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setConfidenceConnectedSigma(self._confidence.value())
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _confidenceIterChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
             self._draw.setConfidenceConnectedIter(self._iters.value())
@@ -1594,11 +1582,13 @@ class TabROIToolsWidget(TabWidget):
             self._cc3Dregion.setChecked(False)
             self._ac3Dregion.setChecked(False)
 
+    # noinspection unresolved-references
     def _2DBlobregionClicked(self) -> None:
         if not self._btn['2Dblobregion'].isChecked():
             self._rg2DBlobRegion.setChecked(False)
             self._cc2DBlobRegion.setChecked(False)
 
+    # noinspection unresolved-references
     def _3DBlobregionClicked(self) -> None:
         if not self._btn['3Dblobregion'].isChecked():
             self._rg3DBlobRegion.setChecked(False)
@@ -1638,6 +1628,7 @@ class TabROIToolsWidget(TabWidget):
             else: v = v[0].split(' ')[0].lower()
             self._draw.setActiveContourAlgorithm(v)
             if self.hasViewCollection():
+                # noinspection unresolved-references
                 vol = self._views.getVolume()
                 if vol is not None:
                     r1 = vol.getRange()
@@ -1656,6 +1647,7 @@ class TabROIToolsWidget(TabWidget):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(self._contourdialog, c)
         # Revision 28/08/2025 >
@@ -1690,6 +1682,7 @@ class TabROIToolsWidget(TabWidget):
     def getIconSize(self) -> int:
         return self._btn[0].width()
 
+    # noinspection method-overriding
     def setEnabled(self, v: bool) -> None:
         super().setEnabled(v)
         if self._draw is not None and self.hasViewCollection():
@@ -1706,8 +1699,10 @@ class TabROIToolsWidget(TabWidget):
             index = struct.index(self._draw.getStructElement())
             self._structtype.setCurrentIndex(index)
             # Fill holes
+            # noinspection unresolved-references
             self._fill.setChecked(self._views.getFillHolesROIFlag())
 
+    # noinspection unresolved-references
     def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         super().setViewCollection(views)
         self._collection = self._views.getROICollection()
@@ -1716,6 +1711,7 @@ class TabROIToolsWidget(TabWidget):
     # < Revision 09/03/2025
     # add updateThresholdWidget method, called by setROIToolsEnabled mainWindow method
     def updateThresholdWidget(self) -> None:
+        # noinspection unresolved-references
         vol = self._views.getVolume()
         if vol is not None:
             if self._threshold.getVolume() is None: self._threshold.setVolume(vol)
@@ -1739,6 +1735,7 @@ class TabROIToolsWidget(TabWidget):
 
     # Public tools methods
 
+    # noinspection unresolved-references
     def brush(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._views.getBrushFlag() > 0:
@@ -1757,6 +1754,7 @@ class TabROIToolsWidget(TabWidget):
                 for widget in self._views:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget,
                                            IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None:
                             if not sliceview.getNoActionFlag():
@@ -1769,6 +1767,7 @@ class TabROIToolsWidget(TabWidget):
             # Revision 05/05/2026 >
 
     # < Revision 26/02/2026
+    # noinspection unresolved-references
     def area(self) -> None:
         if self._views.getDrawRectangleFlag() or self._views.getDrawThresholdRectangleFlag():
             self._btn['dummy'].setChecked(True)
@@ -1791,6 +1790,7 @@ class TabROIToolsWidget(TabWidget):
     # Revision 26/02/2026 >
 
     # < Revision 26/02/2026
+    # noinspection unresolved-references
     def sam(self) -> None:
         if self._views.getSamFlag():
             self._btn['dummy'].setChecked(True)
@@ -1807,11 +1807,13 @@ class TabROIToolsWidget(TabWidget):
     def interpolate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
+                # noinspection unresolved-references
                 view = self._views['slices']
                 if view is not None:
                     first = view().getFirstVisibleSliceIndex()
                     last = view().getLastVisibleSliceIndex()
                     if last > first:
+                        # noinspection unresolved-references
                         orient = self._views.getCurrentOrientation()
                         self._draw.interpolateBetweenSlices(first, last, orient)
                         self._updateROIDisplay()
@@ -1840,6 +1842,7 @@ class TabROIToolsWidget(TabWidget):
 
     # Slice ROI actions
 
+    # noinspection unresolved-references
     def slcDilate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1853,6 +1856,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binary dilate slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcErode(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1866,6 +1870,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binnary erode slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcOpening(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1879,6 +1884,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binary opening slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcClosing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1892,6 +1898,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binary closing slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcInvert(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1905,6 +1912,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Binary not slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcHoles(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1918,6 +1926,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Fill holes slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcFill(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -1936,6 +1945,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcObject(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1957,6 +1967,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Object segmentation slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcBack(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1978,6 +1989,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Background segmentation slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcThresholding(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -1991,6 +2003,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Thresholding slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcCopy(self) -> None:
         if self._draw is not None:
             index = self._views.getSelectedSliceIndex()
@@ -2003,6 +2016,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Copy slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcCut(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2016,6 +2030,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Cut slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcPaste(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2029,6 +2044,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Paste slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcClear(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2042,6 +2058,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Clear slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcHFlip(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2055,6 +2072,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Horizontal flip slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcVFlip(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2068,6 +2086,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Vertical flip slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcUp(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2081,6 +2100,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Move up slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcDown(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2094,6 +2114,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Move down slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcLeft(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2107,6 +2128,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Move left slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcRight(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2120,6 +2142,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Move right slice {}'.format(index))
 
+    # noinspection unresolved-references
     def slcFilterExtent(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
@@ -2134,6 +2157,7 @@ class TabROIToolsWidget(TabWidget):
                     # Revision 05/05/2026 >
                     if self._logger is not None: self._logger.info('ROI tools - Blob filter extent {} slice {}'.format(self._extent.value(), index))
 
+    # noinspection unresolved-references
     def slcRegionGrowing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._rg2DRegion.isChecked():
@@ -2152,6 +2176,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcRegionConfidence(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._cc2DRegion.isChecked():
@@ -2172,6 +2197,7 @@ class TabROIToolsWidget(TabWidget):
 
     # Slice blob actions
 
+    # noinspection unresolved-references
     def slcBlobDilate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2190,6 +2216,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobErode(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2208,6 +2235,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobOpening(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # self._views.set2DBlobOpenROIFlag()
@@ -2226,6 +2254,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobClosing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2244,6 +2273,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobCopy(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # self._views.set2DBlobCopyROIFlag()
@@ -2262,6 +2292,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobCut(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2280,6 +2311,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobPaste(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2298,6 +2330,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = self.slcBlobPaste
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobRemove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2316,6 +2349,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobKeep(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2334,6 +2368,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobThresholding(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2350,6 +2385,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobRegionGrowing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._rg2DBlobRegion.isChecked():
@@ -2368,6 +2404,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def slcBlobRegionConfidence(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._cc2DBlobRegion.isChecked():
@@ -2523,6 +2560,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Fill holes (by slices)')
 
+    # noinspection unresolved-references
     def voiFill(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2628,6 +2666,7 @@ class TabROIToolsWidget(TabWidget):
     def voiHFlip(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
+                # noinspection unresolved-references
                 orient = self._views.getCurrentOrientation()
                 if orient == 0: self._draw.flip(True, False, False)
                 elif orient == 1: self._draw.flip(True, False, False)
@@ -2641,6 +2680,7 @@ class TabROIToolsWidget(TabWidget):
     def voiVFlip(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
+                # noinspection unresolved-references
                 orient = self._views.getCurrentOrientation()
                 if orient == 0: self._draw.flip(False, True, False)
                 elif orient == 1: self._draw.flip(False, False, True)
@@ -2654,6 +2694,7 @@ class TabROIToolsWidget(TabWidget):
     def voiUp(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
+                # noinspection unresolved-references
                 orient = self._views.getCurrentOrientation()
                 if orient == 0: self._draw.shift(0, self._move.value(), 0)
                 elif orient == 1: self._draw.shift(0, 0, self._move.value())
@@ -2667,6 +2708,7 @@ class TabROIToolsWidget(TabWidget):
     def voiDown(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
+                # noinspection unresolved-references
                 orient = self._views.getCurrentOrientation()
                 if orient == 0: self._draw.shift(0, -self._move.value(), 0)
                 elif orient == 1: self._draw.shift(0, 0, -self._move.value())
@@ -2680,6 +2722,7 @@ class TabROIToolsWidget(TabWidget):
     def voiLeft(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
+                # noinspection unresolved-references
                 orient = self._views.getCurrentOrientation()
                 if orient == 0: self._draw.shift(self._move.value(), 0, 0)
                 elif orient == 1: self._draw.shift(self._move.value(), 0, 0)
@@ -2693,6 +2736,7 @@ class TabROIToolsWidget(TabWidget):
     def voiRight(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._draw is not None:
+                # noinspection unresolved-references
                 orient = self._views.getCurrentOrientation()
                 if orient == 0: self._draw.shift(-self._move.value(), 0, 0)
                 elif orient == 1: self._draw.shift(-self._move.value(), 0, 0)
@@ -2719,6 +2763,7 @@ class TabROIToolsWidget(TabWidget):
                 # Revision 05/05/2026 >
                 self._logger.info('ROI tools - Blob filter extent {}'.format(self._extent.value()))
 
+    # noinspection unresolved-references
     def voiRegionGrowing(self):
         if self.hasViewCollection() and self.hasCollection():
             if self._rg3DRegion.isChecked():
@@ -2739,6 +2784,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiRegionConfidence(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._cc3DRegion.isChecked():
@@ -2759,6 +2805,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiActiveContour(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._ac3DRegion.isChecked():
@@ -2794,8 +2841,10 @@ class TabROIToolsWidget(TabWidget):
             if platform == 'win32':
                 import pywinstyles
                 cl = self.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._statistics, c)
+            # noinspection unresolved-references
             self._statistics.setVolume(self._views.getVolume())
             self._statistics.setROICollection(self._collection)
             wait.close()
@@ -2811,6 +2860,7 @@ class TabROIToolsWidget(TabWidget):
 
     # Volume blob actions
 
+    # noinspection unresolved-references
     def voiBlobDilate(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2829,6 +2879,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobErode(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2847,6 +2898,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobOpening(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2865,6 +2917,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobClosing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2884,6 +2937,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobCopy(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2902,6 +2956,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobCut(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2920,6 +2975,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobPaste(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2938,6 +2994,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobRemove(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2956,6 +3013,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobKeep(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2974,6 +3032,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobExpand(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -2992,6 +3051,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobShrink(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -3010,6 +3070,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobThresholding(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             # < Revision 14/11/2025
@@ -3028,6 +3089,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobRegionGrowing(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._rg3DBlobRegion.isChecked():
@@ -3046,6 +3108,7 @@ class TabROIToolsWidget(TabWidget):
             self._lastaction = None
             # Revision 05/05/2026 >
 
+    # noinspection unresolved-references
     def voiBlobRegionConfidence(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
             if self._cc3DBlobRegion.isChecked():
@@ -3082,11 +3145,12 @@ class TabMeshListWidget(TabWidget):
 
     QWidget -> TabMeshListWidget
 
-    Last revision: 02/11/2024
+    Last revision: 06/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -3094,6 +3158,10 @@ class TabMeshListWidget(TabWidget):
 
         self._list = ListMeshAttributesWidget(views=views, parent=self)
         self._action = dict()
+
+        # < Revision 06/10/2026
+        self._list.setCompression(self._compress)
+        # Revision 06/10/2026 >
 
         # Widgets
 
@@ -3105,15 +3173,10 @@ class TabMeshListWidget(TabWidget):
         self._btdiff = IconPushButton('difference.png', size=TabWidget._VSIZE)
         self._btfeatures = IconPushButton('cubefeature.png', size=TabWidget._VSIZE)
 
-        # noinspection PyUnresolvedReferences
         self._btfilt.clicked.connect(self.filters)
-        # noinspection PyUnresolvedReferences
         self._btunion.clicked.connect(self.union)
-        # noinspection PyUnresolvedReferences
         self._btinter.clicked.connect(self.intersection)
-        # noinspection PyUnresolvedReferences
         self._btdiff.clicked.connect(self.difference)
-        # noinspection PyUnresolvedReferences
         self._btfeatures.clicked.connect(self.features)
         self._btfilt.setToolTip('Checked mesh(es) filtering (clean, decimate, fill holes, smooth)')
         self._dilate.setToolTip('Checked mesh(es) isotropic dilatation')
@@ -3147,11 +3210,8 @@ class TabMeshListWidget(TabWidget):
         self._settings.setParameterVisibility('MaxCount', False)
 
         self._popupDilate = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popupDilate.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popupDilate.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupDilate.setAttribute(Qt.WA_TranslucentBackground, True)
         self._dmm = LabeledDoubleSpinBox()
         self._dmm.setTitle('Dilate')
@@ -3165,17 +3225,13 @@ class TabMeshListWidget(TabWidget):
         self._action['dmm'].setDefaultWidget(self._dmm)
         self._popupDilate.addAction(self._action['dmm'])
         self._action['dilate'] = QAction('Dilate mesh')
-        # noinspection PyUnresolvedReferences
         self._action['dilate'].triggered.connect(self.dilate)
         self._popupDilate.addAction(self._action['dilate'])
         self._dilate.setMenu(self._popupDilate)
 
         self._popupErode = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popupErode.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popupErode.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popupErode.setAttribute(Qt.WA_TranslucentBackground, True)
         self._emm = LabeledDoubleSpinBox()
         self._emm.setTitle('Erode')
@@ -3189,7 +3245,6 @@ class TabMeshListWidget(TabWidget):
         self._action['emm'].setDefaultWidget(self._emm)
         self._popupErode.addAction(self._action['emm'])
         self._action['erode'] = QAction('Erode mesh')
-        # noinspection PyUnresolvedReferences
         self._action['erode'].triggered.connect(self.erode)
         self._popupErode.addAction(self._action['erode'])
         self._erode.setMenu(self._popupErode)
@@ -3284,6 +3339,7 @@ class TabMeshListWidget(TabWidget):
 
     # < Revision 20/02/2025
     # add setEnabled method
+    # noinspection method-overriding
     def setEnabled(self, v: bool) -> None:
         super().setEnabled(v)
         self._list.setEnabled(v)
@@ -3312,12 +3368,17 @@ class TabTargetListWidget(TabWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
         super().__init__(views, parent)
 
         self._list = ListToolAttributesWidget(views=views, parent=self)
+
+        # < Revision 06/10/2026
+        self._list.setCompression(self._compress)
+        # Revision 06/10/2026 >
 
         # Layout
 
@@ -3369,6 +3430,7 @@ class TabTargetListWidget(TabWidget):
 
     # < Revision 20/02/2025
     # add setEnabled method
+    # noinspection method-overriding
     def setEnabled(self, v: bool) -> None:
         super().setEnabled(v)
         self._list.setEnabled(v)
@@ -3392,11 +3454,12 @@ class TabTrackingWidget(TabWidget):
 
     QWidget -> TabTrackingWidget
 
-    Last revision: 29/07/2026
+    Last revision: 06/10/2026
     """
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -3404,6 +3467,10 @@ class TabTrackingWidget(TabWidget):
 
         self._list = ListBundleAttributesWidget(views=views, parent=self)
         self._tractogram: SisypheStreamlines | None = None
+
+        # < Revision 06/10/2026
+        self._list.setCompression(self._compress)
+        # Revision 06/10/2026 >
 
         # Widgets
 
@@ -3418,9 +3485,7 @@ class TabTrackingWidget(TabWidget):
         self._atlas = IconPushButton('tracking-atlas.png', size=TabWidget._VSIZE)
         self._dissection.setToolTip('Streamlines selection from ROI')
         self._atlas.setToolTip('Streamlines selection from Atlas')
-        # noinspection PyUnresolvedReferences
         self._dissection.clicked.connect(self.dissection)
-        # noinspection PyUnresolvedReferences
         self._atlas.clicked.connect(self.atlas)
 
         self._roidialog = DialogStreamlinesROISelection()
@@ -3428,6 +3493,7 @@ class TabTrackingWidget(TabWidget):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(self._roidialog, c)
             pywinstyles.change_header_color(self._atlasdialog, c)
@@ -3448,7 +3514,6 @@ class TabTrackingWidget(TabWidget):
         lyout = self.layout()
         # lyout.addWidget(self._file)
         # lyout.addWidget(grp)
-        # noinspection PyUnresolvedReferences
         lyout.addLayout(btlayout)
         lyout.addWidget(self._list)
 
@@ -3460,6 +3525,7 @@ class TabTrackingWidget(TabWidget):
 
     # Private methods
 
+    # noinspection unresolved-references
     def _loadTractogram(self, filename: str) -> None:
         if not self._file.isEmpty():
             wait = DialogWait()
@@ -3553,6 +3619,7 @@ class TabTrackingWidget(TabWidget):
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(self._atlasdialog, c)
                 # Revision 28/08/2025 >
@@ -3619,6 +3686,7 @@ class TabTrackingWidget(TabWidget):
                        'Streamlines atlas selection',
                        'No whole brain tractogram.')
 
+    # noinspection unresolved-references
     def dissection(self) -> None:
         if self.hasTractogram():
             slt = self.getTractogram()
@@ -3638,6 +3706,7 @@ class TabTrackingWidget(TabWidget):
             if platform == 'win32':
                 import pywinstyles
                 cl = self.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(self._roidialog, c)
             # Revision 28/08/2025 >
@@ -3711,6 +3780,7 @@ class TabTrackingWidget(TabWidget):
 
     # < Revision 20/02/2025
     # add setEnabled method
+    # noinspection method-overriding
     def setEnabled(self, v: bool) -> None:
         super().setEnabled(v)
         self._list.setEnabled(v)
@@ -3757,6 +3827,7 @@ class TabHelpWidget(QWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
@@ -3764,17 +3835,14 @@ class TabHelpWidget(QWidget):
 
         self._home = IconPushButton('home.png', size=TabWidget.getDefaultIconSize())
         self._home.setEnabled(True)
-        # noinspection PyUnresolvedReferences
         self._home.clicked.connect(self.home)
 
         self._back = IconPushButton('backward.png', size=TabWidget.getDefaultIconSize())
         self._back.setEnabled(True)
-        # noinspection PyUnresolvedReferences
         self._back.clicked.connect(self.backward)
 
         self._for = IconPushButton('forward.png', size=TabWidget.getDefaultIconSize())
         self._for.setEnabled(True)
-        # noinspection PyUnresolvedReferences
         self._for.clicked.connect(self.forward)
 
         self._search = LabeledLineEdit('Search')
@@ -3782,7 +3850,6 @@ class TabHelpWidget(QWidget):
 
         self._web = QWebEngineView()
         self._web.setUrl(self.getHome())
-        # noinspection PyTypeChecker
         self._web.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         # < Revision 07/03/2025
         # self._web.setZoomFactor(0.8)
@@ -3797,7 +3864,6 @@ class TabHelpWidget(QWidget):
 
         btlyout = QHBoxLayout()
         btlyout.setContentsMargins(0, 0, 0, 0)
-        # noinspection PyUnresolvedReferences
         btlyout.setSizeConstraint(QHBoxLayout.SetMinimumSize)
         btlyout.setSpacing(5)
         btlyout.addWidget(self._home)
@@ -3827,9 +3893,11 @@ class TabHelpWidget(QWidget):
         return self._home.width()
 
     def backward(self) -> None:
+        # noinspection unresolved-references
         self._web.page().triggerAction(QWebEnginePage.WebAction.Back)
 
     def forward(self) -> None:
+        # noinspection unresolved-references
         self._web.page().triggerAction(QWebEnginePage.WebAction.Forward)
 
     def home(self) -> None:

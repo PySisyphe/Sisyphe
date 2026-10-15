@@ -50,6 +50,8 @@ from vtk import vtkTIFFWriter
 from vtk import vtkWindowToImageFilter
 from vtk import VTK_CURSOR_HAND
 from vtk import VTK_CURSOR_ARROW
+from vtk import VTK_CURSOR_DEFAULT
+from vtk import VTK_CURSOR_CROSSHAIR
 from vtkmodules.util.vtkImageExportToArray import vtkImageExportToArray
 
 from PyQt5.QtCore import Qt
@@ -133,7 +135,7 @@ class VolumeViewWidget(AbstractViewWidget):
 
     QWidget -> AbstractViewWidget -> VolumeViewWidget
 
-    Last revision: 08/06/2026
+    Last revision: 14/10/2026
     """
 
     _CODETOBLEND: dict[int, str] = {0: 'composite', 1: 'MaximumIntensity', 2: 'MinimumIntensity',
@@ -146,6 +148,10 @@ class VolumeViewWidget(AbstractViewWidget):
 
     CameraChanged: pyqtSignal = pyqtSignal(QWidget)
     MeshOnSliceVisibilityChanged: pyqtSignal = pyqtSignal(QWidget, bool)
+    # < Revision 14/10/2026
+    InteractiveModeChanged: pyqtSignal = pyqtSignal(QWidget, int)  # Interactive mode for tool creation
+    InteractiveClicked: pyqtSignal = pyqtSignal(int)
+    # Revision 14/10/2026 >
 
     # Public class methods
 
@@ -189,6 +195,7 @@ class VolumeViewWidget(AbstractViewWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None):
         """
         VolumeViewWidget instance constructor.
@@ -222,6 +229,9 @@ class VolumeViewWidget(AbstractViewWidget):
         self._selectedSlice = 0                 # number of the selected slice
         self._slprop: vtkProp | None = None     # selected streamline
         self._slid: int = 0                     # current point of the selected streamline
+        # < Revision 14/10/2026
+        self._interactive: int = 0
+        # Revision 14/10/2026 >
 
         # Init popup menu
 
@@ -281,11 +291,8 @@ class VolumeViewWidget(AbstractViewWidget):
         self._action['showslices'].triggered.connect(self.showAllSlices)
         self._action['hideslices'].triggered.connect(self.hideAllSlices)
         self._menuPosition = QMenu('Position', self._popup)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuPosition.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._menuPosition.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menuPosition.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuPosition.addAction(self._action['top'])
         self._menuPosition.addAction(self._action['bottom'])
@@ -325,11 +332,8 @@ class VolumeViewWidget(AbstractViewWidget):
         # Init texture popup menu
 
         self._texturepopup = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._texturepopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._texturepopup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._texturepopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['crop'] = QAction('Crop picked region', self)
         self._action['uncrop'] = QAction('Uncrop volume rendering', self)
@@ -370,11 +374,8 @@ class VolumeViewWidget(AbstractViewWidget):
         self._group_blend.addAction(self._action['additive'])
         self._group_blend.addAction(self._action['isosurface'])
         submenu = QMenu('Blend mode', self._texturepopup)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction(self._action['composite'])
         submenu.addAction(self._action['maxintensity'])
@@ -384,11 +385,8 @@ class VolumeViewWidget(AbstractViewWidget):
         submenu.addAction(self._action['isosurface'])
         self._texturepopup.addMenu(submenu)
         submenu = QMenu('Transfer function', self._texturepopup)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction(self._action['loadtransfer'])
         submenu.addAction(self._action['savetransfer'])
@@ -397,11 +395,8 @@ class VolumeViewWidget(AbstractViewWidget):
         # Init mesh popup menu
 
         self._meshpopup = QMenu()
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._meshpopup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._meshpopup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._meshpopup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['meshprop'] = QAction('Edit properties...', self)
         self._action['meshprop'].triggered.connect(self.editActorProperties)
@@ -680,7 +675,62 @@ class VolumeViewWidget(AbstractViewWidget):
         prop.SetGradientOpacity(self._transfer.getGradientTransfer())
         self.updateRender()
 
+    # Public synchronization event methods
+
+    # < Revision 14/10/2026
+    # add synchroniseInteractiveModeChanged
+    def synchroniseInteractiveModeChanged(self, obj: QWidget, mode: int) -> None:
+        """
+        Synchronizes interactive mode for tool creation between SliceTrajectoryViewWidget/VolumeViewWidget instances.
+        This method is called by the InteractiveModeChanged PyQt signal.
+
+        Parameters
+        ----------
+        obj : QWidget
+            SliceTrajectoryViewWidget/VolumeViewWidget instance that emitted the InteractiveModeChanged signal.
+        mode : int
+            interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)
+        """
+        if obj != self:
+            self.setInteractiveMode(mode, signal=False)
+    # Revision 14/10/2026 >
+
     # Public methods
+
+    # < Revision 14/10/2026
+    # add setInteractiveMode method
+    def setInteractiveMode(self, v : int, signal: bool = True) -> None:
+        """
+        Set the interactive mode for tool creation.
+
+        Parameters
+        ----------
+        v : int
+            interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)
+        signal : bool (optional)
+            If True, emits the `InteractiveModeChanged` signal for synchronization (default True).
+        """
+        self._interactive = v
+        if v > 0: self._renderwindow.SetCurrentCursor(VTK_CURSOR_CROSSHAIR)
+        else: self._renderwindow.SetCurrentCursor(VTK_CURSOR_DEFAULT)
+        if signal:
+            # noinspection unresolved-references
+            self.InteractiveModeChanged.emit(self, v)
+    # Revision 14/10/2026 >
+
+    # < Revision 14/10/2026
+    # add getInteractiveMode method
+    def getInteractiveMode(self) -> int:
+        """
+        Get the interactive mode for tool creation.
+
+        Returns
+        -------
+        int
+            interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)
+        """
+        return self._interactive
+    # Revision 14/10/2026 >
 
     def setVolume(self, volume: SisypheVolume) -> None:
         """
@@ -725,7 +775,7 @@ class VolumeViewWidget(AbstractViewWidget):
 
     # < Revision 18/10/2024
     # add replaceVolume method
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def replaceVolume(self, volume: SisypheVolume) -> None:
         """
         Replace the current displayed SisypheVolume with a new one.
@@ -1001,7 +1051,10 @@ class VolumeViewWidget(AbstractViewWidget):
                                            initialFilter='JPG (*.jpg)')[0]
         if name != '':
             chdir(dirname(name))
-            campos = ['front', 'left', 'top', 'back', 'right', 'bottom']
+            # < Revision 08/10/2026
+            # campos = ['front', 'left', 'top', 'back', 'right', 'bottom']
+            campos = ['top', 'front', 'left', 'bottom', 'back', 'right']
+            # Revision 08/10/2026 >
             wait = DialogWait(title, title, progress=False)
             wait.open()
             imglist = list()
@@ -1019,7 +1072,10 @@ class VolumeViewWidget(AbstractViewWidget):
                 cap = flip(cap.reshape(cap.shape[1:]), axis=0)
                 imglist.append(cap)
             # New capture (2 x 3) grid
-            cap = montage(stack(imglist), grid_shape=(2, 3), multichannel=True)
+            # < Revision 08/10/2026
+            # cap = montage(stack(imglist), grid_shape=(2, 3), multichannel=True)
+            cap = montage(stack(imglist), grid_shape=(2, 3), channel_axis=-1)
+            # Revision 08/10/2026 >
             # Save capture
             wait.setInformationText('Save {} capture.'.format(basename(name)))
             try: imsave(name, cap)
@@ -1272,7 +1328,9 @@ class VolumeViewWidget(AbstractViewWidget):
         mapper = self._texture.GetMapper()
         mapper.SetCroppingRegionPlanes(x, fx, y, fy, z, fz)
         self._renderwindow.Render()
-        if self.isSynchronised() and signal: self.CursorPositionChanged.emit(self, x, y, z)
+        if self.isSynchronised() and signal:
+            # noinspection unresolved-references
+            self.CursorPositionChanged.emit(self, x, y, z)
 
     def setCursorVisibility(self, v: bool, signal: bool = True) -> None:
         """
@@ -1874,6 +1932,7 @@ class VolumeViewWidget(AbstractViewWidget):
             if platform == 'win32':
                 import pywinstyles
                 cl = self.palette().base().color()
+                # noinspection string-format
                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                 pywinstyles.change_header_color(dialog, c)
             dialog.setProperties(prop.GetProperty())
@@ -1888,35 +1947,39 @@ class VolumeViewWidget(AbstractViewWidget):
         Handles the right mouse button press VTK event to show a context-sensitive popup menu.
         Currently, this method overrides superclass's implementation.
         """
-        x, y = self._window.GetInteractorStyle().GetLastPos()
-        p = self._getScreenFromDisplay(x, y)
-        picker = self._interactor.GetPicker()
-        n = picker.Pick(x, y, 0, self._renderer)
-        menu = self._popup
-        if n:
-            prop = picker.GetViewProp()
-            cname = prop.GetClassName()
-            # if cname == 'vtkImageSlice': menu = self._slicespopup
-            if cname == 'vtkVolume': menu = self._texturepopup
-            elif cname == 'vtkOpenGLActor': menu = self._meshpopup
-            elif cname in ('vtkDistanceRepresentation3D', 'vtkAngleRepresentation3D'): menu = self._toolpopup
-            # < Revision 13/03/2025
-            # tools menu management
-            if cname in ('vtkDistanceRepresentation2D',
-                         'vtkBiDimensionalRepresentation2D',
-                         'vtkAngleRepresentation2D',
-                         'vtkBorderRepresentation',
-                         'vtkTextRepresentation',
-                         'vtkOpenGLBillboardTextActor3D',
-                         'vtkPointHandleRepresentation3D',
-                         'vtkLineRepresentation'):
-                # Show tool popup menu
-                r = (cname == 'vtkTextRepresentation')
-                self._action['edittext'].setVisible(r)
-                self._action['textprop'].setVisible(r)
-                menu = self._toolpopup
-            # Revision 13/03/2025 >
-        menu.popup(p)
+        # < Revision 14/10/2026
+        if self._interactive > 0: self.setInteractiveMode(0)
+        else:
+        # Revision 14/10/2026 >
+            x, y = self._window.GetInteractorStyle().GetLastPos()
+            p = self._getScreenFromDisplay(x, y)
+            picker = self._interactor.GetPicker()
+            n = picker.Pick(x, y, 0, self._renderer)
+            menu = self._popup
+            if n:
+                prop = picker.GetViewProp()
+                cname = prop.GetClassName()
+                # if cname == 'vtkImageSlice': menu = self._slicespopup
+                if cname == 'vtkVolume': menu = self._texturepopup
+                elif cname == 'vtkOpenGLActor': menu = self._meshpopup
+                elif cname in ('vtkDistanceRepresentation3D', 'vtkAngleRepresentation3D'): menu = self._toolpopup
+                # < Revision 13/03/2025
+                # tools menu management
+                if cname in ('vtkDistanceRepresentation2D',
+                             'vtkBiDimensionalRepresentation2D',
+                             'vtkAngleRepresentation2D',
+                             'vtkBorderRepresentation',
+                             'vtkTextRepresentation',
+                             'vtkOpenGLBillboardTextActor3D',
+                             'vtkPointHandleRepresentation3D',
+                             'vtkLineRepresentation'):
+                    # Show tool popup menu
+                    r = (cname == 'vtkTextRepresentation')
+                    self._action['edittext'].setVisible(r)
+                    self._action['textprop'].setVisible(r)
+                    menu = self._toolpopup
+                # Revision 13/03/2025 >
+            menu.popup(p)
 
     def _onWheelForwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
         """
@@ -1963,6 +2026,13 @@ class VolumeViewWidget(AbstractViewWidget):
         Currently, this method calls superclass's implementation.
         """
         super()._onLeftPressEvent(obj, evt_name)
+        # < Revision 14/10/2026
+        if self._interactive:
+            # noinspection unresolved-references
+            self.InteractiveClicked.emit(self._interactive)
+            self.setInteractiveMode(0)
+            return
+        # Revision 14/10/2026 >
         if self.hasVolume():
             interactorstyle = self._window.GetInteractorStyle()
             self._mousepos0 = interactorstyle.GetLastPos()
@@ -2113,6 +2183,7 @@ class VolumeViewWidget(AbstractViewWidget):
                     self.sliceMinus()
                 elif k == 'Down' or k == 'Left':
                     self.slicePlus()
+        super()._onKeyPressEvent(obj, evt_name)
 
     def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
         """

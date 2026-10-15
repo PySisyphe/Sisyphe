@@ -128,7 +128,7 @@ class IconBarWidget(QWidget):
     QWidget -> IconBarWidget
 
     Creation: 17/04/2022
-    Last revision: 10/07/2026
+    Last revision: 09/10/2026
     """
 
     _BTSIZE: int = 40    # default button size
@@ -155,6 +155,7 @@ class IconBarWidget(QWidget):
 
     # Special methods
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None) -> None:
         """
         IconBarWidget instance constructor.
@@ -246,24 +247,19 @@ class IconBarWidget(QWidget):
         self._icons['clipboard'].setToolTip('Copy capture to clipboard.')
 
         submenu = QMenu()
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         submenu.addAction('Distance')
         submenu.addAction('Orthogonal distances')
         submenu.addAction('Angle')
         submenu.addSeparator()
         submenu.addAction('Remove all')
-        # noinspection PyUnresolvedReferences
         submenu.triggered.connect(self._onMenuTools)
         self._icons['tools'].setMenu(submenu)
 
         self._isoedit = LabeledLineEdit('Isoline values', fontsize=10)
         self._isoedit.getQLineEdit().setClearButtonEnabled(True)
-        # noinspection PyUnresolvedReferences
         self._isoedit.getQLineEdit().editingFinished.connect(self._onIsoEditingFinished)
 
         self._isocolor = ColorSelectPushButton()
@@ -287,20 +283,15 @@ class IconBarWidget(QWidget):
         self._isoprop.setMaximumWidth(400)
 
         self._isoMenu = QMenu()
-        # noinspection PyUnresolvedReferences
         self._isoMenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._isoMenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._isoMenu.setAttribute(Qt.WA_TranslucentBackground, True)
         action = QWidgetAction(self)
         action.setDefaultWidget(self._isoprop)
         action.setData(-1)
         self._isoMenu.addAction(action)
         self._isoMenu.addSeparator()
-        # noinspection PyUnresolvedReferences
         self._isoMenu.aboutToShow.connect(self._onShowMenuIso)
-        # noinspection PyUnresolvedReferences
         self._isoMenu.triggered.connect(self._onMenuIso)
         self._icons['iso'].setMenu(self._isoMenu)
 
@@ -313,7 +304,6 @@ class IconBarWidget(QWidget):
                                     'QToolTip#IconBar { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }')
         else:
             pal = self.palette()
-            # noinspection PyUnresolvedReferences
             pal.setColor(QPalette.Background, Qt.black)
             self.setAutoFillBackground(True)
             self.setPalette(pal)
@@ -342,26 +332,18 @@ class IconBarWidget(QWidget):
 
         # Shortcuts
 
-        # noinspection PyUnresolvedReferences
         self._icons['expand'].setShortcut(Qt.Key_Plus)
         self._icons['zoom1'].setShortcut('0')
         self._shcutp = QShortcut('p', self) # Pin shortcut
-        # noinspection PyUnresolvedReferences
         self._shcutp.activated.connect(self._onPin)
         self._shcutA = QShortcut('A', self) # Axial shortcut
         self._shcutC = QShortcut('C', self) # Coronal shortcut
         self._shcutS = QShortcut('S', self) # Sagittal shortcut
-        # noinspection PyUnresolvedReferences
         self._shcut1 = QShortcut(Qt.Key_1, self) # Grid 1x1 shortcut
-        # noinspection PyUnresolvedReferences
         self._shcut2 = QShortcut(Qt.Key_2, self) # Grid 1x2 shortcut
-        # noinspection PyUnresolvedReferences
         self._shcut3 = QShortcut(Qt.Key_3, self) # Grid 1x3 shortcut
-        # noinspection PyUnresolvedReferences
         self._shcut4 = QShortcut(Qt.Key_4, self) # Grid 2x2 shortcut
-        # noinspection PyUnresolvedReferences
         self._shcut6 = QShortcut(Qt.Key_6, self) # Grid 2x3 shortcut
-        # noinspection PyUnresolvedReferences
         self._shcut9 = QShortcut(Qt.Key_9, self) # Grid 3x3 shortcut
         self._shcutx = QShortcut('x', self) # Show cursor shortcut
         self._shcuti = QShortcut('i', self) # Show information shortcut
@@ -388,7 +370,6 @@ class IconBarWidget(QWidget):
         self._layout = QHBoxLayout()
         self._layout.setSpacing(0)
         self._layout.setContentsMargins(0, 0, 0, 0)
-        # noinspection PyUnresolvedReferences
         self._layout.setAlignment(Qt.AlignVCenter)
         self._layout.addWidget(self._bar)
 
@@ -484,6 +465,7 @@ class IconBarWidget(QWidget):
         w2 = self.parent()
         while w2 is not None:
             w = w2
+            # noinspection unresolved-references
             w2 = w.parent()
         return w
 
@@ -531,8 +513,17 @@ class IconBarWidget(QWidget):
                     else: messageBox(self,
                                      'Save selected view capture',
                                      'No selected view.')
-                elif s[1] == 'captures': w.saveSeriesCaptures()
-                elif s[1] == 'single': w.saveSeriesCapture()
+                elif s[1] == 'captures':
+                    # < Revision 08/10/2026
+                    try: w.saveSeriesCaptures()
+                    except: pass
+                    # Revision 08/10/2026 >
+                elif s[1] == 'single':
+                    # < Revision 08/10/2026
+                    # w.saveSeriesCapture()
+                    w2 = w[0, 0]
+                    if w2.getName() == '3D view': w2.saveSeriesCapture()
+                    # Revision 08/10/2026 >
             elif s[0] == 'Send':
                 if s[1] == 'selected':
                     w2 = w.getSelectedViewWidget()
@@ -549,6 +540,7 @@ class IconBarWidget(QWidget):
                     if self.hasThumbnail():
                         mainwindow = self.getThumbnail().getMainWindow()
                         if mainwindow is not None:
+                            # noinspection unresolved-references
                             caps = self().getFirstVolumeViewWidget().getSeriesPixmapCaptures()
                             for cap in caps:
                                 mainwindow.getScreenshots().paste(cap)
@@ -689,7 +681,7 @@ class IconBarWidget(QWidget):
                 c = list(self._isocolor.getFloatColor())
                 view.setIsoLinesColor(c, signal=True)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _onIsoOpacityChanged(self, w: QWidget) -> None:
         """
         Updates the isoline opacity when the opacity is changed.
@@ -1127,6 +1119,7 @@ class IconBarWidget(QWidget):
 
     # Public view widget methods
 
+    # noinspection unresolved-references
     def setViewWidget(self, widget: MultiViewWidget) -> None:
         """
         Set and configure the view widget encapsulated by the IconBarWidget.
@@ -1153,28 +1146,20 @@ class IconBarWidget(QWidget):
             # noinspection PyUnresolvedReferences
             self._icons['expand'].clicked.connect(self._onExpand)
             self._connectExpandAction()
-            # noinspection PyUnresolvedReferences
             self._icons['screen'].clicked.connect(lambda _: self._onFullScreen())
-            # noinspection PyUnresolvedReferences
             self._icons['zoomin'].clicked.connect(view1.zoomIn)
-            # noinspection PyUnresolvedReferences
             self._icons['zoomout'].clicked.connect(view1.zoomOut)
-            # noinspection PyUnresolvedReferences
             self._icons['zoom1'].clicked.connect(view1.zoomDefault)
             self._icons['actions'].setMenu(view1.getPopupActions())
             self._icons['info'].setMenu(view1.getPopupInformation())
             self._icons['colorbar'].setMenu(view1.getPopupColorbarPosition())
             self._icons['ruler'].setMenu(view1.getPopupRulerPosition())
             submenu = QMenu()
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-            # noinspection PyUnresolvedReferences
             submenu.setAttribute(Qt.WA_TranslucentBackground, True)
             submenu.addAction('Copy grid capture to clipboard')
             submenu.addAction('Copy selected view capture to clipboard')
-            # noinspection PyUnresolvedReferences
             submenu.triggered.connect(self._onMenuCopyCapture)
             self._icons['clipboard'].setMenu(submenu)
             """
@@ -1189,15 +1174,10 @@ class IconBarWidget(QWidget):
                 menu.actions()[0].triggered.connect(lambda dummy, v=0: self._onMenuOrientation(v))
                 menu.actions()[1].triggered.connect(lambda dummy, v=1: self._onMenuOrientation(v))
                 menu.actions()[2].triggered.connect(lambda dummy, v=2: self._onMenuOrientation(v))
-                # noinspection PyUnresolvedReferences
                 self._shcutA.activated.connect(lambda: menu.actions()[0].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutC.activated.connect(lambda: menu.actions()[1].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutS.activated.connect(lambda: menu.actions()[2].trigger())
-                # noinspection PyUnresolvedReferences
                 self._icons['sliceminus'].clicked.connect(view1.slicePlus)
-                # noinspection PyUnresolvedReferences
                 self._icons['sliceplus'].clicked.connect(view1.sliceMinus)
                 self._visibilityflags['orient'] = True
                 self._visibilityflags['sliceminus'] = True
@@ -1207,11 +1187,8 @@ class IconBarWidget(QWidget):
                 # layout.insertWidget(3, self._icons['sliceplus'])
                 # layout.insertWidget(3, self._icons['sliceminus'])
                 # layout.insertWidget(3, self._icons['orient'])
-                # noinspection PyUnresolvedReferences
                 layout.insertWidget(4, self._icons['sliceplus'])
-                # noinspection PyUnresolvedReferences
                 layout.insertWidget(4, self._icons['sliceminus'])
-                # noinspection PyUnresolvedReferences
                 layout.insertWidget(4, self._icons['orient'])
                 # Revision 05/12/2025 >
                 self._icons['sliceminus'].setToolTip('Previous slice.\n'
@@ -1238,22 +1215,14 @@ class IconBarWidget(QWidget):
                                                'r key show/hide ruler\n'
                                                't key show/hide tooltip\n'
                                                'f key line/font properties')
-                # noinspection PyUnresolvedReferences
                 self._shcutx.activated.connect(lambda: self._icons['show'].menu().actions()[0].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcuti.activated.connect(lambda: self._icons['show'].menu().actions()[1].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutl.activated.connect(lambda: self._icons['show'].menu().actions()[2].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutm.activated.connect(lambda: self._icons['show'].menu().actions()[3].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutb.activated.connect(lambda: self._icons['show'].menu().actions()[6].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutr.activated.connect(lambda: self._icons['show'].menu().actions()[7].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[8].trigger())
                 # < Revision 04/05/2026
-                # noinspection PyUnresolvedReferences
                 self._shcutf.activated.connect(lambda: self._icons['show'].menu().actions()[-1].trigger())
                 # Revision 04/05/2026 >
                 widget.popupMenuROIDisabled()
@@ -1268,40 +1237,28 @@ class IconBarWidget(QWidget):
                                                    '6 key 2x3\n'
                                                    '9 key 3x3')
                     self._icons['grid'].setMenu(widget.getPopupMenuNumberOfVisibleViews())
-                    # noinspection PyUnresolvedReferences
                     self._shcut1.activated.connect(lambda: self._icons['grid'].menu().actions()[0].trigger())
-                    # noinspection PyUnresolvedReferences
                     self._shcut2.activated.connect(lambda: self._icons['grid'].menu().actions()[1].trigger())
-                    # noinspection PyUnresolvedReferences
                     self._shcut3.activated.connect(lambda: self._icons['grid'].menu().actions()[2].trigger())
-                    # noinspection PyUnresolvedReferences
                     self._shcut4.activated.connect(lambda: self._icons['grid'].menu().actions()[3].trigger())
-                    # noinspection PyUnresolvedReferences
                     self._shcut6.activated.connect(lambda: self._icons['grid'].menu().actions()[4].trigger())
-                    # noinspection PyUnresolvedReferences
                     self._shcut9.activated.connect(lambda: self._icons['grid'].menu().actions()[5].trigger())
                     # < Revision 05/12/2025
                     # layout.insertWidget(3, self._icons['grid'])
-                    # noinspection PyUnresolvedReferences
                     layout.insertWidget(4, self._icons['grid'])
                     # Revision 05/12/2025 >
             if grid or orthoslc:
                 self._icons['show'].setMenu(view1.getPopupVisibility())
                 submenu = QMenu()
-                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-                # noinspection PyUnresolvedReferences
                 submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 submenu.addAction('Save grid capture...')
                 submenu.addAction('Save selected view capture...')
                 submenu.addAction('Save captures from slice series...')
                 submenu.addSeparator()
                 action = submenu.addAction('Send selected view capture to screenshots preview')
-                # noinspection PyUnresolvedReferences
                 action.setShortcut(Qt.Key_Space)
-                # noinspection PyUnresolvedReferences
                 submenu.triggered.connect(self._onMenuSaveCapture)
                 self._icons['capture'].setMenu(submenu)
             """    
@@ -1323,11 +1280,8 @@ class IconBarWidget(QWidget):
                 self._transfer.gradientTransferVisibilityChanged.connect(self._onTransferMenuChanged)
 
                 submenu = QMenu()
-                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-                # noinspection PyUnresolvedReferences
                 submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 a = QWidgetAction(self)
                 a.setDefaultWidget(self._transfer)
@@ -1340,13 +1294,9 @@ class IconBarWidget(QWidget):
                 # layout.insertWidget(3, self._icons['transfer'])
                 # layout.insertWidget(3, self._icons['campos'])
                 # layout.insertWidget(3, self._icons['texture'])
-                # noinspection PyUnresolvedReferences
                 layout.insertWidget(4, self._icons['align'])
-                # noinspection PyUnresolvedReferences
                 layout.insertWidget(4, self._icons['transfer'])
-                # noinspection PyUnresolvedReferences
                 layout.insertWidget(4, self._icons['campos'])
-                # noinspection PyUnresolvedReferences
                 layout.insertWidget(4, self._icons['texture'])
                 # Revision 05/12/2025 >
 
@@ -1359,20 +1309,13 @@ class IconBarWidget(QWidget):
                                                'r key show/hide ruler\n'
                                                't key show/hide tooltip\n'
                                                'f key line/font properties')
-                # noinspection PyUnresolvedReferences
                 self._shcutx.activated.connect(lambda: self._icons['show'].menu().actions()[0].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcuti.activated.connect(lambda: self._icons['show'].menu().actions()[1].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutm.activated.connect(lambda: self._icons['show'].menu().actions()[2].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutb.activated.connect(lambda: self._icons['show'].menu().actions()[3].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutr.activated.connect(lambda: self._icons['show'].menu().actions()[4].trigger())
-                # noinspection PyUnresolvedReferences
                 self._shcutt.activated.connect(lambda: self._icons['show'].menu().actions()[5].trigger())
                 # < Revision 04/05/2026
-                # noinspection PyUnresolvedReferences
                 self._shcutf.activated.connect(lambda: self._icons['show'].menu().actions()[-1].trigger())
                 # Revision 04/05/2026 >
 
@@ -1390,11 +1333,8 @@ class IconBarWidget(QWidget):
                 self._icons['transfer'].setToolTip('Set color and alpha transfer functions.')
 
                 submenu = QMenu()
-                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-                # noinspection PyUnresolvedReferences
                 submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-                # noinspection PyUnresolvedReferences
                 submenu.setAttribute(Qt.WA_TranslucentBackground, True)
                 submenu.addAction('Save grid capture...')
                 submenu.addAction('Save selected view capture...')
@@ -1402,10 +1342,8 @@ class IconBarWidget(QWidget):
                 submenu.addAction('Save single capture from multiple camera positions...')
                 submenu.addSeparator()
                 action = submenu.addAction('Send selected view capture to screenshots preview')
-                # noinspection PyUnresolvedReferences
                 action.setShortcut(Qt.Key_Space)
                 submenu.addAction('Send captures from multiple camera positions to screenshots preview')
-                # noinspection PyUnresolvedReferences
                 submenu.triggered.connect(self._onMenuSaveCapture)
                 self._icons['capture'].setMenu(submenu)
 
@@ -2006,6 +1944,7 @@ class IconBarWidget(QWidget):
 
     # Qt events
 
+    # noinspection method-overriding
     def timerEvent(self, event: Optional[QTimerEvent]) -> None:
         """
         Handles timer events to manage the auto-hiding of the unpinned icon bar.
@@ -2028,6 +1967,7 @@ class IconBarWidget(QWidget):
                 p = w.mapFromGlobal(p)
                 if 0 <= p.x() < self._icons['pin'].width() and 0 <= p.y() < w.height(): self.iconBarVisibleOn()
 
+    # noinspection unresolved-references,method-overriding
     def dragEnterEvent(self, event: Optional[QDragEnterEvent]) -> None:
         """
         Handles drag enter events, accepting text-based mime data for drag-and-drop operations.
@@ -2041,6 +1981,7 @@ class IconBarWidget(QWidget):
         if event.mimeData().hasText(): event.acceptProposedAction()
         else: event.ignore()
 
+    # noinspection unresolved-references,method-overriding
     def dropEvent(self, event: Optional[QDropEvent]) -> None:
         """
         Handles drop events to load PySisyphe volume (.xvol) from the thumbnail bar based on user settings.
@@ -2087,6 +2028,7 @@ class IconBarWidget(QWidget):
                             if platform == 'win32':
                                 import pywinstyles
                                 cl = self.palette().base().color()
+                                # noinspection string-format
                                 c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                                 pywinstyles.change_header_color(dialog, c)
                             dialog.exec()
@@ -2485,6 +2427,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
 
     # Private methods
 
+    # noinspection unresolved-references
     def _updateTooltips(self) -> None:
         """
         Updates the tooltips of the rigid transformation buttons with current translation and rotation values.
@@ -2511,6 +2454,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['rotc2'].setToolTip('Clockwise X rotation\nX Rotation {:.1f}°'.format(r[0]))
         self._buttons['rota2'].setToolTip('Counter-clockwise X Rotation\nX Rotation {:.1f}°'.format(r[0]))
 
+    # noinspection unresolved-references
     def _xtranslation(self, v: float) -> None:
         """
         Apply a translation along the x-axis.
@@ -2529,6 +2473,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['left1'].setToolTip('Right translation\nX Translation {:.2f} mm'.format(t[0]))
         self._buttons['right1'].setToolTip('Left translation\nX Translation {:.2f} mm'.format(t[0]))
 
+    # noinspection unresolved-references
     def _ytranslation(self, v: float) -> None:
         """
         Apply a translation along the y-axis.
@@ -2547,6 +2492,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['left2'].setToolTip('Forward translation\nY Translation {:.2f} mm'.format(t[1]))
         self._buttons['right2'].setToolTip('Backward translation\nY Translation {:.2f} mm'.format(t[1]))
 
+    # noinspection unresolved-references
     def _ztranslation(self, v: float) -> None:
         """
         Apply a translation along the z-axis.
@@ -2565,6 +2511,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['up2'].setToolTip('Cranial translation\nZ Translation {:.2f} mm'.format(t[2]))
         self._buttons['down2'].setToolTip('Caudal translation\nZ Translation {:.2f} mm'.format(t[2]))
 
+    # noinspection unresolved-references
     def _xrotation(self, v: float) -> None:
         """
         Apply a rotation around the x-axis.
@@ -2581,6 +2528,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['rotc2'].setToolTip('Clockwise X rotation\nX Rotation {:.2f}°'.format(r[0]))
         self._buttons['rota2'].setToolTip('Counter-clockwise X Rotation\nX Rotation {:.2f}°'.format(r[0]))
 
+    # noinspection unresolved-references
     def _yrotation(self, v: float) -> None:
         """
         Apply a rotation around the y-axis.
@@ -2597,6 +2545,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['rotc1'].setToolTip('Clockwise Y rotation\nY Rotation {:.2f}°'.format(r[1]))
         self._buttons['rota1'].setToolTip('Counter-clockwise Y Rotation\nY Rotation {:.2f}°'.format(r[1]))
 
+    # noinspection unresolved-references
     def _zrotation(self, v: float) -> None:
         """
         Apply a rotation around the z-axis.
@@ -2634,6 +2583,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         In this mode, overlay volume can be moved or rotated with mouse.
         """
         widget = self().getFirstSliceViewWidget()
+        # noinspection unresolved-references
         widget.setMoveOverlayFlag()
 
     def setMoveOverlayOff(self) -> None:
@@ -2644,6 +2594,7 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         widget = self().getFirstSliceViewWidget()
         # < Revision 30/10/2025
         # widget.setMoveOverlayOff()
+        # noinspection unresolved-references
         widget.setMoveOverlayFlag(False)
         # Revision 30/10/2025 >
 
@@ -2861,6 +2812,7 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
     Last Revision: 10/10/2025
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  widget: OrthogonalTrajectoryViewWidget | None = None,
                  parent: QWidget | None = None) -> None:
@@ -2899,11 +2851,8 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         self._sthick.setSuffix(' mm')
 
         menu = QMenu()
-        # noinspection PyUnresolvedReferences
         menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         menu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         menu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         a.setDefaultWidget(self._sstep)
@@ -2922,13 +2871,9 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         action['mean'].setCheckable(True)
         action['sum'].setCheckable(True)
         action['mean'].setChecked(True)
-        # noinspection PyUnresolvedReferences
         action['min'].triggered.connect(lambda _: self._slabTypeChanged(0))
-        # noinspection PyUnresolvedReferences
         action['max'].triggered.connect(lambda _: self._slabTypeChanged(1))
-        # noinspection PyUnresolvedReferences
         action['mean'].triggered.connect(lambda _: self._slabTypeChanged(2))
-        # noinspection PyUnresolvedReferences
         action['sum'].triggered.connect(lambda _: self._slabTypeChanged(3))
         self._group = QActionGroup(self)
         self._group.setExclusive(True)
@@ -2940,12 +2885,10 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         submenu.addAction(action['sum'])
         submenu.addAction(action['min'])
         submenu.addAction(action['max'])
-        # noinspection PyUnresolvedReferences
         menu.aboutToHide.connect(self._slabThicknessChanged)
         self._icons['thick'].setMenu(menu)
 
         layout = self._bar.layout()
-        # noinspection PyUnresolvedReferences
         layout.insertWidget(7, self._icons['thick'])
 
         # Sphere cursor
@@ -2955,17 +2898,13 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
 
         view = self._widget[0, 0]
         menu = QMenu()
-        # noinspection PyUnresolvedReferences
         menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         menu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         menu.setAttribute(Qt.WA_TranslucentBackground, True)
         a = QWidgetAction(self)
         w = LabeledSlider(title='Cursor radius', fontsize=10)
         w.setRange(0, 50)
         w.setValue(0)
-        # noinspection PyUnresolvedReferences
         w.valueChanged.connect(view.setSphereCursorRadius)
         a.setDefaultWidget(w)
         menu.addAction(a)
@@ -2973,13 +2912,11 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
         w = LabeledSlider(title='Cursor opacity', fontsize=10)
         w.setRange(0, 100)
         w.setValue(50)
-        # noinspection PyUnresolvedReferences
         w.valueChanged.connect(view.setSphereCursorOpacity)
         a.setDefaultWidget(w)
         menu.addAction(a)
         self._icons['sphere'].setMenu(menu)
 
-        # noinspection PyUnresolvedReferences
         layout.insertWidget(13, self._icons['sphere'])
 
         # < Revision 06/12/2024
@@ -3856,6 +3793,7 @@ class IconBarViewWidgetCollection(QObject):
 
     # Overlay methods
 
+    # noinspection unresolved-references
     def addOverlay(self, vol: SisypheVolume, wait: DialogWait | None = None) -> bool:
         """
         Add an overlay to all widgets, with optional progress display.
@@ -4004,6 +3942,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getROICollection()
                     else: return None
@@ -4021,6 +3960,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getDrawInstance()
                     else: return None
@@ -4038,11 +3978,13 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getSliceIndex()
                     else: return None
         return None
 
+    # noinspection calling-non-callable
     def getSelectedSliceIndex(self) -> int | None:
         """
         Get the slice index of the selected view from the first suitable widget.
@@ -4084,6 +4026,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getOrientation()
                     else: return None
@@ -4096,6 +4039,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.updateROIDisplay(signal=True)
 
@@ -4106,6 +4050,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.updateROIAttributes(signal=True)
 
@@ -4123,6 +4068,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     widget().updateROIName(old, name)
 
     def setUndoOn(self) -> None:
@@ -4159,6 +4105,7 @@ class IconBarViewWidgetCollection(QObject):
             if self.count() > 0:
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None: sliceview.setROIVisibility(v, signal=True)
         else: raise TypeError('parameter type {} is not bool.'.format(v))
@@ -4176,6 +4123,7 @@ class IconBarViewWidgetCollection(QObject):
             if self.count() > 0:
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None:
                             if sliceview.hasVolume():
@@ -4195,6 +4143,7 @@ class IconBarViewWidgetCollection(QObject):
             if self.count() > 0:
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None: sliceview.setBrushRadius(radius, signal=True)
         else: raise TypeError('parameter type {} is not int.'.format(type(radius)))
@@ -4206,6 +4155,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setNoROIFlag(signal=True)
 
@@ -4221,6 +4171,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getBrushFlag()
         return None
@@ -4238,6 +4189,7 @@ class IconBarViewWidgetCollection(QObject):
             if self.count() > 0:
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None:
                             # < Revision 20/03/2025
@@ -4263,6 +4215,7 @@ class IconBarViewWidgetCollection(QObject):
             if isinstance(f, bool):
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None: sliceview.setDrawRectangleFlag(f, signal=True)
             else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
@@ -4282,6 +4235,7 @@ class IconBarViewWidgetCollection(QObject):
             if isinstance(f, bool):
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None: sliceview.setDrawThresholdRectangleFlag(f, signal=True)
             else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
@@ -4301,6 +4255,7 @@ class IconBarViewWidgetCollection(QObject):
             if isinstance(f, bool):
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None: sliceview.setSamFlag(f, signal=True)
             else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
@@ -4312,6 +4267,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     widget().setSamModel(model)
     # Revision 26/02/2026 >
 
@@ -4321,6 +4277,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     return widget().getSamModel()
         return None
     # Revision 26/02/2026 >
@@ -4331,6 +4288,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     return widget().hasSamModel()
         return False
     # Revision 26/02/2026 >
@@ -4348,6 +4306,7 @@ class IconBarViewWidgetCollection(QObject):
             if isinstance(f, bool):
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
                         if sliceview is not None: sliceview.setFillHolesFlag(f, signal=True)
             else: raise TypeError('parameter type {} is not bool.'.format(type(f)))
@@ -4361,6 +4320,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobDilateFlagOn(signal=True)
 
@@ -4373,6 +4333,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobErodeFlagOn(signal=True)
 
@@ -4385,6 +4346,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobCloseFlagOn(signal=True)
 
@@ -4397,6 +4359,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobOpenFlagOn(signal=True)
 
@@ -4409,6 +4372,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobCopyFlagOn(signal=True)
 
@@ -4421,6 +4385,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobCutFlagOn(signal=True)
 
@@ -4433,6 +4398,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobPasteFlagOn(signal=True)
 
@@ -4445,6 +4411,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobRemoveFlagOn(signal=True)
 
@@ -4457,6 +4424,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobKeepFlagOn(signal=True)
 
@@ -4469,6 +4437,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobThresholdFlagOn(signal=True)
 
@@ -4481,6 +4450,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DFillFlagOn(signal=True)
 
@@ -4493,6 +4463,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DRegionGrowingFlagOn(signal=True)
 
@@ -4505,6 +4476,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DRegionConfidenceFlagOn(signal=True)
 
@@ -4518,6 +4490,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobRegionGrowingFlagOn(signal=True)
 
@@ -4531,6 +4504,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set2DBlobRegionConfidenceFlagOn(signal=True)
 
@@ -4542,6 +4516,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobDilateFlagOn(signal=True)
 
@@ -4553,6 +4528,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobErodeFlagOn(signal=True)
 
@@ -4564,6 +4540,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobCloseFlagOn(signal=True)
 
@@ -4575,6 +4552,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobOpenFlagOn(signal=True)
 
@@ -4586,6 +4564,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobCopyFlagOn(signal=True)
 
@@ -4597,6 +4576,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobCutFlagOn(signal=True)
 
@@ -4608,6 +4588,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobPasteFlagOn(signal=True)
 
@@ -4619,6 +4600,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobRemoveFlagOn(signal=True)
 
@@ -4630,6 +4612,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobKeepFlagOn(signal=True)
 
@@ -4646,6 +4629,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobExpandFlagOn(v, signal=True)
 
@@ -4662,6 +4646,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobShrinkFlagOn(v, signal=True)
 
@@ -4673,6 +4658,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobThresholdFlagOn(signal=True)
 
@@ -4684,6 +4670,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DFillFlagOn(signal=True)
 
@@ -4695,6 +4682,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DRegionGrowingFlagOn(signal=True)
 
@@ -4706,6 +4694,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DRegionConfidenceFlagOn(signal=True)
 
@@ -4718,6 +4707,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobRegionGrowingFlagOn(signal=True)
 
@@ -4730,6 +4720,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.set3DBlobRegionConfidenceFlagOn(signal=True)
 
@@ -4741,6 +4732,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: sliceview.setActiveContourFlagOn(signal=True)
 
@@ -4757,6 +4749,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getDrawRectangleFlag()
         return None
@@ -4775,6 +4768,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getDrawThresholdRectangleFlag()
         return None
@@ -4785,6 +4779,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getSamFlag()
         return None
@@ -4802,6 +4797,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getFillHolesFlag()
         return None
@@ -4818,6 +4814,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobDilateFlag()
         return None
@@ -4834,6 +4831,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobErodeFlag()
         return None
@@ -4850,6 +4848,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobCloseFlag()
         return None
@@ -4866,6 +4865,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobOpenFlag()
         return None
@@ -4882,6 +4882,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobCopyFlag()
         return None
@@ -4898,6 +4899,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobCutFlag()
         return None
@@ -4914,6 +4916,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobPasteFlag()
         return None
@@ -4930,6 +4933,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobRemoveFlag()
         return None
@@ -4946,6 +4950,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobKeepFlag()
         return None
@@ -4962,6 +4967,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobThresholdFlag()
         return None
@@ -4978,6 +4984,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DFillFlag()
         return None
@@ -4994,6 +5001,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DRegionGrowingFlag()
         return None
@@ -5010,6 +5018,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DRegionConfidenceFlag()
         return None
@@ -5026,6 +5035,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobRegionGrowingFlag()
         return None
@@ -5042,6 +5052,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get2DBlobRegionConfidenceFlag()
         return None
@@ -5058,6 +5069,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobDilateFlag()
         return None
@@ -5074,6 +5086,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobErodeFlag()
         return None
@@ -5090,6 +5103,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobCloseFlag()
         return None
@@ -5106,6 +5120,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobOpenFlag()
         return None
@@ -5122,6 +5137,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobCopyFlag()
         return None
@@ -5138,6 +5154,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobCutFlag()
         return None
@@ -5154,6 +5171,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobPasteFlag()
         return None
@@ -5170,6 +5188,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobRemoveFlag()
         return None
@@ -5186,6 +5205,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobKeepFlag()
         return None
@@ -5202,6 +5222,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobExpandFlag()
         return None
@@ -5218,6 +5239,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobShrinkFlag()
         return None
@@ -5234,6 +5256,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobThresholdFlag()
         return None
@@ -5250,6 +5273,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DFillFlag()
         return None
@@ -5266,6 +5290,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DRegionGrowingFlag()
         return None
@@ -5282,6 +5307,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DRegionConfidenceFlag()
         return None
@@ -5298,6 +5324,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobRegionGrowingFlag()
         return None
@@ -5314,6 +5341,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.get3DBlobRegionConfidenceFlag()
         return None
@@ -5330,6 +5358,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                    # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
                     if sliceview is not None: return sliceview.getActiveContourFlag()
         return None
@@ -5349,6 +5378,7 @@ class IconBarViewWidgetCollection(QObject):
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
                                        IconBarOrthogonalSliceTrajectoryViewWidget)):
+                    # noinspection calling-non-callable
                     return widget().getFirstVolumeViewWidget()
         return None
 
@@ -5364,6 +5394,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, IconBarWidget):
+                    # noinspection calling-non-callable
                     return widget().getFirstSliceViewWidget()
         return None
 
@@ -5379,6 +5410,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, IconBarOrthogonalSliceTrajectoryViewWidget):
+                    # noinspection calling-non-callable
                     return widget()
         return None
 
@@ -5394,6 +5426,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, IconBarMultiSliceGridViewWidget):
+                    # noinspection calling-non-callable
                     return widget()
         return None
 
@@ -5409,6 +5442,7 @@ class IconBarViewWidgetCollection(QObject):
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, IconBarSynchronisedGridViewWidget):
+                    # noinspection calling-non-callable
                     return widget()
         return None
 
@@ -5427,6 +5461,7 @@ class IconBarViewWidgetCollection(QObject):
             from Sisyphe.widgets.projectionViewWidget import IconBarMultiProjectionViewWidget
             for widget in self:
                 if isinstance(widget, IconBarMultiProjectionViewWidget):
+                    # noinspection calling-non-callable
                     return widget()
         return None
     # Revision 15/10/2024 >
@@ -5446,6 +5481,7 @@ class IconBarViewWidgetCollection(QObject):
             from Sisyphe.widgets.multiComponentViewWidget import IconBarMultiComponentViewWidget
             for widget in self:
                 if isinstance(widget, IconBarMultiComponentViewWidget):
+                    # noinspection calling-non-callable
                     return widget()
         return None
     # Revision 11/12/2024 >
@@ -5463,6 +5499,7 @@ class IconBarViewWidgetCollection(QObject):
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
                                        IconBarOrthogonalSliceTrajectoryViewWidget)):
+                    # noinspection calling-non-callable
                     view = widget().getFirstVolumeViewWidget()
                     if view is not None: return view.getMeshCollection()
         return None
@@ -5480,6 +5517,7 @@ class IconBarViewWidgetCollection(QObject):
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
                                        IconBarOrthogonalSliceTrajectoryViewWidget)):
+                    # noinspection calling-non-callable
                     view = widget().getFirstVolumeViewWidget()
                     if view is not None: return view.getToolCollection()
         return None
@@ -5497,6 +5535,7 @@ class IconBarViewWidgetCollection(QObject):
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
                                        IconBarOrthogonalSliceTrajectoryViewWidget)):
+                    # noinspection calling-non-callable
                     view = widget().getFirstVolumeViewWidget()
                     if view is not None: return view.getTractCollection()
         return None

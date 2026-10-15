@@ -344,7 +344,9 @@ class RichJupyterWidget2(RichJupyterWidget):
                         self.execute('r = json.loads(r)', hidden=True)
                         r = json.loads(r)
                     self._append_plain_text('\n{}'.format(r))
-                    if self._update is not None: self._update()
+                    if self._update is not None:
+                        # noinspection calling-non-callable
+                        self._update()
             except:
                 self._append_plain_text('\n%gemini client error:\n{}'.format(traceback.format_exc()),
                                         before_prompt=False)
@@ -389,7 +391,9 @@ class RichJupyterWidget2(RichJupyterWidget):
         wait.close()
         self.kernel_manager.kernel.shell.push({'r': r})
         self._append_plain_text('\n{}'.format(r))
-        if self._update is not None: self._update()
+        if self._update is not None:
+            # noinspection calling-non-callable
+            self._update()
         self._show_interpreter_prompt(nb)
     # Revision 08/02/2026 >
 
@@ -709,7 +713,9 @@ class RichJupyterWidget2(RichJupyterWidget):
                     return
                 self.kernel_manager.kernel.shell.push({'v': r})
                 self._append_plain_text('\n{} file is loaded into v variable.'.format(buff))
-                if self._update is not None: self._update()
+                if self._update is not None:
+                    # noinspection calling-non-callable
+                    self._update()
                 self._show_interpreter_prompt(nb)
             except:
                 self._append_plain_text('\nIO error, unable to load {}.'.format(buff))
@@ -754,7 +760,7 @@ class ConsoleWidget(QWidget):
 
     QWidget -> ConsoleWidget
 
-    Last revision: 27/04/2026
+    Last revision: 09/10/2026
     """
 
     @classmethod
@@ -784,6 +790,7 @@ class ConsoleWidget(QWidget):
     _popup          QMenu
     """
 
+    # noinspection unresolved-references
     def __init__(self,
                  variables: dict[str, Any] | None = None,
                  parent: QWidget | None = None):
@@ -1093,7 +1100,7 @@ class ConsoleWidget(QWidget):
                                   "plt.show = _inline_show\n", hidden=True)
     # Revision 27/04/2026 >
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _globalsDblClicked(self, item: QTreeWidgetItem, c: int) -> None:
         if self.hasMainWindow():
             # noinspection PyUnresolvedReferences
@@ -1125,7 +1132,7 @@ class ConsoleWidget(QWidget):
                                 self._mainwindow.addVolume(self._vol)
                 except: return
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _globalsClicked(self, item: QTreeWidgetItem, c: int) -> None:
         # noinspection PyUnresolvedReferences
         v = item.data(0, Qt.UserRole)
@@ -1140,7 +1147,7 @@ class ConsoleWidget(QWidget):
                     item.setToolTip(0, info)
             except: return
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _modulesDblClicked(self, item: QTreeWidgetItem, c: int) -> None:
         if self.hasMainWindow():
             # noinspection PyUnresolvedReferences
@@ -1241,6 +1248,7 @@ class ConsoleWidget(QWidget):
 
     # < Revision 01/12/2025
     # add _plot method
+    # noinspection unresolved-references
     def _plot(self, chart: int, item: QTreeWidgetItem) -> None:
         g = self._console.kernel_manager.kernel.shell.user_ns
         try:
@@ -1264,6 +1272,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1310,6 +1319,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1354,6 +1364,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1398,6 +1409,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1446,6 +1458,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1490,6 +1503,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1532,6 +1546,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1579,6 +1594,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1620,6 +1636,7 @@ class ConsoleWidget(QWidget):
                         if platform == 'win32':
                             import pywinstyles
                             cl = self.palette().base().color()
+                            # noinspection string-format
                             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                             pywinstyles.change_header_color(dialog, c)
                         if dialog.exec() == dialog.Accepted:
@@ -1788,6 +1805,7 @@ class ConsoleWidget(QWidget):
             self.pushVariables(v)
             self.update()
 
+    # noinspection method-overriding
     def setFont(self, font: QFont) -> None:
         # noinspection PyProtectedMember
         self._console._set_font(font)
@@ -1805,5 +1823,12 @@ class ConsoleWidget(QWidget):
 
     # Qt event
 
+    # noinspection method-overriding
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.matches(QKeySequence.Copy): self.copy()
+        # < Revision 09/10/2026
+        else:
+            # redirect to windowSisyphe main window
+            if self._mainwindow:
+                self._mainwindow.keyPressEvent(event)
+        # Revision 09/10/2026 >
