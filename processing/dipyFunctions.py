@@ -200,6 +200,7 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
                      gibbs: dict[str, int] | None = None,
                      denoise: dict[str, int | str] | None = None,
                      save: bool = False,
+                     compress: bool = False,
                      wait: DialogWait | DictProxy | None = None) -> tuple[SisypheVolumeCollection, SisypheROI | None] | None:
     """
     Parameters
@@ -225,6 +226,8 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
         {'algo': 'Adaptive soft coefficient matching', 'noisealgo': str, 'rec': str, 'ncoils': int, 'nphase': int}
     save : bool
         save if true
+    compress : bool
+        save xvol in compressed format
     wait : gui.DialogWait | multiprocessing.managers.DictProxy | None
         optional progress dialog or multiprocessing shared dict (DictProxy)
 
@@ -232,7 +235,7 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
     -------
     SisypheVolumeCollection : SisypheROI | None
 
-    Last revision: 03/09/2026
+    Last revision: 07/10/2026
     """
     mask = None
     # < Revision 17/06/2025
@@ -278,6 +281,9 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             if wait is not None:
                 if isinstance(wait, DialogWait): wait.setInformationText('Save {}...'.format(basename(rmask.getFilename())))
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Save {}...'.format(basename(rmask.getFilename()))
+            # < Revision 07/10/2026
+            if compress: rmask.setCompressionOn()
+            # Revision 07/10/2026 >
             rmask.save()
         else: rmask = None
     # Gibbs suppression
@@ -595,6 +601,9 @@ def dwiPreprocessing(vols: SisypheVolumeCollection,
             if wait is not None:
                 if isinstance(wait, DialogWait): wait.setInformationText('Save {}...'.format(v.getBasename()))
                 elif isinstance(wait, DictProxy): wait['msg'] = 'Save {}...'.format(v.getBasename())
+            # < Revision 07/10/2026
+            if compress: v.setCompressionOn()
+            # Revision 07/10/2026 >
             v.save()
         rvol.append(v)
     # noinspection PyUnboundLocalVariable

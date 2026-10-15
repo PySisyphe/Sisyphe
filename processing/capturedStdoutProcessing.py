@@ -775,6 +775,7 @@ class ProcessDeepMedialTemporalSegmentation(Process):
 
     # Public methods
 
+    # noinspection unresolved-references
     def run(self):
         from ants.core.ants_image_io import from_numpy
         t1 = from_numpy(self._t1, spacing=self._spacing)
@@ -919,6 +920,7 @@ class ProcessDeepWhiteMatterHyperIntensitiesSegmentation(Process):
     _result     Queue
     """
 
+    # noinspection unresolved-references
     def __init__(self, flair, t1, mask, model, cache, stdout, queue):
         Process.__init__(self)
         self._flair = flair.getNumpy(defaultshape=False).astype('float32')
@@ -934,6 +936,7 @@ class ProcessDeepWhiteMatterHyperIntensitiesSegmentation(Process):
 
     # Public methods
 
+    # noinspection unresolved-references,unused-local
     def run(self):
         from ants.core.ants_image_io import from_numpy
         flair = from_numpy(self._flair, spacing=self._spacing)
@@ -952,17 +955,14 @@ class ProcessDeepWhiteMatterHyperIntensitiesSegmentation(Process):
         set_antsxnet_cache_directory(self._cache)
         if self._model == 'sysu':
             from antspynet.utilities.white_matter_hyperintensity_segmentation import sysu_media_wmh_segmentation
-            # noinspection PyUnusedLocal
             with CapturePythonStdout(self._stdout) as F:
                 r = sysu_media_wmh_segmentation(flair, t1, verbose=True)
         elif self._model == 'hypermapp3r':
             from antspynet.utilities.white_matter_hyperintensity_segmentation import hypermapp3r_segmentation
-            # noinspection PyUnusedLocal
             with CapturePythonStdout(self._stdout) as F:
                 r = hypermapp3r_segmentation(flair, t1, verbose=True)
         elif self._model == 'antsxnet':
             from antspynet.utilities.white_matter_hyperintensity_segmentation import wmh_segmentation
-            # noinspection PyUnusedLocal
             with CapturePythonStdout(self._stdout) as F:
                 r = wmh_segmentation(flair, t1, mask, verbose=True)
         else: raise ValueError('Invalid model.')
@@ -1625,6 +1625,7 @@ class ProcessDiffusionPreprocessing(Process):
 
     # Public methods
 
+    # noinspection unresolved-references,unbound-local-variable
     def run(self):
         self._mng['msg'] = 'Load gradient B values...'
         from Sisyphe.core.sisypheDicom import loadBVal
@@ -1657,7 +1658,6 @@ class ProcessDiffusionPreprocessing(Process):
             self._result.put('No such file {}.'.format(self._fbvec))
             self.terminate()
         self._mng['msg'] = 'Load diffusion weighted volumes...'
-        # noinspection PyUnboundLocalVariable
         dwinames = list(bvals.keys())
         bvals = array(list(bvals.values()))
         from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -1676,7 +1676,6 @@ class ProcessDiffusionPreprocessing(Process):
         # gtable = gradient_table(bvals=bvals, bvecs=bvecs)
         from Sisyphe.core.sisypheTracts import SisypheDiffusionModel
         model = SisypheDiffusionModel()
-        # noinspection PyUnboundLocalVariable
         model.setGradients(bvals, bvecs, lpstoras=self._corr1, direction=direction)
         gtable = model.getGradientTable()
         # Revision 03/09/2026 >
@@ -1734,7 +1733,7 @@ class ProcessDiffusionModel(Process):
 
     Process -> ProcessDiffusionModel
 
-    Last revision: 28/07/2026
+    Last revision: 07/10/2026
     """
 
     # Special method
@@ -1761,7 +1760,7 @@ class ProcessDiffusionModel(Process):
     # replace parameter corr with corr1
     # add parameter corr2
     def __init__(self, bval, bvec, model, method, order, maps,
-                 corr1, corr2, algo, niter, size, save, mng, queue):
+                 corr1, corr2, algo, niter, size, save, compress, mng, queue):
         Process.__init__(self)
         self._fbval = bval
         self._fbvec = bvec
@@ -1774,6 +1773,9 @@ class ProcessDiffusionModel(Process):
         self._corr2 = corr2
         # Revision 28/07/2026 >
         self._save = save
+        # < Revision 07/10/2026
+        self._compress = compress
+        # Revision 07/10/2026 >
         self._algo = algo
         self._niter = niter
         self._size = size
@@ -1783,6 +1785,7 @@ class ProcessDiffusionModel(Process):
 
     # Public methods
 
+    # noinspection unresolved-references,unbound-local-variable
     def run(self):
         # Load gradient B values
         self._mng['msg'] = 'Load gradient B values...'
@@ -1820,7 +1823,6 @@ class ProcessDiffusionModel(Process):
             self.terminate()
         # Load diffusion weighted volumes
         self._mng['msg'] = 'Load diffusion weighted volumes...'
-        # noinspection PyUnboundLocalVariable
         dwinames = list(bvals.keys())
         bvals = array(list(bvals.values()))
         from Sisyphe.core.sisypheVolume import SisypheVolume
@@ -1956,11 +1958,9 @@ class ProcessDiffusionModel(Process):
         else:
             self._result.put('Invalid model name ({}).'.format(self._model))
             self.terminate()
-        # noinspection PyUnboundLocalVariable
         if nd < ndim:
             self._result.put('Not enough diffusion-weighted images for the {} model (at least {}).'.format(self._model, ndim))
             self.terminate()
-        # noinspection PyUnboundLocalVariable
         model.setGradients(bvals, bvecs, lpstoras=self._corr1, direction=direction)
         model.setDWI(vols)
         # Mask processing
@@ -1970,7 +1970,6 @@ class ProcessDiffusionModel(Process):
             self._result.put('Mask processing error.\n{}\n{}.'.format(type(err), str(err)))
             self.terminate()
         # Model fitting
-        # noinspection PyUnboundLocalVariable
         self._mng['msg'] = msg
         try: model.computeFitting()
         except Exception as err:
@@ -1989,6 +1988,9 @@ class ProcessDiffusionModel(Process):
                 v.setFilenameSuffix('FA')
                 v.acquisition.setSequenceToFractionalAnisotropyMap()
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if ga:
@@ -1999,6 +2001,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('GA')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if gfa:
@@ -2009,6 +2014,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('GFA')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if md:
@@ -2019,6 +2027,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('MD')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if tr:
@@ -2028,6 +2039,9 @@ class ProcessDiffusionModel(Process):
                 v.setFilenameSuffix('TR')
                 v.acquisition.setSequenceToApparentDiffusionMap()
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if ad:
@@ -2038,6 +2052,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('AD')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if rd:
@@ -2048,6 +2065,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('RD')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if li:
@@ -2058,6 +2078,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('LINEARITY')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if pl:
@@ -2068,6 +2091,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('PLANARITY')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if sp:
@@ -2078,6 +2104,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('SPHERICITY')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 v = None
             if ts:
@@ -2088,6 +2117,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('TENSOR')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if ts2:
                 self._mng['msg'] = 'Save diffusion Tensor components...'
@@ -2100,6 +2132,9 @@ class ProcessDiffusionModel(Process):
                     v2.acquisition.setModalityToOT()
                     v2.acquisition.setSequence('TENSOR ' + c[i])
                     v2.setID(model.getReferenceID())
+                    # < Revision 07/10/2026
+                    if self._compress: v.setCompressionOn()
+                    # Revision 07/10/2026 >
                     v2.save()
             if mj:
                 self._mng['msg'] = 'Save diffusion tensor major direction...'
@@ -2109,6 +2144,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('PRINCIPAL')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
                 # < Revision 30/07/2026
                 # components
@@ -2124,6 +2162,9 @@ class ProcessDiffusionModel(Process):
                     vc.acquisition.setSequence(suffix)
                     vc.display.setLUT(lut[i])
                     vc.setID(model.getReferenceID())
+                    # < Revision 07/10/2026
+                    if self._compress: vc.setCompressionOn()
+                    # Revision 07/10/2026 >
                     vc.save()
                 # Revision 30/07/2026 >
             if evl:
@@ -2134,6 +2175,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('EIGENVAL')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if evc:
                 self._mng['msg'] = 'Save diffusion tensor eigen vectors...'
@@ -2143,6 +2187,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('EIGENVEC')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if fw:
                 self._mng['msg'] = 'Save Free Water Fraction map...'
@@ -2152,6 +2199,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('FWF')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if fcsf:
                 self._mng['msg'] = 'Save Cerebro-Spinal Fluid Fraction map...'
@@ -2161,6 +2211,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('FCSF')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if fgm:
                 self._mng['msg'] = 'Save Gray Matter Fraction map...'
@@ -2170,6 +2223,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('FGM')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if fwm:
                 self._mng['msg'] = 'Save White Matter Fraction map...'
@@ -2179,6 +2235,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('FWM')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if fiso:
                 self._mng['msg'] = 'Save Isotropic Fraction map...'
@@ -2188,6 +2247,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('FISO')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             # < Revision 01/09/2026
             if ivimd:
@@ -2198,6 +2260,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('IVIM Diffusivity')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if ivimds:
                 self._mng['msg'] = 'Save IVIM pseudo-diffusivity map...'
@@ -2207,6 +2272,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('IVIM Pseudo-diffusivity')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             if ivimf:
                 self._mng['msg'] = 'Save IVIM perfusion fraction map...'
@@ -2216,6 +2284,9 @@ class ProcessDiffusionModel(Process):
                 v.acquisition.setModalityToOT()
                 v.acquisition.setSequence('IVIM Perfusion fraction')
                 v.setID(model.getReferenceID())
+                # < Revision 07/10/2026
+                if self._compress: v.setCompressionOn()
+                # Revision 07/10/2026 >
                 v.save()
             # Revision 01/09/2026 >
         self._result.put('terminate')
@@ -2333,6 +2404,9 @@ class ProcessDiffusionTracking(Process):
         v = track.getSeedMask()
         v.setFilename(self._model)
         v.setFilenameSuffix('seed_mask')
+        # < Revision 07/10/2026
+        v.setCompressionOn()
+        # Revision 07/10/2026 >
         v.save()
         # Revision 24/07/2026 >
         if self._stopping['algo'] == 'FA/GFA':
@@ -2475,6 +2549,9 @@ class ProcessGibbsImageFilter(Process):
             v2.setFilenamePrefix(self._prefix)
             v2.setFilenameSuffix(self._suffix)
             self._mng['msg'] = 'Save {}...'.format(v2.getBasename())
+            # < Revision 07/10/2026
+            v2.setCompressionOn()
+            # Revision 07/10/2026 >
             v2.save()
             self._result.put('terminate')
         else:
@@ -2552,6 +2629,9 @@ class ProcessNLMeansImageFilter(Process):
         v2.setFilenamePrefix(self._prefix)
         v2.setFilenameSuffix(self._suffix)
         self._mng['msg'] = 'Save {}...'.format(v2.getBasename())
+        # < Revision 07/10/2026
+        v2.setCompressionOn()
+        # Revision 07/10/2026 >
         v2.save()
         self._result.put('terminate')
 # Revision 04/09/2026 >
