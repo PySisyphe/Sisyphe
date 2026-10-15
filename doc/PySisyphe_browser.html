@@ -75,6 +75,8 @@
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_Window.html">Window menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_extensions.html">PySiSyphe file extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PySisyphe_extensions.html#pysisyphe-files">PySiSyphe files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/index.html">Core API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API2/index.html">Widgets &amp; dialogs API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PySisyphe_license.html">License</a></li>
@@ -117,7 +119,7 @@
 <ol class="arabic simple">
 <li><p>The folder area displays a directory tree.</p></li>
 </ol>
-<p>Left-click on the icon folder to select it. You can only select one directory. This folder is then expanded to view its subdirectories. The files located in this directory are displayed in the files middle area.</p>
+<p>Left-click on the icon folder to select it. You can only select one directory. This folder is then expanded to view its subdirectories. The files located in this directory are displayed in the files area (2).</p>
 <p>Right-click to pop up a menu:</p>
 <blockquote>
 <div><ul class="simple">
@@ -132,15 +134,16 @@
 <li><p><strong>Go to template folder</strong>, select the PySisyphe template folder and scroll to it in the directory tree.</p></li>
 </ul>
 </div></blockquote>
-<p>The folder area supports drag-and-drop from the folder and file area, as well as from the File Explorer on the Windows platform and the Finder on the Mac OS platform.</p>
+<p>The folder area supports drag-and-drop from the folder and file area, as well as from the File Explorer on Windows and the Finder on Mac OS.</p>
 <ol class="arabic simple" start="2">
-<li><p>The files area displays a list of files of the current folder, selected in the folder area.</p></li>
+<li><p>The files area displays a list of files of the current folder, selected in the folder area (1).</p></li>
 </ol>
 <p>Left-click on the icon file to select it and display a preview of its contents in the area on the right. You can select multiple files.</p>
-<p>Double-click a file to open it in the <a class="reference internal" href="PySisyphe_thumbnailbar.html#page-thumbnailbar"><span class="std std-ref">Thumbnail bar</span></a>. The following files are supported: .xvol PySisyphe volume, Nifti volume (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd volume (.nrrd, .nhdr), Minc volume (.mnc, .minc), FreeSurfer volume (.mgh, .mgz), .vol Sisyphe volume, VTK volume (.vtk, .vti). Files with the .xlabels extension open in the <a class="reference internal" href="PySisyphe_File.html#menu-section-editlabels"><span class="std std-ref">Edit volume labels</span></a> dialog box. Files with the .xmodel extension open in the <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-glm-model"><span class="std std-ref">General linear model definition</span></a> dialog box. Files with the .xwflow extension open in the <a class="reference internal" href="PySisyphe_Functions.html#menu-section-workflow"><span class="std std-ref">Workflow processing</span></a> dialog box.</p>
+<p>Double-click a file to open it in the <a class="reference internal" href="PySisyphe_thumbnailbar.html#page-thumbnailbar"><span class="std std-ref">Thumbnail bar</span></a>. The following files are supported: .xvol PySisyphe volume, Nifti volume (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd volume (.nrrd, .nhdr), Minc volume (.mnc, .minc), FreeSurfer volume (.mgh, .mgz), .vol Sisyphe volume, VTK volume (.vtk, .vti), BrainVoyager volume (.vmr). Files with the .xlabels extension open in the <a class="reference internal" href="PySisyphe_File.html#menu-section-editlabels"><span class="std std-ref">Edit volume labels</span></a> dialog box. Files with the .xmodel extension open in the <a class="reference internal" href="PySisyphe_Mapping.html#menu-section-glm-model"><span class="std std-ref">General linear model definition</span></a> dialog box. Files with the .xwflow extension open in the <a class="reference internal" href="PySisyphe_Functions.html#menu-section-workflow"><span class="std std-ref">Workflow processing</span></a> dialog box. Files with the .xdcm extension open in the <a class="reference internal" href="PySisyphe_File.html#menu-section-xmldcm"><span class="std std-ref">XML Dicom attributes</span></a> dialog box. Finally, DICOM files (.dcm, .dicom, .nema) open in the <a class="reference internal" href="PySisyphe_File.html#menu-section-dcmdataset"><span class="std std-ref">Dicom dataset</span></a> dialog box.</p>
 <p>Right-click to pop up a menu:</p>
 <blockquote>
 <div><ul class="simple">
+<li><p><strong>File extension filtering</strong>, submenu that lets you filter the displayed files by file extension (no filtering by default, .xvol, .xroi, .nii or .nii.gz).</p></li>
 <li><p><strong>Open</strong>, similar to double-click (see above).</p></li>
 <li><p><strong>Edit attributes</strong>, open the selected PySisyphe volume in the <a class="reference internal" href="PySisyphe_File.html#menu-section-attributes"><span class="std std-ref">Edit attributes</span></a> dialog box.</p></li>
 <li><p><strong>Copy to console</strong>, copy the selected PySisyphe volume to the <a class="reference internal" href="PySisyphe_ipython.html#page-ipython"><span class="std std-ref">IPython console</span></a> as the variable “v”.</p></li>
@@ -157,7 +160,7 @@
 <li><p><strong>Open current folder in file explorer/finder</strong>, open the current folder, which is selected in the directory tree, in the File Explorer on the Windows platform or the Finder on the Mac OS platform.</p></li>
 </ul>
 </div></blockquote>
-<p>The files area supports drag-and-drop from the folder and file area, as well as from the File Explorer on the Windows platform and the Finder on the Mac OS platform.</p>
+<p>The files area supports drag-and-drop from the folder and file area, as well as from and to the File Explorer on Windows pand the Finder on Mac OS.</p>
 <ol class="arabic simple" start="3">
 <li><p>The preview area displays a preview of the selected file’s contents. Four types of previews are available depending on the file type: text, table, image, or XML source.</p></li>
 </ol>

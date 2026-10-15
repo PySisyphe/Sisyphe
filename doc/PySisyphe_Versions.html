@@ -103,7 +103,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-99-16-build-20-07-2026">version 0.99.16, build 20/07/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-01-14-build-01-09-2026">version 1.01.14, build 01/09/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-03-09-build-20-09-2026">version 1.03.09, build 20/09/2026</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-05-22-build-20-10-2026">version 1.05.22, build 20/10/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-05-24-build-05-10-2026">version 1.05.24, build 05/10/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-10-24-build-20-10-2026">version 1.10.24, build 20/10/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -157,7 +158,8 @@
 <li><p><a class="reference internal" href="#build20-07-2026"><span class="std std-ref">version 0.99.16, build 20/07/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build01-09-2026"><span class="std std-ref">version 1.01.14, build 01/09/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-09-2026"><span class="std std-ref">version 1.03.09, build 20/09/2026</span></a></p></li>
-<li><p><a class="reference internal" href="#build20-10-2026"><span class="std std-ref">version 1.05.22, build 20/10/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build05-10-2026"><span class="std std-ref">version 1.05.24, build 05/10/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-10-2026"><span class="std std-ref">version 1.10.24, build 20/10/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -12144,8 +12146,8 @@
 </li>
 </ul>
 </section>
-<section id="version-1-05-22-build-20-10-2026">
-<span id="build20-10-2026"></span><h2>version 1.05.22, build 20/10/2026<a class="headerlink" href="#version-1-05-22-build-20-10-2026" title="Link to this heading"></a></h2>
+<section id="version-1-05-24-build-05-10-2026">
+<span id="build05-10-2026"></span><h2>version 1.05.24, build 05/10/2026<a class="headerlink" href="#version-1-05-24-build-05-10-2026" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>new html documentation</strong></p>
 <blockquote>
@@ -12238,12 +12240,14 @@
 <li><p>gui.dialogDeepSegmentation</p></li>
 <li><p>gui.dialogFiducialBox</p></li>
 <li><p>gui.dialogSettings</p></li>
+<li><p>gui.dialogWait</p></li>
 <li><p>gui.windowSisyphe</p></li>
 <li><p>processing.capturedStdoutProcessing</p></li>
 <li><p>widgets.fileBrowserWidget</p></li>
 <li><p>widgets.sliceTrajectoryViewWidget</p></li>
 <li><p>widgets.sliceViewFiducialBoxWidget</p></li>
 <li><p>widgets.projectionViewWidget</p></li>
+<li><p>widgets.LUTWidgets</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -12366,6 +12370,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogWait.DialogWait</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe</p>
 <blockquote>
 <div><ul class="simple">
@@ -12411,6 +12422,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update setVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -12535,6 +12553,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogWait.DialogWait.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix on linux platform (dialog box doesn’t show up in the foreground), add Qt.X11BypassWindowManagerHint in self.setWindowFlags()</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe._initFileMenu()</p>
 <blockquote>
 <div><ul class="simple">
@@ -12600,6 +12625,352 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix, move the mask processing before the line if self._cut == 0:</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix linux platform (histogram is not displayed in the widget’s background.), replace if platform == ‘win32’ with if platform in (‘win32’, ‘linux’)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-1-10-24-build-20-10-2026">
+<span id="build20-10-2026"></span><h2>version 1.10.24, build 20/10/2026<a class="headerlink" href="#version-1-10-24-build-20-10-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_File.rst</p></li>
+<li><p>PySisyphe_Versions.rst</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/settings/settings.xml</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>gui.dialogAlgebra</p></li>
+<li><p>gui.dialogTarget</p></li>
+<li><p>gui.dialogSettings</p></li>
+<li><p>widgets.volumeViewWidget</p></li>
+<li><p>widgets.iconBarViewWidgets</p></li>
+<li><p>widgets.multiViewWidgets</p></li>
+<li><p>widgets.multiComponentViewWidget</p></li>
+<li><p>widgets.consoleWidget</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.fileBrowserWidget</p></li>
+<li><p>widgets.attributesWidgets</p></li>
+<li><p>widgets.sliceTrajectoryViewWidget</p></li>
+<li><p>widgets.volumeViewWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated plugin</strong></p>
+<blockquote>
+<div><ul>
+<li><p>SEEG_Trajectories plugin class</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, skull stripping does not display a message box</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new class</strong></p>
+<blockquote>
+<div><ul>
+<li><p>widgets.fileBrowserWidget.FileItemModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>drag/drop management</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>103 classes updated (core, gui, widgets)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>xvol/xroi compressed format management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogAlgebra.DialogAlgebra</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogTarget.DialogTarget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new isInteractivePosition() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update setDefaultPosition() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSettings() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarViewWidgets.IconBarWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _onMenuSaveCapture() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update saveSeriesCapture() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.OrthogonalSliceViewWidget</p></li>
+<li><p>widgets.multiViewWidgets.OrthogonalSliceVolumeViewWidget</p></li>
+<li><p>widgets.multiViewWidgets.MultiSliceGridViewWidget</p></li>
+<li><p>widgets.multiViewWidgets.SynchronisedGridViewWidget</p></li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new saveSeriesCaptures() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update keyPressEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _onKeyPressEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget</p></li>
+<li><p>widgets.fileBrowserWidget.IconProvider</p></li>
+<li><p>widgets.fileBrowserWidget.FileDragDropTreeView</p></li>
+<li><p>widgets.fileBrowserWidget.LineEditDelegate</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>reimplemented to improve performance</p></li>
+<li><p>add file filter management (<a href="#id2"><span class="problematic" id="id3">*</span></a>, <a href="#id4"><span class="problematic" id="id5">*</span></a>.xvol, <a href="#id6"><span class="problematic" id="id7">*</span></a>.xroi, <a href="#id8"><span class="problematic" id="id9">*</span></a>.nii, <a href="#id10"><span class="problematic" id="id11">*</span></a>.nii.gz)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new copyAttributesFromWidget() method</p></li>
+<li><p>update setDefaultAttributesFromSettings() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update setViewCollection() method</p></li>
+<li><p>update newHandle() method</p></li>
+<li><p>update newLine() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add InteractiveModeChanged custom Qt signal</p></li>
+<li><p>add InteractiveClicked custom Qt signal</p></li>
+<li><p>new setInteractiveMode() method</p></li>
+<li><p>new getInteractiveMode() method</p></li>
+<li><p>new synchroniseInteractiveModeChanged() method</p></li>
+<li><p>update _onLeftPressEvent() method</p></li>
+<li><p>update _onRightPressEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>gui.dialogTarget.DialogTarget.isInteractivePosition()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._posmouse attribute getter method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.OrthogonalSliceViewWidget.saveSeriesCaptures()</p></li>
+<li><p>widgets.multiViewWidgets.OrthogonalSliceVolumeViewWidget.saveSeriesCaptures()</p></li>
+<li><p>widgets.multiViewWidgets.MultiSliceGridViewWidget.saveSeriesCaptures()</p></li>
+<li><p>widgets.multiViewWidgets.SynchronisedGridViewWidget.saveSeriesCaptures()</p></li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget.saveSeriesCaptures()</p></li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.copyAttributesFromWidget()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy display attributes of a tool</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.setInteractiveMode()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.setInteractiveMode()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>active the interactive mode for tool creation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.getInteractiveMode()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.getInteractiveMode()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get interactive mode (0 inactive, 1 target creation, 2 trajectory creation)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.synchroniseInteractiveModeChanged()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.synchroniseInteractiveModeChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>synchronize interactive mode between SliceTrajectoryViewWidget/VolumeViewWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>gui.dialogAlgebra.DialogAlgebra.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, add if result.dtype == ‘bool’: result = result.astype(‘uint8’)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogTarget.DialogTarget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>interactive tool creation management</p></li>
+<li><p>add self._posmouse attribute (radio button of interactive position)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogTarget.DialogTarget.setDefaultPosition()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._poscursor.setChecked(True) with self._posmouse.setChecked(True)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSettings.DialogSettings._initSettings()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add IVIM model settings</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget.saveSeriesCapture()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>reorder the screenshots (campos = [‘top’, ‘front’, ‘left’, ‘bottom’, ‘back’, ‘right’])</p></li>
+<li><p>bug fix, replace montage(stack(imglist), grid_shape=(2, 3), multichannel=True) with montage(stack(imglist), grid_shape=(2, 3), channel_axis=-1)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarViewWidgets.IconBarWidget._onMenuSaveCapture()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, saveSeriesCapture() management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>redirect key press events to windowSisyphe main window</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget._onKeyPressEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix for exiting fullscreen mode with F11 or ESC keys, redirect key press events to windowSisyphe main window</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ItemToolAttributesWidget.setDefaultAttributesFromSettings()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._opacity.setOpacity(v, signal=False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.__init__()</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.setViewCollection()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add view[0, 0].InteractiveClicked.connect(self._synchroniseInteractiveClicked)</p></li>
+<li><p>add view[0, 1].InteractiveClicked.connect(self._synchroniseInteractiveClicked)</p></li>
+<li><p>add view[1, 0].InteractiveClicked.connect(self._synchroniseInteractiveClicked)</p></li>
+<li><p>add view[1, 1].InteractiveClicked.connect(self._synchroniseInteractiveClicked)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.newHandle()</p></li>
+<li><p>widgets.attributesWidgets.ListToolAttributesWidget.newLine()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>copy the display properties of the last tool</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget._onLeftPressEvent()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget._onLeftPressEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>create a target/trajectory tool at the left-click position if interactive mode is on</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget._onRightPressEvent()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget._onRightPressEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>cancel tool creation and exit interactive mode</p></li>
 </ul>
 </div></blockquote>
 </li>
