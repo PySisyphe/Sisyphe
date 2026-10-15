@@ -102,6 +102,9 @@
 		<ProjectionDepth varmax="20" varmin="5" vartype="int">10</ProjectionDepth>
 		<DropInView label="Drop in view action" vartype="lstr">Registered|Replace|Overlay|Dialog</DropInView>
 	</Viewport>
+	<Volume>
+		<Compression label="Save xvol/xroi by using a compressed format" vartype="bool">False</Compression>
+	</Volume>
 	<ROI>
 		<MaxCount varmax="50" varmin="10" vartype="int">10</MaxCount>
 		<FillHoles vartype="bool">False</FillHoles>
