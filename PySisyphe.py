@@ -155,17 +155,23 @@ def getPalette() -> QPalette:
     return PALETTE
 
 def getBackgroundAsQColor() -> QColor:
+    # noinspection unresolved-references
     return PALETTE.base().color()
 
 def getBackgroundAsStr() -> str:
+    # noinspection unresolved-references
     cl = PALETTE.base().color()
+    # noinspection string-format
     return '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
 
 def getForegroundAsQColor() -> QColor:
+    # noinspection unresolved-references
     return PALETTE.button().color()
 
 def getForegroundAsStr() -> str:
+    # noinspection unresolved-references
     cl = PALETTE.button().color()
+    # noinspection string-format
     return '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
 
 def updateWindowTitleBarColor(window):
@@ -173,7 +179,7 @@ def updateWindowTitleBarColor(window):
         pywinstyles.change_header_color(window, getBackgroundAsStr())
         QApplication.processEvents()
 
-# noinspection PyUnusedLocal,PyShadowingBuiltins
+# noinspection unused-parameter,shadowing-builtins
 def qtMessageHandler(type: QtMsgType, context: QMessageLogContext, msg: str):
     # disable qt stdout warnings to avoid console output in frozen code
     pass
@@ -212,6 +218,7 @@ class QApplicationEventHandler(QApplication):
 
     openFileRequest = pyqtSignal(QUrl, name='openFileRequest')
 
+    # noinspection method-overriding
     def event(self, event):
         # noinspection PyUnresolvedReferences
         if event.type() == QEvent.FileOpen:

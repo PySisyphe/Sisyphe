@@ -34,7 +34,7 @@ __email__ = 'pysisyphe@gmail.com'
 # __version__ = "0.96.24" # 20-06-2026
 # __version__ = "0.99.16" # 20-07-2026
 # __version__ = "1.01.14" # 01-09-2026
-__version__ = "1.05.22"   # 20-10-2026
+__version__ = "1.10.24"   # 20-10-2026
 __build__ = '20261020'
 
 _V = b'70797369737970686540676d61696c2e636f6d'
@@ -191,6 +191,7 @@ def getVersionFromHost() -> str:
     if exists(filename):
         doc = minidom.parse(filename)
         root = doc.documentElement
+        # noinspection unresolved-references
         if root.nodeName == 'host' and root.getAttribute('version') == '1.0':
             section = doc.getElementsByTagName('version')
             if len(section) > 0:
