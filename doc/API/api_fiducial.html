@@ -75,6 +75,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Mapping.html">Mapping menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Diffusion.html">Diffusion menu</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../PySisyphe_Window.html">Window menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_extensions.html">PySiSyphe file extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PySisyphe_extensions.html#pysisyphe-files">PySiSyphe files</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Core API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="api_packages.html">Packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_constants.html">Sisyphe.core.sisypheConstants</a></li>
@@ -370,13 +372,14 @@ the Leksell reference coordinates and the image coordinates, and vice versa.</p>
 <h2>Inheritance<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
 <p>QObject -&gt; SisypheFiducialBox</p>
 <p>Creation: 26/07/2022
-Last revision: 02/06/2026</p>
+Last revision: 26/09/2026</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.ProgressTextChanged">
 <span class="sig-name descname"><span class="pre">ProgressTextChanged</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pyqtSignal</span></em><a class="headerlink" href="#Sisyphe.core.sisypheFiducialBox.SisypheFiducialBox.ProgressTextChanged" title="Link to this definition"></a></dt>
 <dd><p>Private attributes</p>
 <p>_nbfid      int, fiducials count (6 or 9)
 _fidtol     float, distance tolerance of fiducial markers
+_maxerror   float, maximum fiducial markers error
 _fidlist    dict, fiducial markers coordinates
 _errorlist  dict, fiducial markers errors
 _errorstats dict, fiducial markers errors statistics
