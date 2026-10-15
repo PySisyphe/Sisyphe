@@ -25,6 +25,7 @@ Version history
 - :ref:`build20-07-2026`
 - :ref:`build01-09-2026`
 - :ref:`build20-09-2026`
+- :ref:`build05-10-2026`
 - :ref:`build20-10-2026`
 
 .. _version-increment-rules:
@@ -7734,9 +7735,9 @@ version 1.03.09, build 20/09/2026
 
 		- replace v.load(filename) with v.load(filename, binary=False)
 
-.. _build20-10-2026:
+.. _build05-10-2026:
 
-version 1.05.22, build 20/10/2026
+version 1.05.24, build 05/10/2026
 ---------------------------------
 
 - **new html documentation**
@@ -7800,12 +7801,14 @@ version 1.05.22, build 20/10/2026
 	- gui.dialogDeepSegmentation
 	- gui.dialogFiducialBox
 	- gui.dialogSettings
+	- gui.dialogWait
 	- gui.windowSisyphe
 	- processing.capturedStdoutProcessing
 	- widgets.fileBrowserWidget
 	- widgets.sliceTrajectoryViewWidget
 	- widgets.sliceViewFiducialBoxWidget
 	- widgets.projectionViewWidget
+	- widgets.LUTWidgets
 
 - **updated functions**
 
@@ -7875,6 +7878,10 @@ version 1.05.22, build 20/10/2026
 
 		- update _initSettings() method
 
+	- gui.dialogWait.DialogWait
+
+		- update __init__() method
+
 	- gui.windowSisyphe.WindowSisyphe
 
 		- update _initFileMenu() method
@@ -7904,6 +7911,10 @@ version 1.05.22, build 20/10/2026
 	- widgets.projectionViewWidget.ProjectionViewWidget
 
 		- update setVolume() method
+
+	- widgets.LUTWidgets.LutWidget
+
+		- update __init__() method
 
 - **new methods**
 
@@ -7973,6 +7984,10 @@ version 1.05.22, build 20/10/2026
 
 		- add FrameDetection field
 
+	- gui.dialogWait.DialogWait.__init__()
+
+		- bug fix on linux platform (dialog box doesn't show up in the foreground), add Qt.X11BypassWindowManagerHint in self.setWindowFlags()
+
 	- gui.windowSisyphe.WindowSisyphe._initFileMenu()
 
 		- bug fix, replace self._action['xdcm'].triggered.connect(self.xmlDicom) with self._action['xdcm'].triggered.connect(lambda: self.xmlDicom())
@@ -8013,3 +8028,219 @@ version 1.05.22, build 20/10/2026
 	- widgets.projectionViewWidget.ProjectionViewWidget.setVolume()
 
 		- bug fix, move the mask processing before the line if self._cut == 0:
+
+	- widgets.LUTWidgets.LutWidget.__init__()
+
+		- bug fix linux platform (histogram is not displayed in the widget's background.), replace if platform == 'win32' with if platform in ('win32', 'linux')
+
+.. _build20-10-2026:
+
+version 1.10.24, build 20/10/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_File.rst
+	- PySisyphe_Versions.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /settings/settings.xml
+
+- **updated modules**
+
+	- gui.dialogAlgebra
+	- gui.dialogTarget
+	- gui.dialogSettings
+	- widgets.volumeViewWidget
+	- widgets.iconBarViewWidgets
+	- widgets.multiViewWidgets
+	- widgets.multiComponentViewWidget
+	- widgets.consoleWidget
+	- widgets.abstractViewWidget
+	- widgets.fileBrowserWidget
+	- widgets.attributesWidgets
+	- widgets.sliceTrajectoryViewWidget
+	- widgets.volumeViewWidget
+
+- **updated plugin**
+
+	- SEEG_Trajectories plugin class
+
+		- bug fix, skull stripping does not display a message box
+
+- **new class**
+
+	- widgets.fileBrowserWidget.FileItemModel
+
+		- drag/drop management
+
+- **updated classes**
+
+	- 103 classes updated (core, gui, widgets)
+
+		- xvol/xroi compressed format management
+
+	- gui.dialogAlgebra.DialogAlgebra
+
+		- update execute() method
+
+	- gui.dialogTarget.DialogTarget
+
+		- new isInteractivePosition() method
+		- update __init__() method
+		- update setDefaultPosition() method
+
+	- gui.dialogSettings.DialogSettings
+
+		- update _initSettings() method
+
+	- widgets.iconBarViewWidgets.IconBarWidget
+
+		- update _onMenuSaveCapture() method
+
+	- widgets.volumeViewWidget.VolumeViewWidget
+
+		- update saveSeriesCapture() method
+
+	- widgets.multiViewWidgets.OrthogonalSliceViewWidget
+	- widgets.multiViewWidgets.OrthogonalSliceVolumeViewWidget
+	- widgets.multiViewWidgets.MultiSliceGridViewWidget
+	- widgets.multiViewWidgets.SynchronisedGridViewWidget
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+
+		- new saveSeriesCaptures() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- update keyPressEvent() method
+
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- update _onKeyPressEvent() method
+
+	- widgets.fileBrowserWidget.FileBrowserWidget
+	- widgets.fileBrowserWidget.IconProvider
+	- widgets.fileBrowserWidget.FileDragDropTreeView
+	- widgets.fileBrowserWidget.LineEditDelegate
+
+		- reimplemented to improve performance
+		- add file filter management (*, *.xvol, *.xroi, *.nii, *.nii.gz)
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget
+
+		- new copyAttributesFromWidget() method
+		- update setDefaultAttributesFromSettings() method
+
+	- widgets.attributesWidgets.ListToolAttributesWidget
+
+		- update __init__() method
+		- update setViewCollection() method
+		- update newHandle() method
+		- update newLine() method
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget
+	- widgets.volumeViewWidget.VolumeViewWidget
+
+		- add InteractiveModeChanged custom Qt signal
+		- add InteractiveClicked custom Qt signal
+		- new setInteractiveMode() method
+		- new getInteractiveMode() method
+		- new synchroniseInteractiveModeChanged() method
+		- update _onLeftPressEvent() method
+		- update _onRightPressEvent() method
+		
+- **new methods**
+
+	- gui.dialogTarget.DialogTarget.isInteractivePosition()
+
+		- self._posmouse attribute getter method
+
+	- widgets.multiViewWidgets.OrthogonalSliceViewWidget.saveSeriesCaptures()
+	- widgets.multiViewWidgets.OrthogonalSliceVolumeViewWidget.saveSeriesCaptures()
+	- widgets.multiViewWidgets.MultiSliceGridViewWidget.saveSeriesCaptures()
+	- widgets.multiViewWidgets.SynchronisedGridViewWidget.saveSeriesCaptures()
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget.saveSeriesCaptures()
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget.copyAttributesFromWidget()
+
+		- copy display attributes of a tool
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.setInteractiveMode()
+	- widgets.volumeViewWidget.VolumeViewWidget.setInteractiveMode()
+
+		- active the interactive mode for tool creation
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.getInteractiveMode()
+	- widgets.volumeViewWidget.VolumeViewWidget.getInteractiveMode()
+
+		- get interactive mode (0 inactive, 1 target creation, 2 trajectory creation)
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget.synchroniseInteractiveModeChanged()
+	- widgets.volumeViewWidget.VolumeViewWidget.synchroniseInteractiveModeChanged()
+
+		- synchronize interactive mode between SliceTrajectoryViewWidget/VolumeViewWidget
+
+- **updated methods**
+
+	- gui.dialogAlgebra.DialogAlgebra.execute()
+
+		- bug fix, add if result.dtype == 'bool': result = result.astype('uint8')
+
+	- gui.dialogTarget.DialogTarget.__init__()
+
+		- interactive tool creation management
+		- add self._posmouse attribute (radio button of interactive position)
+
+	- gui.dialogTarget.DialogTarget.setDefaultPosition()
+
+		- replace self._poscursor.setChecked(True) with self._posmouse.setChecked(True)
+
+	- gui.dialogSettings.DialogSettings._initSettings()
+
+		- add IVIM model settings
+
+	- widgets.volumeViewWidget.VolumeViewWidget.saveSeriesCapture()
+
+		- reorder the screenshots (campos = ['top', 'front', 'left', 'bottom', 'back', 'right'])
+		- bug fix, replace montage(stack(imglist), grid_shape=(2, 3), multichannel=True) with montage(stack(imglist), grid_shape=(2, 3), channel_axis=-1)
+
+	- widgets.iconBarViewWidgets.IconBarWidget._onMenuSaveCapture()
+
+		- bug fix, saveSeriesCapture() management
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- redirect key press events to windowSisyphe main window
+
+	- widgets.abstractViewWidget.AbstractViewWidget._onKeyPressEvent()
+
+		- bug fix for exiting fullscreen mode with F11 or ESC keys, redirect key press events to windowSisyphe main window
+
+	- widgets.attributesWidgets.ItemToolAttributesWidget.setDefaultAttributesFromSettings()
+
+		- add self._opacity.setOpacity(v, signal=False)
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.__init__()
+	- widgets.attributesWidgets.ListToolAttributesWidget.setViewCollection()
+
+		- add view[0, 0].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+		- add view[0, 1].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+		- add view[1, 0].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+		- add view[1, 1].InteractiveClicked.connect(self._synchroniseInteractiveClicked)
+
+	- widgets.attributesWidgets.ListToolAttributesWidget.newHandle()
+	- widgets.attributesWidgets.ListToolAttributesWidget.newLine()
+
+		- copy the display properties of the last tool
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget._onLeftPressEvent()
+	- widgets.volumeViewWidget.VolumeViewWidget._onLeftPressEvent()
+
+		- create a target/trajectory tool at the left-click position if interactive mode is on
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget._onRightPressEvent()
+	- widgets.volumeViewWidget.VolumeViewWidget._onRightPressEvent()
+
+		- cancel tool creation and exit interactive mode

@@ -181,6 +181,7 @@ The Settings sections are as follows:
 	- GUI: general GUI parameters (:ref:`page-toolbar` size and visibility, :ref:`page-thumbnailbar` size, icon size, font name and size).
 	- Toolbar icons: :ref:`page-toolbar` icons visibility. Left-click on |view| icon to toggle visibility.
 	- Viewport: display parameters of the central area view widgets (icon size, line width and opacity, various visibility options).
+	- Volume: parameter to save xvol/xroi volumes in a compressed format.
 	- ROI: ROI Tools tab of the dock (:ref:`tools-section-brush-settings`).
 	- Mesh: Mesh tab of the dock (:ref:`mesh-section-mesh-settings`).
 	- Tools: Target/Trajectory tab of the dock (:ref:`page-dockroitools`).

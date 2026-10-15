@@ -13,7 +13,7 @@ This widget consists of three parts: folders area on the left (1), files area in
 
 1) The folder area displays a directory tree. 
 
-Left-click on the icon folder to select it. You can only select one directory. This folder is then expanded to view its subdirectories. The files located in this directory are displayed in the files middle area.
+Left-click on the icon folder to select it. You can only select one directory. This folder is then expanded to view its subdirectories. The files located in this directory are displayed in the files area (2).
 
 Right-click to pop up a menu:
 
@@ -27,16 +27,17 @@ Right-click to pop up a menu:
 	- **Go to user folder**, select the user folder (~/.PySisyphe) and scroll to it in the directory tree.
 	- **Go to template folder**, select the PySisyphe template folder and scroll to it in the directory tree.
 
-The folder area supports drag-and-drop from the folder and file area, as well as from the File Explorer on the Windows platform and the Finder on the Mac OS platform.
+The folder area supports drag-and-drop from the folder and file area, as well as from the File Explorer on Windows and the Finder on Mac OS.
 
-2) The files area displays a list of files of the current folder, selected in the folder area.
+2) The files area displays a list of files of the current folder, selected in the folder area (1).
 
 Left-click on the icon file to select it and display a preview of its contents in the area on the right. You can select multiple files.
 
-Double-click a file to open it in the :ref:`page-thumbnailbar`. The following files are supported: .xvol PySisyphe volume, Nifti volume (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd volume (.nrrd, .nhdr), Minc volume (.mnc, .minc), FreeSurfer volume (.mgh, .mgz), .vol Sisyphe volume, VTK volume (.vtk, .vti). Files with the .xlabels extension open in the :ref:`menu-section-editlabels` dialog box. Files with the .xmodel extension open in the :ref:`menu-section-glm-model` dialog box. Files with the .xwflow extension open in the :ref:`menu-section-workflow` dialog box.
+Double-click a file to open it in the :ref:`page-thumbnailbar`. The following files are supported: .xvol PySisyphe volume, Nifti volume (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd volume (.nrrd, .nhdr), Minc volume (.mnc, .minc), FreeSurfer volume (.mgh, .mgz), .vol Sisyphe volume, VTK volume (.vtk, .vti), BrainVoyager volume (.vmr). Files with the .xlabels extension open in the :ref:`menu-section-editlabels` dialog box. Files with the .xmodel extension open in the :ref:`menu-section-glm-model` dialog box. Files with the .xwflow extension open in the :ref:`menu-section-workflow` dialog box. Files with the .xdcm extension open in the :ref:`menu-section-xmldcm` dialog box. Finally, DICOM files (.dcm, .dicom, .nema) open in the :ref:`menu-section-dcmdataset` dialog box.
 
 Right-click to pop up a menu:
 
+	- **File extension filtering**, submenu that lets you filter the displayed files by file extension (no filtering by default, .xvol, .xroi, .nii or .nii.gz).
 	- **Open**, similar to double-click (see above).
 	- **Edit attributes**, open the selected PySisyphe volume in the :ref:`menu-section-attributes` dialog box.
 	- **Copy to console**, copy the selected PySisyphe volume to the :ref:`page-ipython` as the variable "v".
@@ -52,7 +53,7 @@ Right-click to pop up a menu:
 	- **New folder**, create a new folder into the current folder.
 	- **Open current folder in file explorer/finder**, open the current folder, which is selected in the directory tree, in the File Explorer on the Windows platform or the Finder on the Mac OS platform.
 
-The files area supports drag-and-drop from the folder and file area, as well as from the File Explorer on the Windows platform and the Finder on the Mac OS platform.
+The files area supports drag-and-drop from the folder and file area, as well as from and to the File Explorer on Windows pand the Finder on Mac OS.
 
 3) The preview area displays a preview of the selected file's contents. Four types of previews are available depending on the file type: text, table, image, or XML source.
 

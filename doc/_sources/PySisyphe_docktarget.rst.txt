@@ -23,6 +23,7 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 |target|
 	Left-click to show a dialog box to add a new Target. This dialog allows you to set the target position in 4 different ways:
 
+	- **Interactive position**, after clicking OK, the mouse cursor will change to a target shape. Click the left mouse button to place the target tool in one of the four views in the orthogonal view widget. Click the right mouse button to exit interactive target placement mode.
 	- **Cursor position**, check this option to set the target at the cursor position of the view widget.
 	- **Absolute position**, check this option to set the target at the worlds coordinates (RAS+ convention, in mm) defined in the three edit boxes **X**, **Y** and **Z**. The default coordinates are set to the center of the field of view.
 	- **Weighted position**, Check this option to set the target to the weighted barycenter of, at least, two Targets/Trajectoryies. 
@@ -39,15 +40,16 @@ Left-click to select a target or a trajectory element in the list (blue outline 
 
 		The first edit box is the <Translation> parameter, the second edit box is the <Factor> parameter and the two lastest, with available Targets/Trajectories, are the <target#1> and <target#2> parameters. The result of the formula, giving absolute translation in each direction, is displayed in the fifth edit box. The new target is locked by default. Its position is automatically updated when the reference Target/Trajectory is interactively moved by the user, as long as it remains locked.
 
-	Click **OK** to validate position and display the new Target in the view widget.
+	Click **OK** to validate position and display the new Target in the view widget. The new tool inherits its display properties from the last tool in the Target/Trajectory list or the default settings (:ref:`menu-section-preferences`) if the list is empty.
 
 |line|
 	Left-click to show a dialog box to add a new Trajectory. This dialog allows you to set the target and entry positions of the trajectory:
 
-	- The **Cursor position**, **Absolute position**, **Weighted position**, **Relative position** options for defining the target position of the trajectory are identical to those described above in |target|.
+	- **Interactive position**, this option is the same as the one described above in |target|.
+	- The **Cursor position**, **Absolute position**, **Weighted position**, **Relative position** options for defining the target position of the trajectory are the same as those described above in |target|.
 	- The entry position can be defined by a **trajectory** with two angles in degrees and a length in mm, or by an **absolute position** with three coordinates in **X**, **Y** and **Z** axes.
 
-	Click **OK** to validate positions and display the new Trajectory in the view widget.
+	Click **OK** to validate positions and display the new Trajectory in the view widget. The new tool inherits its display properties from the last tool in the Target/Trajectory list or the default settings (:ref:`menu-section-preferences`) if the list is empty.
 
 |targets|
 	Left-click to show a dialog box to add equidistant targets along the selected trajectory. The targets are added based on the target extremity of the selected trajectory.
