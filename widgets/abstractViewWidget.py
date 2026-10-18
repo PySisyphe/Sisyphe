@@ -12,6 +12,9 @@ from typing import TYPE_CHECKING
 from typing import Any
 
 from sys import platform
+# < Revision 16/10/2026
+from sys import version_info
+# Revision 16/10/2026 >
 
 from os import getcwd
 from os import remove
@@ -86,7 +89,11 @@ from Sisyphe.core.sisypheTools import LineWidget
 from Sisyphe.core.sisypheTools import ToolWidgetCollection
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.basicWidgets import colorDialog
-from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+# < Revision 16/10/2026
+if platform == 'darwin' and version_info.minor > 10:
+    from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+else: from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+# Revision 16/10/2026 >
 
 # to avoid ImportError due to circular imports
 if TYPE_CHECKING:
@@ -1214,6 +1221,7 @@ class AbstractViewWidget(QFrame):
         # noinspection PyTypeChecker
         return float(xr), float(yr)
 
+    # noinspection unresolved-references
     def _getScreenFromDisplay(self, x: float, y: float) -> QPoint:
         """
         Convert display coordinates to global screen coordinates.
@@ -1234,14 +1242,18 @@ class AbstractViewWidget(QFrame):
         # < Revision 14/03/2025
         # if platform == 'darwin':
         if platform == 'darwin' or platform == 'linux':
-            scale = 1.0
+            # < Revision 16/10/2026
+            # scale = 1.0
+            if platform == 'darwin' and version_info.minor > 10:
+                scale = QApplication.primaryScreen().devicePixelRatio()
+            else: scale = 1.0
+            # Revision 16/10/2026 >
             xs = int(x / scale)
             ys = int((self._renderwindow.GetSize()[1] - y - 1) / scale)
             r = self.mapToGlobal(QPoint(xs, ys))
         else:
             # bug mapToGlobal in win32 platform
             px, py = self._renderwindow.GetPosition()
-            # noinspection unresolved-references
             scale = QApplication.primaryScreen().devicePixelRatio()
             x2 = px + int(x / scale)
             y2 = py + int((self._renderwindow.GetSize()[1] - y - 1) / scale)

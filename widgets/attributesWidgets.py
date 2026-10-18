@@ -841,7 +841,7 @@ class ItemMeshAttributesWidget(ItemAttributesWidget):
         # Revision 25/03/2025 >
         self._properties.setToolTip('Set mesh properties.')
         self._properties.clicked.connect(lambda dummy: self.settings())
-        self._dialogprop = DialogMeshProperties()
+        self._dialogprop = DialogMeshProperties(self)
         if platform == 'win32':
             import pywinstyles
             # < Revision 18/11/2025
@@ -1411,7 +1411,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._properties.setToolTip('Set tool properties.')
         self._properties.clicked.connect(lambda dummy: self.properties())
 
-        self._dialogprop = DialogSetting('Tools')
+        self._dialogprop = DialogSetting('Tools', parent=self)
         if platform == 'win32':
             import pywinstyles
             # < Revision 18/11/2025
@@ -1434,7 +1434,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._target.setToolTip('Set point position.')
         self._target.clicked.connect(lambda dummy: self.target())
 
-        self._dialogtarget = DialogTarget(tool, views)
+        self._dialogtarget = DialogTarget(tool, views, parent=self)
         if platform == 'win32':
             import pywinstyles
             # < Revision 18/11/2025
@@ -1456,7 +1456,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
         self._length.setToolTip('Set trajectory length.')
         self._length.clicked.connect(lambda dummy: self.length())
 
-        self._dialoglength = DialogFromXml('Trajectory length', ['TrajectoryLength'])
+        self._dialoglength = DialogFromXml('Trajectory length', ['TrajectoryLength'], parent=self)
         if platform == 'win32':
             import pywinstyles
             # < Revision 18/11/2025
@@ -1480,7 +1480,7 @@ class ItemToolAttributesWidget(ItemAttributesWidget):
 
         self._move.clicked.connect(lambda dummy: self.moving())
 
-        self._dialogmove = DialogFromXml('Move point/trajectory', ['DuplicateTool'])
+        self._dialogmove = DialogFromXml('Move point/trajectory', ['DuplicateTool'], parent=self)
         if platform == 'win32':
             import pywinstyles
             # < Revision 18/11/2025
@@ -2421,7 +2421,7 @@ class ItemBundleAttributesWidget(ItemAttributesWidget):
         self._color.setToolTip('Set streamlines color representation.')
         self._color.clicked.connect(lambda dummy: self._editColor())
 
-        self._dialogcolor = DialogFromXml('Streamlines color', ['TractColor'])
+        self._dialogcolor = DialogFromXml('Streamlines color', ['TractColor'], parent=self)
         if platform == 'win32':
             import pywinstyles
             # < Revision 18/11/2025
@@ -4354,7 +4354,7 @@ class ListMeshAttributesWidget(ListAttributesWidget):
         self._console.setToolTip('Copy checked mesh(es) to console')
         # Revision 29/11/2025 >
 
-        self._dialog = DialogThreshold(size=384)
+        self._dialog = DialogThreshold(size=384, parent=self)
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
@@ -5649,9 +5649,9 @@ class ListToolAttributesWidget(ListAttributesWidget):
         self._console.setToolTip('Copy checked tool(s) to console')
         # Revision 29/11/2025 >
 
-        self._dialogtarget = DialogTarget()
+        self._dialogtarget = DialogTarget(self)
         # < Revision 18/06/2026
-        self._dialogtargets = DialogTargetsAlongTrajectory()
+        self._dialogtargets = DialogTargetsAlongTrajectory(self)
         # Revision 18/06/2026 >
         self._dialogduplicate = DialogFromXml('Duplicate tool', ['DuplicateTool'])
         self._dialogfeatures = DialogGenericResults()
@@ -7264,9 +7264,9 @@ class ListBundleAttributesWidget(ListAttributesWidget):
         self._btlayout2.insertWidget(1, self._visibility)
         # Revision 13/11/2025 >
 
-        self._roidialog = DialogStreamlinesROISelection()
-        self._fltdialog = DialogStreamlinesFiltering()
-        self._cltdialog = DialogStreamlinesClustering()
+        self._roidialog = DialogStreamlinesROISelection(self)
+        self._fltdialog = DialogStreamlinesFiltering(self)
+        self._cltdialog = DialogStreamlinesClustering(self)
         self._statdialog = DialogGenericResults()
         self._statdialog.setWindowTitle('Bundle statistics')
         if platform == 'win32':
