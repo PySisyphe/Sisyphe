@@ -112,8 +112,29 @@ class DialogSplash(QDialog):
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
             self.setLayout(self._layout)
         elif sys.platform == 'darwin':
-            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
-            self.setLayout(self._layout)
+            # < Revision 16/10/2026
+            # self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            # self.setLayout(self._layout)
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+            self.setAttribute(Qt.WA_TranslucentBackground)
+            from PyQt5.QtWidgets import QFrame
+            self._frame = QFrame()
+            self._frame.setObjectName('WaitFrame')
+            self._slayout = QVBoxLayout()
+            self._slayout.setContentsMargins(0, 0, 0, 0)
+            self._slayout.addWidget(self._frame)
+            bacolor = self.palette().window().color()
+            bocolor = self.palette().button().color()
+            self.setStyleSheet(
+                f"QFrame#WaitFrame {{"
+                f"  background-color: {bacolor.name()};"
+                f"  border: 1px solid {bocolor.name()};"
+                f"  border-radius: 10px;"
+                f"}}")
+            self._layout = QVBoxLayout()
+            self._frame.setLayout(self._layout)
+            self.setLayout(self._slayout)
+            # Revision 16/10/2026 >
         elif sys.platform == 'linux':
             self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
             self.setAttribute(Qt.WA_TranslucentBackground)
@@ -203,7 +224,12 @@ class DialogSplash(QDialog):
         # < Revision 18/07/2025
         if sys.platform == 'darwin': diskfree = diskusage[3]
         else: diskfree = 100 - diskusage[3]
-        from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+        # < Revision 16/10/2026
+        # from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+        if sys.platform == 'darwin' and sys.version_info.minor > 10:
+            from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+        else: from Sisyphe.widgets.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+        # Revision 16/10/2026 >
         inter = QVTKRenderWindowInteractor(self)
         inter.Initialize()
         renderer = inter.GetRenderWindow()

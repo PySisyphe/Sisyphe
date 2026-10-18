@@ -85,6 +85,7 @@ class DialogAtlasLabeling(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, title: str = 'ROI', parent: QObject | None = None):
         super().__init__(parent)
 
@@ -94,7 +95,6 @@ class DialogAtlasLabeling(QDialog):
         else:  self._title = 'ROI'
 
         self.setWindowTitle('{} atlas labeling'.format(self._title))
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -145,7 +145,6 @@ class DialogAtlasLabeling(QDialog):
 
         self._atlas = QTreeWidget(parent=self)
         self._atlas.setHeaderLabels(['Atlas', 'File'])
-        # noinspection PyTypeChecker
         self._atlas.header().setSectionResizeMode(QHeaderView.ResizeToContents)
         self._atlas.header().setSectionsClickable(False)
         self._atlas.header().setSortIndicatorShown(False)
@@ -164,9 +163,7 @@ class DialogAtlasLabeling(QDialog):
                     item = QTreeWidgetItem(self._atlas)
                     item.setText(0, title)
                     item.setText(1, basename(filename))
-                    # noinspection PyUnresolvedReferences
                     item.setData(0, Qt.UserRole, filename)
-                    # noinspection PyUnresolvedReferences
                     item.setCheckState(0, Qt.Unchecked)
                     self._atlas.addTopLevelItem(item)
 
@@ -181,7 +178,6 @@ class DialogAtlasLabeling(QDialog):
         btlyout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': btlyout.setContentsMargins(10, 10, 10, 10)
         btlyout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         btlyout.setDirection(QHBoxLayout.RightToLeft)
         self._ok = QPushButton('Close')
         self._ok.setFixedWidth(100)
@@ -208,7 +204,6 @@ class DialogAtlasLabeling(QDialog):
         self._filesMesh.setMinimumWidth(int(screen.width() * 0.33))
         self._filesTools.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         # self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         self.setModal(True)
         self._center()
@@ -219,6 +214,7 @@ class DialogAtlasLabeling(QDialog):
         self.show()
         self.adjustSize()
         QApplication.processEvents()
+        # noinspection unresolved-references
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
 
@@ -321,6 +317,7 @@ class DialogAtlasLabeling(QDialog):
             self._reficbm.setVisible(hide)
         else: raise TypeError('parameter type {} is not str, list[str] or SisypheMesh.'.format(type(mesh)))
 
+    # noinspection unresolved-references
     def addTool(self,
                 tools: str | list[str] | ToolWidgetCollection | HandleWidget | LineWidget,
                 hide: bool = True) -> None:
@@ -337,6 +334,7 @@ class DialogAtlasLabeling(QDialog):
         else: raise TypeError('parameter type {} is not str, list[str], '
                               'ToolWidgetCollection, HandleWidget or LineWidget.'.format(type(tools)))
 
+    # noinspection unresolved-references
     def roiLabeling(self):
         if not self._filesROI.isEmpty():
             # get atlas filenames
@@ -344,9 +342,7 @@ class DialogAtlasLabeling(QDialog):
             labels2 = list()
             for i in range(self._atlas.topLevelItemCount()):
                 item = self._atlas.topLevelItem(i)
-                # noinspection PyUnresolvedReferences
                 if item.checkState(0) == Qt.Checked:
-                    # noinspection PyUnresolvedReferences
                     labels.append(item.data(0, Qt.UserRole))
                     labels2.append(item.text(0))
             if len(labels) > 0:
@@ -372,6 +368,9 @@ class DialogAtlasLabeling(QDialog):
                                            'Reference volume {} spatial normalization is not affine.'
                                            'Please perform an affine spatial normalization before labeling.'.format(ref.getBasename()))
                                 self.reject()
+                                # < Revision 17/10/2026
+                                return False
+                                # Revision 17/10/2026 >
                         else:
                             wait.close()
                             messageBox(self,
@@ -379,6 +378,9 @@ class DialogAtlasLabeling(QDialog):
                                        'Reference volume {} has never been normalized in the ICBM space.'
                                        'Please perform an affine spatial normalization before labeling.'.format(ref.getBasename()))
                             self.reject()
+                            # < Revision 17/10/2026
+                            return False
+                            # Revision 17/10/2026 >
                 r = dict()
                 nrows = dict()
                 for k, label in enumerate(labels):
@@ -424,6 +426,7 @@ class DialogAtlasLabeling(QDialog):
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(dialog, c)
                 for label in labels2:
@@ -431,7 +434,6 @@ class DialogAtlasLabeling(QDialog):
                     for k in r[label]:
                         if len(r[label][k]) < nrows[label]:
                             r[label][k] += [''] * (nrows[label] - len(r[label][k]))
-                    # noinspection PyUnresolvedReferences
                     dialog.setTreeWidgetDict(tab, r[label], align=Qt.AlignLeft)
                 self.hide()
                 screen = QApplication.primaryScreen().geometry()
@@ -445,15 +447,14 @@ class DialogAtlasLabeling(QDialog):
                 return True
         return False
 
+    # noinspection unresolved-references
     def meshLabeling(self):
         if not self._filesMesh.isEmpty():
             # get atlas filenames
             labels = list()
             for i in range(self._atlas.topLevelItemCount()):
                 item = self._atlas.topLevelItem(i)
-                # noinspection PyUnresolvedReferences
                 if item.checkState(0) == Qt.Checked:
-                    # noinspection PyUnresolvedReferences
                     labels.append(item.data(0, Qt.UserRole))
             if len(labels) > 0:
                 n = self._filesMesh.filenamesCount()
@@ -490,15 +491,14 @@ class DialogAtlasLabeling(QDialog):
                 return True
         return False
 
+    # noinspection unresolved-references,unbound-local-variable
     def toolLabeling(self):
         if not self._filesTools.isEmpty():
             labels = list()
             labels2 = list()
             for i in range(self._atlas.topLevelItemCount()):
                 item = self._atlas.topLevelItem(i)
-                # noinspection PyUnresolvedReferences
                 if item.checkState(0) == Qt.Checked:
-                    # noinspection PyUnresolvedReferences
                     labels.append(item.data(0, Qt.UserRole))
                     labels2.append(item.text(0))
             if len(labels) > 0:
@@ -518,6 +518,9 @@ class DialogAtlasLabeling(QDialog):
                                        'Reference volume {} has never been normalized in the ICBM space.'
                                        'Please perform a spatial normalization before labeling.'.format(ref.getBasename()))
                             self.reject()
+                            # < Revision 17/10/2026
+                            return False
+                            # Revision 17/10/2026 >
                 r = dict()
                 pos = dict()
                 for filename in self._filesTools.getFilenames():
@@ -528,7 +531,6 @@ class DialogAtlasLabeling(QDialog):
                         tool.load(filename)
                         if self._reficbm.isChecked(): p = tool.getPosition()
                         else:
-                            # noinspection PyUnboundLocalVariable
                             p = ref.getICBMfromWorld(tool.getPosition())
                         items.append((p, tool))
                     elif ext == '.xline':
@@ -547,7 +549,6 @@ class DialogAtlasLabeling(QDialog):
                             elif isinstance(tool, LineWidget):
                                 if self._reficbm.isChecked(): p = tool.getPosition2()
                                 else: p = ref.getICBMfromWorld(tool.getPosition2())
-                            # noinspection PyUnboundLocalVariable
                             items.append((p, tool))
                     if len(items) > 0:
                         for item in items:
@@ -558,7 +559,6 @@ class DialogAtlasLabeling(QDialog):
                             for k, label in enumerate(labels):
                                 atlas = SisypheVolume()
                                 atlas.load(label)
-                                # noinspection PyUnboundLocalVariable
                                 r[key][labels2[k]] = atlas.acquisition.getLabel(atlas[int(p[0]), int(p[1]), int(p[2])])
                             pos[key] = [p[0] - 98.0, p[1] - 134.0, p[2] - 72.0]
                     wait.incCurrentProgressValue()
@@ -568,6 +568,7 @@ class DialogAtlasLabeling(QDialog):
                 if platform == 'win32':
                     import pywinstyles
                     cl = self.palette().base().color()
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(dialog, c)
                 dialog.newTab('Tools atlas labeling', capture=False, clipbrd=False, dataset=True)

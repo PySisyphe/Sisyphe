@@ -183,8 +183,8 @@ class DialogWait(QDialog):
             self._slayout.addWidget(self._frame)
             # < Revision 15/10/2026
             try:
-                bacolor = __main__.palette().base().color()
-                bocolor = __main__.palette().mid().color()
+                bacolor = __main__.PALETTE.base().color()
+                bocolor = __main__.PALETTE.mid().color()
             except:
                 bacolor = self.palette().base().color()
                 bocolor = self.palette().mid().color()
@@ -204,7 +204,10 @@ class DialogWait(QDialog):
         # Revision 08/07/2026 >
             # < Revision 17/07/2025
             # to get a dialog box with rounded border on Darwin platform
-            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            # < Revision 16/10/2026
+            # self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+            # Revision 16/10/2026 >
             self.setAttribute(Qt.WA_TranslucentBackground)
             from PyQt5.QtWidgets import QFrame
             self._frame = QFrame()
@@ -212,10 +215,12 @@ class DialogWait(QDialog):
             self._slayout = QVBoxLayout()
             self._slayout.setContentsMargins(0, 0, 0, 0)
             self._slayout.addWidget(self._frame)
-            bcolor = self.palette().window().color()
+            bacolor = self.palette().window().color()
+            bocolor = self.palette().button().color()
             self.setStyleSheet(
                 f"QFrame#WaitFrame {{"
-                f"  background-color: {bcolor.name()};"
+                f"  background-color: {bacolor.name()};"
+                f"  border: 1px solid {bocolor.name()};"
                 f"  border-radius: 10px;"
                 f"}}")
             self._layout = QVBoxLayout()

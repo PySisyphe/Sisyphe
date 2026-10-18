@@ -55,6 +55,7 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMenuBar
@@ -133,7 +134,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 06/10/2026
+    Last revision: 17/10/2026
     """
 
     # Class constants
@@ -231,6 +232,7 @@ class WindowSisyphe(QMainWindow):
     _compress       bool, save xvol/xroi in compressed format
     """
 
+    # noinspection unresolved-references,protected-member
     def __init__(self, splash: DialogSplash | None = None) -> None:
         super().__init__()
         self.setObjectName('MainWindow')
@@ -258,12 +260,45 @@ class WindowSisyphe(QMainWindow):
         except: self._compress = True
         # Revision 06/10/2026 >
 
+        # Font settings
+
+        family = self._settings.getFieldValue('GUI', 'FontFamily')
+        if family is None: family = self.font().defaultFamily()
+        size = self._settings.getFieldValue('GUI', 'FontSize')
+        if size is None: size = 12
+        font =QFont(family, pointSize=size)
+        QApplication.setFont(font)
+
         if splash is not None:
+            # < Revision 17/10/2026
+            if platform == 'linux':
+                splash.setFont(font)
+                for child in splash.findChildren(QWidget):
+                    child.setFont(font)
+                splash._frame.updateGeometry()
+                lyout = splash._frame.layout()
+                lyout.invalidate()
+                lyout.activate()
+                lyout = splash.layout()
+                lyout.invalidate()
+                lyout.activate()
+                splash.ensurePolished()
+                splash.updateGeometry()
+                hint = splash.sizeHint()
+                splash.resize(hint)
+            # Revision 17/10/2026 >
             # < Revision 10/02/2026
             splash.getProgressBar().setRange(0, 19)
             # Revision 10/02/2026 >
             splash.setMessage('Main window initialization...')
             splash.setProgressBarVisibility(True)
+            # < Revision 17/10/2026
+            geometry = self.screen().availableGeometry()
+            x = geometry.x() + (geometry.width() - splash.width()) // 2
+            y = geometry.y() + (geometry.height() - splash.height()) // 2
+            splash.move(x, y)
+            # Revision 17/10/2026 >
+
 
         self._splitter = QSplitter(parent=self)
         self.setCentralWidget(self._splitter)
@@ -343,7 +378,6 @@ class WindowSisyphe(QMainWindow):
         self._tabview.addTab(self._captures, 'Screenshots')
         self._tabview.addTab(self._console, 'IPython')
         self._tabview.setTabPosition(QTabWidget.South)
-        # noinspection PyUnresolvedReferences
         self._tabview.currentChanged.connect(self.updateTimers)
 
         self._dialog = None
@@ -396,7 +430,6 @@ class WindowSisyphe(QMainWindow):
         # < Revision 06/10/2026
         self._thumbnail.setCompression(self._compress)
         # Revision 06/10/2026 >
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.addToolBar(Qt.TopToolBarArea, self._thumbnail)
         self._sliceview.setThumbnail(self._thumbnail)
         self._orthoview.setThumbnail(self._thumbnail)
@@ -573,11 +606,13 @@ class WindowSisyphe(QMainWindow):
 
         # Font settings
 
-        family = self._settings.getFieldValue('GUI', 'FontFamily')
-        if family is None: family = self.font().defaultFamily()
-        size = self._settings.getFieldValue('GUI', 'FontSize')
-        if size is None: size = 12
+        # < Revision 17/10/2026
+        # family = self._settings.getFieldValue('GUI', 'FontFamily')
+        # if family is None: family = self.font().defaultFamily()
+        # size = self._settings.getFieldValue('GUI', 'FontSize')
+        # if size is None: size = 12
         self.setApplicationFont(family, size)
+        # Revision 17/10/2026 >
 
         # Dialog settings initialization
 
@@ -597,14 +632,12 @@ class WindowSisyphe(QMainWindow):
         self.setWindowTitle('PySisyphe')
         if platform == 'darwin':
             self.setUnifiedTitleAndToolBarOnMac(False)
-        # noinspection unresolved-references
         self.resize(QApplication.primaryScreen().availableSize())
         self.move(0, 0)
         self.show()
         # < Revision 10/02/2026
         self._browser.initSplitterSize()
         # Revision 10/02/2026 >
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self.setWindowState(Qt.WindowMaximized)
         width = ItemAttributesWidget.getDefaultMinimumWidth() + 80
         self._splitter.setSizes([sum(self._splitter.sizes()) - width, width])
@@ -634,7 +667,7 @@ class WindowSisyphe(QMainWindow):
         self._action['pref'].setShortcut(QKeySequence.Preferences)
         self._action['exit'].setShortcut(QKeySequence.Quit)
 
-        # Mac os
+        # MacOS
         if platform == 'darwin':
             # noinspection PyUnresolvedReferences
             self._action['about'].setMenuRole(QAction.AboutRole)
@@ -2469,7 +2502,6 @@ class WindowSisyphe(QMainWindow):
     def setApplicationFont(self, name: str | QFont | None,
                            pointsize: int = 12):
 
-        from PyQt5.QtWidgets import QWidget
         def forceFontRecursive(widget: QWidget, rfont: QFont):
             widget.setFont(rfont)
             for child in widget.findChildren(QWidget):
@@ -2502,6 +2534,10 @@ class WindowSisyphe(QMainWindow):
             # self._tabTargetList.getToolListWidget().setFont(font)
             # self._tabMeshList.getMeshListWidget().setFont(font)
             # self._tabTrackingList.getTrackingListWidget().setFont(font)
+            # < Revision 17/10/2026
+            try: forceFontRecursive(__main__.splash, font)
+            except: pass
+            # Revision 17/10/2026 >
             forceFontRecursive(self, font)
             # Revision 03/05/2026 >
             # < Revision 02/05/2026
