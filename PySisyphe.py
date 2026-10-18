@@ -59,6 +59,10 @@ elif sys.platform == 'win32':
             # 0 = SW_HIDE
             user32.ShowWindow(hWnd, 0)
     # Revision 10/01/2026 >
+elif sys.platform == 'linux':
+    # < Revision 15/10/2026
+    os.environ['QT_QPA_PLATFORMTHEME'] = 'xdgdesktopportal'
+    # Revision 15/10/2026 >
 
 # < Revision 10/01/2026
 import warnings
