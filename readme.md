@@ -131,8 +131,8 @@ Enabling dark mode on the MacOS platform:
 
 Enabling dark mode on the Linux Ubuntu 26.04 platform:
 
-	- click on the **System Tray** in the upper right corner and click the gear wheel icon to open settings,
-	- in the dialog box that opens, in the left side pane, scroll down and click on **Appearance**,
-	- in the center pane, in the **Style section**, click on **Dark**.
+	- click on the System Tray in the upper right corner and click the gear wheel icon to open settings,
+	- in the dialog box that opens, in the left side pane, scroll down and click on Appearance,
+	- in the center pane, in the Style section, click on Dark.
 
 Additional content, such as templates, atlases, samples, plugins, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
