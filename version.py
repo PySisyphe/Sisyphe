@@ -34,8 +34,8 @@ __email__ = 'pysisyphe@gmail.com'
 # __version__ = "0.96.24" # 20-06-2026
 # __version__ = "0.99.16" # 20-07-2026
 # __version__ = "1.01.14" # 01-09-2026
-__version__ = "1.10.24"   # 20-10-2026
-__build__ = '20261020'
+__version__ = "1.12.07"   # 20-11-2026
+__build__ = '20261120'
 
 _V = b'70797369737970686540676d61696c2e636f6d'
 
@@ -88,7 +88,6 @@ def getVersionAsList() -> list[int]:
 def getVersionAsDict() -> dict[str, int]:
     r = dict()
     v = __version__.split('.')
-    # noinspection PyUnresolvedReferences
     r['major'] = int(v[0])
     r['minor'] = int(v[1])
     r['patch'] = int(v[2])
@@ -128,7 +127,9 @@ def isOlderThan(version: str | list[int] | dict[str, int],
         else:
             if isinstance(current, str): current = [int(v) for v in current.split('.')]
             elif isinstance(current, dict): current = [current['major'], current['minor'], current['patch']]
-            elif not isinstance(current, list): pass
+            elif not isinstance(current, list):
+                # noinspection unreachable-code
+                pass
             else: raise TypeError('Invalid curent parameter type {}.'.format(type(current)))
         # Revision 23/04/2026 >
         if current[0] < version[0]: return True
@@ -153,7 +154,9 @@ def isNewerThan(version: str | list[int] | dict[str, int],
         else:
             if isinstance(current, str): current = [int(v) for v in current.split('.')]
             elif isinstance(current, dict): current = [current['major'], current['minor'], current['patch']]
-            elif not isinstance(current, list): pass
+            elif not isinstance(current, list):
+                # noinspection unreachable-code
+                pass
             else: raise TypeError('Invalid current parameter type {}.'.format(type(current)))
         # Revision 23/04/2026 >
         if current[0] > version[0]: return True
