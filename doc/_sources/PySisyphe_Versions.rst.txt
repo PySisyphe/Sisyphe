@@ -27,6 +27,7 @@ Version history
 - :ref:`build20-09-2026`
 - :ref:`build05-10-2026`
 - :ref:`build20-10-2026`
+- :ref:`build20-11-2026`
 
 .. _version-increment-rules:
 
@@ -8050,15 +8051,29 @@ version 1.10.24, build 20/10/2026
 
 - **updated modules**
 
+	- PySisyphe
+		
+		- bug fix, native QFileDialog is not displayed in the stand alone frozen version for Linux Ubuntu 26.04 LTS platform
+		- add os.environ['QT_QPA_PLATFORMTHEME'] = 'xdgdesktopportal' for the linux platform
+		- update PyInstaller stand alone frozen version for Linux Ubuntu 26.04 LTS platform
+
 	- gui.dialogAlgebra
 	- gui.dialogTarget
 	- gui.dialogSettings
+	- gui.dialogSplash
+	- gui.dialogWait
+	- gui.dialogAtlasLabeling
+	- gui.windowSisyphe
 	- widgets.volumeViewWidget
 	- widgets.iconBarViewWidgets
 	- widgets.multiViewWidgets
 	- widgets.multiComponentViewWidget
 	- widgets.consoleWidget
 	- widgets.abstractViewWidget
+
+		- bug fix related to click position errors in the QVTKRenderWindowInteractor on the MacOS platform when using python 3.12
+		- import the standard Qt QVTKRenderWindowInteractor instead of the custom version in Sisyphe.widgets
+
 	- widgets.fileBrowserWidget
 	- widgets.attributesWidgets
 	- widgets.sliceTrajectoryViewWidget
@@ -8096,6 +8111,21 @@ version 1.10.24, build 20/10/2026
 
 		- update _initSettings() method
 
+	- gui.dialogSplash.DialogSplash
+	- gui.dialogWait.DialogWait
+
+		- update __init__() method
+
+	- gui.dialogAtlasLabeling.DialogAtlasLabeling
+
+		- update toolLabeling() method
+		- update roiLabeling() method
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- update __init__() method
+		- update setApplicationFont() method
+
 	- widgets.iconBarViewWidgets.IconBarWidget
 
 		- update _onMenuSaveCapture() method
@@ -8119,6 +8149,7 @@ version 1.10.24, build 20/10/2026
 	- widgets.abstractViewWidget.AbstractViewWidget
 
 		- update _onKeyPressEvent() method
+		- update _getScreenFromDisplay() method
 
 	- widgets.fileBrowserWidget.FileBrowserWidget
 	- widgets.fileBrowserWidget.IconProvider
@@ -8201,6 +8232,19 @@ version 1.10.24, build 20/10/2026
 
 		- add IVIM model settings
 
+	- gui.dialogAtlasLabeling.DialogAtlasLabeling.toolLabeling()
+	- gui.dialogAtlasLabeling.DialogAtlasLabeling.roiLabeling()
+
+		- add return False after each self.reject()
+
+	- gui.windowSisyphe.WindowSisyphe.__init__()
+
+		- move the font settings to the beginning of the method
+
+	- gui.windowSisyphe.WindowSisyphe.setApplicationFont()
+
+		- add __main__.splash.setFont(font)
+
 	- widgets.volumeViewWidget.VolumeViewWidget.saveSeriesCapture()
 
 		- reorder the screenshots (campos = ['top', 'front', 'left', 'bottom', 'back', 'right'])
@@ -8217,6 +8261,11 @@ version 1.10.24, build 20/10/2026
 	- widgets.abstractViewWidget.AbstractViewWidget._onKeyPressEvent()
 
 		- bug fix for exiting fullscreen mode with F11 or ESC keys, redirect key press events to windowSisyphe main window
+
+	- widgets.abstractViewWidget.AbstractViewWidget._getScreenFromDisplay()
+
+		- bug fix related to click position errors in the QVTKRenderWindowInteractor ont the MacOS platform when using python 3.12
+		- replace scale = 1 with scale = QApplication.primaryScreen().devicePixelRatio()
 
 	- widgets.attributesWidgets.ItemToolAttributesWidget.setDefaultAttributesFromSettings()
 
@@ -8244,3 +8293,490 @@ version 1.10.24, build 20/10/2026
 	- widgets.volumeViewWidget.VolumeViewWidget._onRightPressEvent()
 
 		- cancel tool creation and exit interactive mode
+
+	- gui.dialogSplash.DialogSplash.__init__()
+	- gui.dialogWait.DialogWait.__init__()
+
+		- windows with rounded borders on MacOS and Linux platforms when using python 3.12
+
+.. _build20-11-2026:
+
+version 1.12.07, build 20/11/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_File.rst
+	- PySisyphe_ipython.rst
+	- PySisyphe_thumbnailbar.rst
+	- PySisyphe_registration.rst
+	- PySisyphe_Versions.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /settings/dialogs.xml
+	- /settings/settings.xml
+	- /settings/tooltips.xml
+
+- **updated modules**
+
+	- core.sisypheImage
+	- core.sisypheVolume
+	- core.sisypheSheet
+	- core.sisypheSettings
+	- core.sisypheFiducialBox
+	- core.sisypheImageIO
+	- gui.dialogDicomImport
+	- gui.dialogDatatype
+	- gui.dialogImport
+	- gui.windowSisyphe
+	- processing.capturedStdoutProcessing
+	- widgets.consoleWidget
+	- widgets.iconBarWidgets
+	- widgets.imageWidgets
+	- widgets.abstractViewWidget
+	- widgets.sliceTrajectoryViewWidget
+	- widgets.sliceViewWidgets
+	- widgets.volumeViewWidget
+	- widgets.fileBrowserWidget
+	- widgets.functionsSettingsWidget
+	- widgets.selectFileWidgets
+
+- **update functions**
+
+		- core.sisypheImageIO.flipImageToVTKDirectionConvention()
+
+			- bug fix, an error occurs if any minor component of a vector in the direction matrix has a value greater than 0.5
+
+				- replace d = np_array(img.GetDirection()).reshape(3, 3).round() with d = np_array(img.GetDirection()).reshape(3, 3)
+				- add d = d.round() after m = abs(d).argmax(axis=0)
+
+		- core.sisypheImageIO.convertImageToAxialOrientation()
+
+			- bug fix, an error occurs if any minor component of a vector in the direction matrix has a value greater than 0.5
+
+				- replace d = np_array(img.GetDirection()).reshape(3, 3).round() with d = np_array(img.GetDirection()).reshape(3, 3)
+
+- **new classes**
+
+	- gui.dialogDatatype.DialogToRGB
+
+		- dialog for RGB conversion
+
+	- gui.dialogDatatype.DialogFromRGB
+	
+		- dialog for grayscale or luminance conversion
+
+- **updated classes**
+
+	- core.sisypheImage.SisypheImage
+
+		- new isRGB() method
+		- new getGrayscaleFromRGB() method
+		- new getLuminanceFromRGB() method
+		- new getRGB() method
+		- update __str__() method
+		- update _updateNumpyFromSITKImage() method
+		- update _updateVTKImageFromNumpy() method
+		- update isIsotropic() method
+		- update isAnisotropic() method
+		- update isThickAnisotropic() method
+		- update cast() method
+		- update getAbs() method
+		- update getSign() method
+		- update getSqr() method
+		- update getSqrt() method
+		- update getExp() method
+		- update getExp2() method
+		- update getLog() method
+		- update getLog2() method
+		- update getLog10() method
+		- update getSin() method
+		- update getCos() method
+		- update getTan() method
+		- update getArcsin() method
+		- update getArccos() method
+		- update getArctan() method
+		- update getSinh() method
+		- update getCosh() method
+		- update getTanh() method
+		- update getArcsinh() method
+		- update getArccosh() method
+		- update getArctanh() method
+		- update getFloor() method
+		- update getCeil() method
+
+	- core.sisypheVolume.SisypheVolume
+
+		- new getGrayscaleFromRGB() method
+		- new getLuminanceFromRGB() method
+		- new getRGB() method
+
+	- core.sisypheSheet.SisypheSheet
+
+		- new loadNPY() method
+		- new loadNPZ() method
+		- new loadSAS() method
+		- new loadSPSS() method
+		- new loadSTATA() method
+		- new loadXML() method
+		- update loadCSV() method
+		- update loadTXT() method
+		- update loadXLSX() method
+		- update loadJSON() method
+		- update saveCSV() method
+		- update saveTXT() method
+		- update saveMATFILE() method
+
+	- core.sisypheSettings.SisypheSettings
+
+		- add 'file' to _VARTYPES
+		- add 'ext' to _ATTRS
+		- update newField() method
+		- update getFieldValue() method
+		- update setFieldValue() method
+
+	- core.sisypheFiducialBox.SisypheFiducialBox
+
+		- update __init__() method
+		- update _calcTransform() method
+		- update calcTransform() method
+
+	- gui.dialogDicomImport.DialogDicomImport
+
+		- update convert() method
+
+	- gui.dialogImport.DialogImport
+
+		- new _nameChanged() method
+		- new _setSequencesFromModality() method
+		- update __init__() method
+		- update convert()
+
+	- gui.windowSisyphe.WindowSisyphe
+
+		- new scalarToRGB() method
+		- new RBGToScalar() method
+		- update _initFileMenu() method
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel
+
+		- update run() method
+
+	- widgets.consoleWidget.RichJupyterWidget2
+
+		- update __init__() method
+		- new _context_menu_make() method
+		- new setCustomMenu() method
+
+	- widgets.consoleWidget.ConsoleWidget
+
+		- update __init__() method
+		- update _popupGlobals() method
+		- new _popupModules() method
+
+	- widgets.iconBarWidgets.IconBarOrthogonalSliceVolumeViewWidget
+	- widgets.iconBarWidgets.IconBarOrthogonalSliceTrajectoryViewWidget
+
+		- update setVolume() method
+
+	- widgets.imageWidgets.ImagePreviewWidget
+
+		- update __init__() method
+		- update updateImage() method
+
+	- widgets.imageWidgets.SisypheImageViewWidget
+
+		- update updateImage() method
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget
+
+		- new saveRGB() method
+		- new saveGrayscale() method
+		- new saveLuminance() method
+		- update __init__() method
+		- update displayInSliceView() method
+		- update displayInOrthogonalView() method
+		- update displayInSynchronisedView() method
+		- update overlay() method
+
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget
+
+		- update _addSlice() method
+
+	- widgets.sliceViewWidgets.SliceViewWidget
+
+		- update _addSlice() method
+
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget
+
+		- update _addReslice() method
+
+	- widgets.sliceViewWidgets.SliceRegistrationViewWidget
+
+		- update _addSlice() method
+		- update _addReslice() method
+
+	- widgets.volumeViewWidget.VolumeViewWidget
+
+		- update _addSlice() method
+		- update _addTexture() method
+		- update _addOuterSurfaceMesh() method
+
+	- widgets.fileBrowserWidget.FileBrowserWidget
+
+		- update _currentFileChanged() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- update _initSettingsLayout() method
+
+	- widgets.selectFileWidgets.FilesSelectionWidget
+
+		- update setSelectionTo() method
+
+- **new methods**
+
+	- core.sisypheImage.SisypheImage.isRGB()
+
+		- rgb image, i.e. three uint8 components
+
+	- core.sisypheImage.SisypheImage.getGrayscaleFromRGB()
+
+		- get a grayscale scalar image copy of the current image
+
+	- core.sisypheImage.SisypheImage.getLuminanceFromRGB()
+
+		- get a luminance scalar image copy of the current image
+
+	- core.sisypheImage.SisypheImage.getRGB()
+
+		- get an rgb copy of the current image
+
+	- core.sisypheImage.SisypheImage.cast()
+
+		- bug fix for multicomponent images
+
+	- core.sisypheVolume.SisypheVolume.getGrayscaleFromRGB()
+
+		- get a grayscale scalar image copy of the current image
+
+	- core.sisypheVolume.SisypheVolume.getLuminanceFromRGB()
+
+		- get a luminance scalar image copy of the current image
+
+	- core.sisypheVolume.SisypheVolume.getRGB()
+
+		- get an rgb copy of the current image
+
+	- core.sisypheSheet.SisypheSheet.loadNPY()
+	- core.sisypheSheet.SisypheSheet.loadNPZ()
+	- core.sisypheSheet.SisypheSheet.loadSAS()
+	- core.sisypheSheet.SisypheSheet.loadSPSS()
+	- core.sisypheSheet.SisypheSheet.loadSTATA()
+	- core.sisypheSheet.SisypheSheet.loadXML()
+
+		- open numpy, sas, spss, stata and xml files
+
+	- gui.windowSisyphe.WindowSisyphe.scalarToRGB()
+
+		- dialog for RGB conversion
+
+	- gui.windowSisyphe.WindowSisyphe.RBGToScalar()
+
+		- dialog for grayscale or luminance conversion
+
+	- widgets.consoleWidget.RichJupyterWidget2._context_menu_make()
+
+		- add ConsoleWidget popup menu actions to the RichJupyterWidget2 popup menu
+	
+	- widgets.consoleWidget.RichJupyterWidget2.setCustomMenu()
+
+		- set self._custommenu attribute. This attribute stores the ConsoleWidget popup menu
+
+	- widgets.consoleWidget.ConsoleWidget._popupModules()
+
+		- popup menu management of the self._modules widget
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.saveRGB()
+
+		- save an rgb copy of the SisypheVolume associated with the thumbnail
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.saveGrayscale()
+
+		- save a grayscale copy of the SisypheVolume associated with the thumbnail
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.saveLuminance()
+
+		- save a luminance copy of the SisypheVolume associated with the thumbnail
+
+- **updated methods**
+
+	- core.sisypheImage.SisypheImage.__str__()
+
+		- add rgb info
+
+	- core.sisypheImage.SisypheImage.isIsotropic()
+	- core.sisypheImage.SisypheImage.isAnisotropic()
+	- core.sisypheImage.SisypheImage.isThickAnisotropic()
+
+		- bug fix, add if not self.isEmpty():
+
+	- core.sisypheImage.SisypheImage._updateNumpyFromSITKImage()
+
+		- bug fix, restore double transposition to avoid warning
+
+	- core.sisypheImage.SisypheImage._updateVTKImageFromNumpy()
+
+		- bug fix, rgb management
+
+	- core.sisypheImage.SisypheImage.getAbs() method
+	- core.sisypheImage.SisypheImage.getSign() method
+	- core.sisypheImage.SisypheImage.getSqr() method
+	- core.sisypheImage.SisypheImage.getSqrt() method
+	- core.sisypheImage.SisypheImage.getExp() method
+	- core.sisypheImage.SisypheImage.getExp2() method
+	- core.sisypheImage.SisypheImage.getLog() method
+	- core.sisypheImage.SisypheImage.getLog2() method
+	- core.sisypheImage.SisypheImage.getLog10() method
+	- core.sisypheImage.SisypheImage.getSin() method
+	- core.sisypheImage.SisypheImage.getCos() method
+	- core.sisypheImage.SisypheImage.getTan() method
+	- core.sisypheImage.SisypheImage.getArcsin() method
+	- core.sisypheImage.SisypheImage.getArccos() method
+	- core.sisypheImage.SisypheImage.getArctan() method
+	- core.sisypheImage.SisypheImage.getSinh() method
+	- core.sisypheImage.SisypheImage.getCosh() method
+	- core.sisypheImage.SisypheImage.getTanh() method
+	- core.sisypheImage.SisypheImage.getArcsinh() method
+	- core.sisypheImage.SisypheImage.getArccosh() method
+	- core.sisypheImage.SisypheImage.getArctanh() method
+	- core.sisypheImage.SisypheImage.getFloor() method
+	- core.sisypheImage.SisypheImage.getCeil() method
+
+		- bufg fix for multi-component images, replace self._numpy_array with self.getNumpy()
+
+	- core.sisypheSheet.SisypheSheet.loadCSV()
+	- core.sisypheSheet.SisypheSheet.loadTXT()
+	- core.sisypheSheet.SisypheSheet.loadXLSX()
+	- core.sisypheSheet.SisypheSheet.loadJSON()
+
+		- remove dict() intermediate step
+
+	- core.sisypheSheet.SisypheSheet.saveCSV()
+
+		- replace self.to_csv(filename, index_label='Series') with self.to_csv(filename, index=False)
+
+	- core.sisypheSheet.SisypheSheet.saveMATFILE()
+
+		- replace self.to_dict() with self.to_dict(index=False)
+
+	- core.sisypheSheet.SisypheSheet.saveTXT()
+
+		- replace self.to_csv(filename, index_label='Series', sep=sep) with self.to_csv(filename, index=False, sep=sep)
+
+	- core.sisypheSettings.SisypheSettings.newField()
+
+		- 'file' vartype management
+
+	- core.sisypheSettings.SisypheSettings.getFieldValue()
+	- core.sisypheSettings.SisypheSettings.setFieldValue()
+		
+		- 'file' vartype management
+
+	- core.sisypheFiducialBox.SisypheFiducialBox.__init__()
+
+		- add self._ffidlist attribute, fiducial markers coordinates with error < self._maxerror
+
+	- core.sisypheFiducialBox.SisypheFiducialBox._calcTransform()
+
+		- replace self._fidlist with self._ffidlist
+
+	- core.sisypheFiducialBox.SisypheFiducialBox.calcTransform()
+
+		- calculate self._ffidlist from self._fidlist
+
+	- gui.dialogDicomImport.DialogDicomImport.convert()
+
+		- set default LUT based on DICOM modality
+
+	- gui.windowSisyphe.WindowSisyphe._initFileMenu()
+
+		- new attribute self._action['rgb'], "Conversion to RGB" menu
+		- new attribute self._action['scalar'], "Conversion to Grayscale/Luminance" menu
+
+	- processing.capturedStdoutProcessing.ProcessDiffusionModel.run()
+
+		- save diffusion tensor major direction in rbg format
+		- save rgb fa
+
+	- widgets.consoleWidget.RichJupyterWidget2.__init__()
+
+		- add self._custommenu attribute
+
+	- widgets.consoleWidget.ConsoleWidget.__init__()
+
+		- add a popup menu to the self._modules widget
+
+	- widgets.consoleWidget.ConsoleWidget._popupGlobals()
+
+		- add actions to the popup menu of the self._globals widget
+
+	- widgets.iconBarWidgets.IconBarOrthogonalSliceVolumeViewWidget.setVolume()
+	- widgets.iconBarWidgets.IconBarOrthogonalSliceTrajectoryViewWidget.setVolume()
+
+		- rgb volume management
+
+	- widgets.imageWidgets.ImagePreviewWidget.__init__()
+	- widgets.imageWidgets.ImagePreviewWidget.updateImage()
+
+		- rgb volume management
+
+	- widgets.imageWidgets.SisypheImageViewWidget.updateImage()
+
+		- rgb volume management
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()
+
+		- hide self._component & self._lutwidget widgets from the popup menu if the volume is RGB
+		- new attribute self._action['rgb'], "Save RGB copy as" menu
+		- new attribute self._action['gray'], "Save grayscale copy as" menu
+		- new attribute self._action['lm'], "Save luminance copy as" menu
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInSliceView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInOrthogonalView()
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInSynchronisedView()
+
+		- rgb volume management
+
+	- widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.overlay()
+
+		- rgb volume management
+
+	- widgets.sliceViewWidgets.SliceViewWidget._addSlice()
+	- widgets.sliceViewWidgets.SliceOverlayViewWidget._addReslice()
+	- widgets.sliceViewWidgets.SliceRegistrationViewWidget._addSlice()
+	- widgets.sliceViewWidgets.SliceRegistrationViewWidget._addReslice()
+	- widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget._addSlice()
+
+		- rgb volume management
+
+	- widgets.volumeViewWidget.VolumeViewWidget._addSlice()
+	- widgets.volumeViewWidget.VolumeViewWidget._addTexture()
+	- widgets.volumeViewWidget.VolumeViewWidget._addOuterSurfaceMesh()
+
+		- rgb volume management
+
+	- widgets.fileBrowserWidget.FileBrowserWidget._currentFileChanged()
+
+		- bug fix, .npz preview, add r = r[tuple(r.keys())[0]]
+
+	- widgets.functionsSettingsWidget. SettingsWidget._initSettingsLayout()
+
+		- 'file' vartype management
+
+	- widgets.selectFileWidgets.FilesSelectionWidget.setSelectionTo()
+
+		- add scrollto parameter (bool)
+		- scroll to selected item if scrollto is True

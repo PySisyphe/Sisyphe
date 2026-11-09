@@ -145,7 +145,7 @@ Toggle **Diffusion model...** button to show/hide model parameters:
 Toggle **DTI model...** button to show/hide DTI parameters:
 
 - Select the **Fitting algorithm** from the combobox. The fitting methods available in Pysisyphe are as follows: *weighted least squares* (WLS), *ordinary least squares* (LS or OLS), *non-linear least-squares* (NLLS) or *RESTORE robust tensor* (RT or RESTORE).
-- Check the map(s) to be calculated: *Fractional anisotropy* (FA), *Geodesic anisotropy* (GA), *Mean diffusivity* (MD), *Trace* of the tensor, *Axial diffusivity* (AD), *Radial diffusivity* (RD), *Linearity*, *planarity*, *sphericity*, *tensor*, *tensor components*, *major tensor direction*, *tensor eigen values* and *tensor eigen vectors*. These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
+- Check the map(s) to be calculated: *Fractional anisotropy* (FA), *Geodesic anisotropy* (GA), *Mean diffusivity* (MD), *Trace* of the tensor, *Axial diffusivity* (AD), *Radial diffusivity* (RD), *Linearity*, *planarity*, *sphericity*, *tensor*, *tensor components*, *major tensor direction* (6 volumes saved: multi-component volume of the major direction, suffixed with '_PRINCIPAL'; x, y and z single-component volumes, absolute value of the major direction, suffixed with '_PRINCIPAL_X', '_PRINCIPAL_Y' and '_PRINCIPAL_Z'; absolute value of the major direction in RGB format, suffixed with '_RGB_PRINCIPAL'; absolute value of the major direction weigthed with FA in RGB format, suffixed with '_RGB_FA'), *tensor eigen values* and *tensor eigen vectors*. These maps are saved using the file name of the first diffusion-weighted volume suffixed by the map acronym.
 
 Toggle **FWDTI model...** button to show/hide DKI parameters:
 

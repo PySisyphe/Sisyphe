@@ -17,6 +17,11 @@ Command line on the left (1). Right-click displays a popup menu:
 - **Select all**, select all of the console text.
 - **Save as HTML/XML**, save the console display to HTML/XML file.
 - **Print**, open a print dialog to print the console display.
+- **Clear**,  clear console.
+- **Restart**, restart console.
+- **Show/Hide modules**, toggle visibility of the Modules/Types/Functions list box at top-right (2).
+- **Show/Hide variables**, toggle visibility of the Variables list box at bottom-right (3).
+- **Show/Hide tooltips**, toggle tooltips visbility.
 
 Right-click a chart image displays another popup menu:
 
@@ -25,11 +30,10 @@ Right-click a chart image displays another popup menu:
 
 Modules/Types/Functions imported into the environment are displayed in the list box at top-right (2). A tooltip pops when mouse cursor remains in front of a box element. It displays its docstring.
 
-
 Variables are displayed in the list box at bottom-right (3). A tooltip pops when mouse cursor remains in front of a variable. It displays its value converted to string. 
 
 - Double-click on a SisypheVolume, sitkImage (see `SimpleITK Image class <https://simpleitk.org/doxygen/v2_5/html/classitk_1_1simple_1_1Image.html>`_), ANTsImage (see `ANTs Image class <https://antspy.readthedocs.io/en/latest/core.html>`_), vtkImageData (see `VTK Image class <https://vtk.org/doc/nightly/html/classvtkImageData.html>`_) or ndarray variable (see `Numpy ndarray class <https://antspy.readthedocs.io/en/latest/core.html>`_) opens it in the thumbnail bar.
-- Right-click on 1D/2D ndarray, 2D sitkImage, or Pillow Image displays a popup menu that allows you to select various Matplotlib charts to draw at the current console prompt. A dialog box opens to select the display settings for each chart. Matplotlib Figure and Axes variables of the current chart are created under the names 'fig' and 'ax'.
+- Right-click on 1D/2D ndarray, 2D sitkImage, or Pillow Image displays a popup menu that allows you to select various Matplotlib charts to draw at the current console prompt. A dialog box opens to select the display settings for each chart. The Matplotlib Figure and Axes variables of the current chart are created under the names 'fig' and 'ax'.
 
 The available charts are listed below: 
 

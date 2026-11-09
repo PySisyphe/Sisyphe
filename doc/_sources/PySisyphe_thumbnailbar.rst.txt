@@ -52,8 +52,14 @@ Left-Click on the lower right of the thumbnail (on the three dots "..."), or rig
 - **Remove from all views**, close all views and unselect the thumbnail volume.
 - **Display as overlay**, display the thumbnail volume as overlay in views.
 - **Save**, save the thumbnail volume.
-- **Save as...**, display a dialog box to save volume with a new file name.
+- **Save as...**, display a dialog box to save thumbnail volume with a new file name.
+- **Save current component**, save the current component of the thumbnail volume. This menu is displayed only for multi-component thumbnail volume.
+- **Save current component as...**, display a dialog box to save the current component of the thumbnail volume. This menu is displayed only for multi-component thumbnail volume.
+- **Save RGP copy as...**, convert the current thumbnail volume to RGB format, then display a dialog box to save it. This menu is displayed only for single-component thumbnail volume.
+- **Save lightness copy as...**, convert the current thumbnail volume to lightness scalar format, then display a dialog box to save it. This menu is displayed only for thumbnail volume in RGB format.
+- **Save luminance copy as...**, convert the current thumbnail volume to luminance scalar format (RGB to HSL conversion), then display a dialog box to save it. This menu is displayed only for humbnail volume in RGB format.
 - **Copy to console**, to copy the thumbnail volume as a variable in the PySisyhe console. One of the following formats is selected in the submenu: SisypheVolume (variable name 'vol'), SimpleITKImage (variable name 'sitkv'), ITKImage (variable name 'itkv'), VTKImageData (variable name 'vtkv'), ANTsImage (antsv), NibabelImage (variable name 'nibv'), or numpy ndarray (transposed or not, variable name 'npv').
+- **Split multi-component...**, to create single-component volumes from the current multi-component thumbnail volume. This menu is displayed only for multi-component thumbnail volume.
 - **Close**, close the thumbnail volume.
 - **Windowing >**
 
@@ -64,16 +70,18 @@ Left-Click on the lower right of the thumbnail (on the three dots "..."), or rig
 	- **Metallic window**, reserved to CT modality. Set windowing to enhance metallic contrast.
 
 - **Anonymize**, Anonymize the thumbnail volume.
-- **Edit attributes...**, display a dialog box to edit attributes (identity, acquisition, image) of the thumbnail volume.
-- **Set Origin to default**, set origin attribute of the thumbnail volume to default i.e. (0.0, 0.0, 0.0)
-- **Set Directions to default**, Set directions attribute of the thumbnail volume to default i.e. (0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
-- **Set Modality**, change modality attribute of the thumbnail volume (**CT** computed tomography, **LB** label volume, **MR** magnetic Resonance, **NM** single photon emission tomography, **PT** positon emission tomography, **TP** template)
-- **Datatype conversion**, change array value datatype of the thumbnail volume (**int8**, **int16**, **int32**, **int64**, **unit8**, **uint16**, **uint32**, **uint64**, **float32**, **float64**)
+- **Edit attributes...**, display a :ref:`menu-section-attributes` dialog box to edit attributes (identity, acquisition, image) of the thumbnail volume.
+- **Edit labels...**, display a :ref:`menu-section-editlabels` dialog box to edit the labels of the current thumbnail volume. This menu is displayed only for thumbnail label volume (LB modality).
+- **Set Origin to default**, set origin attribute of the thumbnail volume to default i.e. (0.0, 0.0, 0.0).
+- **Set Directions to default**, Set directions attribute of the thumbnail volume to default i.e. (0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0).
+- **Set Modality**, change modality attribute of the thumbnail volume (**CT** computed tomography, **LB** label volume, **MR** magnetic Resonance, **NM** single photon emission tomography, **PT** positon emission tomography, **TP** template).
+- **Datatype conversion**, change array value datatype of the thumbnail volume (**int8**, **int16**, **int32**, **int64**, **unit8**, **uint16**, **uint32**, **uint64**, **float32**, **float64**).
 - **Descriptive statistics**, display a dialog box giving descriptive statistics of the thumbnail volume (minimum, 5th percentile, 25th percentile, median, 75th percentile, 95th percentile, std, mean, skewness, kurtosis).
+- **View Dicom attributes...**, display a :ref:`menu-section-xmldcm` dialog box.
 - **Add to database**, add the thumbnail volume to the patient database.
-- **AC-PC selection...**, display a dialog box to select anterior and posterior commissure of the thumbnail volume.
-- **Reorientation...**, display a dialog box to reorient the thumbnail volume and/or change the field-of-view.
-- **Stereotactic frame detection...**, display a dialog box for detecting fiducial markers of a Leksell stereotaxic frame of the thumbnail volume.
+- **AC-PC selection...**, display a :ref:`menu-section-acpc` dialog box to select anterior and posterior commissure of the thumbnail volume.
+- **Reorientation...**, display a :ref:`menu-section-reorient` dialog box to reorient the thumbnail volume and/or change the field-of-view.
+- **Stereotactic frame detection...**, display a :ref:`menu-section-frame` dialog box for detecting fiducial markers of a Leksell stereotaxic frame of the thumbnail volume.
 - **Flip**, flip axes of the thumbnail volume (left/right axis, anterior/posterior axis, or cranial/caudal axis).
 - **Swap axis**, permute volume axes (swap axis order to **y-z-x**, **z-x-y**, **x-z-y**, **y-z-x**, or **z-y-x**).
 - **Remove neck slices**, Remove the lowest slices of the neck, typically for 3D MR acquired with a sagittal orientation

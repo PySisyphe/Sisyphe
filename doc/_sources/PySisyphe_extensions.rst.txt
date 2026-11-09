@@ -114,7 +114,7 @@ PySiSyphe files
 .PySisyphe folder
 -----------------
 
-It is located in the user folder (C:\Users\YourUsername in windows platform, /Users/YourUsername in mac os platform and /home/YourUsername in linux platform). It can be quickly opened in the OS platform's file manager by selecting the menu :ref:`menu-section-openuser`. It contains configuration files (functions.xml, settings.xml), a log file (PySisyphe.log), and a file listing the most recently opened volumes (recent.xml).
+It is located in the user folder (C:/Users/YourUsername in windows platform, /Users/YourUsername in mac os platform and /home/YourUsername in linux platform). It can be quickly opened in the OS platform's file manager by selecting the menu :ref:`menu-section-openuser`. It contains configuration files (functions.xml, settings.xml), a log file (PySisyphe.log), and a file listing the most recently opened volumes (recent.xml).
 
 Eight default subdirectories are provided for storing user data:
 
