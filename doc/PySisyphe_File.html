@@ -87,6 +87,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#edit-attributes">Edit attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#menu-section-id">ID replacement</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#anonymize">Anonymize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conversion-to-rgb">Conversion to RGB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conversion-to-lightness-luminance">Conversion to Lightness/Luminance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#edit-volume-labels">Edit volume labels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rois-to-label-volume">ROIs to label volume</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#volumes-to-label-volume">Volumes to label volume</a></li>
@@ -165,6 +167,8 @@
 <li><p><a class="reference internal" href="#menu-section-attributes"><span class="std std-ref">Edit attributes</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-id"><span class="std std-ref">ID replacement</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-anonymize"><span class="std std-ref">Anonymize</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-torgb"><span class="std std-ref">Conversion to RGB</span></a></p></li>
+<li><p><a class="reference internal" href="#menu-section-fromrgb"><span class="std std-ref">Conversion to Lightness/Luminance</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-editlabels"><span class="std std-ref">Edit volume labels</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-roitolabels"><span class="std std-ref">ROIs to label volume</span></a></p></li>
 <li><p><a class="reference internal" href="#menu-section-volumetolabels"><span class="std std-ref">Volumes to label volume</span></a></p></li>
@@ -285,6 +289,7 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <li><p>Tools: Target/Trajectory tab of the dock (<a class="reference internal" href="PySisyphe_dockroitools.html#page-dockroitools"><span class="std std-ref">ROI Tools tab of the dock</span></a>).</p></li>
 <li><p>Bundles: Tracking tab of the dock (<a class="reference internal" href="PySisyphe_docktracking.html#page-docktracking"><span class="std std-ref">Tracking tab of the dock</span></a>).</p></li>
 <li><p>Templates: default template volume for various modalities/sequences (MR T1/T2/PD/FLAIR, FDG PET; HMPAO SPECT; tissue probability maps i.e. GM, SCGM, WM, CSF, Brainstem, cerebellum; Brain mask).</p></li>
+<li><p>LUT: Set the default LUT for each DICOM modality (CT, MR, NM, PT). These settings are used during the conversion of DICOM volumes (<a class="reference internal" href="#menu-section-dcmimport"><span class="std std-ref">Dicom import</span></a>).</p></li>
 <li><p>Database: patient database folders.</p></li>
 <li><p>Gemini: Google Gemini AI settings (API key: get your API key from Google AI Studio <a class="reference external" href="https://aistudio.google.com/api-keys">https://aistudio.google.com/api-keys</a>, model name).</p></li>
 <li><p>Dicom host: Dicom SCP host parameters of the <a class="reference internal" href="#menu-section-dcmquery"><span class="std std-ref">Dicom query/retrieve from Dicom SCP Server</span></a></p></li>
@@ -333,19 +338,24 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <li><p><strong>Templates</strong>, various template volumes</p>
 <blockquote>
 <div><ul class="simple">
+<li><p>AheadBrain, <a class="reference external" href="https://brain.labsolver.org/histology.html">https://brain.labsolver.org/histology.html</a></p></li>
 <li><p>Allen, <a class="reference external" href="https://community.brain-map.org/t/allen-human-reference-atlas-3d-2020-new/405">https://community.brain-map.org/t/allen-human-reference-atlas-3d-2020-new/405</a></p></li>
-<li><p>Atropos, <a class="reference external" href="https://mindboggle.info/data.html">https://mindboggle.info/data.html</a></p></li>
 <li><p>Arterial, <a class="reference external" href="https://www.nitrc.org/projects/arterialatlas/">https://www.nitrc.org/projects/arterialatlas/</a></p></li>
+<li><p>Atropos, <a class="reference external" href="https://mindboggle.info/data.html">https://mindboggle.info/data.html</a></p></li>
 <li><p>Atag, <a class="reference external" href="https://www.nitrc.org/projects/atag">https://www.nitrc.org/projects/atag</a></p></li>
+<li><p>BigBrain, <a class="reference external" href="https://brain.labsolver.org/histology.html">https://brain.labsolver.org/histology.html</a></p></li>
 <li><p>Brainnav, <a class="reference external" href="https://www.nitrc.org/projects/brainstemnavig">https://www.nitrc.org/projects/brainstemnavig</a></p></li>
 <li><p>BRAVISSIMA, <a class="reference external" href="https://www.nitrc.org/projects/bravissima/">https://www.nitrc.org/projects/bravissima/</a></p></li>
 <li><p>Bundles HCP, <a class="reference external" href="https://brain.labsolver.org/hcp_template.html">https://brain.labsolver.org/hcp_template.html</a></p></li>
 <li><p>Bundles IIT, <a class="reference external" href="https://www.nitrc.org/projects/iit/">https://www.nitrc.org/projects/iit/</a></p></li>
 <li><p>Bundles LC2TEC, <a class="reference external" href="https://www.nitrc.org/projects/brainstem_atlas/">https://www.nitrc.org/projects/brainstem_atlas/</a></p></li>
+<li><p>CMB, <a class="reference external" href="https://zenodo.org/records/20553851">https://zenodo.org/records/20553851</a></p></li>
 <li><p>Colin27, <a class="reference external" href="https://meca-brain.org/software/marsatlas-colin27/">https://meca-brain.org/software/marsatlas-colin27/</a></p></li>
+<li><p>Dartel</p></li>
 <li><p>Desikan, <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S1053811906000437?via%3Dihub">https://www.sciencedirect.com/science/article/abs/pii/S1053811906000437?via%3Dihub</a></p></li>
 <li><p>Destrieux, <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S1053811910008542?via%3Dihub">https://www.sciencedirect.com/science/article/abs/pii/S1053811910008542?via%3Dihub</a></p></li>
 <li><p>Distal, <a class="reference external" href="https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/">https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/</a></p></li>
+<li><p>GOBS, <a class="reference external" href="https://brainder.org/download/flair/">https://brainder.org/download/flair/</a></p></li>
 <li><p>HoliAtlas, <a class="reference external" href="https://arxiv.org/html/2501.16879v1">https://arxiv.org/html/2501.16879v1</a></p></li>
 <li><p>HR, <a class="reference external" href="https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009">https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009</a></p></li>
 <li><p>ICBM152 Subcortical</p></li>
@@ -356,12 +366,13 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <li><p>SPL, <a class="reference external" href="https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html">https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html</a></p></li>
 <li><p>SRI24, <a class="reference external" href="https://www.nitrc.org/projects/sri24">https://www.nitrc.org/projects/sri24</a></p></li>
 <li><p>THOMAS, <a class="reference external" href="https://github.com/thalamicseg/hipsthomasdocker">https://github.com/thalamicseg/hipsthomasdocker</a></p></li>
+<li><p>VisibleHumanProject, <a class="reference external" href="https://datadiscovery.nlm.nih.gov/Diagnostic-Imaging/Visible-Human-Project/ux2j-9i9a/about_data">https://datadiscovery.nlm.nih.gov/Diagnostic-Imaging/Visible-Human-Project/ux2j-9i9a/about_data</a></p></li>
 </ul>
 </div></blockquote>
 </li>
 <li><p><strong>Controls</strong></p>
 <blockquote>
-<div><p>Control populations for 3D T1 MR, FDG PET (118 subjects), and HMPAO SPECT (33 subjects). These files are saved in the “controls” sub-folder of the PySisyphe user folder (~/.PySisyphe).</p>
+<div><p>Control populations for MR (IXI <a class="reference external" href="https://brain-development.org/">https://brain-development.org/</a>, 581 subjects), FDG PET (118 subjects), and HMPAO SPECT (33 subjects). These files are saved in the “controls” sub-folder of the PySisyphe user folder (~/.PySisyphe).</p>
 </div></blockquote>
 </li>
 <li><p><strong>Plugins</strong></p>
@@ -432,6 +443,22 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <p>Left-click <strong>OK</strong> button to anonymize volume(s) added in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget.</p>
 <p>You can also click <a class="reference internal" href="_images/anonymize.png"><img alt="anonymize" src="_images/anonymize.png" style="width: 19.2px; height: 19.2px;" /></a> button in the toolbar.</p>
 </section>
+<section id="conversion-to-rgb">
+<span id="menu-section-torgb"></span><h2>Conversion to RGB<a class="headerlink" href="#conversion-to-rgb" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Conversion to RGB</strong> dialog box. It converts single-component scalar volumes to three-component RGB volumes using the current LUT and windowing.</p>
+<p>Open the volume(s) to convert in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget of the dialog box.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without performing any conversion</p>
+<p>Left-click <strong>OK</strong> button to convert volume(s) added in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget. Converted volumes are saved with the original filenames, which are prefixed with “rgb”.</p>
+</section>
+<section id="conversion-to-lightness-luminance">
+<span id="menu-section-fromrgb"></span><h2>Conversion to Lightness/Luminance<a class="headerlink" href="#conversion-to-lightness-luminance" title="Link to this heading"></a></h2>
+<p>This menu displays the <strong>Conversion to Lightness/Luminance</strong> dialog box. It converts three-component RGB volumes to single-component scalar volumes.
+The Lightness conversion uses the following formula: (max(R,G,B) + min(R,G,B)) / 2.0
+The Luminance conversion is the weighted sum of the RGB components (ITU-R BT.709 / sRGB standard): 0.2125 * R + 0.7154 * G + 0.0721 * B.</p>
+<p>Open the volume(s) to convert in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget of the dialog box.</p>
+<p>Left-click <strong>Cancel</strong> button to close dialog box without performing any conversion</p>
+<p>Left-click <strong>OK</strong> button to convert volume(s) added in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget. Converted volumes are saved with the original filenames, which are prefixed with “lightness” or “luminance”.</p>
+</section>
 <section id="edit-volume-labels">
 <span id="menu-section-editlabels"></span><h2>Edit volume labels<a class="headerlink" href="#edit-volume-labels" title="Link to this heading"></a></h2>
 <p>This menu is assigned to a label volume (LB modality). In this volume, each scalar value in the image array is associated with a label. These labels are written to a xml file with the same name as the volume and .xlabels extension.</p>
@@ -481,6 +508,65 @@ Left-click on a volume menu item to open it in the thumbnail bar.</p>
 <span id="menu-section-import"></span><h2>Import<a class="headerlink" href="#import" title="Link to this heading"></a></h2>
 <p>Select a submenu to import an image in one of the following image formats: Nifti (.nii, .hdr, .img, .nia, .nii.gz, .img.gz), Nrrd (.nrrd, .nhdr), Minc (.mnc), Sisyphe (.vol), VTK (.vti, .vtk). This displays an <strong>Import</strong> dialog box that converts volumes to the PySisyphe format (.xvol).</p>
 <p>Add volumes to convert in the <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-multi-file"><span class="std std-ref">Multiple file selection</span></a> widget. You can set the backup directory for converted volumes in the <strong>Import directory</strong> <a class="reference internal" href="PySisyphe_widgets.html#widgets-section-single-file"><span class="std std-ref">Single file selection</span></a> widget. If the backup directory is not defined (default), volumes will be saved in the same folder as the original files.</p>
+<p>Import parameters are as follows:</p>
+<ul>
+<li><p><strong>Save as</strong>, Converted files can be saved using one of four methods:</p>
+<blockquote>
+<div><ul>
+<li><p><strong>Same filename</strong>, to save with the same name as the original file, but with the PySisyphe volume .xvol extension.</p></li>
+<li><p><strong>Search/replace</strong>, the strings in the <strong>Search</strong> field are replaced with those in the <strong>Replace</strong> field in the name of the original file (except for extension). Multiple strings can be entered in the <strong>Search</strong> and <strong>Replace</strong> fields. They must be split by the “|” character. To remove some character strings listed in the <strong>Search</strong> field, omit string at the same position in the <strong>Replace</strong> field. If you want to delete a string listed in the <strong>Search</strong> field, leave the corresponding location in the <strong>Replace</strong> field blank.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>e.g.”file_GG_10-i01.nii”, Search=GG|10, Replace=HH|20 , is saved with “file_HH_20-i01.xvol”</p></li>
+<li><p>e.g.”file_GG_10-i01.nii”, Search=GG|_10 , Replace=HH , is saved with “file_HH-i01.xvol”</p></li>
+<li><p>e.g.”file_GG_10-i01.nii”, Search=_GG|10|-i01 , Replace=|20 , is saved with “file_20.xvol”</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Prefix#number</strong>, to save the file using the name given in the <strong>Prefix</strong> field, followed by the “#” character, and finally the conversion sequence number from the list of provided files.</p></li>
+<li><p><strong>Prefix/extracted numbers/suffix</strong>, to save the file with the name entered in the <strong>Prefix</strong> field, followed by the list of numbers extracted from the original file name, separated by the character specified in the <strong>Number separator</strong> field, and finally the name provided in the <strong>Suffix</strong> field. In the <strong>Number order</strong> field, you can change the order of the extracted numbers, separating the new index order with the “|” character (the first index is 0). To remove some numbers from the extraction list, you must omit their indices in the <strong>Number order</strong> field. The order will be preserved if this field is left blank.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>e.g.”file_10_200_3000-T1.nii”, four numbers are detected: 10, 200, and 3000 and 1. Their indices are 0, 1, 2, and 3 respectively.</p></li>
+<li><p>e.g.”file_10_200_3000-T1.nii”, Numer order=1|2|0|3, Number separator=_, Prefix=converted, Suffix is left blank, is saved with “converted_200_3000_10_1.xvol”</p></li>
+<li><p>e.g.”file_10_200_3000-T1.nii”, Numer order=0|2, Number separator=_, Prefix=converted, Suffix is left blank, is saved with “converted_10_3000.xvol”</p></li>
+<li><p>e.g.”file_10_200_3000-T1.nii”, Numer order is left blank, Number separator=_, Prefix=converted, Suffix is left blank, is saved with “converted_10_200_3000_1.xvol”</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Datatype</strong>, select the array value datatype (<em>int8</em>, <em>int16</em>, <em>int32</em>, <em>int64</em>, <em>unit8</em>, <em>uint16</em>, <em>uint32</em>, <em>uint64</em>, <em>float32</em>, <em>float64</em>) or keep the original.</p></li>
+<li><p><strong>Modality</strong>, select the modality (OT Other, CT Computed Tomography, MR Magnetic Resonance, NM Nuclear Medicine, PT Positon Tomography, TP Template).</p></li>
+<li><p><strong>Sequence</strong>, select the sequence.</p></li>
+<li><p><strong>Origin</strong>, set the origin attribute to default i.e. (0.0, 0.0, 0.0) or keep the original value.</p></li>
+<li><p><strong>Directions</strong>, set the directions attribute to default i.e. (0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0) or keep the original value.</p></li>
+<li><p><strong>LUT</strong>, select the LUT colormap.</p></li>
+<li><p><strong>Feature file</strong>, Select the feature file, which can be in CSV (.csv) or Excel (.xlsx) format. It is used to extract features regarding the date of study, date of birth, age, or gender. The following parameters are displayed if this field is not empty:</p>
+<blockquote>
+<div><ul>
+<li><p><strong>Study code position in filename</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“No code”, the volume order in the selection box is used as the row number in the feature file.</p></li>
+<li><p>“Original filename”, the original file name is the code used to search the volume’s row in the feature file.</p></li>
+<li><p>Position (starting at 0) of the code number extracted from the original file name used to search the volume’s row in the feature file.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Study code column</strong>, column number of the code used to search the volume’s row in the feature file. Enter -1 to use the volume order in the selection box as the row number in the feature file.</p></li>
+<li><p><strong>Date of study column</strong>, column number (starting at 0) in the feature file where date of study is listed. Enter -1 if there is no date of scan.</p></li>
+<li><p><strong>Date of birth column</strong>, column number (starting at 0) in the feature file where date of birth is listed. Enter -1 if there is no date of birth.</p></li>
+<li><p><strong>Date format</strong>, format of the date used in the feature file (d for day, m for month, y for year).</p></li>
+<li><p><strong>Age column</strong>, column number (starting at 0) in the feature file where age is listed. Enter -1 if there is no age field.</p></li>
+<li><p><strong>Gender column</strong>, column number (starting at 0) in the feature file where gender is listed. Enter -1 if there is no gender field.</p></li>
+<li><p><strong>Male string</strong>, the string code used in the feature file for male gender.</p></li>
+<li><p><strong>Female string</strong>, the string code used in the feature file for female gender.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
 <p>Left-click <strong>Import</strong> button to perform volume conversion. Images are saved in axial orientation by default.</p>
 <p>Left-click <strong>OK</strong> button to close dialog box.</p>
 <p>You can also click <a class="reference internal" href="_images/importnii.png"><img alt="importnii" src="_images/importnii.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/importnrrd.png"><img alt="importnrrd" src="_images/importnrrd.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/importmnc.png"><img alt="importmnc" src="_images/importmnc.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/importvol.png"><img alt="importvol" src="_images/importvol.png" style="width: 19.2px; height: 19.2px;" /></a> <a class="reference internal" href="_images/importvtk.png"><img alt="importvtk" src="_images/importvtk.png" style="width: 19.2px; height: 19.2px;" /></a> buttons in the toolbar.</p>

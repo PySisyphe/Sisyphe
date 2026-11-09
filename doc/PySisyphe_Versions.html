@@ -105,6 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-1-03-09-build-20-09-2026">version 1.03.09, build 20/09/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-05-24-build-05-10-2026">version 1.05.24, build 05/10/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-10-24-build-20-10-2026">version 1.10.24, build 20/10/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-12-07-build-20-11-2026">version 1.12.07, build 20/11/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -160,6 +161,7 @@
 <li><p><a class="reference internal" href="#build20-09-2026"><span class="std std-ref">version 1.03.09, build 20/09/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build05-10-2026"><span class="std std-ref">version 1.05.24, build 05/10/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-10-2026"><span class="std std-ref">version 1.10.24, build 20/10/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-11-2026"><span class="std std-ref">version 1.12.07, build 20/11/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -12661,16 +12663,36 @@
 </li>
 <li><p><strong>updated modules</strong></p>
 <blockquote>
+<div><ul>
+<li><p>PySisyphe</p>
+<blockquote>
 <div><ul class="simple">
+<li><p>bug fix, native QFileDialog is not displayed in the stand alone frozen version for Linux Ubuntu 26.04 LTS platform</p></li>
+<li><p>add os.environ[‘QT_QPA_PLATFORMTHEME’] = ‘xdgdesktopportal’ for the linux platform</p></li>
+<li><p>update PyInstaller stand alone frozen version for Linux Ubuntu 26.04 LTS platform</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.dialogAlgebra</p></li>
 <li><p>gui.dialogTarget</p></li>
 <li><p>gui.dialogSettings</p></li>
+<li><p>gui.dialogSplash</p></li>
+<li><p>gui.dialogWait</p></li>
+<li><p>gui.dialogAtlasLabeling</p></li>
+<li><p>gui.windowSisyphe</p></li>
 <li><p>widgets.volumeViewWidget</p></li>
 <li><p>widgets.iconBarViewWidgets</p></li>
 <li><p>widgets.multiViewWidgets</p></li>
 <li><p>widgets.multiComponentViewWidget</p></li>
 <li><p>widgets.consoleWidget</p></li>
-<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.abstractViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix related to click position errors in the QVTKRenderWindowInteractor on the MacOS platform when using python 3.12</p></li>
+<li><p>import the standard Qt QVTKRenderWindowInteractor instead of the custom version in Sisyphe.widgets</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.fileBrowserWidget</p></li>
 <li><p>widgets.attributesWidgets</p></li>
 <li><p>widgets.sliceTrajectoryViewWidget</p></li>
@@ -12737,6 +12759,30 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogSplash.DialogSplash</p></li>
+<li><p>gui.dialogWait.DialogWait</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogAtlasLabeling.DialogAtlasLabeling</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update toolLabeling() method</p></li>
+<li><p>update roiLabeling() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update setApplicationFont() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.iconBarViewWidgets.IconBarWidget</p>
 <blockquote>
 <div><ul class="simple">
@@ -12773,6 +12819,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update _onKeyPressEvent() method</p></li>
+<li><p>update _getScreenFromDisplay() method</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -12903,6 +12950,28 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogAtlasLabeling.DialogAtlasLabeling.toolLabeling()</p></li>
+<li><p>gui.dialogAtlasLabeling.DialogAtlasLabeling.roiLabeling()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add return False after each self.reject()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>move the font settings to the beginning of the method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.setApplicationFont()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add __main__.splash.setFont(font)</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.volumeViewWidget.VolumeViewWidget.saveSeriesCapture()</p>
 <blockquote>
 <div><ul class="simple">
@@ -12929,6 +12998,14 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>bug fix for exiting fullscreen mode with F11 or ESC keys, redirect key press events to windowSisyphe main window</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget._getScreenFromDisplay()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix related to click position errors in the QVTKRenderWindowInteractor ont the MacOS platform when using python 3.12</p></li>
+<li><p>replace scale = 1 with scale = QApplication.primaryScreen().devicePixelRatio()</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -12971,6 +13048,758 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>cancel tool creation and exit interactive mode</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogSplash.DialogSplash.__init__()</p></li>
+<li><p>gui.dialogWait.DialogWait.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>windows with rounded borders on MacOS and Linux platforms when using python 3.12</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-1-12-07-build-20-11-2026">
+<span id="build20-11-2026"></span><h2>version 1.12.07, build 20/11/2026<a class="headerlink" href="#version-1-12-07-build-20-11-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_File.rst</p></li>
+<li><p>PySisyphe_ipython.rst</p></li>
+<li><p>PySisyphe_thumbnailbar.rst</p></li>
+<li><p>PySisyphe_registration.rst</p></li>
+<li><p>PySisyphe_Versions.rst</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/settings/dialogs.xml</p></li>
+<li><p>/settings/settings.xml</p></li>
+<li><p>/settings/tooltips.xml</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheImage</p></li>
+<li><p>core.sisypheVolume</p></li>
+<li><p>core.sisypheSheet</p></li>
+<li><p>core.sisypheSettings</p></li>
+<li><p>core.sisypheFiducialBox</p></li>
+<li><p>core.sisypheImageIO</p></li>
+<li><p>gui.dialogDicomImport</p></li>
+<li><p>gui.dialogDatatype</p></li>
+<li><p>gui.dialogImport</p></li>
+<li><p>gui.windowSisyphe</p></li>
+<li><p>processing.capturedStdoutProcessing</p></li>
+<li><p>widgets.consoleWidget</p></li>
+<li><p>widgets.iconBarWidgets</p></li>
+<li><p>widgets.imageWidgets</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.sliceTrajectoryViewWidget</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
+<li><p>widgets.volumeViewWidget</p></li>
+<li><p>widgets.fileBrowserWidget</p></li>
+<li><p>widgets.functionsSettingsWidget</p></li>
+<li><p>widgets.selectFileWidgets</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>update functions</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImageIO.flipImageToVTKDirectionConvention()</p>
+<blockquote>
+<div><ul>
+<li><p>bug fix, an error occurs if any minor component of a vector in the direction matrix has a value greater than 0.5</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace d = np_array(img.GetDirection()).reshape(3, 3).round() with d = np_array(img.GetDirection()).reshape(3, 3)</p></li>
+<li><p>add d = d.round() after m = abs(d).argmax(axis=0)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImageIO.convertImageToAxialOrientation()</p>
+<blockquote>
+<div><ul>
+<li><p>bug fix, an error occurs if any minor component of a vector in the direction matrix has a value greater than 0.5</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace d = np_array(img.GetDirection()).reshape(3, 3).round() with d = np_array(img.GetDirection()).reshape(3, 3)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>gui.dialogDatatype.DialogToRGB</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for RGB conversion</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDatatype.DialogFromRGB</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for grayscale or luminance conversion</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new isRGB() method</p></li>
+<li><p>new getGrayscaleFromRGB() method</p></li>
+<li><p>new getLuminanceFromRGB() method</p></li>
+<li><p>new getRGB() method</p></li>
+<li><p>update __str__() method</p></li>
+<li><p>update _updateNumpyFromSITKImage() method</p></li>
+<li><p>update _updateVTKImageFromNumpy() method</p></li>
+<li><p>update isIsotropic() method</p></li>
+<li><p>update isAnisotropic() method</p></li>
+<li><p>update isThickAnisotropic() method</p></li>
+<li><p>update cast() method</p></li>
+<li><p>update getAbs() method</p></li>
+<li><p>update getSign() method</p></li>
+<li><p>update getSqr() method</p></li>
+<li><p>update getSqrt() method</p></li>
+<li><p>update getExp() method</p></li>
+<li><p>update getExp2() method</p></li>
+<li><p>update getLog() method</p></li>
+<li><p>update getLog2() method</p></li>
+<li><p>update getLog10() method</p></li>
+<li><p>update getSin() method</p></li>
+<li><p>update getCos() method</p></li>
+<li><p>update getTan() method</p></li>
+<li><p>update getArcsin() method</p></li>
+<li><p>update getArccos() method</p></li>
+<li><p>update getArctan() method</p></li>
+<li><p>update getSinh() method</p></li>
+<li><p>update getCosh() method</p></li>
+<li><p>update getTanh() method</p></li>
+<li><p>update getArcsinh() method</p></li>
+<li><p>update getArccosh() method</p></li>
+<li><p>update getArctanh() method</p></li>
+<li><p>update getFloor() method</p></li>
+<li><p>update getCeil() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getGrayscaleFromRGB() method</p></li>
+<li><p>new getLuminanceFromRGB() method</p></li>
+<li><p>new getRGB() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSheet.SisypheSheet</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new loadNPY() method</p></li>
+<li><p>new loadNPZ() method</p></li>
+<li><p>new loadSAS() method</p></li>
+<li><p>new loadSPSS() method</p></li>
+<li><p>new loadSTATA() method</p></li>
+<li><p>new loadXML() method</p></li>
+<li><p>update loadCSV() method</p></li>
+<li><p>update loadTXT() method</p></li>
+<li><p>update loadXLSX() method</p></li>
+<li><p>update loadJSON() method</p></li>
+<li><p>update saveCSV() method</p></li>
+<li><p>update saveTXT() method</p></li>
+<li><p>update saveMATFILE() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.SisypheSettings</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ‘file’ to _VARTYPES</p></li>
+<li><p>add ‘ext’ to _ATTRS</p></li>
+<li><p>update newField() method</p></li>
+<li><p>update getFieldValue() method</p></li>
+<li><p>update setFieldValue() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _calcTransform() method</p></li>
+<li><p>update calcTransform() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDicomImport.DialogDicomImport</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update convert() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogImport.DialogImport</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new _nameChanged() method</p></li>
+<li><p>new _setSequencesFromModality() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update convert()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new scalarToRGB() method</p></li>
+<li><p>new RBGToScalar() method</p></li>
+<li><p>update _initFileMenu() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDiffusionModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update run() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>new _context_menu_make() method</p></li>
+<li><p>new setCustomMenu() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _popupGlobals() method</p></li>
+<li><p>new _popupModules() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarOrthogonalSliceVolumeViewWidget</p></li>
+<li><p>widgets.iconBarWidgets.IconBarOrthogonalSliceTrajectoryViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setVolume() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.ImagePreviewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update updateImage() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheImageViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update updateImage() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new saveRGB() method</p></li>
+<li><p>new saveGrayscale() method</p></li>
+<li><p>new saveLuminance() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update displayInSliceView() method</p></li>
+<li><p>update displayInOrthogonalView() method</p></li>
+<li><p>update displayInSynchronisedView() method</p></li>
+<li><p>update overlay() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _addSlice() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _addSlice() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceOverlayViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _addReslice() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceRegistrationViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _addSlice() method</p></li>
+<li><p>update _addReslice() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _addSlice() method</p></li>
+<li><p>update _addTexture() method</p></li>
+<li><p>update _addOuterSurfaceMesh() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _currentFileChanged() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSettingsLayout() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update setSelectionTo() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage.isRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rgb image, i.e. three uint8 components</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getGrayscaleFromRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get a grayscale scalar image copy of the current image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getLuminanceFromRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get a luminance scalar image copy of the current image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get an rgb copy of the current image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.cast()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix for multicomponent images</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.getGrayscaleFromRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get a grayscale scalar image copy of the current image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.getLuminanceFromRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get a luminance scalar image copy of the current image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheVolume.SisypheVolume.getRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>get an rgb copy of the current image</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSheet.SisypheSheet.loadNPY()</p></li>
+<li><p>core.sisypheSheet.SisypheSheet.loadNPZ()</p></li>
+<li><p>core.sisypheSheet.SisypheSheet.loadSAS()</p></li>
+<li><p>core.sisypheSheet.SisypheSheet.loadSPSS()</p></li>
+<li><p>core.sisypheSheet.SisypheSheet.loadSTATA()</p></li>
+<li><p>core.sisypheSheet.SisypheSheet.loadXML()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>open numpy, sas, spss, stata and xml files</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.scalarToRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for RGB conversion</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe.RBGToScalar()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dialog for grayscale or luminance conversion</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2._context_menu_make()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add ConsoleWidget popup menu actions to the RichJupyterWidget2 popup menu</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2.setCustomMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set self._custommenu attribute. This attribute stores the ConsoleWidget popup menu</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget._popupModules()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>popup menu management of the self._modules widget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.saveRGB()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save an rgb copy of the SisypheVolume associated with the thumbnail</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.saveGrayscale()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save a grayscale copy of the SisypheVolume associated with the thumbnail</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.saveLuminance()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save a luminance copy of the SisypheVolume associated with the thumbnail</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImage.SisypheImage.__str__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add rgb info</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.isIsotropic()</p></li>
+<li><p>core.sisypheImage.SisypheImage.isAnisotropic()</p></li>
+<li><p>core.sisypheImage.SisypheImage.isThickAnisotropic()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, add if not self.isEmpty():</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage._updateNumpyFromSITKImage()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, restore double transposition to avoid warning</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage._updateVTKImageFromNumpy()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, rgb management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheImage.SisypheImage.getAbs() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSign() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSqr() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSqrt() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getExp() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getExp2() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getLog() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getLog2() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getLog10() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSin() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getCos() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getTan() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArcsin() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArccos() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArctan() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getSinh() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getCosh() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getTanh() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArcsinh() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArccosh() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getArctanh() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getFloor() method</p></li>
+<li><p>core.sisypheImage.SisypheImage.getCeil() method</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bufg fix for multi-component images, replace self._numpy_array with self.getNumpy()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSheet.SisypheSheet.loadCSV()</p></li>
+<li><p>core.sisypheSheet.SisypheSheet.loadTXT()</p></li>
+<li><p>core.sisypheSheet.SisypheSheet.loadXLSX()</p></li>
+<li><p>core.sisypheSheet.SisypheSheet.loadJSON()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove dict() intermediate step</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSheet.SisypheSheet.saveCSV()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self.to_csv(filename, index_label=’Series’) with self.to_csv(filename, index=False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSheet.SisypheSheet.saveMATFILE()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self.to_dict() with self.to_dict(index=False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSheet.SisypheSheet.saveTXT()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self.to_csv(filename, index_label=’Series’, sep=sep) with self.to_csv(filename, index=False, sep=sep)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.SisypheSettings.newField()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘file’ vartype management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheSettings.SisypheSettings.getFieldValue()</p></li>
+<li><p>core.sisypheSettings.SisypheSettings.setFieldValue()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘file’ vartype management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._ffidlist attribute, fiducial markers coordinates with error &lt; self._maxerror</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox._calcTransform()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._fidlist with self._ffidlist</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheFiducialBox.SisypheFiducialBox.calcTransform()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>calculate self._ffidlist from self._fidlist</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDicomImport.DialogDicomImport.convert()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>set default LUT based on DICOM modality</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.windowSisyphe.WindowSisyphe._initFileMenu()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new attribute self._action[‘rgb’], “Conversion to RGB” menu</p></li>
+<li><p>new attribute self._action[‘scalar’], “Conversion to Grayscale/Luminance” menu</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>processing.capturedStdoutProcessing.ProcessDiffusionModel.run()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>save diffusion tensor major direction in rbg format</p></li>
+<li><p>save rgb fa</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._custommenu attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add a popup menu to the self._modules widget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.ConsoleWidget._popupGlobals()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add actions to the popup menu of the self._globals widget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.iconBarWidgets.IconBarOrthogonalSliceVolumeViewWidget.setVolume()</p></li>
+<li><p>widgets.iconBarWidgets.IconBarOrthogonalSliceTrajectoryViewWidget.setVolume()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rgb volume management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.ImagePreviewWidget.__init__()</p></li>
+<li><p>widgets.imageWidgets.ImagePreviewWidget.updateImage()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rgb volume management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheImageViewWidget.updateImage()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rgb volume management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>hide self._component &amp; self._lutwidget widgets from the popup menu if the volume is RGB</p></li>
+<li><p>new attribute self._action[‘rgb’], “Save RGB copy as” menu</p></li>
+<li><p>new attribute self._action[‘gray’], “Save grayscale copy as” menu</p></li>
+<li><p>new attribute self._action[‘lm’], “Save luminance copy as” menu</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInSliceView()</p></li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInOrthogonalView()</p></li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.displayInSynchronisedView()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rgb volume management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.imageWidgets.SisypheVolumeThumbnailButtonWidget.overlay()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rgb volume management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceViewWidget._addSlice()</p></li>
+<li><p>widgets.sliceViewWidgets.SliceOverlayViewWidget._addReslice()</p></li>
+<li><p>widgets.sliceViewWidgets.SliceRegistrationViewWidget._addSlice()</p></li>
+<li><p>widgets.sliceViewWidgets.SliceRegistrationViewWidget._addReslice()</p></li>
+<li><p>widgets.sliceTrajectoryViewWidget.SliceTrajectoryViewWidget._addSlice()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rgb volume management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget._addSlice()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget._addTexture()</p></li>
+<li><p>widgets.volumeViewWidget.VolumeViewWidget._addOuterSurfaceMesh()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>rgb volume management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.fileBrowserWidget.FileBrowserWidget._currentFileChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, .npz preview, add r = r[tuple(r.keys())[0]]</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget. SettingsWidget._initSettingsLayout()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘file’ vartype management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.selectFileWidgets.FilesSelectionWidget.setSelectionTo()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add scrollto parameter (bool)</p></li>
+<li><p>scroll to selected item if scrollto is True</p></li>
 </ul>
 </div></blockquote>
 </li>
