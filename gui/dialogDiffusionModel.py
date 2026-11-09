@@ -76,13 +76,13 @@ class DialogDiffusionModel(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Init window
 
         self.setWindowTitle('Diffusion model')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # < Revision 05/10/2026
@@ -207,7 +207,6 @@ class DialogDiffusionModel(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -227,10 +226,8 @@ class DialogDiffusionModel(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         exitb.clicked.connect(self.accept)
         # < Revision 11/07/2025
-        # noinspection PyUnresolvedReferences
         # self._save.clicked.connect(self.save)
         self._save.clicked.connect(self.multiExecute)
         # Revision 11/07/2025 >
@@ -241,14 +238,13 @@ class DialogDiffusionModel(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._bvals.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 17/06/2025 >
         self.setModal(True)
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _center(self, widget):
         self.adjustSize()
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -270,8 +266,8 @@ class DialogDiffusionModel(QDialog):
         self._bvals.setToolTip('')
         # Revision 30/07/2026 >
 
+    # noinspection unresolved-references,inconsistent-returns
     def _updateBVals(self):
-        # noinspection PyInconsistentReturns
         if not self._bvals.isEmpty():
             try: v1 = loadBVal(self._bvals.getFilename(), format='xml')
             except:
@@ -313,14 +309,13 @@ class DialogDiffusionModel(QDialog):
                         buff = '{}: {}'.format(basename(dwi[0]), ' '.join([str(j) for j in v[0]]))
                         for i in range(1, len(v)):
                             buff += '\n{}: {}'.format(basename(dwi[i]), ' '.join([str(j) for j in v[i]]))
-                        # noinspection PyInconsistentReturns
                         self._bvecs.setToolTip(buff)
                     else: raise ValueError('b-vectors and b-values count <= 1.')
                 else: raise ValueError('b-vectors and b-values mismatch.')
             else: raise IOError('No such file {}.'.format(filename))
 
+    # noinspection unresolved-references,inconsistent-returns
     def _updateBVecs(self):
-        # noinspection PyInconsistentReturns
         if not self._bvecs.isEmpty():
             try: v1 = loadBVec(self._bvecs.getFilename(), format='xml')
             except:
@@ -362,7 +357,6 @@ class DialogDiffusionModel(QDialog):
                         buff = '{}: {}'.format(basename(dwi[0]), str(v[0]))
                         for i in range(1, len(v)):
                             buff += '\n{}: {}'.format(basename(dwi[i]), str(v[i]))
-                        # noinspection PyInconsistentReturns
                         self._bvals.setToolTip(buff)
                     else: raise ValueError('b-vectors and b-values count <= 1.')
                 else: raise ValueError('b-vectors and b-values mismatch.')
@@ -581,6 +575,7 @@ class DialogDiffusionModel(QDialog):
                            title=self.windowTitle(),
                            text=r)
 
+    # noinspection unresolved-references
     def showEvent(self, a0):
         super().showEvent(a0)
         self.move(self.screen().availableGeometry().center() - self.rect().center())
@@ -613,6 +608,7 @@ class DialogALPS(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -623,7 +619,6 @@ class DialogALPS(QDialog):
         # Init window
 
         self.setWindowTitle('Diffusion analysis along perivascular space')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init QLayout
@@ -678,7 +673,6 @@ class DialogALPS(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         exitb = QPushButton('Close')
         exitb.setAutoDefault(True)
@@ -703,10 +697,8 @@ class DialogALPS(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         exitb.clicked.connect(self.accept)
         # < Revision 11/07/2025
-        # noinspection PyUnresolvedReferences
         # self._save.clicked.connect(self.save)
         self._exec.clicked.connect(self.execute)
         # Revision 11/07/2025 >
@@ -717,7 +709,6 @@ class DialogALPS(QDialog):
         screen = QApplication.primaryScreen().geometry()
         self._files.setMinimumWidth(int(screen.width() * 0.33))
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 17/06/2025 >
         self.setModal(True)
@@ -745,6 +736,7 @@ class DialogALPS(QDialog):
                 self._tensor,
                 self._lbl]
 
+    # noinspection unresolved-references
     def execute(self):
         n = self._files.filenamesCount() > 0
         if n > 0:
@@ -896,6 +888,7 @@ class DialogALPS(QDialog):
                 if platform == 'win32':
                     import pywinstyles
                     cl = self._files.palette().base().color()
+                    # noinspection string-format
                     c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
                     pywinstyles.change_header_color(dialog, c)
                 dialog.newTab('Diffusion ALPS Index', capture=False, clipbrd=False, scrshot=False, dataset=True)

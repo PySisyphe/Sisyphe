@@ -110,7 +110,7 @@ from Sisyphe.widgets.iconBarViewWidgets import IconBarSynchronisedGridViewWidget
 from Sisyphe.widgets.multiComponentViewWidget import IconBarMultiComponentViewWidget
 from Sisyphe.widgets.projectionViewWidget import IconBarMultiProjectionViewWidget
 
-# noinspection PyCompatibility,PyPackageRequirements
+# noinspection PyCompatibility
 import __main__
 from PyQt5.QtWidgets import QApplication
 
@@ -134,7 +134,7 @@ class WindowSisyphe(QMainWindow):
 
     QMainWindow ->   WindowSisyphe
 
-    Last revision: 17/10/2026
+    Last revision: 25/10/2026
     """
 
     # Class constants
@@ -687,6 +687,7 @@ class WindowSisyphe(QMainWindow):
         self._initViewsMenu()
         self._initWindowMenu()
 
+    # noinspection unresolved-references
     def _initFileMenu(self) -> None:
         """
             File menu
@@ -725,6 +726,8 @@ class WindowSisyphe(QMainWindow):
                 Edit Attributes
                 ID replacement
                 Anonymize
+                Conversion to RGB
+                Conversion to Lightness/Luminance
                 --
                 Edit volume labels
                 ROIs to label volume
@@ -758,11 +761,8 @@ class WindowSisyphe(QMainWindow):
                 Quit
         """
         self._menu['file'] = self._menubar.addMenu('File')
-        # noinspection PyUnresolvedReferences
         self._menu['file'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menu['file'].setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menu['file'].setAttribute(Qt.WA_TranslucentBackground, True)
 
         # Icons
@@ -804,16 +804,12 @@ class WindowSisyphe(QMainWindow):
 
         self._action['open'] = self._menu['file'].addAction(icload, 'Open...')
         self._menu['template'] = self._menu['file'].addMenu('Open template...')
-        # noinspection PyUnresolvedReferences
         self._menu['template'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
         self._menu['template'].triggered.connect(self._openTemplate)
         self._initTemplateMenu()
         submenu = self._menu['file'].addMenu('Open from format')
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['opennii'] = submenu.addAction(icopennii, 'Open Nifti...')
         self._action['opennrrd'] = submenu.addAction(icopennrrd, 'Open Nrrd...')
@@ -824,7 +820,6 @@ class WindowSisyphe(QMainWindow):
         self._action['openvtk'] = submenu.addAction(icopenvtk, 'Open VTK...')
 
         self._menu['recent'] = self._menu['file'].addMenu('Recent files...')
-        # noinspection PyUnresolvedReferences
         self._menu['recent'].setWindowFlag(Qt.NoDropShadowWindowHint, True)
         self._menu['recent'].aboutToShow.connect(self._updateRecentMenu)
         self._menu['recent'].triggered.connect(self._openRecent)
@@ -840,11 +835,8 @@ class WindowSisyphe(QMainWindow):
         self._action['saveall'] = self._menu['file'].addAction(icsaveall, 'Save all')
         self._action['saveas'] = self._menu['file'].addAction(icsave, 'Save As...')
         submenu = self._menu['file'].addMenu('Save to format')
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['savenii'] = submenu.addAction(icosavenii, 'Save Nifti...')
         self._action['savenpy'] = submenu.addAction(icosavenpy, 'Save Numpy...')
@@ -867,6 +859,10 @@ class WindowSisyphe(QMainWindow):
         self._action['editattr'] = self._menu['file'].addAction(icattr, 'Edit Attributes...')
         self._action['editid'] = self._menu['file'].addAction(icid, 'ID replacement...')
         self._action['anonymize'] = self._menu['file'].addAction(icano, 'Anonymize...')
+        # < Revision 25/10/2026
+        self._action['rgb'] = self._menu['file'].addAction(icano, 'Conversion to RGB...')
+        self._action['scalar'] = self._menu['file'].addAction(icano, 'Conversion to Lightness/Luminance...')
+        # Revision 25/10/2026 >
 
         self._menu['file'].addSeparator()
         self._action['editlabels'] = self._menu['file'].addAction(iclabel, 'Edit volume labels...')
@@ -880,11 +876,8 @@ class WindowSisyphe(QMainWindow):
 
         self._menu['file'].addSeparator()
         submenu = self._menu['file'].addMenu('Import')
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['importnifti'] = submenu.addAction(icimportnii, 'Import Nifti...')
         self._action['importminc'] = submenu.addAction(icimportmnc, 'Import Minc...')
@@ -892,11 +885,8 @@ class WindowSisyphe(QMainWindow):
         self._action['importvtk'] = submenu.addAction(icimportvtk, 'Import Vtk...')
         self._action['importsis'] = submenu.addAction(icimportvol, 'Import Sisyphe (*.vol)...')
         submenu = self._menu['file'].addMenu('Export')
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['exportnifti'] = submenu.addAction(icexport, 'Export Nifti...')
         self._action['exportminc'] = submenu.addAction(icexport, 'Export Minc...')
@@ -904,22 +894,16 @@ class WindowSisyphe(QMainWindow):
         self._action['exportvtk'] = submenu.addAction(icexport, 'Export Vtk...')
         self._action['exportnpy'] = submenu.addAction(icexport, 'Export Numpy...')
         submenu = self._menu['file'].addMenu('DICOM')
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['dcmimport'] = submenu.addAction(icimport, 'DICOM Import...')
         self._action['dcmrtimport'] = submenu.addAction(icimport, 'DICOM RT Import...')
         self._action['dcmexport'] = submenu.addAction(icexport, 'DICOM Export...')
         self._action['dcmquery'] = submenu.addAction(icimport, 'DICOM Query/Retrieve from DICOM SCP Server...')
         submenu.addSeparator()
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         submenu.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action['dcmds'] = submenu.addAction('DICOM Dataset...')
         self._action['xdcm'] = submenu.addAction('XML DICOM Attributes...')
@@ -936,7 +920,6 @@ class WindowSisyphe(QMainWindow):
         self._action['save'].setShortcut(QKeySequence.Save)
         self._action['saveas'].setShortcut(QKeySequence.SaveAs)
         self._action['close'].setShortcut(QKeySequence.Delete)
-        # noinspection PyUnresolvedReferences
         self._action['editattr'].setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Question))
 
         # Connect
@@ -956,6 +939,10 @@ class WindowSisyphe(QMainWindow):
         self._action['editattr'].triggered.connect(self.editAttr)
         self._action['editid'].triggered.connect(self.editID)
         self._action['anonymize'].triggered.connect(self.anonymize)
+        # < Revision 25/10/2026
+        self._action['rgb'].triggered.connect(self.scalarToRGB)
+        self._action['scalar'].triggered.connect(self.RBGToScalar)
+        # Revision 25/10/2026 >
         self._action['editlabels'].triggered.connect(lambda _: self.editLabels())
         self._action['lutedit'].triggered.connect(self.lutEdit)
         self._action['opennii'].triggered.connect(lambda _: self.loadNifti())
@@ -1776,7 +1763,7 @@ class WindowSisyphe(QMainWindow):
         console.setTitle(self._tabview.tabText(7))
         self._menu['views'].addMenu(console)
 
-    # noinspection PyTypeChecker
+    # noinspection unresolved-references
     def _initWindowMenu(self) -> None:
         """
             Window menu
@@ -1899,7 +1886,6 @@ class WindowSisyphe(QMainWindow):
         # noinspection PyUnresolvedReferences
         self._action['proj'].setShortcut(QKeySequence(Qt.Key_F4))
         # < Revision 02/06/2026
-        # noinspection PyUnresolvedReferences
         self._action['dock'].setShortcut(QKeySequence(Qt.Key.Key_Tab))
         # Revision 02/06/2026 >
         # noinspection PyUnresolvedReferences
@@ -3136,7 +3122,7 @@ class WindowSisyphe(QMainWindow):
     # Revision 10/02/2026 >
 
     # < Revision 10/02/2026
-    # getBrowserVisibility method
+    # add getBrowserVisibility method
     def getBrowserVisibility(self) -> bool:
         return self._tabview.isTabVisible(6)
     # Revision 10/02/2026 >
@@ -4171,6 +4157,44 @@ class WindowSisyphe(QMainWindow):
             messageBox(self, 'Anonymize error', '{}\n{}'.format(type(err), str(err)))
             if self._logger is not None: self._logger.error(traceback.format_exc())
             if wait is not None: wait.close()
+
+    # < Revision 25/10/2025
+    # add scalarToRGB method
+    def scalarToRGB(self) -> None:
+        from Sisyphe.gui.dialogDatatype import DialogToRGB
+        self._dialog = DialogToRGB()
+        self._dialog.setCompression(self._compress)
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32':
+            try: __main__.updateWindowTitleBarColor(self._dialog)
+            except: pass
+        try:
+            # self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-torgb')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogToRGB]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Conversion to RGB dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 25/10/2025 >
+
+    # < Revision 25/10/2025
+    # add RBGToScalar method
+    def RBGToScalar(self) -> None:
+        from Sisyphe.gui.dialogDatatype import DialogFromRGB
+        self._dialog = DialogFromRGB()
+        self._dialog.setCompression(self._compress)
+        self._dialog.getFilesSelectionWidget().setToolbarThumbnail(self._thumbnail)
+        if platform == 'win32':
+            try: __main__.updateWindowTitleBarColor(self._dialog)
+            except: pass
+        try:
+            # self._tabHelp.setPage('PySisyphe_File.html', 'menu-section-fromrgb')
+            if self._logger is not None: self._logger.info('Dialog exec [gui.dialogDatatype.DialogFromRGB]')
+            self._dialog.exec()
+        except Exception as err:
+            messageBox(self, 'Conversion to Lightness/Luminance dialog error', '{}\n{}'.format(type(err), str(err)))
+            if self._logger is not None: self._logger.error(traceback.format_exc())
+    # Revision 25/10/2025 >
 
     def editLabels(self, filename: str | SisypheVolume = '') -> None:
         v = None
@@ -5911,11 +5935,8 @@ class WindowSisyphe(QMainWindow):
                 self._dialog.setAttribute(Qt.WA_DeleteOnClose)
                 # noinspection PyUnresolvedReferences,PyTypeChecker
                 self._dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
-                # noinspection PyUnresolvedReferences
                 self._dialog.finished.connect(lambda: self.setEnabled(True))
-                # noinspection PyUnresolvedReferences
                 self._dialog.finished.connect(lambda: self._menubar.setEnabled(True))
-                # noinspection PyUnresolvedReferences
                 self._dialog.finished.connect(lambda: self._dialog.close())
                 if self._logger is not None: self._logger.info('Dialog exec [gui.dialogFiducialBox.DialogFiducialBox] {}'.format(v.getBasename()))
                 self._dialog.show()
@@ -6908,7 +6929,9 @@ class WindowSisyphe(QMainWindow):
             if self._logger is not None: self._logger.error(traceback.format_exc())
 
     def contrast(self, filename: str = '') -> None:
-        if not isinstance(filename, str): filename = ''
+        if not isinstance(filename, str):
+            # noinspection unreachable-code
+            filename = ''
         # < Revision 12/10/2025
         self._tabHelp.setPage('PySisyphe_Mapping.html', 'menu-section-contrast')
         # Revision 12/10/2025 >
@@ -6940,7 +6963,9 @@ class WindowSisyphe(QMainWindow):
                              '{} model is not estimated.'.format(basename(filename)))
 
     def result(self, filename: str = '') -> None:
-        if not isinstance(filename, str): filename = ''
+        if not isinstance(filename, str):
+            # noinspection unreachable-code
+            filename = ''
         if filename == '' or not exists(filename):
             # < Revision 16/04/2025
             # self._dialog = DialogFileSelection(parent=self)
@@ -6987,11 +7012,8 @@ class WindowSisyphe(QMainWindow):
                     self._dialog.setAttribute(Qt.WA_DeleteOnClose)
                     # noinspection PyUnresolvedReferences,PyTypeChecker
                     self._dialog.setWindowFlag(Qt.WindowStaysOnTopHint)
-                    # noinspection PyUnresolvedReferences
                     self._dialog.finished.connect(lambda: self.setEnabled(True))
-                    # noinspection PyUnresolvedReferences
                     self._dialog.finished.connect(lambda: self._menubar.setEnabled(True))
-                    # noinspection PyUnresolvedReferences
                     self._dialog.finished.connect(lambda: self._dialog.close())
                     self._dialog.show()
                     # Revision 29/11/2024 >

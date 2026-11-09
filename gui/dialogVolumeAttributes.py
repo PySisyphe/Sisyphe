@@ -60,11 +60,11 @@ class DialogVolumeAttributes(QDialog):
     _volume     SisypheVolume
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent=None, vol=None):
         super().__init__(parent)
 
         self.setWindowTitle('Edit volume attributes')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # < Revision 05/10/2026
@@ -104,7 +104,6 @@ class DialogVolumeAttributes(QDialog):
         items = SisypheAcquisition.getCodeToModalityDict().values()
         for item in items:
             self._modality.addItem(item)
-        # noinspection PyUnresolvedReferences
         self._modality.adjustSize()
         self._modality.setToolTip('Image modality\n'
                                   'OT Other, secondary/post processed\n'
@@ -115,7 +114,6 @@ class DialogVolumeAttributes(QDialog):
                                   'LB Label image\n'
                                   'TP Template image\n'
                                   'PJ Projection image')
-        # noinspection PyUnresolvedReferences
         self._modality.currentIndexChanged.connect(self._setSequencesFromModality)
         # Sequence
         self._sequence = QComboBox(self)
@@ -123,7 +121,6 @@ class DialogVolumeAttributes(QDialog):
         self._setSequencesFromModality()
         self._sequence.adjustSize()
         self._sequence.setToolTip('Sequence name')
-        # noinspection PyUnresolvedReferences
         self._sequence.currentIndexChanged.connect(self._setUnitFromSequence)
         # Unit
         self._unit = QComboBox(self)
@@ -154,7 +151,6 @@ class DialogVolumeAttributes(QDialog):
         self._aID = QLineEdit(self)
         self._aID.setFixedWidth(400)
         self._aID.setReadOnly(True)
-        # noinspection PyUnresolvedReferences
         self._aID.setAlignment(Qt.AlignCenter)
         self._aID.setToolTip('Array ID\n'
                              'This is a unique, read-only value that is\n'
@@ -163,7 +159,6 @@ class DialogVolumeAttributes(QDialog):
         # ID
         self._ID = QLineEdit(self)
         self._ID.setFixedWidth(400)
-        # noinspection PyUnresolvedReferences
         self._ID.setAlignment(Qt.AlignCenter)
         self._ID.setToolTip('Space/Transform ID\n'
                             'This ID may be shared by multiple images\n'
@@ -181,7 +176,6 @@ class DialogVolumeAttributes(QDialog):
         self._unlocksp.setChecked(True)
         self._unlocksp.setToolTip('Lock/unlock spacing.\n'
                                   'Locked spacing is not copied.')
-        # noinspection PyUnresolvedReferences
         self._unlocksp.toggled.connect(self._unlockSpacing)
         # Revision 25/12/2025 >
         self._spacingx = QDoubleSpinBox(self)
@@ -192,7 +186,6 @@ class DialogVolumeAttributes(QDialog):
         self._spacingx.setToolTip('Voxel spacing in mm along the x-axis.')
         self._spacingx.adjustSize()
         self._spacingx.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
-        # noinspection PyUnresolvedReferences
         self._spacingx.setAlignment(Qt.AlignCenter)
         self._spacingx.setEnabled(False)
         self._spacingy = QDoubleSpinBox(self)
@@ -203,7 +196,6 @@ class DialogVolumeAttributes(QDialog):
         self._spacingy.setToolTip('Voxel spacing in mm along the y-axis.')
         self._spacingy.adjustSize()
         self._spacingy.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
-        # noinspection PyUnresolvedReferences
         self._spacingy.setAlignment(Qt.AlignCenter)
         self._spacingy.setEnabled(False)
         self._spacingz = QDoubleSpinBox(self)
@@ -214,7 +206,6 @@ class DialogVolumeAttributes(QDialog):
         self._spacingz.setToolTip('Voxel spacing in mm along the z-axis.')
         self._spacingz.adjustSize()
         self._spacingz.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
-        # noinspection PyUnresolvedReferences
         self._spacingz.setAlignment(Qt.AlignCenter)
         self._spacingz.setEnabled(False)
         self._lspacing = QHBoxLayout()
@@ -231,7 +222,6 @@ class DialogVolumeAttributes(QDialog):
         self._unlocko.setChecked(True)
         self._unlocko.setToolTip('Lock/unlock origin.\n'
                                  'Locked origin is not copied.')
-        # noinspection PyUnresolvedReferences
         self._unlocko.toggled.connect(self._unlockOrigin)
         # Revision 25/12/2025 >
         self._originx = QDoubleSpinBox(self)
@@ -241,7 +231,6 @@ class DialogVolumeAttributes(QDialog):
         self._originx.adjustSize()
         self._originx.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._originx.setSuffix(' mm')
-        # noinspection PyUnresolvedReferences
         self._originx.setAlignment(Qt.AlignCenter)
         self._originx.setToolTip('Image origin in mm along the x-axis.')
         self._originx.setEnabled(False)
@@ -252,7 +241,6 @@ class DialogVolumeAttributes(QDialog):
         self._originy.adjustSize()
         self._originy.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._originy.setSuffix(' mm')
-        # noinspection PyUnresolvedReferences
         self._originy.setAlignment(Qt.AlignCenter)
         self._originy.setToolTip('Image origin in mm along the y-axis.')
         self._originy.setEnabled(False)
@@ -263,7 +251,6 @@ class DialogVolumeAttributes(QDialog):
         self._originz.adjustSize()
         self._originz.setStepType(QDoubleSpinBox.AdaptiveDecimalStepType)
         self._originz.setSuffix(' mm')
-        # noinspection PyUnresolvedReferences
         self._originz.setAlignment(Qt.AlignCenter)
         self._originz.setToolTip('Image origin in mm along the z-axis.')
         self._originz.setEnabled(False)
@@ -328,7 +315,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir1.setMaximum(1.0)
         self._dir1.setToolTip('Unit vector of the x-axis.')
         self._dir1.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir1.setAlignment(Qt.AlignCenter)
         self._dir2 = QDoubleSpinBox(self)
         self._dir2.setSingleStep(0.1)
@@ -336,7 +322,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir2.setMaximum(1.0)
         self._dir2.setToolTip('Unit vector of the x-axis.')
         self._dir2.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir2.setAlignment(Qt.AlignCenter)
         self._dir3 = QDoubleSpinBox(self)
         self._dir3.setSingleStep(0.1)
@@ -344,7 +329,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir3.setMaximum(1.0)
         self._dir3.setToolTip('Unit vector of the x-axis.')
         self._dir3.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir3.setAlignment(Qt.AlignCenter)
         self._dir4 = QDoubleSpinBox(self)
         self._dir4.setSingleStep(0.1)
@@ -352,7 +336,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir4.setMaximum(1.0)
         self._dir4.setToolTip('Unit vector of the y-axis.')
         self._dir4.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir4.setAlignment(Qt.AlignCenter)
         self._dir5 = QDoubleSpinBox()
         self._dir5.setSingleStep(0.1)
@@ -360,7 +343,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir5.setMaximum(1.0)
         self._dir5.setToolTip('Unit vector of the y-axis.')
         self._dir5.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir5.setAlignment(Qt.AlignCenter)
         self._dir6 = QDoubleSpinBox()
         self._dir6.setSingleStep(0.1)
@@ -368,7 +350,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir6.setMaximum(1.0)
         self._dir6.setToolTip('Unit vector of the y-axis.')
         self._dir6.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir6.setAlignment(Qt.AlignCenter)
         self._dir7 = QDoubleSpinBox()
         self._dir7.setSingleStep(0.1)
@@ -376,7 +357,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir7.setMaximum(1.0)
         self._dir7.setToolTip('Unit vector of the z-axis.')
         self._dir7.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir7.setAlignment(Qt.AlignCenter)
         self._dir8 = QDoubleSpinBox()
         self._dir8.setSingleStep(0.1)
@@ -384,7 +364,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir8.setMaximum(1.0)
         self._dir8.setToolTip('Unit vector of the z-axis.')
         self._dir8.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir8.setAlignment(Qt.AlignCenter)
         self._dir9 = QDoubleSpinBox()
         self._dir9.setSingleStep(0.1)
@@ -392,7 +371,6 @@ class DialogVolumeAttributes(QDialog):
         self._dir9.setMaximum(1.0)
         self._dir9.setToolTip('Unit vector of the z-axis.')
         self._dir9.adjustSize()
-        # noinspection PyUnresolvedReferences
         self._dir9.setAlignment(Qt.AlignCenter)
         self._ldir1 = QHBoxLayout()
         self._ldir1.setSpacing(5)
@@ -427,101 +405,54 @@ class DialogVolumeAttributes(QDialog):
         layout = QGridLayout()
         layout.setContentsMargins(5, 0, 5, 0)
         # Identity fields
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Identity'), 0, 0, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Lastname'), 1, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._lastname, 1, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Firstname'), 2, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._firstname, 2, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Gender'), 3, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._gender, 3, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Date of birth'), 4, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._dob, 4, 1, alignment=Qt.AlignLeft)
         # Acquisition fields
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Acquisition'), 5, 0, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Modality'), 6, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._modality, 6, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Sequence'), 7, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._sequence, 7, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Unit'), 8, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._unit, 8, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Frame'), 9, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._frame, 9, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Date of scan'), 10, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._dos, 10, 1, alignment=Qt.AlignLeft)
         # Image fields
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Image'), 11, 0, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Array ID'), 12, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._aID, 12, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Transform ID'), 13, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._ID, 13, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Size'), 14, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._size, 14, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Spacing'), 15, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addLayout(self._lspacing, 15, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Origin'), 16, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addLayout(self._lorigin, 16, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Data type'), 17, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._datatype, 17, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Slope'), 18, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._slope, 18, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Intercept'), 19, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._inter, 19, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Orientation'), 20, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._orient, 20, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('First vector direction'), 21, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addLayout(self._ldir1, 21, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Second vector direction'), 22, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addLayout(self._ldir2, 22, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Third vector direction'), 23, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addLayout(self._ldir3, 23, 1, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(QLabel('Memory size'), 24, 0, alignment=Qt.AlignRight)
-        # noinspection PyUnresolvedReferences
         layout.addWidget(self._memory, 24, 1, alignment=Qt.AlignLeft)
         self._layout.addLayout(layout)
 
@@ -530,7 +461,6 @@ class DialogVolumeAttributes(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         reset = QPushButton('Reset')
         reset.setFixedWidth(100)
@@ -545,11 +475,8 @@ class DialogVolumeAttributes(QDialog):
         layout.addStretch()
         layout.addWidget(reset)
         self._layout.addLayout(layout)
-        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self._accept)
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         reset.clicked.connect(self._initFields)
 
         if isinstance(vol, SisypheVolume): self.setVolume(vol)

@@ -33,6 +33,8 @@ from Sisyphe.widgets.selectFileWidgets import MultiExtFilesSelectionWidget
 from Sisyphe.widgets.functionsSettingsWidget import DialogSettingsWidget
 
 __all__ = ['DialogDatatype',
+           'DialogToRGB',
+           'DialogFromRGB',
            'DialogAttributes',
            'DialogEditID']
 
@@ -41,10 +43,11 @@ Class hierarchy
 ~~~~~~~~~~~~~~~
 
     - QDialog -> DialogDatatype
+              -> DialogToRGB
+              -> DialogFromRGB
               -> DialogAttributes
               -> DialogEditID
 """
-
 
 class DialogDatatype(QDialog):
     """
@@ -73,11 +76,11 @@ class DialogDatatype(QDialog):
     _compress   bool, save xvol in compressed format
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Datatype conversion')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -119,7 +122,6 @@ class DialogDatatype(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -134,9 +136,7 @@ class DialogDatatype(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
     # Public methods
@@ -180,6 +180,243 @@ class DialogDatatype(QDialog):
             self._files.clearall()
 
 
+class DialogToRGB(QDialog):
+    """
+    DialogToRGB
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog window for RGB conversion.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogToRGB
+
+    Creation: 25/10/2026
+    """
+
+    # Special method
+
+    """
+    Private attributes
+
+    _files      FilesSelectionWidget
+    _compress   bool, save xvol in compressed format
+    """
+
+    # noinspection unresolved-references
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle('Conversion to RGB')
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
+        self.setSizeGripEnabled(False)
+
+        self._compress = False
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Files selection widgets
+
+        self._files = FilesSelectionWidget()
+        self._files.setMaximumNumberOfFiles(500)
+        self._files.filterSisypheVolume()
+        self._files.setCurrentVolumeButtonVisibility(False)
+        self._layout.addWidget(self._files)
+
+        # Init default dialog buttons
+
+        lyout = QHBoxLayout()
+        if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
+        lyout.setSpacing(10)
+        lyout.setDirection(QHBoxLayout.RightToLeft)
+        ok = QPushButton('Close')
+        ok.setFixedWidth(100)
+        ok.setAutoDefault(True)
+        ok.setDefault(True)
+        self._execute = QPushButton('Convert')
+        self._execute.setToolTip('Execute RGB conversion.')
+        lyout.addWidget(ok)
+        lyout.addWidget(self._execute)
+        lyout.addStretch()
+        self._layout.addLayout(lyout)
+
+        # Qt Signals
+
+        ok.clicked.connect(self.accept)
+        self._execute.clicked.connect(self.execute)
+
+    # Public methods
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
+    def getFilesSelectionWidget(self):
+        return self._files
+
+    def execute(self):
+        n = self._files.filenamesCount()
+        if n > 0:
+            title = 'RGB conversion'
+            wait = DialogWait(title=title, progress=True, progressmin=0, progressmax=n,
+                              progresstxt=True, cancel=False)
+            wait.setCurrentProgressValue(0)
+            wait.open()
+            for filename in self._files.getFilenames():
+                wait.setInformationText('Convert {}'.format(basename(filename)))
+                wait.incCurrentProgressValue()
+                v = SisypheVolume()
+                if exists(filename):
+                    try:
+                        v.load(filename)
+                        v2 = v.getRGB()
+                        if self._compress: v2.setCompressionOn()
+                        v2.save()
+                    except Exception as err:
+                        messageBox(self, title, '{}'.format(err))
+            wait.close()
+            self._files.clearall()
+
+
+class DialogFromRGB(QDialog):
+    """
+    DialogFromRGB
+
+    Description
+    ~~~~~~~~~~~
+
+    GUI dialog window for lightness or luminance conversion.
+
+    Inheritance
+    ~~~~~~~~~~~
+
+    QDialog -> DialogFromRGB
+
+    Last revision: 25/10/2026
+    """
+
+    # Special method
+
+    """
+    Private attributes
+
+    _files      FilesSelectionWidget
+    _datatype   LabeledComboBox
+    _compress   bool, save xvol in compressed format
+    """
+
+    # noinspection unresolved-references
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle('Conversion to Lightness/Luminance')
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        screen = QApplication.primaryScreen().geometry()
+        self.setMinimumWidth(int(screen.width() * 0.33))
+        self.setSizeGripEnabled(False)
+
+        self._compress = False
+
+        # Init QLayout
+
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(5, 5, 5, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
+
+        # Files selection widgets
+
+        self._files = FilesSelectionWidget()
+        self._files.setMaximumNumberOfFiles(500)
+        self._files.filterSisypheVolume()
+        self._files.filterMultiComponent()
+        self._files.filterSameDatatype('uint8')
+        self._files.setCurrentVolumeButtonVisibility(False)
+        self._layout.addWidget(self._files)
+
+        # Datatype selection widget
+
+        lyout = QHBoxLayout()
+        self._datatype = LabeledComboBox()
+        self._datatype.setTitle('Datatype')
+        self._datatype.addItem('Luminance')
+        self._datatype.addItem('Lightness')
+        self._datatype.adjustSize()
+        lyout.addStretch()
+        lyout.addWidget(self._datatype)
+        lyout.addStretch()
+        self._layout.addLayout(lyout)
+
+        # Init default dialog buttons
+
+        lyout = QHBoxLayout()
+        if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
+        lyout.setSpacing(10)
+        lyout.setDirection(QHBoxLayout.RightToLeft)
+        ok = QPushButton('Close')
+        ok.setFixedWidth(100)
+        ok.setAutoDefault(True)
+        ok.setDefault(True)
+        self._execute = QPushButton('Convert')
+        self._execute.setToolTip('Execute Lightness/Luminance conversion.')
+        lyout.addWidget(ok)
+        lyout.addWidget(self._execute)
+        lyout.addStretch()
+        self._layout.addLayout(lyout)
+
+        # Qt Signals
+
+        ok.clicked.connect(self.accept)
+        self._execute.clicked.connect(self.execute)
+
+    # Public methods
+
+    # < Revision 07/10/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 07/10/2026 >
+
+    def getFilesSelectionWidget(self):
+        return self._files
+
+    def execute(self):
+        n = self._files.filenamesCount()
+        if n > 0:
+            title = '{} conversion'.format(self._datatype.currentText())
+            wait = DialogWait(title=title, progress=True, progressmin=0, progressmax=n,
+                              progresstxt=True, cancel=False)
+            wait.setCurrentProgressValue(0)
+            wait.open()
+            for filename in self._files.getFilenames():
+                wait.setInformationText('Convert {}'.format(basename(filename)))
+                wait.incCurrentProgressValue()
+                v = SisypheVolume()
+                if exists(filename):
+                    try:
+                        v.load(filename)
+                        if self._datatype.currentIndex() == 0: v2 = v.getLuminanceFromRGB()
+                        else: v2 = v.getLightnessFromRGB()
+                        if self._compress: v2.setCompressionOn()
+                        v2.save()
+                    except Exception as err:
+                        messageBox(self, title, '{}'.format(err))
+            wait.close()
+            self._files.clearall()
+
+
 class DialogAttributes(DialogDatatype):
     """
     DialogAttributes
@@ -214,6 +451,7 @@ class DialogAttributes(DialogDatatype):
         if platform == 'win32':
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             c = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(self._attributes, c)
         self._attributes.hideButtons()
@@ -356,11 +594,11 @@ class DialogEditID(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('ID replacement')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumWidth(int(screen.width() * 0.33))
@@ -408,7 +646,6 @@ class DialogEditID(QDialog):
         lyout = QHBoxLayout()
         if platform == 'win32': lyout.setContentsMargins(10, 10, 10, 10)
         lyout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -423,9 +660,7 @@ class DialogEditID(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
     # Private methods

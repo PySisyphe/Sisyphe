@@ -158,6 +158,7 @@ class DialogRegistration(QDialog):
     _compress           bool, save xvol in a compressed format
     """
 
+    # noinspection unresolved-references
     def __init__(self, transform='Affine', parent=None):
         super().__init__(parent)
 
@@ -165,7 +166,6 @@ class DialogRegistration(QDialog):
 
         self._reg = transform
         self.setWindowTitle('{} Registration'.format(self._reg))
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # Init non-GUI attributes
@@ -206,7 +206,6 @@ class DialogRegistration(QDialog):
         self._movingSelect.FieldChanged.connect(self._updateMoving)
 
         self._applyTo = QCheckBox('Apply transformation to')
-        # noinspection PyUnresolvedReferences
         self._applyTo.clicked.connect(self._updateApplyToSelect)
 
         self._applyToSelect = FilesSelectionWidget(parent=self)
@@ -257,7 +256,6 @@ class DialogRegistration(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._cancel = QPushButton('Cancel')
         # self._cancel.setFixedWidth(100)
@@ -276,9 +274,7 @@ class DialogRegistration(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -288,7 +284,6 @@ class DialogRegistration(QDialog):
         self._movingSelect.setMinimumWidth(int(screen.width() * 0.33))
         self.adjustSize()
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
@@ -297,14 +292,14 @@ class DialogRegistration(QDialog):
 
     def _updateWindowTitleBarColor(self, window):
         if platform == 'win32':
-            # noinspection PyUnresolvedReferences
             import pywinstyles
             cl = self.palette().base().color()
+            # noinspection string-format
             scl = '#{:02x}{:02x}{:02x}'.format(cl.red(), cl.green(), cl.blue())
             pywinstyles.change_header_color(window, scl)
             QApplication.processEvents()
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         # self.setFixedSize(self.size())
@@ -399,6 +394,7 @@ class DialogRegistration(QDialog):
         if 'resample' in params: self._resamplesettings.setParametersFromDict(params['resample'])
     # Revision 13/02/2025 >
 
+    # noinspection unresolved-references
     def execute(self):
         # < Revision 02/07/2026
         logger = logging.getLogger(__name__)
@@ -422,14 +418,10 @@ class DialogRegistration(QDialog):
         mvol.load(self._movingSelect.getFilename())
         loggertxt += '\tMoving volume: {}\n'.format(mvol.getBasename())
         # Store volume origins
-        # noinspection PyUnusedLocal
         forigin = fvol.getOrigin()
-        # noinspection PyUnusedLocal
         morigin = mvol.getOrigin()
         # Store volume directions
-        # noinspection PyUnusedLocal
         fdirections = fvol.getDirections()
-        # noinspection PyUnusedLocal
         mdirections = mvol.getDirections()
         # set volume origin to (0.0, 0.0, 0.0) before registration
         fvol.setDefaultOrigin()
@@ -1064,11 +1056,11 @@ class DialogRegistration(QDialog):
                             filename = abspath(filename)
                             chdir(dirname(filename))
                             resampled.setFilename(filename)
-                            self._wait.setInformationText('Save {}...'.format(resampled.getBasename()))
                             resampled.setFilename(filename)
                     # < Revision 07/10/2026
                     if self._compress: resampled.setCompressionOn()
                     # Revision 07/10/2026 >
+                    self._wait.setInformationText('Save {}...'.format(resampled.getBasename()))
                     resampled.save()
                     if self._applyToSelect.filenamesCount() > 0:
                         filenames = self._applyToSelect.getFilenames()
@@ -1078,6 +1070,7 @@ class DialogRegistration(QDialog):
                             f.setMoving(img)
                             f.execute(fixed=fvol, save=True, dialog=dialog,
                                       prefix=prefix, suffix=suffix, wait=self._wait)
+                    else: self._wait.hide()
                 else:
                     if self._applyToSelect.filenamesCount() > 0:
                         filenames = self._applyToSelect.getFilenames()
@@ -1089,7 +1082,9 @@ class DialogRegistration(QDialog):
                             # < Revision 07/10/2026
                             if self._compress: img.setCompressionOn()
                             # Revision 07/10/2026 >
+                            self._wait.setInformationText('Save {}...'.format(img.getBasename()))
                             img.save()
+                    else: self._wait.hide()
                 if exists(trf): remove(trf)
         """
         Exit  
@@ -1135,6 +1130,7 @@ class DialogICBMNormalization(DialogRegistration):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(transform='Transform', parent=parent)
 
@@ -1145,7 +1141,6 @@ class DialogICBMNormalization(DialogRegistration):
         self._fixedSelect.filterICBM()
         self._movingSelect.FieldChanged.connect(self._updateTemplate)
         self.layout().removeWidget(self._fixedSelect)
-        # noinspection PyUnresolvedReferences
         self.layout().insertWidget(1, self._fixedSelect)
 
         self._settings.getParameterWidget('ManualRegistration').setChecked(False)
@@ -1158,6 +1153,7 @@ class DialogICBMNormalization(DialogRegistration):
 
     # Private method
 
+    # noinspection unresolved-references
     def _updateTemplate(self):
         filename = self._movingSelect.getFilename()
         if exists(filename):
@@ -1264,13 +1260,13 @@ class DialogBatchRegistration(DialogRegistration):
     _batch  FilesSelectionWidget
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(transform='Rigid', parent=parent)
 
         self.setWindowTitle('Batch registration')
 
         self.layout().removeWidget(self._fixedSelect)
-        # noinspection PyUnresolvedReferences
         self.layout().insertWidget(1, self._fixedSelect)
 
         self._movingSelect.setVisible(False)
@@ -1284,7 +1280,6 @@ class DialogBatchRegistration(DialogRegistration):
         self._batch.setTextLabel('Moving volumes')
         self._batch.setCurrentVolumeButtonVisibility(True)
         self._batch.FieldChanged.connect(self._updateFixed)
-        # noinspection PyUnresolvedReferences
         self.layout().insertWidget(2, self._batch)
 
         self._settings.getParameterWidget('ManualRegistration').setChecked(False)
@@ -1356,13 +1351,13 @@ class DialogAsymmetry(DialogRegistration):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(transform='DisplacementField', parent=parent)
 
         self.setWindowTitle('Asymmetry analysis')
 
         self.layout().removeWidget(self._fixedSelect)
-        # noinspection PyUnresolvedReferences
         self.layout().insertWidget(1, self._fixedSelect)
 
         self._fixedSelect.setVisible(False)
@@ -1377,7 +1372,6 @@ class DialogAsymmetry(DialogRegistration):
         self._batch.setTextLabel('Volumes')
         self._batch.setCurrentVolumeButtonVisibility(True)
         self._batch.FieldChanged.connect(self._updateBatch)
-        # noinspection PyUnresolvedReferences
         self.layout().insertWidget(2, self._batch)
 
         self._settings.getParameterWidget('ManualRegistration').setChecked(False)
@@ -1398,7 +1392,6 @@ class DialogAsymmetry(DialogRegistration):
         self._jacsettings = FunctionSettingsWidget('DisplacementFieldJacobianDeterminant')
         self._jacsettings.setSettingsButtonFunctionText()
         self._jacsettings.VisibilityToggled.connect(self._center)
-        # noinspection PyUnresolvedReferences
         self.layout().insertWidget(3, self._jacsettings)
         # Revision 18/09/2025 >
 
@@ -1499,13 +1492,13 @@ class DialogEddyCurrentCorrection(DialogRegistration):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(transform='Transform', parent=parent)
 
         self.setWindowTitle('Eddy current correction')
 
         self.layout().removeWidget(self._fixedSelect)
-        # noinspection PyUnresolvedReferences
         self.layout().insertWidget(1, self._fixedSelect)
 
         self._fixedSelect.setTextLabel('B0 volume')
@@ -1526,7 +1519,6 @@ class DialogEddyCurrentCorrection(DialogRegistration):
         self._batch.setCurrentVolumeButtonVisibility(True)
         self._batch.setEnabled(False)
         self._batch.FieldChanged.connect(self._updateBatch)
-        # noinspection PyUnresolvedReferences
         self.layout().insertWidget(2, self._batch)
 
         self._eddy = SisypheFunctionsSettings()
@@ -1570,6 +1562,7 @@ class DialogEddyCurrentCorrection(DialogRegistration):
     def getBatchSelectionWidget(self):
         return self._batch
 
+    # noinspection unresolved-references
     def execute(self):
         filenames = self._batch.getFilenames()
         index = 0
@@ -1640,11 +1633,11 @@ class DialogFrameBasedRegistration(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Frame-based registration')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # < Revision 07/10/2026
@@ -1697,7 +1690,6 @@ class DialogFrameBasedRegistration(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         self._cancel = QPushButton('Cancel')
         # self._cancel.setFixedWidth(100)
@@ -1714,9 +1706,7 @@ class DialogFrameBasedRegistration(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         self._cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 20/05/2025
@@ -1726,14 +1716,13 @@ class DialogFrameBasedRegistration(QDialog):
         self._movingSelect.setMinimumWidth(int(screen.width() * 0.33))
         self.adjustSize()
         # dialog resize off
-        # noinspection PyUnresolvedReferences
         self._layout.setSizeConstraint(QHBoxLayout.SetFixedSize)
         # Revision 20/05/2025 >
         self.setModal(True)
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.adjustSize()
         # self.setFixedSize(self.size())
@@ -1752,6 +1741,7 @@ class DialogFrameBasedRegistration(QDialog):
         self._compress = compress
     # Revision 07/10/2026 >
 
+    # noinspection unresolved-references
     def execute(self):
         if not (self._fixedSelect.isEmpty() or self._movingSelect.isEmpty()):
             filenames = self._movingSelect.getFilenames()

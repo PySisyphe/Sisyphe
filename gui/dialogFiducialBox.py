@@ -54,14 +54,13 @@ class DialogFiducialBox(QDialog):
     _view       IconBarSliceViewFiducialBoxWidget
     """
 
+    # noinspection unresolved-references
     def __init__(self, fid=SisypheFiducialBox, parent=None):
 
         super().__init__(parent)
 
         self.setWindowTitle('Stereotactic frame detection')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, True)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.75), int(screen.height() * 0.75))
@@ -78,7 +77,6 @@ class DialogFiducialBox(QDialog):
         if platform == 'win32' or platform == 'linux': lyout.setContentsMargins(10, 10, 10, 10)
         else: lyout.setContentsMargins(0, 0, 0, 0)
         lyout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         lyout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -100,7 +98,7 @@ class DialogFiducialBox(QDialog):
         else: self._threshold.setValue(0.8)
         self._threshold.setSuffix(' mm')
         self._threshold.setToolTip('Markers with a positional error greater than this threshold are\n'
-                             'removed after clicking the “Calc geometric transform” button.')
+                                   'removed after clicking the “Calc geometric transform” button.')
         # Revision 27/09/2026 >
         lyout.addWidget(ok)
         lyout.addWidget(cancel)
@@ -111,17 +109,11 @@ class DialogFiducialBox(QDialog):
         lyout.addWidget(dlt2)
         lyout.addWidget(dlt)
 
-        # noinspection PyUnresolvedReferences
         error.clicked.connect(self.showErrorStatistics)
-        # noinspection PyUnresolvedReferences
         trf.clicked.connect(self._calcTransform)
-        # noinspection PyUnresolvedReferences
         dlt.clicked.connect(self._removeCurrentSliceMarkers)
-        # noinspection PyUnresolvedReferences
         dlt2.clicked.connect(self._removeFrontPlateMarkers)
-        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
         self.accepted.connect(self._view.addTransformToVolume)
         self.rejected.connect(self._view.removeTransformFromVolume)

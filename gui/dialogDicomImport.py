@@ -48,6 +48,7 @@ from Sisyphe.core.sisypheImageIO import writeToNumpy
 from Sisyphe.core.sisypheImageIO import readFromDicomFilenames
 from Sisyphe.core.sisypheImageIO import convertImageToAxialOrientation
 from Sisyphe.core.sisypheImageIO import flipImageToVTKDirectionConvention
+from Sisyphe.core.sisypheSettings import SisypheSettings
 from Sisyphe.widgets.basicWidgets import LabeledComboBox
 from Sisyphe.widgets.basicWidgets import messageBox
 from Sisyphe.widgets.selectFileWidgets import FileSelectionWidget
@@ -72,7 +73,7 @@ class DialogDicomImport(QDialog):
 
     QDialog -> DialogDicomImport
 
-    Last revision: 06/10/2026
+    Last revision: 22/10/2026
     """
 
     # Special method
@@ -83,11 +84,11 @@ class DialogDicomImport(QDialog):
     _series     DicomFilesTreeViewWidget
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('DICOM import')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         screen = QApplication.primaryScreen().geometry()
         self.setMinimumSize(int(screen.width() * 0.50), int(screen.height() * 0.50))
@@ -123,13 +124,10 @@ class DialogDicomImport(QDialog):
         self._series.setModalityFilterToImages()
 
         self._origin = QCheckBox('Keep Dicom origin')
-
-        # noinspection PyUnresolvedReferences
         self._origin.setCheckState(Qt.Unchecked)
         self._origin.setToolTip('Copy Dicom origin into converted volume.')
 
         self._acq = QCheckBox('Use acquisition number')
-        # noinspection PyUnresolvedReferences
         self._acq.setCheckState(Qt.Unchecked)
         self._acq.setToolTip('Use acquisition number as suffix in converted file name.')
 
@@ -140,7 +138,6 @@ class DialogDicomImport(QDialog):
 
         self._convert = QPushButton('Import')
         self._convert.setToolTip('Import checked DICOM files.')
-        # noinspection PyUnresolvedReferences
         self._convert.clicked.connect(self.convert)
 
         self._layout.addWidget(self._series)
@@ -159,7 +156,6 @@ class DialogDicomImport(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32' or platform == 'linux': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         ok = QPushButton('Close')
         ok.setFixedWidth(100)
@@ -170,7 +166,6 @@ class DialogDicomImport(QDialog):
 
         self._layout.addLayout(layout)
 
-        # noinspection PyUnresolvedReferences
         ok.clicked.connect(self.accept)
 
         self.setModal(True)
@@ -183,6 +178,7 @@ class DialogDicomImport(QDialog):
         self._compress = compress
     # Revision 06/10/2026 >
 
+    # noinspection unresolved-references
     def convert(self):
         fmt = self._format.currentIndex()
         tree = self._series.getTreeWidget()
@@ -193,6 +189,9 @@ class DialogDicomImport(QDialog):
         wait.setProgressTextVisibility(True)
         wait.setButtonVisibility(True)
         wait.setProgressRange(0, self._series.getSelectedAcquisitionsCount())
+        # < Revision 22/10/2026
+        settings = SisypheSettings()
+        # Revision 22/10/2026 >
         # < Revision 19/02/2026
         wait.setCurrentProgressValue(0)
         # Revision 19/02/2026 >
@@ -201,7 +200,6 @@ class DialogDicomImport(QDialog):
         nseries = tree.topLevelItemCount()
         for i in range(nseries):
             seriesitem = tree.topLevelItem(i)
-            # noinspection PyUnresolvedReferences
             if seriesitem.checkState(0) == Qt.Checked:
                 btag = False
                 bval = dict()
@@ -212,7 +210,6 @@ class DialogDicomImport(QDialog):
                 # Acquisitions
                 for j in range(nacq):
                     acqitem = seriesitem.child(j)
-                    # noinspection PyUnresolvedReferences
                     if acqitem.checkState(0) == Qt.Checked:
                         if wait.getStopped():
                             tree.treeUpdate()
@@ -222,7 +219,6 @@ class DialogDicomImport(QDialog):
                         # Get DICOM filenames of the current acquisition
                         for k in range(nfiles):
                             fileitem = acqitem.child(k)
-                            # noinspection PyUnresolvedReferences
                             if fileitem.checkState(0) == Qt.Checked:
                                 filename = fileitem.toolTip(0)
                                 filenames.append(filename)
@@ -304,6 +300,14 @@ class DialogDicomImport(QDialog):
                                     # Revision 28/07/2026 >
                                     vol.identity = idt
                                     vol.acquisition = acq
+                                    # < Revision 22/10/2026
+                                    modality = acq.getModality()
+                                    if modality in ('CT', 'MR', 'NM', 'OT', 'PT'):
+                                        lut = settings.getFieldValue('LUT', modality)
+                                        if lut:
+                                            vol.display.setLUT(lut)
+                                            vol.display.setDefaultWindow()
+                                    # Revision 22/10/2026 >
                                     # < Revision 05/10/2026
                                     if self._compress: vol.setCompressionOn()
                                     # Revision 05/10/2026 >
