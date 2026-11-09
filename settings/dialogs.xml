@@ -33,6 +33,31 @@
 		<SwapOrder vartype="lstr">y,z,x|z,x,y|x,z,y|y,z,x|z,y,x</SwapOrder>
 		<Prefix vartype="str">swap</Prefix>
 	</SwapAxes>
+	<Import>
+		<Name label="Save as" vartype="lstr">Same filename|Search/replace|Prefix#number|Prefix/extracted numbers/suffix</Name>
+		<Search vartype="str"></Search>
+		<Replace vartype="str"></Replace>
+		<Separator label="Number separator" vartype="str">_</Separator>
+		<Numbers label="Number order" vartype="str">0</Numbers>
+		<Prefix vartype="str"></Prefix>
+		<Suffix vartype="str"></Suffix>
+		<Datatype vartype="lstr">Default|uint8|int8|uint16|int16|uint32|int32|uint64|int64|float32|float64</Datatype>
+		<Modality vartype="lstr">OT|CT|MR|NM|PT|TP</Modality>
+		<Sequence vartype="lstr">UNKNOWN</Sequence>
+		<Origin vartype="lstr">Default|Extracted</Origin>
+		<Directions vartype="lstr">Default|Extracted</Directions>
+		<LUT vartype="lut">gray</LUT>
+		<File label="Feature file" ext=".xlsx|.csv" vartype="file"/>
+		<Code label="Study code position in filename" vartype="lstr">No code|Original filename|0|1|2|3|4|5</Code>
+		<Column label="Study code column" varmin="-1" varmax="256" vartype="int">-1</Column>
+		<Scan label="Date of study column" varmin="-1" varmax="256" vartype="int">-1</Scan>
+		<Birth label="Date of birth column" varmin="-1" varmax="256" vartype="int">-1</Birth>
+		<Date label="Date format" vartype="lstr">ddmmyyyy|mmddyyyy|yyyymmdd|dd/mm/yyyy|mm/dd/yyyy|yyyy/mm/dd|dd-mm-yyyy|mm-dd-yyyy|yyyy-mm-dd|dd.mm.yyyy|mm.dd.yyyy|yyyy.mm.dd</Date>
+		<Age label="Age column" varmin="-1" varmax="256" vartype="int">-1</Age>
+		<Gender label="Gender column" varmin="-1" varmax="256" vartype="int">-1</Gender>
+		<Male label="Male string" vartype="str">1</Male>
+		<Female label="Female string" vartype="str">2</Female>
+	</Import>
 	<ChartProperties>
 		<TitleVisibility vartype="bool">False</TitleVisibility>
 		<FrameVisibility vartype="bool">False</FrameVisibility>

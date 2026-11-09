@@ -3070,4 +3070,108 @@
 			- Ratio: normalized by the total number of streamlines.
 		</Values>
 	</BundleConnectivityMatrix>
+	<Import>
+		<Title>
+			- Set the save name settings for the converted volume.
+			- Set the LUT of the converted volume.
+			- Set features include the date of scan, date of birth, 
+			age, or gender for the converted volume extracted from 
+			a CSV or Excel file.
+		</Title>
+		<Name>
+			Save name rules for the converted volume:
+
+			- "Same filename", same name as the original file, with the .xvol extension.
+
+			- "Search/replace", the character strings in the "Search" field are replaced 
+			with those in the "Replace" field in the name of the original file (except 
+			for extension).
+
+			- "Prefix#number", to save the file using the name given in the "Prefix" 
+			field, followed by the "#" character, and finally the conversion sequence 
+			number from the list of provided files.
+
+			- "Prefix/extracted numbers/suffix", to save the file with the name entered 
+			in the "Prefix" field, followed by the list of numbers extracted from the 
+			original file name, separated by the character specified in the 
+			"Number separator" field, and finally the name provided in the "Suffix" field.
+		</Name>
+		<Search>
+			Multiple strings can be entered in the "Search" field. They must be split by 
+			the "|" character.
+		</Search>
+		<Replace>
+			Multiple strings can be entered in the "Replace" field. 
+			They must be split by the "|" character. To remove some character strings 
+			listed in the "Search" field, omit character strings at the same position in 
+			the "Replace" field. If you want to delete a character string listed in the 
+			"Search" field, leave the corresponding location in the "Replace" field blank.
+		</Replace>
+		<Separator>
+			Separator character used to save the converted volume according to the 
+			"Prefix/extracted numbers/suffix" rule.
+		</Separator>
+		<Numbers>
+			You can change the order of the extracted numbers, separating the new index 
+			order with the "|" character (the first index is 0). To remove some numbers 
+			from the extraction list, you must omit their indices in this field. The 
+			order will be preserved if this field is left blank.
+		</Numbers>
+		<Prefix>
+			Prefix string used to save the converted volume with "Prefix#number" or 
+			"Prefix/extracted numbers/suffix" rules.
+		</Prefix>
+		<Suffix>
+			Suffix string used to save the converted volume with "Prefix#number" or 
+			"Prefix/extracted numbers/suffix" rules.
+		</Suffix>
+		<Datatype>
+			Datatype of the converted volume (original datatype if default or uint8, 
+			int8, uint16, int16, uint32, int32, uint64, int64, float32, float64).
+		</Datatype>
+		<Modality>Modality of the converted volume (OT, CT, MR, NM, PT, TP).</Modality>
+		<Sequence>Sequence of the converted volume.</Sequence>
+		<Origin>Origin of the converted volume: default (0.0, 0.0, 0.0) or extracted value.</Origin>
+		<Directions>Directions of the converted volume: default or extracted value.</Directions>
+		<LUT>LUT name of the converted volume.</LUT>
+		<File>
+			Select the feature file, which can be in CSV (.csv) or Excel (.xlsx) format, 
+			to extract features regarding the date of study, date of birth, age, or gender.
+		</File>
+		<Code>
+			- "No code", the volume order in the selection box is used as 
+			the row number in the feature file.
+
+			- "Original filename", the original file name is the code used to 
+			search the volume's row in the feature file.
+
+			- Position (starting at 0) of the code number extracted from the 
+			original file name used to search the volume's row in the feature 
+			file.
+		</Code>
+		<Column>
+			Column number of the code used to search the volume's row in the 
+			feature file. Enter -1 to use the volume order in the selection 
+			box as the row number in the feature file.
+		</Column>
+		<Scan>
+			Column number (starting at 0) in the feature file where date of study 
+			is listed. Enter -1 if there is no date of scan.
+		</Scan>
+		<Birth>
+			Column number (starting at 0) in the feature file where date of birth 
+			is listed. Enter -1 if there is no date of birth.
+		</Birth>
+		<Date>Format of the date used in the feature file.</Date>
+		<Age>
+			Column number (starting at 0) in the feature file where age is listed. 
+			Enter -1 if there is no age field.
+		</Age>
+		<Gender>
+			Column number (starting at 0) in the feature file where gender is listed. 
+			Enter -1 if there is no gender field.
+		</Gender>
+		<Male>The string code used in the feature file for male gender.</Male>
+		<Female>The string code used in the feature file for female gender.</Female>
+	</Import>
 </tooltips>
