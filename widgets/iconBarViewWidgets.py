@@ -2729,6 +2729,7 @@ class IconBarOrthogonalSliceVolumeViewWidget(IconBarWidget):
 
     # Public methods
 
+    # noinspection protected-member,unresolved-references
     def setVolume(self, vol: SisypheVolume) -> None:
         """
         Set the SisypheVolume to be displayed. and connect the transfer function widget to the 3D VolumeViewWidget.
@@ -2740,7 +2741,19 @@ class IconBarOrthogonalSliceVolumeViewWidget(IconBarWidget):
             SisypheVolume to display.
         """
         super().setVolume(vol)
-        self._transfer.setViewWidget(self().getFirstVolumeViewWidget())
+        # < Revision 23/10/2026
+        # self._transfer.setViewWidget(self().getFirstVolumeViewWidget())
+        if vol.isRGB():
+            self._icons['transfer'].setVisible(False)
+            self._icons['texture'].setVisible(False)
+            self().getFirstVolumeViewWidget()._action['showtexture'].setVisible(False)
+        else:
+            self._icons['transfer'].setVisible(True)
+            self._icons['texture'].setVisible(True)
+            view = self().getFirstVolumeViewWidget()
+            self._transfer.setViewWidget(view)
+            view._action['showtexture'].setVisible(True)
+        # Revision 23/10/2026 >
 
     def setCameraPositionButtonAvailability(self, v: bool) -> None:
         """
@@ -2955,6 +2968,7 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
 
     # Public method
 
+    # noinspection protected-member,unresolved-references
     def setVolume(self, vol: SisypheVolume) -> None:
         """
         Set the SisypheVolume to display, connect the transfer function widget, and reset slab properties.
@@ -2966,7 +2980,19 @@ class IconBarOrthogonalSliceTrajectoryViewWidget(IconBarWidget):
             SisypheVolume to display.
         """
         super().setVolume(vol)
-        self._transfer.setViewWidget(self().getFirstVolumeViewWidget())
+        # < Revision 23/10/2026
+        # self._transfer.setViewWidget(self().getFirstVolumeViewWidget())
+        if vol.isRGB():
+            self._icons['transfer'].setVisible(False)
+            self._icons['texture'].setVisible(False)
+            self().getFirstVolumeViewWidget()._action['showtexture'].setVisible(False)
+        else:
+            self._icons['transfer'].setVisible(True)
+            self._icons['texture'].setVisible(True)
+            view = self().getFirstVolumeViewWidget()
+            self._transfer.setViewWidget(view)
+            view._action['showtexture'].setVisible(True)
+        # Revision 23/10/2026 W
         # < Revision 18/10/2024
         # Reset slab properties
         self._sstep.setValue(1.0)

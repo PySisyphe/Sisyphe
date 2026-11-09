@@ -379,7 +379,7 @@ class FileBrowserWidget(QWidget):
     QWidget -> FileBrowserWidget
 
     Creation: 09/02/2026
-    Last revision: 12/10/2026
+    Last revision: 28/10/2026
     """
 
     # Special method
@@ -1136,9 +1136,12 @@ class FileBrowserWidget(QWidget):
             self._tabVisibility(table=True)
             self._preview.setCurrentIndex(1)
             import numpy as np
-            # noinspection PyUnusedLocal
             try:
                 r = np.load(filename, allow_pickle=True)
+                # < Revision 28/10/2026
+                if ext == '.npz':
+                    r = r[tuple(r.keys())[0]]
+                # Revision 28/10/2026 >
                 df = DataFrame(r)
                 model = PandasTableModel(df)
                 self._tablepreview.setModel(model)
@@ -1149,7 +1152,6 @@ class FileBrowserWidget(QWidget):
             self._tabVisibility(table=True)
             self._preview.setCurrentIndex(1)
             import pandas as pd
-            # noinspection PyUnusedLocal
             try:
                 df = pd.read_csv(filename)
                 model = PandasTableModel(df)
@@ -1161,7 +1163,6 @@ class FileBrowserWidget(QWidget):
             self._tabVisibility(table=True)
             self._preview.setCurrentIndex(1)
             import pandas as pd
-            # noinspection PyUnusedLocal
             try:
                 df = pd.read_excel(filename)
                 model = PandasTableModel(df)
@@ -1205,7 +1206,6 @@ class FileBrowserWidget(QWidget):
             self._tabVisibility(table=True)
             self._preview.setCurrentIndex(1)
             import pandas as pd
-            # noinspection PyUnusedLocal
             try:
                 df = pd.read_spss(filename)
                 model = PandasTableModel(df)
@@ -1217,7 +1217,6 @@ class FileBrowserWidget(QWidget):
             self._tabVisibility(table=True)
             self._preview.setCurrentIndex(1)
             import pandas as pd
-            # noinspection PyUnusedLocal
             try:
                 df = pd.read_stata(filename)
                 model = PandasTableModel(df)
@@ -1229,9 +1228,11 @@ class FileBrowserWidget(QWidget):
             self._tabVisibility(table=True)
             self._preview.setCurrentIndex(1)
             import pandas as pd
-            # noinspection PyUnusedLocal
             try:
-                df = pd.read_sas(filename)
+                # < Revision 28/10/2026
+                # df = pd.read_sas(filename)
+                df = pd.read_sas(filename, index=False)
+                # Revision 28/10/2026 >
                 model = PandasTableModel(df)
                 self._tablepreview.setModel(model)
             except:

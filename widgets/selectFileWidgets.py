@@ -1094,7 +1094,7 @@ class FileSelectionWidget(QWidget, SelectionFilter):
 
     QWidget, SelectionFilter -> FileSelectionWidget
 
-    Last revision: 09/07/2026
+    Last revision: 05/11/2026
     """
 
     # Custom Qt Signal
@@ -2610,7 +2610,7 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
     def setFileCountWarning(self, v: bool = True):
         self._countWarning = v
 
-    def getFileCountWaring(self) -> bool:
+    def getFileCountWarning(self) -> bool:
         return self._countWarning
 
     def setStopCheckAfterFailure(self, stop: bool) -> None:
@@ -2900,7 +2900,8 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         """
         return self._checkbox
 
-    def setSelectionTo(self, index: str | int) -> None:
+    # noinspection unresolved-references
+    def setSelectionTo(self, index: str | int, scrollto: bool = False) -> None:
         """
         Select a file in the list by its index or by matching its text.
 
@@ -2908,17 +2909,22 @@ class FilesSelectionWidget(QWidget, SelectionFilter):
         ----------
         index : str | int
             index (int) or text (str) of the item to select.
+        scrollto : bool (optional)
+            scroll to display the selected item. (default False).
         """
         if not self.isEmpty():
             if isinstance(index, str):
-                # noinspection PyTypeChecker
                 index = self._list.findItems(index, 0)
                 if len(index) > 0: index = index[0]
             if isinstance(index, int):
                 if index < self._list.count():
                     item = self._list.item(index)
-                    # noinspection unresolved-references
                     item.setSelected(True)
+                    # < Revision 05/11/2026
+                    if scrollto:
+                        index = self._list.selectedIndexes()[0]
+                        self._list.scrollTo(index, QListWidget.ScrollHint.PositionAtCenter)
+                    # Revision 05/11/2026 >
             else: raise TypeError('parameter type {} is not int or str.'.format(type(index)))
 
     def copySelectionFrom(self, widget: QWidget) -> None:

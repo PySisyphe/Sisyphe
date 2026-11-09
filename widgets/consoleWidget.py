@@ -99,8 +99,10 @@ Class hierarchy
 
 class RichJupyterWidget2(RichJupyterWidget):
     """
-    Last revision: 14/12/2025
+    Last revision:22/10/2026
     """
+
+    # Special method
 
     # < Revision 09/12/2025
     # override __init__() method
@@ -113,7 +115,12 @@ class RichJupyterWidget2(RichJupyterWidget):
             self._aimodel = 'gemini-2.5-flash'
         self._client = None
         self._update = None
+        # < Revision 22/10/2026
+        self._custommenu = None
+        # Revision 22/10/2026 >
     # Revision 09/12/2025 >
+
+    # Qt event method
 
     def _event_filter_console_keypress(self, event) -> bool:
         # noinspection PyProtectedMember
@@ -145,7 +152,26 @@ class RichJupyterWidget2(RichJupyterWidget):
             r = True
         return r
 
+    # Private methods
+
+    # < Revision 22/10/2026
+    # add _context_menu_make method
+    # noinspection protected-member,unresolved-references
+    def _context_menu_make(self, pos):
+        menu = super()._context_menu_make(pos)
+        menu.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        menu.setWindowFlag(Qt.FramelessWindowHint, True)
+        menu.setAttribute(Qt.WA_TranslucentBackground, True)
+        if self._custommenu:
+            menu.addSeparator()
+            for action in self._custommenu.actions():
+                if action.text() not in ('Copy', 'Save as HTML/XML...'):
+                    menu.addAction(action)
+        return menu
+    # Revision 22/10/2026 >
+
     # < Revision 08/02/2026
+    # add _gemini method
     def _gemini(self) -> None:
         # history
         history = self.input_buffer
@@ -361,6 +387,7 @@ class RichJupyterWidget2(RichJupyterWidget):
     # Revision 08/02/2026 >
 
     # < Revision 08/02/2026
+    # add _packages method
     def _packages(self) -> None:
         # history
         history = self.input_buffer
@@ -398,6 +425,7 @@ class RichJupyterWidget2(RichJupyterWidget):
     # Revision 08/02/2026 >
 
     # < Revision 08/02/2026
+    # add _open method
     def _open(self) -> None:
         # history
         history = self.input_buffer
@@ -725,7 +753,15 @@ class RichJupyterWidget2(RichJupyterWidget):
             self._append_plain_text('\nno such file {}.'.format(buff))
             self._show_interpreter_prompt(nb)
             return
-        # Revision 08/02/2026 >
+    # Revision 08/02/2026 >
+
+    # Public method
+
+    # < Revision 22/10/2026
+    # add setCustomMenu method
+    def setCustomMenu(self, menu: QMenu) -> None:
+        self._custommenu = menu
+    # Revision 22/10/2026 >
 
     # < Revision 09/12/2025
     # override execute method
@@ -760,7 +796,7 @@ class ConsoleWidget(QWidget):
 
     QWidget -> ConsoleWidget
 
-    Last revision: 09/10/2026
+    Last revision: 22/10/2026
     """
 
     @classmethod
@@ -849,10 +885,14 @@ class ConsoleWidget(QWidget):
             # Revision 22/12/2025 >
 
         path = join(self.getDocDirectory(), 'ipython.txt')
+        # < Revision 21/10/2026
         if exists(path):
             with open(path, 'r') as f:
                 buff = f.readlines()
-            self.setToolTip(''.join(buff))
+            self._tooltip = ''.join(buff)
+            self.setToolTip(self._tooltip)
+        else: self._tooltip = ''
+        # Revision 21/10/2026 >
 
         # Modules and variables listwidgets
 
@@ -860,34 +900,31 @@ class ConsoleWidget(QWidget):
         self._modules.setHeaderLabel('Module(s) / Type(s) / Function(s)')
         self._modules.setToolTip('Module(s) / Type(s) / Function(s)')
         self._modules.setAlternatingRowColors(True)
-        # noinspection PyUnresolvedReferences
         self._modules.itemDoubleClicked.connect(self._modulesDblClicked)
+        # < Revision 22/10/2026
+        self._modules.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._modules.customContextMenuRequested.connect(self._popupModules)
+        # Revision 22/10/2026 >
 
         self._globals = QTreeWidget()
         self._globals.setHeaderLabel('Variables')
         self._globals.setToolTip('Variables')
         self._globals.setAlternatingRowColors(True)
         # < Revision 01/12/2025
-        # noinspection PyUnresolvedReferences
         self._globals.setContextMenuPolicy(Qt.CustomContextMenu)
-        # noinspection PyUnresolvedReferences
         self._globals.customContextMenuRequested.connect(self._popupGlobals)
         # Revision 01/12/2025 >
-        # noinspection PyUnresolvedReferences
         self._globals.itemDoubleClicked.connect(self._globalsDblClicked)
-        # noinspection PyUnresolvedReferences
         self._globals.itemClicked.connect(self._globalsClicked)
 
         splt = QSplitter()
         splt.addWidget(self._modules)
         splt.addWidget(self._globals)
-        # noinspection PyUnresolvedReferences
         splt.setOrientation(Qt.Vertical)
 
         splitter = QSplitter()
         splitter.addWidget(self._console)
         splitter.addWidget(splt)
-        # noinspection PyUnresolvedReferences
         splitter.setOrientation(Qt.Horizontal)
 
         # Buttons
@@ -896,22 +933,18 @@ class ConsoleWidget(QWidget):
         btnlyout.setContentsMargins(0, 0, 0, 0)
         btnlyout.setSpacing(5)
         self._save = QPushButton('Save as HTML/XML...', parent=self)
-        # noinspection PyUnresolvedReferences
         self._save.clicked.connect(self.save)
         self._save.setToolTip('Save console to HTML/XML file')
         # < Revision 25/04/2025
         # self._copy = QPushButton('Copy', parent=self)
         # self._copy.setToolTip('Copy selection to clipboard')
-        # noinspection PyUnresolvedReferences
         # self._copy.clicked.connect(self.copy)
         # Revision 25/04/2025 >
         self._clear = QPushButton('Clear', parent=self)
         self._clear.setToolTip('Clear console display')
-        # noinspection PyUnresolvedReferences
         self._clear.clicked.connect(self.clear)
         self._restart = QPushButton('Restart', parent=self)
         self._restart.setToolTip('Restart console')
-        # noinspection PyUnresolvedReferences
         self._restart.clicked.connect(self.restart)
         self._import = QPushButton('Import', parent=self)
         self._import.setToolTip('Import PySisyphe modules')
@@ -932,34 +965,36 @@ class ConsoleWidget(QWidget):
         self._action['clear'] = QAction('Clear', self)
         self._action['restart'] = QAction('Restart', self)
         self._action['save'] = QAction('Save as HTML/XML...', self)
-        self._action['mod'] = QAction('View modules', self)
-        self._action['glob'] = QAction('View Globals', self)
+        self._action['mod'] = QAction('Show/Hide modules', self)
+        self._action['glob'] = QAction('Show/Hide variables', self)
+        # < Revision 21/10/2026
+        self._action['ttip'] = QAction('Show/Hide tooltips', self)
+        # Revision 21/10/2026 >
         self._action['mod'].setCheckable(True)
         self._action['glob'].setCheckable(True)
+        # < Revision 21/10/2026
+        self._action['ttip'].setCheckable(True)
+        # Revision 21/10/2026 >
         self._action['mod'].setChecked(True)
         self._action['glob'].setChecked(True)
+        # < Revision 21/10/2026
+        self._action['ttip'].setChecked(True)
+        # Revision 21/10/2026 >
         self._action['main'] = QAction('PySisyphe main window as \"main\"', self)
-        # noinspection PyUnresolvedReferences
         self._action['copy'].triggered.connect(self.copy)
-        # noinspection PyUnresolvedReferences
         self._action['clear'].triggered.connect(self.clear)
-        # noinspection PyUnresolvedReferences
         self._action['restart'].triggered.connect(self.restart)
-        # noinspection PyUnresolvedReferences
         self._action['save'].triggered.connect(self.save)
-        # noinspection PyUnresolvedReferences
         self._action['mod'].toggled.connect(self.setModuleVisibility)
-        # noinspection PyUnresolvedReferences
         self._action['glob'].toggled.connect(self.setGlobalsVisibility)
-        # noinspection PyUnresolvedReferences
+        # < Revision 21/10/2026
+        self._action['ttip'].toggled.connect(self.setTooltipVisibility)
+        # Revision 21/10/2026 >
         self._action['main'].triggered.connect(self.importMain)
 
         self._popup = QMenu()
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._popup.addAction(self._action['copy'])
         self._popup.addAction(self._action['clear'])
@@ -968,8 +1003,16 @@ class ConsoleWidget(QWidget):
         self._popup.addSeparator()
         self._popup.addAction(self._action['mod'])
         self._popup.addAction(self._action['glob'])
+        # < Revision 21/10/2026
+        self._popup.addAction(self._action['ttip'])
+        # Revision 21/10/2026 >
         self._popup.addSeparator()
+        # < Revision 22/10/2026
         self._menuImport = self._popup.addMenu('Import')
+        self._menuImport.setWindowFlag(Qt.NoDropShadowWindowHint, True)
+        self._menuImport.setWindowFlag(Qt.FramelessWindowHint, True)
+        self._menuImport.setAttribute(Qt.WA_TranslucentBackground, True)
+        # Revision 22/10/2026 >
         self._menuImport.addAction(self._action['main'])
         self._menuImport.addSeparator()
         import Sisyphe
@@ -977,78 +1020,69 @@ class ConsoleWidget(QWidget):
             if not pkg.ispkg and pkg.name != 'PySisyphe':
                 cmd = 'from Sisyphe.core.{} import *'.format(pkg.name)
                 action = QAction(pkg.name, self)
-                # noinspection PyUnresolvedReferences
                 action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
                 self._menuImport.addAction(action)
         self._menuImport.addSeparator()
         # ANTs
         cmd = 'import ants'
         action = QAction('ANTs', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # Matplotlib
         cmd = 'from matplotlib import pyplot as plt'
         action = QAction('Matplotlib', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # NiBabel
         cmd = 'import nibabel as nib'
         action = QAction('NiBabel', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # Nilearn
         cmd = 'import nilearn as nil'
         action = QAction('Nilearn', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # Numpy
         cmd = 'import numpy as np'
         action = QAction('Numpy', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # Pandas
         cmd = 'import pandas as pd'
         action = QAction('Pandas', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # Pillow
         cmd = 'import PIL as pil'
         action = QAction('Pillow', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # PyDicom
         cmd = 'import pydicom as dcm'
         action = QAction('PyDicom', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # Scikit-image
         cmd = 'import skimage as ski'
         action = QAction('Scikit-image', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # SciPy
         cmd = 'import scipy as scp'
         action = QAction('SciPy', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         # SimpleITK
         cmd = 'import SimpleITK as sitk'
         action = QAction('SimpleITK', self)
-        # noinspection PyUnresolvedReferences
         action.triggered.connect(lambda dummy, v=cmd: self._console.execute(v))
         self._menuImport.addAction(action)
         self._popup.addMenu(self._menuImport)
         self._import.setMenu(self._menuImport)
+        # < Revision 22/10/2026
+        self._console.setCustomMenu(self._popup)
+        # Revision 22/10/2026 >
 
         # Init layout
 
@@ -1163,20 +1197,16 @@ class ConsoleWidget(QWidget):
 
     # < Revision 01/12/2025
     # add _popupGlobals method
-    # noinspection PyTypeChecker
+    # noinspection unresolved-references
     def _popupGlobals(self, p: QPoint) -> None:
         item = self._globals.itemAt(p)
         if item is not None:
             g = self._console.kernel_manager.kernel.shell.user_ns
             try:
-                # noinspection PyUnresolvedReferences
                 v = g[item.data(0, Qt.UserRole)]
                 popup = QMenu()
-                # noinspection PyUnresolvedReferences
                 popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-                # noinspection PyUnresolvedReferences
                 popup.setWindowFlag(Qt.FramelessWindowHint, True)
-                # noinspection PyUnresolvedReferences
                 popup.setAttribute(Qt.WA_TranslucentBackground, True)
                 actions = dict()
                 actions['plot'] = QAction('Line plot')
@@ -1244,7 +1274,17 @@ class ConsoleWidget(QWidget):
                     popup.exec(self._globals.mapToGlobal(p))
                 # Revision 09/12/2025 >
             except: pass
+        else:
+            # < Revision 22/10/2026
+            self._popup.exec(self._globals.mapToGlobal(p))
+            # Revision 22/10/2026 >
     # Revision 01/12/2025 >
+
+    # < Revision 22/10/2026
+    # add _popupModules method
+    def _popupModules(self, p: QPoint) -> None:
+        self._popup.exec(self._modules.mapToGlobal(p))
+    # Revision 22/10/2026 >
 
     # < Revision 01/12/2025
     # add _plot method
@@ -1726,6 +1766,13 @@ class ConsoleWidget(QWidget):
                 self._globals.addTopLevelItem(item)
         
     # Public methods
+
+    # < Revision 21/10/2026
+    # add setTooltipVisibility method
+    def setTooltipVisibility(self, v: bool = True) -> None:
+        if v: self.setToolTip(self._tooltip)
+        else: self.setToolTip('')
+    # Revision 21/10/2026 >
 
     def setModuleVisibility(self, v: bool = True) -> None:
         self._modules.setVisible(v)

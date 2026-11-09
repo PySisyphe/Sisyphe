@@ -48,6 +48,7 @@ from vtk import vtkJPEGWriter
 from vtk import vtkPNGWriter
 from vtk import vtkTIFFWriter
 from vtk import vtkWindowToImageFilter
+from vtk import vtkPiecewiseFunction
 from vtk import VTK_CURSOR_HAND
 from vtk import VTK_CURSOR_ARROW
 from vtk import VTK_CURSOR_DEFAULT
@@ -483,12 +484,18 @@ class VolumeViewWidget(AbstractViewWidget):
         slc.SetMapper(mapper)
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
-        prop.SetLookupTable(self._volume.display.getVTKLUT())
-        prop.UseLookupTableScalarRangeOn()
+        # < Revision 23/10/2026
+        # prop.SetLookupTable(self._volume.display.getVTKLUT())
+        # prop.UseLookupTableScalarRangeOn()
+        if not self._volume.isRGB():
+            prop.SetLookupTable(self._volume.display.getVTKLUT())
+            prop.UseLookupTableScalarRangeOn()
+        # Revision 23/10/2026 >
         prop.SetOpacity(alpha)
         self._renderer.AddViewProp(slc)
         return slc
 
+    # noinspection unresolved-references
     def _addTexture(self) -> None:
         """
         Creates and adds the texture rendering of the vtkVolume actor to the scene.
@@ -499,17 +506,27 @@ class VolumeViewWidget(AbstractViewWidget):
         mapper.SetBlendModeToComposite()
         mapper.CroppingOff()
         prop = vtkVolumeProperty()
-        # noinspection PyArgumentList
         prop.ShadeOff()
-        self.loadTransfer()
-        # noinspection PyArgumentList
-        prop.DisableGradientOpacityOff()
-        # noinspection PyArgumentList
-        prop.SetColor(self._transfer.getColorTransfer())
-        # noinspection PyArgumentList
-        prop.SetScalarOpacity(self._transfer.getAlphaTransfer())
-        # noinspection PyArgumentList
-        prop.SetGradientOpacity(self._transfer.getGradientTransfer())
+        # < Revision 23/10/2026
+        # self.loadTransfer()
+        # prop.DisableGradientOpacityOff()
+        # prop.SetColor(self._transfer.getColorTransfer())
+        # prop.SetScalarOpacity(self._transfer.getAlphaTransfer())
+        # prop.SetGradientOpacity(self._transfer.getGradientTransfer())
+        if self._volume.isRGB():
+            prop.IndependentComponentsOff()
+            opacity = vtkPiecewiseFunction()
+            opacity.AddPoint(0, 0.0)
+            opacity.AddPoint(255, 1.0)
+            # prop.SetScalarOpacity(self._transfer.getAlphaTransfer())
+            prop.SetScalarOpacity(opacity)
+        else:
+            self.loadTransfer()
+            prop.DisableGradientOpacityOff()
+            prop.SetColor(self._transfer.getColorTransfer())
+            prop.SetScalarOpacity(self._transfer.getAlphaTransfer())
+            prop.SetGradientOpacity(self._transfer.getGradientTransfer())
+        # Revision 23/10/2026 >
         prop.SetInterpolationTypeToLinear()
         self._texture.SetMapper(mapper)
         self._texture.SetProperty(prop)
@@ -552,7 +569,8 @@ class VolumeViewWidget(AbstractViewWidget):
         wait.open()
         wait.setInformationText('Outer surface mesh processing...')
         mesh = SisypheMesh()
-        mesh.createOuterSurface(self._volume)
+        if self._volume.isRGB(): mesh.createOuterSurface(self._volume.copyComponent())
+        else: mesh.createOuterSurface(self._volume)
         mesh.setName('OuterSurface')
         mesh.setScalarColorVisibilityOff()
         mesh.setColor(1.0, 0.0, 0.0)

@@ -763,6 +763,7 @@ class AbstractViewWidget(QFrame):
     _ffamily                str, font family, default 'Arial'
     _fscale                 float, scale factor applied to font size (default 1.0, no scale factor)
     _fopacity               float, default font opacity, default 1.0
+    _rgb                    bool, is the volume RBG ?
     """
 
     # Private methods
@@ -4122,7 +4123,8 @@ class AbstractViewWidget(QFrame):
         self.setInfoVisibilityOff(signal)
         self.setColorbarVisibilityOff(signal)
         self.setRulerVisibilityOff(signal)
-        self.setOrientationLabelsVisibilityOff(signal)
+        try: self.setOrientationLabelsVisibilityOff(signal)
+        except: pass
         self.setOrientationMarkerVisibilityOff(signal)
         self.setTooltipVisibilityOff(signal)
 
@@ -4139,7 +4141,8 @@ class AbstractViewWidget(QFrame):
         self.setInfoVisibilityOn(signal)
         self.setColorbarVisibilityOn(signal)
         self.setRulerVisibilityOn(signal)
-        self.setOrientationLabelsVisibilityOn(signal)
+        try: self.setOrientationLabelsVisibilityOn(signal)
+        except: pass
         self.setOrientationMarkerVisibilityOn(signal)
         self.setTooltipVisibilityOn(signal)
 

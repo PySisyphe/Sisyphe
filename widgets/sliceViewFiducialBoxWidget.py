@@ -120,6 +120,9 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
     # noinspection unresolved-references
     def _updateDisplayedMarkers(self):
         if not self._fid.isEmpty():
+            # < Revision 02/11/2026
+            maxerror = self._fid.getMaximumFiducialError()
+            # Revision 02/11/2026 >
             sz = self._volume.getSpacing()[2]
             z = round(self._getFocalDepth() // sz)
             errors = self._fid.getErrors()
@@ -132,6 +135,10 @@ class SliceViewFiducialBoxWidget(SliceViewWidget):
                     if errors is not None: tool.setText('#{}\n{:.2f}'.format(i, errors[z][i]))
                     tool.setPosition(p)
                     tool.setVisibility(True)
+                    # < Revision 02/11/2026
+                    if errors[z][i] > maxerror: tool.setColor((1.0, 0.0, 0.0))
+                    else: tool.setColor((1.0, 1.0, 1.0))
+                    # Revision 02/11/2026 >
                 else: tool.setVisibility(False)
 
     def _updateMarkersFromDisplay(self):

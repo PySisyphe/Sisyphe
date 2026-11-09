@@ -3156,6 +3156,7 @@ class TransferWidget(QWidget):
         """
         return self._view
 
+    # noinspection unresolved-references
     def setViewWidget(self, view: VolumeViewWidget, gradient: bool = True):
         """
         Associate a new VolumeViewWidget for all child editor widgets.

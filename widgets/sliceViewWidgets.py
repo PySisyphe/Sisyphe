@@ -445,12 +445,16 @@ class SliceViewWidget(AbstractViewWidget):
         mapper.SliceFacesCameraOn()
         mapper.SetInputData(volume.getVTKImage())
         slc = vtkImageSlice()
-        # noinspection PyTypeChecker
         slc.SetMapper(mapper)
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
-        prop.SetLookupTable(volume.display.getVTKLUT())
-        prop.UseLookupTableScalarRangeOn()
+        # < Revision 23/10/2026
+        # prop.SetLookupTable(volume.display.getVTKLUT())
+        # prop.UseLookupTableScalarRangeOn()
+        if not volume.isRGB():
+            prop.SetLookupTable(volume.display.getVTKLUT())
+            prop.UseLookupTableScalarRangeOn()
+        # Revision 23/10/2026 >
         prop.SetOpacity(alpha)
         self._stack.AddImage(slc)
         return slc
@@ -692,7 +696,7 @@ class SliceViewWidget(AbstractViewWidget):
     # < Revision 30/07/2024
     # add _getFormattedValue method
     @classmethod
-    def _getFormattedValue(cls, v: int | float) -> str:
+    def _getFormattedValue(cls, v: int | float | list | tuple) -> str:
         """
         Formats a numerical value (int or float) into a string.
         For floats, it attempts to use a concise decimal format, falling back to scientific notation for very small
@@ -700,7 +704,7 @@ class SliceViewWidget(AbstractViewWidget):
 
         Parameters
         ----------
-        v : int | float
+        v : int | float | list | tuple
             numerical value to format.
 
         Returns
@@ -714,7 +718,6 @@ class SliceViewWidget(AbstractViewWidget):
                 if v2 >= 1e-4:
                     try:
                         d = int('{:e}'.format(v2).split('-')[1])
-                        # noinspection PyUnusedLocal
                         f = '{:.' + str(d) + 'f}'
                     except:
                         f = '{:g}'
@@ -3765,8 +3768,13 @@ class SliceOverlayViewWidget(SliceViewWidget):
             # Revision 15/04/2023 >
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
-        prop.SetLookupTable(volume.display.getVTKLUT())
-        prop.UseLookupTableScalarRangeOn()
+        # < Revision 23/10/2026
+        # prop.SetLookupTable(volume.display.getVTKLUT())
+        # prop.UseLookupTableScalarRangeOn()
+        if not volume.isRGB():
+            prop.SetLookupTable(volume.display.getVTKLUT())
+            prop.UseLookupTableScalarRangeOn()
+        # Revision 23/10/2026 >
         prop.SetOpacity(alpha)
         self._stack.AddImage(slc)
         return slc
@@ -5857,8 +5865,13 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
                     slc.SetPosition((cv[0]-co[0], cv[1]-co[1], cv[2]-co[2]))
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
-        prop.SetLookupTable(volume.display.getVTKLUT())
-        prop.UseLookupTableScalarRangeOn()
+        # < Revision 23/10/2026
+        # prop.SetLookupTable(volume.display.getVTKLUT())
+        # prop.UseLookupTableScalarRangeOn()
+        if not volume.isRGB():
+            prop.SetLookupTable(volume.display.getVTKLUT())
+            prop.UseLookupTableScalarRangeOn()
+        # Revision 23/10/2026 >
         prop.SetOpacity(alpha)
         self._stack.AddImage(slc)
         return slc
@@ -5994,8 +6007,13 @@ class SliceRegistrationViewWidget(SliceOverlayViewWidget):
         slc.SetMapper(mapper)
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
-        prop.SetLookupTable(volume.display.getVTKLUT())
-        prop.UseLookupTableScalarRangeOn()
+        # < Revision 23/10/2026
+        # prop.SetLookupTable(volume.display.getVTKLUT())
+        # prop.UseLookupTableScalarRangeOn()
+        if not volume.isRGB():
+            prop.SetLookupTable(volume.display.getVTKLUT())
+            prop.UseLookupTableScalarRangeOn()
+        # Revision 23/10/2026 >
         prop.SetOpacity(alpha)
         self._stack.AddImage(slc)
         return slc

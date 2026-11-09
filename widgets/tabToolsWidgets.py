@@ -3145,7 +3145,7 @@ class TabMeshListWidget(TabWidget):
 
     QWidget -> TabMeshListWidget
 
-    Last revision: 06/10/2026
+    Last revision: 03/11/2026
     """
 
     # Special method

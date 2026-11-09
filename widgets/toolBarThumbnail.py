@@ -560,11 +560,21 @@ class ToolBarThumbnail(QToolBar):
     def saveAll(self) -> None:
         if not self.isEmpty():
             # for i in range(len(self._actions)):
+            n = len(self.actions())
+            wait = DialogWait()
+            wait.open()
+            if n > 1:
+                wait.setProgressRange(0, n)
+                wait.progressVisibilityOn()
             i: cython.int
-            for i in range(len(self.actions())):
+            for i in range(n):
                 v = self.getVolumeFromIndex(i)
+                wait.setInformationText('Save {}'.format(v.getBasename()))
+                if wait.getProgressVisibility():
+                    wait.incCurrentProgressValue()
                 v.save()
                 if self._logger is not None: self._logger.info('Save {}'.format(v.getBasename()))
+            wait.close()
             if self.hasMainWindow():
                 # noinspection unresolved-references
                 self._mainwindow.setStatusBarMessage('All volumes saved.')

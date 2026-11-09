@@ -164,8 +164,13 @@ class SliceTrajectoryViewWidget(SliceOverlayViewWidget):
         slc.SetMapper(mapper)
         prop = slc.GetProperty()
         prop.SetInterpolationTypeToLinear()
-        prop.SetLookupTable(volume.display.getVTKLUT())
-        prop.UseLookupTableScalarRangeOn()
+        # < Revision 23/10/2026
+        # prop.SetLookupTable(volume.display.getVTKLUT())
+        # prop.UseLookupTableScalarRangeOn()
+        if not volume.isRGB():
+            prop.SetLookupTable(volume.display.getVTKLUT())
+            prop.UseLookupTableScalarRangeOn()
+        # Revision 23/10/2026 >
         prop.SetOpacity(alpha)
         self._stack.AddImage(slc)
         return slc

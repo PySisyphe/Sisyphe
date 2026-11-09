@@ -96,6 +96,7 @@ class QDoubleSpinBox2(QDoubleSpinBox):
         return f.toString(v, 'g', QLocale.FloatingPointShortest)
 # Revision 12/06/2025 >
 
+
 class SettingsWidget(QWidget):
     """
     SettingsWidget class
@@ -753,6 +754,20 @@ class SettingsWidget(QWidget):
                     layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
                     self._parameters[parameter] = edit
                 # Revision 23/12/2024 >
+                # < Revision 28/10/2026
+                elif vartype == 'file':
+                    edit = FileSelectionWidget(parent=self)
+                    if node.hasAttribute('ext'):
+                        ext = node.getAttribute('ext')
+                        ext = ext.split('|')
+                        if isinstance(ext, str): ext = [ext]
+                        edit.filterExtensions(ext)
+                    edit.setFixedWidth(400)
+                    if exists(data): edit.open(data)
+                    edit.FieldChanged.connect(self._parameterChanged)
+                    layout.addWidget(edit, i, 1, alignment=Qt.AlignLeft)
+                    self._parameters[parameter] = edit
+                # Revision 28/10/2026 >
                 elif vartype == 'dir':
                     edit = FileSelectionWidget(parent=self)
                     edit.filterDirectory()
@@ -1036,7 +1051,7 @@ class SettingsWidget(QWidget):
             # noinspection PyUnresolvedReferences
             return self._parameters[parameter].date().toString(Qt.ISODate)
         elif isinstance(self._parameters[parameter], FileSelectionWidget):
-            # vartype dir, vol, roi, dcm
+            # vartype dir, vol, roi, dcm, file
             return self._parameters[parameter].getFilename()
         elif isinstance(self._parameters[parameter], FilesSelectionWidget):
             # vartype dirs, vols, rois, dcms
