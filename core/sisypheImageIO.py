@@ -148,7 +148,7 @@ IO functions
     - writeToJSON(img: SimpleITK.Image, filename: str)
     - writeToNumpy(img: SimpleITK.Image, filename: str)
 
-    Last revision: 31/07/2025
+    Last revision: 06/11/2026
 """
 
 
@@ -313,11 +313,8 @@ def convertSITKtoVTK(img: sitkImage) -> vtkImageData:
         buff.shape = buff.size
         data = numpy_to_vtk(buff)
         vtkimg = vtkImageData()
-        # noinspection PyArgumentList
         vtkimg.SetDimensions(img.GetSize())
-        # noinspection PyArgumentList
         vtkimg.SetSpacing(img.GetSpacing())
-        # noinspection PyArgumentList
         vtkimg.SetOrigin(img.GetOrigin())
         vtkimg.AllocateScalars(getLibraryDataType(str(buff.dtype), 'vtk'), img.GetNumberOfComponentsPerPixel())
         vtkimg.GetPointData().SetScalars(data)
@@ -356,11 +353,17 @@ def flipImageToVTKDirectionConvention(img: sitkImage) -> sitkImage:
     """
     if isinstance(img, sitkImage):
         f = [False, False, False]
-        d = np_array(img.GetDirection()).reshape(3, 3).round()
+        # < Revision 06/11/2026
+        # d = np_array(img.GetDirection()).reshape(3, 3).round()
+        d = np_array(img.GetDirection()).reshape(3, 3)
+        # Revision 06/11/2026 >
         # < Revision 21/07/2026
         # m = abs(d).argmax(axis=1)
         m = abs(d).argmax(axis=0)
         # Revision 21/07/2026 >
+        # < Revision 06/11/2026
+        d = d.round()
+        # Revision 06/11/2026 >
         for i in range(3):
             # x dimension
             # flip if x direction (1 0 0)
@@ -416,7 +419,10 @@ def convertImageToAxialOrientation(img: sitkImage) -> tuple[sitkImage, list[int]
         - list[int] order of dimensions
     """
     if isinstance(img, sitkImage):
-        d = np_array(img.GetDirection()).reshape(3, 3).round()
+        # < Revision 06/11/2026
+        # d = np_array(img.GetDirection()).reshape(3, 3).round()
+        d = np_array(img.GetDirection()).reshape(3, 3)
+        # Revision 06/11/2026 >
         # < Revision 21/07/2026
         # m = abs(d).argmax(axis=1)
         m = list(abs(d).argmax(axis=0))
@@ -498,7 +504,6 @@ def readFromNIFTI(filename: str, lib: str = 'sitk') -> sitkImage:
                 if lib == 'vtk':
                     r = vtkNIFTIImageReader()
                     r.SetFileName(filename)
-                    # noinspection PyArgumentList
                     r.Update()
                     return r.GetOutput()
                 elif lib == 'itk':
@@ -539,7 +544,6 @@ def readFromNRRD(filename: str, lib: str = 'sitk') -> sitkImage:
                 elif lib == 'vtk':
                     r = vtkNrrdReader()
                     r.SetFileName(filename)
-                    # noinspection PyArgumentList
                     r.Update()
                     return r.GetOutput()
                 elif lib == 'itk':
@@ -620,7 +624,6 @@ def readFromVTK(filename: str, lib: str = 'sitk') -> sitkImage:
                 elif lib == 'vtk':
                     r = vtkImageReader()
                     r.SetFileName(filename)
-                    # noinspection PyArgumentList
                     r.Update()
                     return r.GetOutput()
                 elif lib == 'itk':
@@ -676,7 +679,6 @@ def readFromBitmap(filename: str, lib: str = 'sitk') -> sitkImage:
                     else:  # ext == '.tiff'
                         r = vtkTIFFReader()
                     r.SetFileName(filename)
-                    # noinspection PyArgumentList
                     r.Update()
                     return r.GetOutput()
                 elif lib == 'itk':
@@ -723,7 +725,6 @@ def readFromNumpy(filename: str, defaultshape: bool = True, lib: str = 'sitk') -
                     vtkimg = vtkImageData()
                     d = list(img.shape)
                     d.reverse()
-                    # noinspection PyArgumentList
                     vtkimg.SetDimensions(d)
                     vtkimg.AllocateScalars(getLibraryDataType(str(img.dtype), 'vtk'), img.ndim-2)
                     vtkimg.GetPointData().SetScalars(vtkdata)
@@ -738,7 +739,7 @@ def readFromNumpy(filename: str, defaultshape: bool = True, lib: str = 'sitk') -
     else: raise IOError('no such file {}.'.format(filename))
 
 
-# noinspection PyTypeChecker
+# noinspection PyTypeChecker,RedundantSuppression
 def readFromSisyphe(filename: str, lib: str = 'sitk') -> tuple[sitkImage, dict]:
     """
     Read Sisyphe file (.vol).
@@ -809,7 +810,6 @@ def readFromSisyphe(filename: str, lib: str = 'sitk') -> tuple[sitkImage, dict]:
                             img = vtkImageData()
                             d = list(buff.shape)
                             d.reverse()
-                            # noinspection PyArgumentList
                             img.SetDimensions(d)
                             img.SetSpacing(vx, vy, vz)
                             img.SetOrigin(0, 0, 0)
@@ -864,7 +864,6 @@ def readFromBrainVoyagerVMR(filename: str, lib: str = 'sitk') -> tuple[sitkImage
                     img = vtkImageData()
                     d = list(buff.shape)
                     d.reverse()
-                    # noinspection PyArgumentList
                     img.SetDimensions(d)
                     img.SetSpacing(vx, vy, vz)
                     img.SetOrigin(0, 0, 0)
@@ -914,7 +913,6 @@ def readFromFreeSurferMGH(filename: str, lib: str = 'sitk') -> sitkImage:
                 elif lib == 'vtk':
                     vtkdata = numpy_to_vtk(img)
                     rimg = vtkImageData()
-                    # noinspection PyArgumentList
                     rimg.SetDimensions(img.shape)
                     rimg.SetSpacing(spacing[0], spacing[1], spacing[2])
                     rimg.SetOrigin(0, 0, 0)

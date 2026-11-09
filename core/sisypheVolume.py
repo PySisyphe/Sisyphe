@@ -89,6 +89,7 @@ from Sisyphe.core.sisypheImageAttributes import SisypheIdentity
 from Sisyphe.core.sisypheImageAttributes import SisypheAcquisition
 from Sisyphe.core.sisypheImageAttributes import SisypheDisplay
 from Sisyphe.core.sisypheImageAttributes import SisypheACPC
+from Sisyphe.core.sisypheLUT import SisypheLut
 
 # to avoid ImportError due to circular imports
 if TYPE_CHECKING:
@@ -111,6 +112,7 @@ Function
 ~~~~~~~~
 
     - multiComponentSisypheVolumeFromList(vols: list[SisypheVolume] | SisypheVolumeCollection) -> SisypheVolume
+    - sisypheVolumesCompression(folder: str | None) -> None
 
 Class hierarchy
 ~~~~~~~~~~~~~~~
@@ -150,6 +152,29 @@ def multiComponentSisypheVolumeFromList(vols: list[SisypheVolume] | SisypheVolum
         vol.copyAttributesFrom(vols[0])
         return vol
     else: raise TypeError('parameter type {} is not list.'.format(type(vols)))
+
+
+def sisypheVolumesCompression(folder: str | None) -> None:
+    """
+    Recursively convert all PySisyphe volumes (*.xvol) in a folder to a compressed format.
+
+    Parameters
+    ----------
+    folder : str | None (optional)
+        directory, current directory if None
+    """
+    from os import getcwd
+    from glob import glob
+    if folder is None or not exists(folder): folder = getcwd()
+    path = join(folder, r'**\*.xvol')
+    files = glob(path, recursive=True)
+    for file in files:
+        if exists(file):
+            v = SisypheVolume()
+            v.load(file)
+            v.setCompressionOn()
+            print('Save {}'.format(file))
+            v.save()
 
 
 listImages = sitkImage | ndarray | SisypheImage
@@ -216,7 +241,7 @@ class SisypheVolume(SisypheImage):
     object -> SisypheImage -> SisypheVolume
 
     Creation: 04/02/2021
-    Last revisions: 30/07/2026
+    Last revision: 24/10/2026
     """
     __slots__ = ['_ID', '_arrayID', '_filename', '_compression', '_identity', '_acquisition',
                  '_display', '_acpc', '_transforms', '_xdcm', '_slope', '_intercept', '_orientation']
@@ -453,12 +478,9 @@ class SisypheVolume(SisypheImage):
         self._ID: str | None = None
         self._arrayID: str | None = None
         self._filename: str = ''
-        # noinspection PyUnresolvedReferences
         self._orientation: cython.int = self._UNSPECIFIED
         self._compression: bool = False
-        # noinspection PyUnresolvedReferences
         self._slope: cython.double = 1.0
-        # noinspection PyUnresolvedReferences
         self._intercept: cython.double = 0.0
         self._xdcm: XmlDicom | None = None
         self._identity: SisypheIdentity = SisypheIdentity(parent=self)
@@ -3889,7 +3911,7 @@ class SisypheVolume(SisypheImage):
         """
         r = super().getStandardizeIntensity(method)
         r = SisypheVolume(r)
-        r.copyPropertiesFrom(self, slope=False)
+        r.copyAttributesFrom(self, display=False, slope=False)
         r.setFilename(self.getFilename())
         return r
     # Revision 20/10/2024 >
@@ -3925,10 +3947,87 @@ class SisypheVolume(SisypheImage):
         r = super().getTruncateIntensity(centile, outputrange, onlymax)
         # Revision 20/05/2026 >
         r = SisypheVolume(r)
-        r.copyPropertiesFrom(self, slope=False)
+        r.copyAttributesFrom(self, display=False, slope=False)
         r.setFilename(self.getFilename())
         return r
     # Revision 20/10/2024 >
+
+    # < Revision 24/10/2026
+    # add getGrayscaleFromRGB method
+    def getLightnessFromRGB(self) -> SisypheVolume:
+        """
+        Get a lightness scalar image copy of the current SisypheVolume instance.
+        The current instance must be an RGB image.
+
+        Returns
+        -------
+            SisypheVolume
+                grayscale scalar image
+        """
+        r = super().getLightnessFromRGB()
+        r = SisypheVolume(r)
+        r.copyAttributesFrom(self, display=False, slope=False)
+        r.setFilename(self.getFilename())
+        r.setFilenamePrefix('lightness')
+        return r
+    # Revision 24/10/2026 >
+
+    # < Revision 24/10/2026
+    # add getLuminanceFromRGB method
+    def getLuminanceFromRGB(self) -> SisypheVolume:
+        """
+        Get a luminance scalar image copy of the current SisypheVolume instance.
+        The current instance must be an RGB image.
+
+        Returns
+        -------
+            SisypheVolume
+                luminance scalar image
+        """
+        r = super().getLuminanceFromRGB()
+        r = SisypheVolume(r)
+        r.copyAttributesFrom(self, display=False, slope=False)
+        r.setFilename(self.getFilename())
+        r.setFilenamePrefix('luminance')
+        return r
+    # Revision 24/10/2026 >
+
+    # < Revision 24/10/2026
+    # add getRGB method
+    def getRGB(self,
+               winf: float | int | None = None,
+               wsup: float | int | None = None,
+               lut: list[list[float | int]] | SisypheLut | None = None,
+               c: int = 0) -> SisypheVolume:
+        """
+        Get an RGB copy of the current SisypheVolume instance.
+
+        Parameters
+        ----------
+        winf : float | int | None (optional)
+            lower window value (default None, winf = winf of the current instance)
+        wsup : float | int | None (optional)
+            upper window value (default None, wsup = wsup of the current instance)
+        lut : lut: list[list[float | int]] | SisypheLut | None = None (optional)
+            lut (default None, lut of the current instance)
+        c : int (optional)
+            component (default, first component c = 0)
+
+        Returns
+        -------
+            SisypheVolume
+                RGB image
+        """
+        if lut is None: lut = self.display.getLUT()
+        if winf is None: winf = self.display.getWindowMin()
+        if wsup is None: wsup = self.display.getWindowMax()
+        r = super().getRGB(winf, wsup, lut, c)
+        r = SisypheVolume(r)
+        r.copyAttributesFrom(self, display=False, slope=False)
+        r.setFilename(self.getFilename())
+        r.setFilenamePrefix('rgb')
+        return r
+    # Revision 24/10/2026 >
 
     # < Revision 25/06/2026
     def applySlopeIntercept(self, inv: bool = False) -> SisypheVolume:

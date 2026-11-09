@@ -53,7 +53,9 @@ from numpy import flipud
 from numpy import round
 from numpy import trunc
 from numpy import zeros
+from numpy import clip
 from numpy import nan_to_num
+from numpy import ascontiguousarray
 from numpy.ma import masked_equal
 from numpy.ma import mean as ma_mean
 from numpy.ma import median as ma_median
@@ -85,15 +87,6 @@ from itk import GetArrayFromMatrix as itkGetArrayFromMatrix
 from SimpleITK import sitkUInt8
 from SimpleITK import sitkFloat32
 from SimpleITK import sitkFloat64
-from SimpleITK import sitkVectorInt8
-from SimpleITK import sitkVectorUInt8
-from SimpleITK import sitkVectorInt16
-from SimpleITK import sitkVectorUInt16
-from SimpleITK import sitkVectorInt32
-from SimpleITK import sitkVectorUInt32
-from SimpleITK import sitkVectorInt64
-from SimpleITK import sitkVectorUInt64
-from SimpleITK import sitkVectorFloat32
 from SimpleITK import sitkVectorFloat64
 from SimpleITK import Image as sitkImage
 from SimpleITK import Cast as sitkCast
@@ -184,6 +177,7 @@ from Sisyphe.core.sisypheImageIO import writeToMINC
 from Sisyphe.core.sisypheImageIO import writeToVTK
 from Sisyphe.core.sisypheImageIO import writeToJSON
 from Sisyphe.core.sisypheImageIO import writeToNumpy
+from Sisyphe.core.sisypheLUT import SisypheLut
 
 # to avoid import error due to circular imports
 if TYPE_CHECKING:
@@ -308,7 +302,7 @@ class SisypheImage(object):
     object -> SisypheImage
 
     Creation: 12/01/2021
-    Last revision: 30/07/2026
+    Last revision: 23/10/2026
     """
     __slots__ = ['_sitk_image', '_itk_image', '_vtk_image', '_numpy_array', '_attr']
 
@@ -354,24 +348,20 @@ class SisypheImage(object):
 
         if image is not None:
             # Init from SisypheImage
-            if isinstance(image, (SisypheImage, SisypheBinaryImage)):
-                image = image._sitk_image
+            if isinstance(image, (SisypheImage, SisypheBinaryImage)): image = image._sitk_image
             # Init from filename
             if isinstance(image, str):
                 if exists(image): image = readImage(image)
                 else: raise IOError('No such file {}.'.format(image))
             # Init from sitkImage
-            if isinstance(image, sitkImage):
-                self.copyFromSITKImage(image)
+            if isinstance(image, sitkImage): self.copyFromSITKImage(image)
             # Init from vtkImage
-            elif isinstance(image, vtkImageData):
-                self.copyFromVTKImage(image)
+            elif isinstance(image, vtkImageData): self.copyFromVTKImage(image)
             # Init from ANTSImage
-            elif isinstance(image, ANTsImage):
-                self.copyFromANTSImage(image)
+            elif isinstance(image, ANTsImage): self.copyFromANTSImage(image)
             # Init from numpy
             elif isinstance(image, ndarray):
-                self.copyFromNumpyArray(image)  # default numpy array shape (z, y, x)
+                self.copyFromNumpyArray(image)  # default numpy array shape (n, z, y, x)
                 if 'spacing' in kargs.keys():
                     spacing = kargs['spacing']
                     self.setSpacing(spacing[0], spacing[1], spacing[2])
@@ -418,6 +408,8 @@ class SisypheImage(object):
         str
             conversion of SisypheImage instance to str
         """
+        dtype = self.getDatatype()
+        if self.isRGB(): dtype += ' RGB'
         buff = 'Image attributes:\n' \
                '\tDatatype: {0}\n' \
                '\tSize: {1[0]} x {1[1]} x {1[2]} x {2}\n' \
@@ -427,7 +419,7 @@ class SisypheImage(object):
                '\tDirections (RAS+):\n' \
                '\t{6[0]:.1f} {6[1]:.1f} {6[2]:.1f}\n' \
                '\t{6[3]:.1f} {6[4]:.1f} {6[5]:.1f}\n' \
-               '\t{6[6]:.1f} {6[7]:.1f} {6[8]:.1f}\n'.format(self.getDatatype(),
+               '\t{6[6]:.1f} {6[7]:.1f} {6[8]:.1f}\n'.format(dtype,
                                                              self.getSize(),
                                                              self.getNumberOfComponentsPerPixel(),
                                                              self.getSpacing(),
@@ -1096,7 +1088,6 @@ class SisypheImage(object):
         # GetArrayViewFromImage() return default numpy array shape (z, y, x)
         buff = sitkGetArrayViewFromImage(self._sitk_image)
         self._numpy_array = buff.copy().T  # image shape (x, y, z)
-        # noinspection PyPropertyAccess
         self._numpy_array.data = buff.data
         self._numpy_array = self._numpy_array.T  # default shape (z, y, x)
 
@@ -1104,24 +1095,35 @@ class SisypheImage(object):
     @cython.cfunc
     @cython.returns(cython.void)
     def _updateVTKImageFromNumpy(self) -> None:
-        # default numpy array shape (z, y, x)
-        buff = self._numpy_array.view(ndarray)
-        buff.shape = buff.size
-        data = numpy_to_vtk(buff)
-        self._vtk_image = vtkImageData()
+        # < Revision 23/10/2026
+        # buff = self._numpy_array.view(ndarray)
+        # buff.shape = buff.size
+        # default numpy array shape (n, z, y, x)
+        n = self._sitk_image.GetNumberOfComponentsPerPixel()
         sz = self._sitk_image.GetSize()
+        if n == 3:
+            # RGB multi-component volume
+            # shape (x * y * z, 3)
+            buff = ascontiguousarray(self._numpy_array)
+            buff = buff.reshape(-1, n)
+            data = numpy_to_vtk(buff, deep=1)
+        else:
+            # shape (x * y * z)
+            buff = self._numpy_array.view()
+            buff.shape = buff.size
+            data = numpy_to_vtk(buff)
+        # Revision 23/10/2026 >
+        self._vtk_image = vtkImageData()
         sp = self._sitk_image.GetSpacing()
         if len(sz) == 2:
             sz = (sz[0], sz[1], 1)
             sp = (sp[0], sp[1], 1.0)
-        # noinspection PyArgumentList
         self._vtk_image.SetDimensions(sz)
-        # noinspection PyArgumentList
         self._vtk_image.SetSpacing(sp)
-        # Revision 15/04/2023
+        # < Revision 15/04/2023
         # self._vtk_image.SetOrigin(self._sitk_image.GetOrigin())
-        self._vtk_image.AllocateScalars(getLibraryDataType(str(self._numpy_array.dtype), 'vtk'),
-                                        self._sitk_image.GetNumberOfComponentsPerPixel())
+        # Revision 15/04/2023 >
+        # self._vtk_image.AllocateScalars(getLibraryDataType(str(self._numpy_array.dtype), 'vtk'), n)
         self._vtk_image.GetPointData().SetScalars(data)
 
     # noinspection unresolved-references
@@ -1576,7 +1578,7 @@ class SisypheImage(object):
     # noinspection unresolved-references
     @cython.ccall
     @cython.returns(tuple)
-    def cast(self, datatype: str) -> tuple[SisypheImage, float, float]:  # recode with SimpleITK Clamp
+    def cast(self, datatype: str) -> tuple[SisypheImage, float, float]:
         """
         SisypheImage copy of the current SisypheImage instance with a new datatype.
 
@@ -1597,38 +1599,25 @@ class SisypheImage(object):
                 return SisypheImage(self._sitk_image), 1.0, 0.0
             else:
                 if can_cast(str(self._numpy_array.dtype), datatype, 'same_kind'):
-                    # < Revision 12/09/2024
-                    # take into account vector datatypes
-                    if self.getNumberOfComponentsPerPixel() > 1:
-                        if datatype == 'int8': dtype = sitkVectorInt8
-                        elif datatype == 'uint8': dtype = sitkVectorUInt8
-                        elif datatype == 'int16': dtype = sitkVectorInt16
-                        elif datatype == 'uint16': dtype = sitkVectorUInt16
-                        elif datatype == 'int32': dtype = sitkVectorInt32
-                        elif datatype == 'uint32': dtype = sitkVectorUInt32
-                        elif datatype == 'int64': dtype = sitkVectorInt64
-                        elif datatype == 'uint64': dtype = sitkVectorUInt64
-                        elif datatype == 'float32': dtype = sitkVectorFloat32
-                        elif datatype == 'float64': dtype = sitkVectorFloat64
-                        else: raise ValueError('Vector datatype {} is not supported.'.format(datatype))
-                    else: dtype = getLibraryDataType(datatype, 'sitk')
-                    # Revision 12/09/2024 >
-                    img = sitkCast(self._sitk_image, dtype)
-                    return SisypheImage(image=img), 1.0, 0.0
-                else:
                     slope = 1.0
-                    tmax = iinfo(datatype).max
+                    vmin = 0.0
+                    buff = self.getNumpy()
+                else:
                     vmax = self._numpy_array.max()
                     vmin = self._numpy_array.min()
-                    if vmax - vmin < tmax:
-                        buff = sitkCast(self._sitk_image, sitkFloat32) - vmin
-                    else:
-                        islope = tmax / (vmax - vmin)
-                        buff = (sitkCast(self._sitk_image, sitkFloat32) - vmin) * islope
-                        slope = 1.0 / islope
-                    buff = sitkCast(buff, getLibraryDataType(datatype, 'sitk'))
-                    img = SisypheImage(image=buff)
-                    return img, slope, vmin
+                    if vmin > 0.0: vmin = 0.0
+                    elif datatype in ('int8', 'int16', 'int32', 'int64', 'float32', 'float64'): vmin = 0.0
+                    r = vmax - vmin
+                    if datatype in ('int8', 'uint8'): tmax = iinfo(datatype).max
+                    elif 100.0 < r < iinfo(datatype).max: tmax = r
+                    else: tmax = 1000.0
+                    islope = tmax / r
+                    slope = 1.0 / islope
+                    buff = (self.getNumpy().astype('float32') - vmin) * islope
+                img = SisypheImage(image=buff.astype(datatype, casting='unsafe'),
+                                   spacing=self.getSpacing(),
+                                   direction=self.getDirections())
+                return img, slope, vmin
         else: raise ValueError('SisypheImage array is empty.')
 
     @cython.ccall
@@ -2030,14 +2019,16 @@ class SisypheImage(object):
         bool
             True if max(spacing) / min(spacing) < tol
         """
-        if isinstance(tol, float):
-            s = list(self.getSpacing())
-            s.sort()
-            # < Revision 9/10/2024
-            # return (s[2] / s[0]) < tol
-            return (s[2] / s[0]) <= tol
-            # Revision 9/10/2024 >
-        else: raise TypeError('parameter type {} is not float.'.format(type(tol)))
+        if not self.isEmpty():
+            if isinstance(tol, float):
+                s = list(self.getSpacing())
+                s.sort()
+                # < Revision 9/10/2024
+                # return (s[2] / s[0]) < tol
+                return (s[2] / s[0]) <= tol
+                # Revision 9/10/2024 >
+            else: raise TypeError('parameter type {} is not float.'.format(type(tol)))
+        else: return False
 
     @cython.ccall
     @cython.returns(cython.bint)
@@ -2056,7 +2047,8 @@ class SisypheImage(object):
         bool
             True if max(spacing) / min(spacing) > tol
         """
-        return not self.isIsotropic(tol)
+        if not self.isEmpty(): return not self.isIsotropic(tol)
+        else: return False
 
     @cython.ccall
     @cython.returns(cython.bint)
@@ -2077,12 +2069,14 @@ class SisypheImage(object):
         bool
             True if max(spacing) / min(spacing) > tol and max(spacing) >= thickness
         """
-        s = list(self.getSpacing())
-        s.sort()
-        # < Revision 20/02/2025
-        # return (s[2] / s[0]) > tol or s[2] >= thickness
-        return (s[2] / s[0]) > tol and s[2] >= thickness
-        # Revision 20/02/2025 >
+        if not self.isEmpty():
+            s = list(self.getSpacing())
+            s.sort()
+            # < Revision 20/02/2025
+            # return (s[2] / s[0]) > tol or s[2] >= thickness
+            return (s[2] / s[0]) > tol and s[2] >= thickness
+            # Revision 20/02/2025 >
+        else: return False
 
     @cython.ccall
     @cython.returns(cython.int)
@@ -2451,7 +2445,27 @@ class SisypheImage(object):
         bool
             True if multicomponent image
         """
-        return self._sitk_image.GetNumberOfComponentsPerPixel() > 1
+        if not self.isEmpty():
+            return self._sitk_image.GetNumberOfComponentsPerPixel() > 1
+        else: return False
+
+    # < Revision 23/10/2026
+    # noinspection unresolved-references
+    @cython.ccall
+    @cython.returns(cython.bint)
+    def isRGB(self) -> bool:
+        """
+        Check whether image is RBG (array element is a vector of three uint8 scalar values).
+
+        Returns
+        -------
+        bool
+            True if RGB image
+        """
+        if not self.isEmpty():
+            return self._sitk_image.GetNumberOfComponentsPerPixel() == 3 and self.isUInt8Datatype()
+        else: return False
+    # Revision 23/10/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -5915,7 +5929,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import fabs
-        v = fabs(self._numpy_array)
+        v = fabs(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -5932,7 +5946,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import sign
-        v = sign(self._numpy_array)
+        v = sign(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -5949,7 +5963,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import square
-        v = square(self._numpy_array)
+        v = square(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -5966,7 +5980,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import sqrt
-        v = sqrt(self._numpy_array)
+        v = sqrt(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -5983,7 +5997,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import exp
-        v = exp(self._numpy_array)
+        v = exp(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6000,7 +6014,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import exp2
-        v = exp2(self._numpy_array)
+        v = exp2(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6017,7 +6031,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import log
-        v = log(self._numpy_array)
+        v = log(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6034,7 +6048,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import log2
-        v = log2(self._numpy_array)
+        v = log2(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6051,7 +6065,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import log10
-        v = log10(self._numpy_array)
+        v = log10(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6068,7 +6082,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import sin
-        v = sin(self._numpy_array)
+        v = sin(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6085,7 +6099,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import cos
-        v = cos(self._numpy_array)
+        v = cos(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6102,7 +6116,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import tan
-        v = tan(self._numpy_array)
+        v = tan(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6119,7 +6133,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import arcsin
-        v = arcsin(self._numpy_array)
+        v = arcsin(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6136,7 +6150,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import arccos
-        v = arccos(self._numpy_array)
+        v = arccos(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6153,7 +6167,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import arctan
-        v = arctan(self._numpy_array)
+        v = arctan(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6170,7 +6184,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import sinh
-        v = sinh(self._numpy_array)
+        v = sinh(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6187,7 +6201,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import cosh
-        v = cosh(self._numpy_array)
+        v = cosh(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6204,7 +6218,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import tanh
-        v = tanh(self._numpy_array)
+        v = tanh(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6221,7 +6235,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import arcsinh
-        v = arcsinh(self._numpy_array)
+        v = arcsinh(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6238,7 +6252,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import arccosh
-        v = arccosh(self._numpy_array)
+        v = arccosh(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6255,7 +6269,7 @@ class SisypheImage(object):
         SisypheImage
         """
         from numpy import arctanh
-        v = arctanh(self._numpy_array)
+        v = arctanh(self.getNumpy())
         return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
     # Revision 30/07/2026 >
 
@@ -6273,7 +6287,7 @@ class SisypheImage(object):
         """
         if self.isFloatDatatype:
             from numpy import floor
-            v = floor(self._numpy_array)
+            v = floor(self.getNumpy())
             return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
         else: return self
     # Revision 30/07/2026 >
@@ -6292,7 +6306,7 @@ class SisypheImage(object):
         """
         if self.isFloatDatatype:
             from numpy import ceil
-            v = ceil(self._numpy_array)
+            v = ceil(self.getNumpy())
             return SisypheImage(v, spacing=self.getSpacing(), direction=self.getDirections())
         else: return self
     # Revision 30/07/2026 >
@@ -6460,6 +6474,105 @@ class SisypheImage(object):
             return SisypheImage(img)
         else: raise ValueError('Not implemented for multi-component images.')
     # Revision 20/10/2024 >
+
+    # < Revision 23/10/2026
+    # add getGrayscaleFromRGB method
+    # noinspection unresolved-references
+    @cython.ccall
+    @cython.returns(object)
+    def getLuminanceFromRGB(self) -> SisypheImage:
+        """
+        Get a luminance scalar image copy of the current SisypheImage instance.
+        The current instance must be an RGB image.
+
+        Returns
+        -------
+            SisypheImage
+                luminance scalar image
+        """
+        if self.isRGB():
+            buff =  self._numpy_array.reshape(-1, 3)
+            img = 0.2125  * buff[:, 0] + 0.7154 * buff[:, 1] + 0.0721 * buff[:, 2]
+            img = img.reshape(self._numpy_array.shape[:-1])
+            return SisypheImage(img.astype('uint16'), spacing=self.getSpacing(), direction=self.getDirections())
+        else: raise AttributeError('Volume is not RGB')
+    # Revision 23/10/2026 >
+
+    # < Revision 23/10/2026
+    # add getLuminanceFromRGB method
+    # noinspection unresolved-references
+    @cython.ccall
+    @cython.returns(object)
+    def getLightnessFromRGB(self) -> SisypheImage:
+        """
+        Get a lightness scalar image copy of the current SisypheImage instance.
+        The current instance must be an RGB image.
+
+        Returns
+        -------
+            SisypheImage
+                lightness scalar image
+        """
+        if self.isRGB():
+            imin = npmin(self._numpy_array, axis=-1).astype('float64')
+            imax = npmax(self._numpy_array, axis=-1).astype('float64')
+            img = (imax + imin) / 2.0
+            return SisypheImage(img.astype('uint16'), spacing=self.getSpacing(), direction=self.getDirections())
+        else: raise AttributeError('Volume is not RGB')
+    # Revision 23/10/2026 >
+
+    # < Revision 23/10/2026
+    # add getRGB method
+    # noinspection unresolved-references
+    @cython.ccall
+    @cython.returns(object)
+    def getRGB(self,
+               winf: float | int | None = None,
+               wsup: float | int | None = None,
+               lut: list[list[float | int]] | SisypheLut | None = None,
+               c: int = 0) -> SisypheImage:
+        """
+        Get an RGB copy of the current SisypheImage instance.
+
+        Parameters
+        ----------
+        winf : float | int | None (optional)
+            lower window value (default None, winf = min value)
+        wsup : float | int | None (optional)
+            upper window value (default None, wsup = max value)
+        lut : lut: list[list[float | int]] | SisypheLut | None = None (optional)
+            lut (default None, gray lut)
+        c : int (optional)
+            component (default, first component c = 0)
+
+        Returns
+        -------
+            SisypheImage
+                RGB image
+        """
+        if not self.isRGB():
+            if self.isMulticomponent():
+                img = self._numpy_array[:, :, :, c]
+            else: img = self._numpy_array
+            if lut is None:
+                lut = SisypheLut()
+                lut.setDefaultLut()
+            if isinstance(lut, SisypheLut):
+                lut = lut.copyToNumpy()
+            elif isinstance(lut, list):
+                lut = array(lut)
+            if winf is None: winf = self.getMin()
+            if wsup is None: wsup = self.getMax()
+            img = clip(img, winf, wsup)
+            f = 255.0 / (wsup - winf)
+            img = (img - winf) * f
+            img = img.astype('uint8')
+            lut = (lut * 255.0).astype('uint8')
+            r = lut[img]
+            r = transpose(r, axes=(3, 0, 1, 2)).astype('uint8')
+            return SisypheImage(r[:3, :, :, :], spacing=self.getSpacing(), direction=self.getDirections())
+        else: return self
+    # Revision 23/10/2026 >
 
     # IO public methods
 

@@ -14,6 +14,7 @@ from shutil import copy
 
 from os.path import join
 from os.path import split
+from os.path import splitext
 from os.path import abspath
 from os.path import dirname
 from os.path import basename
@@ -309,22 +310,29 @@ class SisypheSettings(object):
     object -> SisypheSettings
 
     Creation: 08/09/2022
-    Last revisions: 15/04/2026
+    Last revisions: 28/10/2026
     """
     __slots__ = ['_doc', '_filename']
 
     # Class constants
 
     # < Revision 23/12/2024
-    # add 'dcm' and 'dcms' var types
+    # add 'dcm', 'dcms', 'txt' var types
+    # < Revision 28/10/2026
+    # add 'file' var type
     _VARTYPES: tuple[str, ...] = ('str', 'vol', 'roi', 'dir', 'dcm',
                                   'vols', 'rois', 'dcms', 'dirs', 'date',
                                   'int', 'float', 'percent', 'bool',
                                   'visibility', 'lstr', 'lint',
-                                  'lfloat', 'lbool', 'lut', 'color')
-    # < Revision 23/12/2024
+                                  'lfloat', 'lbool', 'lut', 'color',
+                                  'txt', 'file')
+    # Revision 28/10/2026 >
+    # Revision 23/12/2024 >
 
-    _ATTRS: tuple[str, ...] = ('label', 'icon', 'vartype', 'varmin', 'varmax')
+    # < Revision 28/10/2026
+    # add 'ext' var type
+    _ATTRS: tuple[str, ...] = ('label', 'icon', 'vartype', 'varmin', 'varmax', 'ext')
+    # Revision 28/10/2026 >
 
     # Cython static attribute types
 
@@ -738,6 +746,7 @@ class SisypheSettings(object):
             node = node.nextSibling
         return None
 
+    # noinspection unresolved-references
     @cython.ccall
     @cython.returns(list[str])
     def getSectionFieldsList(self, section: str) -> list[str]:
@@ -761,7 +770,6 @@ class SisypheSettings(object):
             while child:
                 if child.nodeType == minidom.Node.ELEMENT_NODE:
                     r.append(child.nodeName)
-                # noinspection unresolved-references
                 child = child.nextSibling
         return r
 
@@ -786,17 +794,28 @@ class SisypheSettings(object):
                 - 'varmin', int | float, optional, minimum field value (for 'int' or 'float' vartype)
                 - 'varmax', int | float, optional, maximum field value (for 'int' or 'float' vartype)
                 - 'step', int, optional, step of the associated QSpinbox widget
+                - 'ext', list[str], list of file extensions
         """
         if not self.hasField(section, field):
             node = self.getSectionNode(section)
             fieldnode = self._doc.createElement(field)
             if len(attrs) > 0:
                 for attr in attrs:
-                    if attr in ('label', 'icon', 'vartype', 'varmin', 'varmax', 'step'):
+                    # < Revision 28/10/2026
+                    # if attr in ('label', 'icon', 'vartype', 'varmin', 'varmax', 'step'):
+                    if attr in ('label', 'icon', 'vartype', 'varmin', 'varmax', 'step', 'ext'):
                         attrnode = self._doc.createAttribute(attr)
                         fieldnode.setAttributeNode(attrnode)
-                        fieldnode.setAttribute(attr, attrs[attr])
-                    else: raise ValueError('{} incorrect attribute.')
+                        # fieldnode.setAttribute(attr, attrs[attr])
+                        if attr == 'ext':
+                            v = attrs[attr]
+                            if isinstance(v, list): '|'.join(v)
+                            fieldnode.setAttribute(attr, v)
+                        elif attr in ('varmin', 'varmax', 'step'):
+                            fieldnode.setAttribute(attr, str(attrs[attr]))
+                        else: fieldnode.setAttribute(attr, attrs[attr])
+                    # Revision 28/10/2026 >
+                    else: raise ValueError('{} unsupported attribute.')
                 txtnode = self._doc.createTextNode('')
                 fieldnode.appendChild(txtnode)
                 # noinspection unresolved-references
@@ -890,6 +909,7 @@ class SisypheSettings(object):
             - 'cmap': str, colormap name
             - 'font': str, font name
             - 'txt', str text file name (in ./Sisyphe/doc folder if path attribute is not defined)
+            - 'file', str file name
         """
         node = self.getFieldNode(section, field)
         if node is not None: return node.getAttribute('vartype')
@@ -935,6 +955,7 @@ class SisypheSettings(object):
                 - 'color', list[float, float, float]
                 - 'font', str
                 - 'txt', str text file name (in ./Sisyphe/doc folder if path attribute is not defined)
+                - 'file', str file name
         """
         i: cython.int
         node = self.getFieldNode(section, field)
@@ -950,7 +971,7 @@ class SisypheSettings(object):
                 # if vartype in ('str', 'dir', 'vol', 'roi', 'date', 'lut'): return data
                 # < Revision 30/11/2025
                 # if vartype in ('str', 'dir', 'vol', 'roi', 'dcm', 'date', 'lut', 'font'): return data
-                if vartype in ('str', 'dir', 'roi', 'dcm', 'date', 'lut', 'font'): return data
+                if vartype in ('str', 'dir', 'roi', 'dcm', 'date', 'lut', 'font', 'file'): return data
                 elif vartype == 'vol':
                     if node.hasAttribute('path'):
                         path = node.getAttribute('path')
@@ -992,7 +1013,7 @@ class SisypheSettings(object):
                     return r
                 # Revision 6/10/2024 >
                 else: return data
-            elif vartype in ('str', 'dir', 'vol', 'roi', 'dcm', 'date'): return ''
+            elif vartype in ('str', 'dir', 'vol', 'roi', 'dcm', 'date', 'txt', 'file'): return ''
             # < Revision 30/11/2025
             elif vartype in ('dirs', 'vols', 'rois', 'dcms'): return list()
             # Revision 30/11/2025 >
@@ -1037,6 +1058,7 @@ class SisypheSettings(object):
                 - 'color', list[float, float, float]
                 - 'font', str | QFont
                 - 'txt', str, text file name (in ./Sisyphe/doc folder if path attribute is not defined)
+                - 'file', str, file name
         """
         node = self.getFieldNode(section, field)
         if node is not None:
@@ -1136,7 +1158,17 @@ class SisypheSettings(object):
                     v = path[1]
                 else: raise ValueError('No such file {}'.format(v))
             # Revision 15/03/2025 >
-            else: raise KeyError('Unknown vartype {}.'.format(vartype))
+            # < Revision 28/10/2026
+            elif vartype == 'file':
+                if exists(v):
+                    ext = splitext(v)[1]
+                    exts = node.getAttribute('ext')
+                    if exts is None or exts == '': exts = [ext]
+                    else: exts = exts.split('|')
+                    if ext not in exts: raise ValueError('{} bad extension ({} expected)'.format(ext, ' '.join(exts)))
+                else: raise ValueError('No such file {}'.format(basename(v)))
+            # Revision 28/10/2026 >
+            else: raise KeyError('Unknown vartype {}'.format(vartype))
             # print('{} {} {}'.format(section, field, v))
             if node.hasChildNodes(): node.firstChild.data = v
             else:

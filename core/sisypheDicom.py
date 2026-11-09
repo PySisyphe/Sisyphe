@@ -961,7 +961,7 @@ class DicomToXmlDicom(object):
         """
         return self._xmlfilename
 
-    # noinspection unreachable-code
+    # noinspection unreachable-code,unresolved-references
     def execute(self) -> None:
         """
         Run Dicom to XmlDicom conversion.
@@ -1015,19 +1015,16 @@ class DicomToXmlDicom(object):
                                 if vr in ['FL', 'FD', 'DS']:
                                     buff = '|'.join(['0.0'] * de.VM)
                                     if n > 0:
-                                        # noinspection PyUnresolvedReferences
                                         buff[:n] = de.value
                                     txt = doc.createTextNode(buff)
                                 elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
                                     buff = '|'.join(['0'] * de.VM)
                                     if n > 0:
-                                        # noinspection PyUnresolvedReferences
                                         buff[:n] = de.value
                                     txt = doc.createTextNode(buff)
                                 else:
                                     buff = '|'.join(['None'] * de.VM)
                                     if n > 0:
-                                        # noinspection PyUnresolvedReferences
                                         buff[:n] = de.value
                                     txt = doc.createTextNode(buff)
                             else: txt = doc.createTextNode('|'.join([str(v) for v in de.value]))
@@ -1092,19 +1089,16 @@ class DicomToXmlDicom(object):
                                         if vr in ['FL', 'FD', 'DS']:
                                             buff = '|'.join(['0.0'] * de.VM)
                                             if n > 0:
-                                                # noinspection PyUnresolvedReferences
                                                 buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                         elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
                                             buff = '|'.join(['0'] * de.VM)
                                             if n > 0:
-                                                # noinspection PyUnresolvedReferences
                                                 buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                         else:
                                             buff = '|'.join(['None'] * de.VM)
                                             if n > 0:
-                                                # noinspection PyUnresolvedReferences
                                                 buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                     else:
@@ -1155,19 +1149,16 @@ class DicomToXmlDicom(object):
                                     if vr in ['FL', 'FD', 'DS']:
                                         buff = '|'.join(['0.0'] * de.VM)
                                         if n > 0:
-                                            # noinspection PyUnresolvedReferences
                                             buff[:n] = de.value
                                         txt = doc.createTextNode(buff)
                                     elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
                                         buff = '|'.join(['0'] * de.VM)
                                         if n > 0:
-                                            # noinspection PyUnresolvedReferences
                                             buff[:n] = de.value
                                         txt = doc.createTextNode(buff)
                                     else:
                                         buff = '|'.join(['None'] * de.VM)
                                         if n > 0:
-                                            # noinspection PyUnresolvedReferences
                                             buff[:n] = de.value
                                         txt = doc.createTextNode(buff)
                                 else:
@@ -1229,19 +1220,16 @@ class DicomToXmlDicom(object):
                                         if vr in ['FL', 'FD', 'DS']:
                                             buff = '|'.join(['0.0'] * de.VM)
                                             if n > 0:
-                                                # noinspection PyUnresolvedReferences
                                                 buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                         elif vr in ['SL', 'SS', 'UL', 'US', 'IS']:
                                             buff = '|'.join(['0'] * de.VM)
                                             if n > 0:
-                                                # noinspection PyUnresolvedReferences
                                                 buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                         else:
                                             buff = '|'.join(['None'] * de.VM)
                                             if n > 0:
-                                                # noinspection PyUnresolvedReferences
                                                 buff[:n] = dec.value
                                             txt = doc.createTextNode(buff)
                                     else:

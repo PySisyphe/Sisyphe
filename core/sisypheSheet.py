@@ -13,6 +13,7 @@ from os.path import splitext
 
 from xml.dom import minidom
 
+from numpy import load as npload
 from numpy import save as npsave
 from numpy import savez as npsavez
 
@@ -21,6 +22,10 @@ from pandas import read_csv
 from pandas import read_json
 from pandas import read_excel
 from pandas import read_table
+from pandas import read_xml
+from pandas import read_spss
+from pandas import read_sas
+from pandas import read_stata
 
 from scipy.io import savemat
 
@@ -46,7 +51,7 @@ class SisypheSheet(DataFrame):
     DataFrame -> SisypheSheet
 
     Creation: 10/04/2023
-    Last revision: 13/12/2024
+    Last revision: 28/10/2026
     """
 
     # Class constants
@@ -174,7 +179,7 @@ class SisypheSheet(DataFrame):
         else: raise IOError('no such file : {}'.format(filename))
 
     @classmethod
-    def loadCSV(cls, filename: str) -> SisypheSheet:
+    def loadCSV(cls, filename: str, sep: str = ',') -> SisypheSheet:
         """
         Create a SisypheSheet instance from a CSV file (.csv).
 
@@ -182,7 +187,8 @@ class SisypheSheet(DataFrame):
         ----------
         filename : str
             CSV file name (.csv)
-
+        sep : str (optional)
+            separator (default ",")
         Returns
         -------
         SisypheSheet
@@ -193,8 +199,11 @@ class SisypheSheet(DataFrame):
             if ext.lower() != '.csv':
                 filename = path + '.csv'
             if exists(filename):
-                d = read_csv(filename, index_col=0).to_dict(orient='tight')
-                return SisypheSheet(DataFrame.from_dict(d, orient='tight'))
+                # < Revision 28/10/2026
+                # d = read_csv(filename, sep=sep, index_col=0).to_dict(orient='tight')
+                # return SisypheSheet(DataFrame.from_dict(d, orient='tight'))
+                return SisypheSheet(read_csv(filename, sep=sep))
+                # Revision 28/10/2026 >
             else: raise IOError('No such file : {}'.format(filename))
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
@@ -216,9 +225,15 @@ class SisypheSheet(DataFrame):
             loaded sheet
         """
         if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.txt':
+                filename = path + '.txt'
             if exists(filename):
-                d = read_table(filename, sep=sep).to_dict(orient='tight')
-                return SisypheSheet(DataFrame.from_dict(d, orient='tight').set_index('Series'))
+                # < Revision 28/10/2026
+                # d = read_table(filename, sep=sep).to_dict(orient='tight')
+                # return SisypheSheet(DataFrame.from_dict(d, orient='tight').set_index('Series'))
+                return SisypheSheet(read_table(filename, sep=sep))
+                # Revision 28/10/2026 >
             else: raise IOError('No such file : {}'.format(filename))
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
@@ -238,9 +253,15 @@ class SisypheSheet(DataFrame):
             loaded sheet
         """
         if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.xlsx':
+                filename = path + '.xlsx'
             if exists(filename):
-                d = read_excel(filename).to_dict(orient='tight')
-                return SisypheSheet(DataFrame.from_dict(d, orient='tight').set_index('Unnamed: 0'))
+                # < Revision 28/10/2026
+                # d = read_excel(filename).to_dict(orient='tight')
+                # return SisypheSheet(DataFrame.from_dict(d, orient='tight').set_index('Unnamed: 0'))
+                return SisypheSheet(read_excel(filename))
+                # Revision 28/10/2026 >
             else: raise IOError('No such file : {}'.format(filename))
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
@@ -260,11 +281,123 @@ class SisypheSheet(DataFrame):
             loaded sheet
         """
         if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.json':
+                filename = path + '.json'
             if exists(filename):
-                d = read_json(filename).to_dict(orient='tight')
-                return SisypheSheet(DataFrame.from_dict(d, orient='tight'))
+                # < Revision 28/10/2026
+                # d = read_json(filename).to_dict(orient='tight')
+                # return SisypheSheet(DataFrame.from_dict(d, orient='tight'))
+                return SisypheSheet(read_json(filename))
+                # Revision 28/10/2026 >
             else: raise IOError('No such file : {}'.format(filename))
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+
+    # < Revision 28/10/2026
+    @classmethod
+    def loadXML(cls, filename: str) -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from an XML file (.xml).
+
+        Parameters
+        ----------
+        filename : str
+            XML file name (.xml)
+
+        Returns
+        -------
+        SisypheSheet
+            loaded sheet
+        """
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.xml':
+                filename = path + '.xml'
+            if exists(filename):
+                return SisypheSheet(read_xml(filename))
+            else: raise IOError('No such file : {}'.format(filename))
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # Revision 28/10/2026 >
+
+    # < Revision 28/10/2026
+    @classmethod
+    def loadNPY(cls, filename: str) -> SisypheSheet:
+        """
+        Create a SisypheSheet instance from a Numpy file (.npy).
+
+        Parameters
+        ----------
+        filename : str
+            Numpy file name (.npy)
+
+        Returns
+        -------
+        SisypheSheet
+            loaded sheet
+        """
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.npy':
+                filename = path + '.npy'
+            if exists(filename):
+                d = npload(filename,  allow_pickle=True)
+                return SisypheSheet(DataFrame(d))
+            else: raise IOError('No such file : {}'.format(filename))
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # Revision 28/10/2026 >
+
+    # < Revision 28/10/2026
+    @classmethod
+    def loadNPZ(cls, filename: str, index: int = 0) -> SisypheSheet:
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.npz':
+                filename = path + '.npz'
+            if exists(filename):
+                d = npload(filename, allow_pickle=True)
+                return SisypheSheet(DataFrame(d[tuple(d.keys())[index]]))
+            else: raise IOError('No such file : {}'.format(filename))
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # Revision 28/10/2026 >
+
+    # < Revision 28/10/2026
+    @classmethod
+    def loadSAS(cls, filename: str) -> SisypheSheet:
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.sas7bdat':
+                filename = path + '.sas7bdat'
+            if exists(filename):
+                return SisypheSheet(read_sas(filename, index=False))
+            else: raise IOError('No such file : {}'.format(filename))
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # Revision 28/10/2026 >
+
+    # < Revision 28/10/2026
+    @classmethod
+    def loadSPSS(cls, filename: str) -> SisypheSheet:
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.sav':
+                filename = path + '.sav'
+            if exists(filename):
+                return SisypheSheet(read_spss(filename))
+            else: raise IOError('No such file : {}'.format(filename))
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # Revision 28/10/2026 >
+
+    # < Revision 28/10/2026
+    @classmethod
+    def loadSTATA(cls, filename: str) -> SisypheSheet:
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.dta':
+                filename = path + '.dta'
+            if exists(filename):
+                return SisypheSheet(read_stata(filename))
+            else: raise IOError('No such file : {}'.format(filename))
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # Revision 28/10/2026 >
 
     # Special methods
 
@@ -357,7 +490,10 @@ class SisypheSheet(DataFrame):
         if isinstance(filename, str):
             path, ext = splitext(filename)
             if ext.lower() != '.csv': filename = path + '.csv'
-            self.to_csv(filename, index_label='Series')
+            # < Revision 28/10/2026
+            # self.to_csv(filename, index_label='Series')
+            self.to_csv(filename, index=False)
+            # Revision 28/10/2026 >
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
     def saveTXT(self, filename: str, sep: str = '|') -> None:
@@ -374,7 +510,10 @@ class SisypheSheet(DataFrame):
         if isinstance(filename, str):
             path, ext = splitext(filename)
             if ext.lower() != '.txt': filename = path + '.txt'
-            self.to_csv(filename, index_label='Series', sep=sep)
+            # < Revision 28/10/2026
+            # self.to_csv(filename, index_label='Series', sep=sep)
+            self.to_csv(filename, index=False, sep=sep)
+            # Revision 28/10/2026 >
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
     def saveMATFILE(self, filename: str) -> None:
@@ -389,8 +528,10 @@ class SisypheSheet(DataFrame):
         if isinstance(filename, str):
             path, ext = splitext(filename)
             if ext.lower() != '.mat': filename = path + '.mat'
-            d = self.to_dict()
-            # noinspection PyTypeChecker
+            # < Revision 28/10/2026
+            # d = self.to_dict()
+            d = self.to_dict(index=False)
+            # Revision 28/10/2026 >
             savemat(filename, d)
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
 
@@ -406,7 +547,7 @@ class SisypheSheet(DataFrame):
         """
         if isinstance(filename, str):
             path, ext = splitext(filename)
-            if ext.lower() != '.mat': filename = path + '.npy'
+            if ext.lower() != '.npy': filename = path + '.npy'
             np = self.values
             npsave(filename, np)
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
@@ -424,15 +565,54 @@ class SisypheSheet(DataFrame):
         """
         if isinstance(filename, str):
             path, ext = splitext(filename)
-            if ext.lower() != '.mat': filename = path + '.npz'
+            if ext.lower() != '.npz': filename = path + '.npz'
             np = self.values
             npsavez(filename, np)
         else: raise TypeError('parameter type {} is not str'.format(type(filename)))
     # Revision 13/12/2024 >
 
+    # < Revision 28/10/2026
+    def saveXML(self, filename: str) -> None:
+        """
+        Save the current SisypheSheet instance to XML file (.xml).
+
+        Parameters
+        ----------
+        filename : str
+            XML file name (.xml)
+        """
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.xml': filename = path + '.xml'
+            xml = self.to_xml(index=False)
+            with open(filename, 'w', encoding="utf-8") as f:
+                f.write(xml)
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # evision 28/10/2026 >
+
+    # < Revision 28/10/2026
+    def saveLATEX(self, filename: str) -> None:
+        """
+        Save the current SisypheSheet instance to XML file (.xml).
+
+        Parameters
+        ----------
+        filename : str
+            XML file name (.xml)
+        """
+        if isinstance(filename, str):
+            path, ext = splitext(filename)
+            if ext.lower() != '.tex': filename = path + '.tex'
+            latex = self.to_latex(index=False)
+            with open(filename, 'w', encoding="utf-8") as f:
+                f.write(latex)
+        else: raise TypeError('parameter type {} is not str'.format(type(filename)))
+    # evision 28/10/2026 >
+
     # Aliases
 
     saveXLSX = DataFrame.to_excel
     saveJSON = DataFrame.to_json
-    saveLATEX = DataFrame.to_latex
+    saveSTATA = DataFrame.to_stata
+    saveHTML = DataFrame.to_html
     toClipboard = DataFrame.to_clipboard

@@ -368,6 +368,7 @@ class SisypheFiducialBox(QObject):
     _fidtol     float, distance tolerance of fiducial markers
     _maxerror   float, maximum fiducial markers error
     _fidlist    dict, fiducial markers coordinates
+    _ffidlist   dict, fiducial markers coordinates with error < _maxerror 
     _errorlist  dict, fiducial markers errors
     _errorstats dict, fiducial markers errors statistics
     _volume     SisypheVolume
@@ -391,6 +392,7 @@ class SisypheFiducialBox(QObject):
                         value2 list(float, float, float), marker coordinates x, y, z
         """
         self._fidlist: dict[int, dict[int, list[float]]] = dict()
+        self._ffidlist: dict[int, dict[int, list[float]]] = dict()
         """
         _errorlist = dict[key1: int, value1: dict[key2: int, value2: float]]
                           key1 int, slice number
@@ -810,23 +812,30 @@ class SisypheFiducialBox(QObject):
             f = vtkLandmarkTransform()
             f.SetModeToRigidBody()
             n = self._nbfid // 3
-            nb = len(self._fidlist) * n
+            # < Revision 02/11/2026
+            # nb = len(self._fidlist) * n
+            nb = len(self._ffidlist) * n
+            # Revision 02/11/2026 >
             ref = vtkPoints()
             ref.SetNumberOfPoints(nb)
             mov = vtkPoints()
             mov.SetNumberOfPoints(nb)
             idx = 0
-            for fid in self._fidlist:
+            # < Revision 02/11/2026
+            # for fid in self._fidlist:
+            for fid in self._ffidlist:
                 # left middle fiducial
                 # Leksell coordinate (195.0, z, z)
-                c = self._fidlist[fid][1]
+                # c = self._fidlist[fid][1]
+                c = self._ffidlist[fid][1]
                 d = self._calcDistBetweenFiducials(fid, 0, 1) + 40
                 ref.SetPoint(idx, 195, d, d)
                 mov.SetPoint(idx, c[0], c[1], fid * sz)
                 idx += 1
                 # right middle fiducial
                 # Leksell coordinate (5.0, z, z)
-                c = self._fidlist[fid][4]
+                # c = self._fidlist[fid][4]
+                c = self._ffidlist[fid][4]
                 d = self._calcDistBetweenFiducials(fid, 4, 5) + 40
                 ref.SetPoint(idx, 5, d, d)
                 mov.SetPoint(idx, c[0], c[1], fid * sz)
@@ -834,11 +843,13 @@ class SisypheFiducialBox(QObject):
                 if self._nbfid == 9:
                     # anterior middle fiducial
                     # Leksell coordinate (z, 215.0, z)
-                    c = self._fidlist[fid][7]
+                    # c = self._fidlist[fid][7]
+                    c = self._ffidlist[fid][7]
                     d = self._calcDistBetweenFiducials(fid, 6, 7) + 40
                     ref.SetPoint(idx, d, 215, d)
                     mov.SetPoint(idx, c[0], c[1], fid * sz)
                     idx += 1
+            # Revision 02/11/2026 >
             f.SetSourceLandmarks(mov)
             f.SetTargetLandmarks(ref)
             f.Update()
@@ -910,13 +921,23 @@ class SisypheFiducialBox(QObject):
         """
         if not self.isEmpty():
             # First estimate
+            # < Revision 02/11/2026
+            self._ffidlist = self._fidlist
+            # Revision 02/11/2026 >
             self._calcTransform()
             # Remove outliers
+            # < Revision 02/11/2026
+            self._ffidlist = dict()
+            # Revision 02/11/2026 >
             if self._maxerror > 0.0:
                 for i in self._errorlist:
                     v = np.array(list(self._errorlist[i].values()))
-                    if np.any(v > self._maxerror):
-                        del self._fidlist[i]
+                    # < Revision 02/11/2026
+                    # if np.any(v > self._maxerror):
+                    #    del self._fidlist[i]
+                    if np.all(v < self._maxerror):
+                        self._ffidlist[i] = self._fidlist[i]
+                    # Revision 02/11/2026 >
             # Final estimate
             self._calcTransform()
     # Revision 26/09/2026 >
