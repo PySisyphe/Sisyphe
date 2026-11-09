@@ -1733,7 +1733,7 @@ class ProcessDiffusionModel(Process):
 
     Process -> ProcessDiffusionModel
 
-    Last revision: 07/10/2026
+    Last revision: 04/11/2026
     """
 
     # Special method
@@ -2152,11 +2152,12 @@ class ProcessDiffusionModel(Process):
                 # components
                 suf = ('X', 'Y', 'Z')
                 lut = ('grdred', 'grdgreen', 'grdblue')
+                v = v.getAbs()
                 for i in range(len(lut)):
                     vc = v.copyComponent(i)
-                    vc = vc.getAbs()
+                    # vc = vc.getAbs()
                     vc.setFilename(filename)
-                    suffix = 'PRINCIPAL {}'.format(suf[i])
+                    suffix = 'PRINCIPAL_{}'.format(suf[i])
                     vc.setFilenameSuffix(suffix)
                     vc.acquisition.setModalityToOT()
                     vc.acquisition.setSequence(suffix)
@@ -2167,6 +2168,33 @@ class ProcessDiffusionModel(Process):
                     # Revision 07/10/2026 >
                     vc.save()
                 # Revision 30/07/2026 >
+                # < Revision 24/10/2026
+                # save in RGB format
+                v = v.cast('uint8')
+                v.setFilename(filename)
+                v.setFilenameSuffix('RGB_PRINCIPAL')
+                v.acquisition.setSequence('RGB PRINCIPAL')
+                if self._compress: v.setCompressionOn()
+                v.save()
+                # Revision 24/10/2026 >
+                # < Revision 04/11/2026
+                # save rgb FA
+                if fa:
+                    rgb = v.getNumpy().astype('float32')
+                    buff = model.getFA().getNumpy().astype('float32')
+                    f = stack([buff, buff, buff])
+                    rgb *= f
+                    v.copyFromNumpyArray(rgb,
+                                         spacing=v.getSpacing(),
+                                         origin=v.getOrigin(),
+                                         direction=v.getDirections())
+                    v = v.cast('uint8')
+                    v.acquisition.setSequence('RGB FA')
+                    v.setFilename(filename)
+                    v.setFilenameSuffix('RGB_FA')
+                    if self._compress: v.setCompressionOn()
+                    v.save()
+                # Revision 04/11/2026 >
             if evl:
                 self._mng['msg'] = 'Save diffusion tensor eigen values...'
                 v = model.getEigenValues()
@@ -2350,6 +2378,7 @@ class ProcessDiffusionTracking(Process):
 
     # Public methods
 
+    # noinspection unbound-local-variable
     def run(self):
         self._mng['msg'] = 'Open model {}...'.format(basename(self._model))
         from Sisyphe.core.sisypheTracts import SisypheDiffusionModel
@@ -2358,7 +2387,6 @@ class ProcessDiffusionTracking(Process):
             self._result.put('{} format is invalid.\n{}\n{}.'.format(basename(self._model), type(err), str(err)))
             self.terminate()
         from Sisyphe.core.sisypheTracts import SisypheTracking
-        # noinspection PyUnboundLocalVariable
         track = SisypheTracking(model)
         track.setSeedCountPerVoxel(self._seedcount)
         track.setStepSize(self._stepsize)
@@ -2394,7 +2422,6 @@ class ProcessDiffusionTracking(Process):
             rois = SisypheROICollection()
             self._mng['msg'] = 'Load seed ROI(s)...'
             rois.load(filenames)
-            # noinspection PyTypeChecker
             if rois[0].hasSameSize(model.getDWI().shape[:3]): track.setSeedsFromRoi(rois.union())
             else:
                 self._result.put('Invalid ROI size {}.'.format(rois[0].getSize()))
@@ -2421,7 +2448,6 @@ class ProcessDiffusionTracking(Process):
             roi = SisypheROI()
             self._mng['msg'] = 'Load stopping ROI...'
             roi.load(filename)
-            # noinspection PyTypeChecker
             if roi.hasSameSize(model.getDWI().shape[:3]): track.setStoppingCriterionToROI(roi)
             else:
                 self._result.put('Invalid ROI size {}.'.format(roi.getSize()))
@@ -2439,7 +2465,6 @@ class ProcessDiffusionTracking(Process):
             if not gm.acquisition.isCerebroSpinalFluidMap():
                 self._result.put('{} sequence is not gray matter map.'.format(basename(filename)))
                 self.terminate()
-            # noinspection PyTypeChecker
             if not gm.hasSameSize(model.getDWI().shape[:3]):
                 self._result.put('Invalid gray matter map size {}.'.format(gm.getSize()))
                 self.terminate()
@@ -2454,7 +2479,6 @@ class ProcessDiffusionTracking(Process):
             if not wm.acquisition.isWhiteMatterMap():
                 self._result.put('{} sequence is not white matter map.'.format(basename(filename)))
                 self.terminate()
-            # noinspection PyTypeChecker
             if not wm.hasSameSize(model.getDWI().shape[:3]):
                 self._result.put('Invalid white matter map size {}.'.format(gm.getSize()))
                 self.terminate()
@@ -2469,7 +2493,6 @@ class ProcessDiffusionTracking(Process):
             if not csf.acquisition.isCerebroSpinalFluidMap():
                 self._result.put('{} sequence is not cerebro-spinal fluid map.'.format(basename(filename)))
                 self.terminate()
-            # noinspection PyTypeChecker
             if not csf.hasSameSize(model.getDWI().shape[:3]):
                 self._result.put('Invalid cerebro-spinal fluid map size {}.'.format(gm.getSize()))
                 self.terminate()
@@ -2482,7 +2505,6 @@ class ProcessDiffusionTracking(Process):
         from Sisyphe.core.sisypheTracts import SisypheStreamlines
         filename = splitext(self._model)[0] + '_' + track.getBundleName() + SisypheStreamlines.getFileExt()
         self._mng['msg'] = 'save {} streamlines...'.format(track.getBundleName())
-        # noinspection PyUnboundLocalVariable
         sl.save(bundle='all', filename=filename)
         if sl.getName() == 'tractogram': msg = 'Tractogram of {} streamlines.'.format(sl.count())
         else: msg = '{} tractogram of {} streamlines.'.format(sl.getName(), sl.count())
