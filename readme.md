@@ -67,8 +67,8 @@ PySisyphe is plug-in extensible and provides a fully documented API that gives a
 
 [PySisyphe NITRC website](https://www.nitrc.org/projects/pysisyphe/)
 
-Download
-========
+Download PySisyphe
+==================
 
 [Download source](https://mega.nz/folder/G18X2IRQ#BRpA7_fcyHBIK66aZNyntA)
 
@@ -76,7 +76,7 @@ Download
 
 Direct link to binary archives:
 - Windows x64 binary, python 3.12 [PySisyphe 1.12.07 python 3.12 build 20-11-2026](https://mega.nz/file/HlVlhKaY#fPGR-YvsM806IhCVbi5pSJHLxgEZo92hv5_tsCmp6mI)
-- MacOS 11+ x64 binary, python 3.12 [PySisyphe 1.12.07 python 3.12 build 20-11-2026]()
+- MacOS 11+ x64 binary, python 3.12 [PySisyphe 1.12.07 python 3.12 build 20-11-2026](https://mega.nz/file/S5MnGTaS#AZOZYlP-5ifOhUU-4YOn_zjp2yADeo5skiToqm6gGWM)
 - Linux Ubuntu 26.04 LTS x64 binary, python 3.12 [PySisyphe 1.12.07 python 3.12 build 20-11-2026](https://mega.nz/file/qptSxThR#CLamVzV4vFnDx5eI-orxT3nhiQL4z3-e4e9t2jhrubE)
 
 Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. **We recommend copying it to the user directory**. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
@@ -137,39 +137,41 @@ Enabling dark mode on the Linux Ubuntu 26.04 platform:
 
 Additional content, such as templates, atlases, samples, plugins, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
 
-Download atlases
+Download atlases converted to PySisyphe format (*.xvol)
+=======================================================
 
-- [AheadBrain](https://mega.nz/file/JWcSXAiS#jIJAgB5PoFxCcOyJX64jkCl-yNoAybiJmstQvjYsflE), https://brain.labsolver.org/histology.html
-- [Allen](https://mega.nz/file/Qbt2WKCZ#zEdXRzCvPPANAh6lGMIQl_drjc60D_Fw-qy3lAGT_qw), https://community.brain-map.org/t/allen-human-reference-atlas-3d-2020-new/405
-- [Arterial](https://mega.nz/file/4DEEmSiJ#fpVuCqB8AKFyU6JHIm7g1f6720nCyC0RcMS9JcUWotk), https://www.nitrc.org/projects/arterialatlas/
-- [Atag](https://mega.nz/file/NDNSGJyB#t_IoSE5BXuxEB-n9adrJUNub0GST8Hi23UzhVprR3NQ), https://www.nitrc.org/projects/atag
-- [Atropos](https://mega.nz/file/5K9jlbbA#VSReS_wpvadeAakS_yq2TuYEzjL7YFfUZJSKhQCK73U), https://mindboggle.info/data.html
-- [BigBrain](https://mega.nz/file/pKVwGSKb#dQ_9PdA80Y_20GyvSzuiWTDJUxUvooJ1_RcadRob93w), https://brain.labsolver.org/histology.html
-- [Brainnav](https://mega.nz/file/9PkhGKYK#84lJ6gyggNF0VaSNViPNEXRuoVPXTQ0iLGgo3j7KOr8), https://www.nitrc.org/projects/brainstemnavig
-- [BRAVISSIMA](https://mega.nz/file/JXthnDRR#0FsISGYigtlrYVwTWt52iqDJom9ic3EqalhUviku8EU), https://www.nitrc.org/projects/bravissima/
-- [Bundles HCP](https://mega.nz/file/1XtAwK6b#iv7yWIzVNTms8kx0gbQoUdUMnp42TqBBRrvyTKYzsPE), https://brain.labsolver.org/hcp_template.html
-- [Bundles IIT](https://mega.nz/file/FfdhVaJD#7cjAmkP7ezlUeGGn7wfZK23HkgpHqWjmG72PN2jwJIM), https://www.nitrc.org/projects/iit/
-- [Bundles LC2TEC](https://mega.nz/file/UGVGEbiQ#znSq33Lw5ZaxRQTcszwNAGC_vYa-UTb0E80ltmgDLRw), https://www.nitrc.org/projects/brainstem_atlas/
-- [CMB](https://mega.nz/file/laMAUYoY#FKNqkN1MJLBik0wLDKAc65oNiBhYsYE-KbUG-gJSZzo), https://zenodo.org/records/20553851
-- [Colin27](https://mega.nz/file/8SdFFA7S#r6dDa3_LE9TDFWlRciJnoAtKAzulK2bOOGQQ0_LlQSU), https://meca-brain.org/software/marsatlas-colin27/
+- [AheadBrain](https://mega.nz/file/JWcSXAiS#jIJAgB5PoFxCcOyJX64jkCl-yNoAybiJmstQvjYsflE), [website](https://brain.labsolver.org/histology.html)
+- [Allen](https://mega.nz/file/Qbt2WKCZ#zEdXRzCvPPANAh6lGMIQl_drjc60D_Fw-qy3lAGT_qw), [website](https://community.brain-map.org/t/allen-human-reference-atlas-3d-2020-new/405)
+- [Arterial](https://mega.nz/file/4DEEmSiJ#fpVuCqB8AKFyU6JHIm7g1f6720nCyC0RcMS9JcUWotk), [website](https://www.nitrc.org/projects/arterialatlas/)
+- [Atag](https://mega.nz/file/NDNSGJyB#t_IoSE5BXuxEB-n9adrJUNub0GST8Hi23UzhVprR3NQ), [website](https://www.nitrc.org/projects/atag)
+- [Atropos](https://mega.nz/file/5K9jlbbA#VSReS_wpvadeAakS_yq2TuYEzjL7YFfUZJSKhQCK73U), [website](https://mindboggle.info/data.html)
+- [BigBrain](https://mega.nz/file/pKVwGSKb#dQ_9PdA80Y_20GyvSzuiWTDJUxUvooJ1_RcadRob93w), [website](https://brain.labsolver.org/histology.html)
+- [Brainnav](https://mega.nz/file/9PkhGKYK#84lJ6gyggNF0VaSNViPNEXRuoVPXTQ0iLGgo3j7KOr8), [website](https://www.nitrc.org/projects/brainstemnavig)
+- [BRAVISSIMA](https://mega.nz/file/JXthnDRR#0FsISGYigtlrYVwTWt52iqDJom9ic3EqalhUviku8EU), [website](https://www.nitrc.org/projects/bravissima/)
+- [Bundles HCP](https://mega.nz/file/1XtAwK6b#iv7yWIzVNTms8kx0gbQoUdUMnp42TqBBRrvyTKYzsPE), [website](https://brain.labsolver.org/hcp_template.html)
+- [Bundles IIT](https://mega.nz/file/FfdhVaJD#7cjAmkP7ezlUeGGn7wfZK23HkgpHqWjmG72PN2jwJIM), [website](https://www.nitrc.org/projects/iit/)
+- [Bundles LC2TEC](https://mega.nz/file/UGVGEbiQ#znSq33Lw5ZaxRQTcszwNAGC_vYa-UTb0E80ltmgDLRw), [website](https://www.nitrc.org/projects/brainstem_atlas/)
+- [CMB](https://mega.nz/file/laMAUYoY#FKNqkN1MJLBik0wLDKAc65oNiBhYsYE-KbUG-gJSZzo), [website](https://zenodo.org/records/20553851)
+- [Colin27](https://mega.nz/file/8SdFFA7S#r6dDa3_LE9TDFWlRciJnoAtKAzulK2bOOGQQ0_LlQSU), [website](https://meca-brain.org/software/marsatlas-colin27/)
 - [Dartel](https://mega.nz/file/hK1xRQqI#VxSXaJVANoRNyXGual7jznujgrmF8j8R08kFHAVuH3o)
-- [Desikan](https://mega.nz/file/wGtjkYpL#i7oVF7kyZlMjajPGXgjlqmCHMIevrjd-TomqVI0lbmU), https://www.sciencedirect.com/science/article/abs/pii/S1053811906000437?via%3Dihub
-- [Destrieux](https://mega.nz/file/BaVmyBSA#3gacV_U6P1uyes0M4hJUXeViPcR4ETAu_U3Bdq9qBwc), https://www.sciencedirect.com/science/article/abs/pii/S1053811910008542?via%3Dihub
-- [Distal](https://mega.nz/file/oLNxkZIQ#zkVz-TnX6k15yMn5ZlxF-L9eqapkUBBUuFLelbgT2Qw), https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/
-- [GOBS](https://mega.nz/file/wPEFlSbL#f91Mw7Fg1_G7hd6l5S3iiQnNa3akiypzcqFRjPh-gDs), https://brainder.org/download/flair/
-- [HoliAtlas](https://mega.nz/file/xL10zSrS#XLGmI6xgwQq2rsZEuWCrrzijbaV-6E1PB7poVJwu7M4), https://arxiv.org/html/2501.16879v1
-- [ICBM152 HR](https://mega.nz/file/NK0UnZbY#vExN9F-ljmqsimXSOmmAuH1LlX2ssucvLs_L8r-pOZ0), https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009
+- [Desikan](https://mega.nz/file/wGtjkYpL#i7oVF7kyZlMjajPGXgjlqmCHMIevrjd-TomqVI0lbmU), [website](https://www.sciencedirect.com/science/article/abs/pii/S1053811906000437?via%3Dihub)
+- [Destrieux](https://mega.nz/file/BaVmyBSA#3gacV_U6P1uyes0M4hJUXeViPcR4ETAu_U3Bdq9qBwc), [website](https://www.sciencedirect.com/science/article/abs/pii/S1053811910008542?via%3Dihub)
+- [Distal](https://mega.nz/file/oLNxkZIQ#zkVz-TnX6k15yMn5ZlxF-L9eqapkUBBUuFLelbgT2Qw), [website](https://www.lead-dbs.org/helpsupport/knowledge-base/atlasesresources/atlases-2/)
+- [GOBS](https://mega.nz/file/wPEFlSbL#f91Mw7Fg1_G7hd6l5S3iiQnNa3akiypzcqFRjPh-gDs), [website](https://brainder.org/download/flair/)
+- [HoliAtlas](https://mega.nz/file/xL10zSrS#XLGmI6xgwQq2rsZEuWCrrzijbaV-6E1PB7poVJwu7M4), [website](https://arxiv.org/html/2501.16879v1)
+- [ICBM152 HR](https://mega.nz/file/NK0UnZbY#vExN9F-ljmqsimXSOmmAuH1LlX2ssucvLs_L8r-pOZ0), [website](https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009)
 - [ICBM152 Subcortical](https://mega.nz/file/wOdUmRbY#jeRzvtB6TVLYDoWFm9WXOv2qyVOObFObFEf-zac46_c) 
-- [ICBM452](https://mega.nz/file/UfthWJSa#iYcsQ0H3_idkKaagUmHcnF7Vts-nlvdaUFg4j_sYTUo), https://www.loni.usc.edu/research/atlas_downloads
-- [LPBA40](https://mega.nz/file/0DkGVK4A#ltwyzRWJK0l_jWQU6ZHhvWavsRwe2kUqjgMTKihMV5E), https://www.loni.usc.edu/research/atlas_downloads
-- [NAC](https://mega.nz/file/5DUDgKrB#YxddiOZbHoGPwDJttR64G4pRySv9iOqElxuIj2z4ouM), https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html
-- [PD25](https://mega.nz/file/kWcEibKJ#fHQ338E2TVadtougl1ub74XWikDg3iyelrs-vAd8Ork), https://nist.mni.mcgill.ca/multi-contrast-pd25-atlas/
-- [SPL](https://mega.nz/file/lHVAHTRK#Uhh3ayGn0fmOtzCV1GauP1dIVW0mb4oQbGH7AXhdRvo), https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html
-- [SRI24](https://mega.nz/file/lGlXFSwQ#kM3ownKbVlDYlYynM82z2BcNkMCZcuVVRRlskhz5c4A), https://www.nitrc.org/projects/sri24
-- [THOMAS](https://mega.nz/file/ASk3UDgY#3ce2sycSUz20HYmpDiIZxHfF4WagDVdB1Zw3ikxif8s), https://github.com/thalamicseg/hipsthomasdocker
-- [VisibleHumanProject](https://mega.nz/file/Ie90iKCT#7jq3po9UUE26KGKTOjHVrLDmu5cdDCQt3ShgB733o6Y), https://datadiscovery.nlm.nih.gov/Diagnostic-Imaging/Visible-Human-Project/ux2j-9i9a/about_data
+- [ICBM452](https://mega.nz/file/UfthWJSa#iYcsQ0H3_idkKaagUmHcnF7Vts-nlvdaUFg4j_sYTUo), [website](https://www.loni.usc.edu/research/atlas_downloads)
+- [LPBA40](https://mega.nz/file/0DkGVK4A#ltwyzRWJK0l_jWQU6ZHhvWavsRwe2kUqjgMTKihMV5E), [website](https://www.loni.usc.edu/research/atlas_downloads)
+- [NAC](https://mega.nz/file/5DUDgKrB#YxddiOZbHoGPwDJttR64G4pRySv9iOqElxuIj2z4ouM), [website](https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html)
+- [PD25](https://mega.nz/file/kWcEibKJ#fHQ338E2TVadtougl1ub74XWikDg3iyelrs-vAd8Ork),[website](https://nist.mni.mcgill.ca/multi-contrast-pd25-atlas/)
+- [SPL](https://mega.nz/file/lHVAHTRK#Uhh3ayGn0fmOtzCV1GauP1dIVW0mb4oQbGH7AXhdRvo), [website](https://www.openanatomy.org/atlas-pages/atlas-spl-nac-brain.html)
+- [SRI24](https://mega.nz/file/lGlXFSwQ#kM3ownKbVlDYlYynM82z2BcNkMCZcuVVRRlskhz5c4A), [website](https://www.nitrc.org/projects/sri24)
+- [THOMAS](https://mega.nz/file/ASk3UDgY#3ce2sycSUz20HYmpDiIZxHfF4WagDVdB1Zw3ikxif8s), [website](https://github.com/thalamicseg/hipsthomasdocker)
+- [VisibleHumanProject](https://mega.nz/file/Ie90iKCT#7jq3po9UUE26KGKTOjHVrLDmu5cdDCQt3ShgB733o6Y), https://datadiscovery.nlm.nih.gov/Diagnostic-Imaging/Visible-Human-Project/ux2j-9i9a/about_data)
 
-Download volunteer groups
+Download volunteer groups converted to PySisyphe format (*.xvol)
+================================================================
 	
 - MR T1 [SRPBS](https://dri.me/ynG4FVU3oxHuWBx1zIbafRlrkU1Rs6), [IXI]()
 - [FDG PET](https://mega.nz/file/we81CDQY#WCmatVKZMzmvS_4NtDeNLUmRcrEMwiHeowTAVD1JJ-Y)
