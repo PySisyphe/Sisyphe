@@ -191,7 +191,6 @@ def qtMessageHandler(type: QtMsgType, context: QMessageLogContext, msg: str):
 # < Revision 04/07/2025
 # Global management of uncaught exceptions
 # Display a dialog box and log the traceback
-# noinspection PyUnusedLocal
 def globalExceptionHandler(tp, value, tb):
     # < Revision 13/07/2025
     # Close wait dialog if it exists
@@ -222,11 +221,9 @@ class QApplicationEventHandler(QApplication):
 
     openFileRequest = pyqtSignal(QUrl, name='openFileRequest')
 
-    # noinspection method-overriding
+    # noinspection method-overriding,unresolved-references
     def event(self, event):
-        # noinspection PyUnresolvedReferences
         if event.type() == QEvent.FileOpen:
-            # noinspection PyUnresolvedReferences
             self.openFileRequest.emit(event.url())
             return True
         return super().event(event)
@@ -254,7 +251,6 @@ if __name__ == "__main__":
 
     # < Revision 19/03/2025
     # disable vtk stdout warnings to avoid console output in frozen code
-    # noinspection PyArgumentList
     vtkObject.GlobalWarningDisplayOff()
     # Revision 19/03/2025 >
 
@@ -266,7 +262,6 @@ if __name__ == "__main__":
     # Windows registry management
     if sys.platform == 'win32':
         if hasattr(sys, '_MEIPASS'):
-            # noinspection PyProtectedMember
             path = dirname(sys.executable)
             # Set file type associations in Windows registry
             import winreg
@@ -369,7 +364,6 @@ if __name__ == "__main__":
 
     if sys.platform == 'win32':
         # High DPI scaling bugfix
-        # noinspection PyUnresolvedReferences
         ctypes.windll.shcore.SetProcessDpiAwareness(2)
         # Set theme
         import qdarktheme
@@ -421,6 +415,19 @@ if __name__ == "__main__":
              'border-color: {0};').format(getForegroundAsStr())
         qss += ' QMenu { ' + c + ' }'
         qss += ' QToolTip { color: #000000; background-color: #FFFFE0; border: 0px; font-size: 8pt; }'
+        # < Revision 10/11/2026
+        qss += ' QCheckBox, QComboBox, QLineEdit, QPushButton, QListWidget, QTreeWidget { margin: 5px; }'
+        qss += ' QGroupBox { margin: 5px; font-size: 8pt; font-weight: normal; }'
+        qss += ' QPushButton#RoundedButton { margin: 0px; }'
+        qss += ' QPushButton#iconPushButton { margin: 0px; }'
+        qss += ' QLabel#iconButton { margin: 0px; }'
+        qss += ' QLabel#colorPushButton { margin: 0px; }'
+        qss += ' QLabel#visibilityButton { margin: 0px; }'
+        qss += ' QLabel#lockButton { margin: 0px; }'
+        qss += ' QLabel#opacityButton { margin: 0px; }'
+        qss += ' QLabel#widthButton { margin: 0px; }'
+        qss += ' QLabel#widthButton { margin: 0px; }'
+        # Revision 10/11/2026 >
         qdarktheme.setup_theme('auto', corner_shape='rounded', additional_qss=qss)
     # Revision 09/07/2026 >
     else:
