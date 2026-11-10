@@ -135,7 +135,7 @@ Enabling dark mode on the Linux Ubuntu 26.04 platform:
 	- in the dialog box that opens, in the left side pane, scroll down and click on Appearance,
 	- in the center pane, in the Style section, click on Dark.
 
-Additional content, such as templates, atlases, samples, plugins, and various modality scans from volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
+Additional content, such as templates, atlases, samples, plugins, and various modality scans from healthy volunteer groups, can be retrieved directly from the download manager integrated into the PySisyphe interface. To access the download manager, select **File > Download Manager**.
 
 Download atlases converted to PySisyphe format (*.xvol)
 =======================================================
