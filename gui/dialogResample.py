@@ -83,7 +83,7 @@ class DialogResample(QDialog):
 
     QDialog -> DialogResample
 
-    Last revision: 10/04/2026
+    Last revision: 12/11/2026
     """
 
     # Special method
@@ -101,11 +101,11 @@ class DialogResample(QDialog):
     _trfs           SisypheTransforms
     """
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Resample')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self._strf = None
@@ -113,6 +113,10 @@ class DialogResample(QDialog):
         self._ftrf.setSize([256, 256, 256])
         self._ftrf.setSpacing([1.0, 1.0, 1.0])
         self._trfs = None
+
+        # < Revision 12/11/2026
+        self._compress = False
+        # Revision 12/11/2026 >
 
         # Init QLayout
 
@@ -142,15 +146,11 @@ class DialogResample(QDialog):
         self._selftrf = QRadioButton('Self geometric transform')
         self._selftrf.setChecked(True)
         self._selftrf.setAutoExclusive(True)
-        # noinspection PyUnresolvedReferences
         self._selftrf.toggled.connect(self._updateVisible)
-        # noinspection PyUnresolvedReferences
         self._selftrf.toggled.connect(self._center)
         self._freetrf = QRadioButton('Free geometric transform')
         self._freetrf.setAutoExclusive(True)
-        # noinspection PyUnresolvedReferences
         self._freetrf.toggled.connect(self._updateVisible)
-        # noinspection PyUnresolvedReferences
         self._freetrf.toggled.connect(self._center)
         lyout = QHBoxLayout()
         lyout.addStretch()
@@ -161,24 +161,18 @@ class DialogResample(QDialog):
 
         self._list = LabeledComboBox('Transformations', fontsize=13)
         self._list.setMinimumWidth(400)
-        # noinspection PyUnresolvedReferences
         self._list.currentIndexChanged.connect(self._transformChanged)
         self._fixed = QPushButton('Get fixed volume')
-        # noinspection PyUnresolvedReferences
         self._fixed.pressed.connect(self._getFixedID)
         self._layout.addWidget(self._list)
         self._layout.addWidget(self._fixed)
-        # noinspection PyUnresolvedReferences
         self._layout.setAlignment(self._fixed, Qt.AlignCenter)
 
         self._sizex = QSpinBox()
         self._sizey = QSpinBox()
         self._sizez = QSpinBox()
-        # noinspection PyUnresolvedReferences
         self._sizex.setAlignment(Qt.AlignCenter)
-        # noinspection PyUnresolvedReferences
         self._sizey.setAlignment(Qt.AlignCenter)
-        # noinspection PyUnresolvedReferences
         self._sizez.setAlignment(Qt.AlignCenter)
         self._sizex.setFixedWidth(100)
         self._sizey.setFixedWidth(100)
@@ -189,11 +183,8 @@ class DialogResample(QDialog):
         self._sizex.setValue(256)
         self._sizey.setValue(256)
         self._sizez.setValue(256)
-        # noinspection PyUnresolvedReferences
         self._sizex.valueChanged.connect(self._updateValues)
-        # noinspection PyUnresolvedReferences
         self._sizey.valueChanged.connect(self._updateValues)
-        # noinspection PyUnresolvedReferences
         self._sizez.valueChanged.connect(self._updateValues)
         self._label1 = QLabel('Size')
         lyout = QHBoxLayout()
@@ -208,11 +199,8 @@ class DialogResample(QDialog):
         self._spacex = QDoubleSpinBox()
         self._spacey = QDoubleSpinBox()
         self._spacez = QDoubleSpinBox()
-        # noinspection PyUnresolvedReferences
         self._spacex.setAlignment(Qt.AlignCenter)
-        # noinspection PyUnresolvedReferences
         self._spacey.setAlignment(Qt.AlignCenter)
-        # noinspection PyUnresolvedReferences
         self._spacez.setAlignment(Qt.AlignCenter)
         self._spacex.setFixedWidth(100)
         self._spacey.setFixedWidth(100)
@@ -229,11 +217,8 @@ class DialogResample(QDialog):
         self._spacex.setValue(1.0)
         self._spacey.setValue(1.0)
         self._spacez.setValue(1.0)
-        # noinspection PyUnresolvedReferences
         self._spacex.valueChanged.connect(self._updateValues)
-        # noinspection PyUnresolvedReferences
         self._spacey.valueChanged.connect(self._updateValues)
-        # noinspection PyUnresolvedReferences
         self._spacez.valueChanged.connect(self._updateValues)
         self._label2 = QLabel('Spacing')
         lyout = QHBoxLayout()
@@ -249,20 +234,15 @@ class DialogResample(QDialog):
         self._fixed2.setToolTip('Get resampling field of view from selected volume,\n'
                                 'and align center of the moving volumes')
         self._fixed2.setFixedWidth(200)
-        # noinspection PyUnresolvedReferences
         self._fixed2.pressed.connect(self._updateGeometryFromVolume)
         self._layout.addWidget(self._fixed2)
-        # noinspection PyUnresolvedReferences
         self._layout.setAlignment(self._fixed2, Qt.AlignHCenter)
 
         self._transx = QDoubleSpinBox()
         self._transy = QDoubleSpinBox()
         self._transz = QDoubleSpinBox()
-        # noinspection PyUnresolvedReferences
         self._transx.setAlignment(Qt.AlignCenter)
-        # noinspection PyUnresolvedReferences
         self._transy.setAlignment(Qt.AlignCenter)
-        # noinspection PyUnresolvedReferences
         self._transz.setAlignment(Qt.AlignCenter)
         self._transx.setDecimals(2)
         self._transy.setDecimals(2)
@@ -279,11 +259,8 @@ class DialogResample(QDialog):
         self._transx.setValue(0.0)
         self._transy.setValue(0.0)
         self._transz.setValue(0.0)
-        # noinspection PyUnresolvedReferences
         self._transx.valueChanged.connect(self._updateValues)
-        # noinspection PyUnresolvedReferences
         self._transy.valueChanged.connect(self._updateValues)
-        # noinspection PyUnresolvedReferences
         self._transz.valueChanged.connect(self._updateValues)
         self._label3 = QLabel('Translations (mm)')
         lyout = QHBoxLayout()
@@ -299,11 +276,8 @@ class DialogResample(QDialog):
         self._rotx = QDoubleSpinBox()
         self._roty = QDoubleSpinBox()
         self._rotz = QDoubleSpinBox()
-        # noinspection PyUnresolvedReferences
         self._rotx.setAlignment(Qt.AlignCenter)
-        # noinspection PyUnresolvedReferences
         self._roty.setAlignment(Qt.AlignCenter)
-        # noinspection PyUnresolvedReferences
         self._rotz.setAlignment(Qt.AlignCenter)
         self._rotx.setDecimals(2)
         self._roty.setDecimals(2)
@@ -320,11 +294,8 @@ class DialogResample(QDialog):
         self._rotx.setValue(0.0)
         self._roty.setValue(0.0)
         self._rotz.setValue(0.0)
-        # noinspection PyUnresolvedReferences
         self._rotx.valueChanged.connect(self._updateValues)
-        # noinspection PyUnresolvedReferences
         self._roty.valueChanged.connect(self._updateValues)
-        # noinspection PyUnresolvedReferences
         self._rotz.valueChanged.connect(self._updateValues)
         self._label4 = QLabel('Rotations (°)')
         lyout = QHBoxLayout()
@@ -356,7 +327,6 @@ class DialogResample(QDialog):
         self._load.addAction('MINC transform (*.xfm)')
         self._load.addAction('Matlab transform (*.mat)')
         self._load.addAction('Text transform (*.txt)')
-        # noinspection PyUnresolvedReferences
         self._load.getPopupMenu().triggered.connect(self._loadTransform)
 
         # < Revision 11/06/2025
@@ -365,7 +335,6 @@ class DialogResample(QDialog):
                                'with the same space (same ID) as the moving volume')
         self._load2.addAction('PySisyphe transforms (*.xtrfs)')
         self._load2.addAction('PySisyphe transforms from volume (*.xvol)')
-        # noinspection PyUnresolvedReferences
         self._load2.getPopupMenu().triggered.connect(self._loadTransforms)
         # Revision 11/06/2025 >
 
@@ -378,10 +347,8 @@ class DialogResample(QDialog):
         self._save.addAction('MINC transform (*.xfm)')
         self._save.addAction('Matlab transform (*.mat)')
         self._save.addAction('Text transform (*.txt)')
-        # noinspection PyUnresolvedReferences
         self._save.getPopupMenu().triggered.connect(self._saveTransform)
         self._field2 = QPushButton('Affine to displacement field')
-        # noinspection PyUnresolvedReferences
         self._field2.pressed.connect(self._affineToDisplacementField)
         lyout = QHBoxLayout()
         lyout.setSpacing(10)
@@ -431,7 +398,6 @@ class DialogResample(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -451,9 +417,7 @@ class DialogResample(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 11/06/2025
@@ -465,7 +429,7 @@ class DialogResample(QDialog):
 
     # Private methods
 
-    # noinspection PyUnusedLocal
+    # noinspection unresolved-references,unused-parameter
     def _center(self, widget):
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
@@ -530,7 +494,7 @@ class DialogResample(QDialog):
         self._save.setEnabled(v)
         self._execute.setEnabled(v)
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _updateVisible(self, v):
         self._trfpreview.clear()
         v = self._selftrf.isChecked()
@@ -583,7 +547,7 @@ class DialogResample(QDialog):
         self._trfpreview.clear()
         self._trfpreview.append(str(self._strf))
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _updateValues(self, v):
         sizex = self._sizex.value()
         sizey = self._sizey.value()
@@ -660,7 +624,7 @@ class DialogResample(QDialog):
             self._trfpreview.clear()
             self._trfpreview.append(str(self._ftrf))
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter
     def _updateDisplacement(self, v):
         filename = self._field.getFilename()
         if exists(filename):
@@ -845,6 +809,12 @@ class DialogResample(QDialog):
 
     # Public method
 
+    # < Revision 12/11/2026
+    # add setCompression method
+    def setCompression(self, compress: bool = True):
+        self._compress = compress
+    # Revision 12/11/2026 >
+
     def getMovingSelectionWidget(self):
         return [self._moving, self._apply]
 
@@ -862,6 +832,9 @@ class DialogResample(QDialog):
         else: trf = self._ftrf
         if trf is not None and not self._moving.isEmpty():
             f = SisypheApplyTransform()
+            # < Revision 12/11/2026
+            f.setCompression(self._compress)
+            # Revision 12/11/2026 >
             interpol = self._settings.getParameterValue('Interpolator')
             if interpol == 'Nearest Neighbor': f.setInterpolator(sitkNearestNeighbor)
             elif interpol == 'Linear': f.setInterpolator(sitkLinear)
@@ -951,11 +924,11 @@ class DialogDisplacementFieldInversion(QDialog):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('Displacement field inversion')
-        # noinspection PyUnresolvedReferences
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         # < Revision 05/10/2026
@@ -996,7 +969,6 @@ class DialogDisplacementFieldInversion(QDialog):
         layout = QHBoxLayout()
         if platform == 'win32': layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
-        # noinspection PyUnresolvedReferences
         layout.setDirection(QHBoxLayout.RightToLeft)
         cancel = QPushButton('Cancel')
         cancel.setFixedWidth(100)
@@ -1012,9 +984,7 @@ class DialogDisplacementFieldInversion(QDialog):
 
         # Qt Signals
 
-        # noinspection PyUnresolvedReferences
         cancel.clicked.connect(self.reject)
-        # noinspection PyUnresolvedReferences
         self._execute.clicked.connect(self.execute)
 
         # < Revision 11/06/2025
@@ -1025,7 +995,7 @@ class DialogDisplacementFieldInversion(QDialog):
 
     # Private method
 
-    # noinspection PyUnusedLocal
+    # noinspection unused-parameter,unresolved-references
     def _center(self, widget):
         self.move(self.screen().availableGeometry().center() - self.rect().center())
         QApplication.processEvents()
@@ -1048,6 +1018,7 @@ class DialogDisplacementFieldInversion(QDialog):
         return [self._fields,
                 self._refs]
 
+    # noinspection unresolved-references
     def execute(self):
         n1 = self._fields.filenamesCount()
         n2 = self._refs.filenamesCount()
