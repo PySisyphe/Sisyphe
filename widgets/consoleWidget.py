@@ -99,7 +99,7 @@ Class hierarchy
 
 class RichJupyterWidget2(RichJupyterWidget):
     """
-    Last revision:22/10/2026
+    Last revision: 12/11/2026
     """
 
     # Special method
@@ -178,7 +178,6 @@ class RichJupyterWidget2(RichJupyterWidget):
         history = history.rstrip()
         if history and (not self._history or self._history[-1] != history):
             self._history.append(history)
-        # noinspection PyAttributeOutsideInit
         self._history_index = len(self._history)
         # parse args
         nb = self._previous_prompt_obj.number + 1
@@ -264,7 +263,7 @@ class RichJupyterWidget2(RichJupyterWidget):
                 i = argwhere(buff == '-p')[0][0]
                 if i < len(buff) - 1 and buff[i + 1] != '-':
                     buffp = buff[i + 1]
-                    # noinspection PyUnresolvedReferences
+                    # noinspection unresolved-references
                     if len(buffp.split(' ')) > 1:
                         content.append(buffp[1:-1])
                     else:
@@ -330,9 +329,7 @@ class RichJupyterWidget2(RichJupyterWidget):
                 if i < len(buff) - 1 and buff[i + 1] != '-':
                     v = None
                     buffp = buff[i + 1]
-                    # noinspection PyTypeChecker
                     if exists(buffp):
-                        # noinspection PyTypeChecker
                         v = Path(buffp)
                     if buffp in g.keys():
                         v = g[buffp]
@@ -371,7 +368,6 @@ class RichJupyterWidget2(RichJupyterWidget):
                         r = json.loads(r)
                     self._append_plain_text('\n{}'.format(r))
                     if self._update is not None:
-                        # noinspection calling-non-callable
                         self._update()
             except:
                 self._append_plain_text('\n%gemini client error:\n{}'.format(traceback.format_exc()),
@@ -394,20 +390,22 @@ class RichJupyterWidget2(RichJupyterWidget):
         history = history.rstrip()
         if history and (not self._history or self._history[-1] != history):
             self._history.append(history)
-        # noinspection PyAttributeOutsideInit
         self._history_index = len(self._history)
         # parse args
         nb = self._previous_prompt_obj.number + 1
         buff = self.input_buffer.split(' ')
-        if len(buff) > 1: buff = buff[1:]
+        if len(buff) > 1:
+            buff = buff[1:]
+            # < Revision 12/11/2026
+            # help arg
+            if '?' in buff or '-help' in buff:
+                self._append_plain_text('\n%packages args:\n'
+                                        '  no arg or package names separated by spaces',
+                                        before_prompt=False)
+                self._show_interpreter_prompt(nb)
+                return
+            # Revision 12/11/2026 >
         else: buff = None
-        # help arg
-        if '?' in buff or '-help' in buff:
-            self._append_plain_text('\n%packages args:\n'
-                                    '  no arg or package names separated by spaces',
-                                    before_prompt=False)
-            self._show_interpreter_prompt(nb)
-            return
         # execute command
         wait = DialogWait()
         wait.open()
@@ -432,7 +430,6 @@ class RichJupyterWidget2(RichJupyterWidget):
         history = history.rstrip()
         if history and (not self._history or self._history[-1] != history):
             self._history.append(history)
-        # noinspection PyAttributeOutsideInit
         self._history_index = len(self._history)
         # parse args
         nb = self._previous_prompt_obj.number + 1
@@ -576,7 +573,6 @@ class RichJupyterWidget2(RichJupyterWidget):
                     try: r.loadFromANTSTransform(buff)
                     except:
                         from scipy.io import loadmat
-                        # noinspection PyUnusedLocal
                         r = loadmat(buff)
                 elif ext == '.xmesh':
                     from Sisyphe.core.sisypheMesh import SisypheMesh
@@ -647,22 +643,17 @@ class RichJupyterWidget2(RichJupyterWidget):
                     r = XmlDicom()
                     r.loadXmlDicomFilename(buff)
                 elif ext in ('.dcm', '.dicom', '.ima', '.nema'):
-                    # noinspection PyUnusedLocal
                     r = pd.dcmread(buff)
                 elif ext == '.json':
-                    # noinspection PyUnusedLocal
                     r = json.loads(buff)
                 elif ext in ('.npy', '.npz'):
                     import numpy as np
-                    # noinspection PyUnusedLocal
                     r = np.load(buff)
                 elif ext == '.csv':
                     import pandas as pd
-                    # noinspection PyUnusedLocal
                     r = pd.read_csv(buff)
                 elif ext == '.xlsx':
                     import pandas as pd
-                    # noinspection PyUnusedLocal
                     try: r = pd.read_excel(buff)
                     except:
                         # < Revision 19/02/2026
@@ -693,15 +684,12 @@ class RichJupyterWidget2(RichJupyterWidget):
                     r.load(buff)
                 elif ext == '.sav':   # SPSS format
                     import pandas as pd
-                    # noinspection PyUnusedLocal
                     r = pd.read_spss(buff)
                 elif ext == '.dta':  # Stata format
                     import pandas as pd
-                    # noinspection PyUnusedLocal
                     r = pd.read_stata(buff)
                 elif ext == '.sas7bdat':  # SAS format
                     import pandas as pd
-                    # noinspection PyUnusedLocal
                     r = pd.read_sas(buff)
                 elif ext == '.pdf':
                     try: import pymupdf
@@ -724,14 +712,11 @@ class RichJupyterWidget2(RichJupyterWidget):
                         self._show_interpreter_prompt(nb)
                         return
                         # Revision 19/02/2026 >
-                    # noinspection PyUnusedLocal
                     r = pymupdf.open(buff)
                 elif ext in ('.xml', '.txt'):
                     with open(buff, 'r') as f:
-                        # noinspection PyUnusedLocal
                         r = f.readlines()
                 elif isDicom(buff):
-                    # noinspection PyUnusedLocal
                     r = pd.dcmread(buff)
                 else:
                     wait.close()
@@ -765,7 +750,6 @@ class RichJupyterWidget2(RichJupyterWidget):
 
     # < Revision 09/12/2025
     # override execute method
-    # noinspection PyProtectedMember
     def execute(self,
                 source: str | None = None,
                 hidden: bool = False,
@@ -1292,15 +1276,18 @@ class ConsoleWidget(QWidget):
     def _plot(self, chart: int, item: QTreeWidgetItem) -> None:
         g = self._console.kernel_manager.kernel.shell.user_ns
         try:
-            # noinspection PyUnresolvedReferences
             vstr = item.data(0, Qt.UserRole)
             v = g[vstr]
             if isinstance(v, (list, ndarray, sitkImage, pilImage)):
                 if isinstance(v, list): ndim = 1
                 elif isinstance(v, ndarray): ndim = v.ndim
                 elif isinstance(v, sitkImage): ndim = v.GetDimension()
-                elif isinstance(v, pilImage): ndim = 2
-                else: ndim = 1
+                elif isinstance(v, pilImage):
+                    # noinspection unreachable-code
+                    ndim = 2
+                else:
+                    # noinspection unreachable-code
+                    ndim = 1
                 if ndim in (1, 2):
                     self._console.execute('import numpy as np', hidden=True)
                     self._console.execute('import matplotlib.pyplot as plt', hidden=True)
