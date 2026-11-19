@@ -38,6 +38,7 @@ from skimage.io import imsave
 from SimpleITK import GradientMagnitudeRecursiveGaussian
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QEvent
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QGridLayout
@@ -713,7 +714,6 @@ class MultiViewWidget(QWidget):
             j: cython.int
             for i in range(self._rows):
                 for j in range(self._cols):
-                    # noinspection PyNoneFunctionAssignment
                     w = self.getViewWidgetAt(i, j)
                     if expand:
                         # noinspection PyUnresolvedReferences
@@ -753,7 +753,6 @@ class MultiViewWidget(QWidget):
         j: cython.int
         for i in range(self._rows):
             for j in range(self._cols):
-                # noinspection PyNoneFunctionAssignment
                 w = self.getViewWidgetAt(i, j)
                 # noinspection PyUnresolvedReferences
                 if w.getAction()['expand'].isChecked(): return w
@@ -781,7 +780,6 @@ class MultiViewWidget(QWidget):
         """
         Toggle the display mode between fullscreen and normal.
         """
-        # noinspection PyNoneFunctionAssignment
         w = self.getFirstViewWidget()
         # noinspection PyUnresolvedReferences
         if w.getAction()['screen'].isChecked(): self.setFullScreenDisplay()
@@ -988,7 +986,6 @@ class MultiViewWidget(QWidget):
             j: cython.int
             for i in range(0, self._rows):
                 for j in range(0, self._cols):
-                    # noinspection PyNoneFunctionAssignment
                     w = self.getViewWidgetAt(i, j)
                     if isinstance(w, SliceOverlayViewWidget):
                         return w.getAlignCenters()
@@ -1003,7 +1000,6 @@ class MultiViewWidget(QWidget):
             j: cython.int
             for i in range(0, self._rows):
                 for j in range(0, self._cols):
-                    # noinspection PyNoneFunctionAssignment
                     w = self.getViewWidgetAt(i, j)
                     if isinstance(w, SliceROIViewWidget): w.updateROIDisplay()
                     else:
@@ -1158,7 +1154,6 @@ class MultiViewWidget(QWidget):
                         if self._views[view].isVisible():
                             c.SetInput(self._views[view].getRenderWindow())
                             r = vtkImageExportToArray()
-                            # noinspection PyArgumentList
                             r.SetInputConnection(c.GetOutputPort())
                             img = r.GetArray()
                             img = flip(img.reshape(img.shape[1:]), axis=0)
@@ -1174,7 +1169,6 @@ class MultiViewWidget(QWidget):
                             if s2[1] < s[1]: s[1] = s2[1]
                             if s2[2] < s[2]: s[2] = s2[2]
                         for i in range(n):
-                            # noinspection PyUnresolvedReferences
                             imglist[i] = imglist[i][:s[0], :s[1], :s[2]]
                         # Layout
                         if n == 1: img = imglist[0]
@@ -1248,6 +1242,16 @@ class MultiViewWidget(QWidget):
                                    text='{}\n{}.'.format(type(err), str(err)))
                     finally:
                         if exists(temp): remove(temp)
+
+    # Qt event
+
+    def leaveEvent(self, a0: QEvent | None) -> None:
+        if len(self._views) > 0:
+            # < Revision 19/11/2026
+            self._views[(0, 0)].synchroniseFocusChanged(None)
+            # Revision 19/11/2026 >
+            self._views[(0, 0)].FocusChanged.emit(self)
+        super().leaveEvent(a0)
 
 
 class OrthogonalSliceViewWidget(MultiViewWidget):
@@ -1329,6 +1333,9 @@ class OrthogonalSliceViewWidget(MultiViewWidget):
                     w1.ToolAttributesChanged.connect(w2.synchroniseToolAttributesChanged)
                     w1.ToolRenamed.connect(w2.synchroniseToolRenamed)
                     w1.ToolAdded.connect(w2.synchroniseToolAdded)
+                    # < Revision 18/11/2026
+                    w1.FocusChanged.connect(w2.synchroniseFocusChanged)
+                    # Revision 18/11/2026 >
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -2714,7 +2721,14 @@ class GridViewWidget(MultiViewWidget):
                     rois = w.getROICollection()
                     draw = w.getDrawInstance()
             else: w = SliceROIViewWidget(rois=rois, draw=draw)
-            self.setViewWidget(i // 3, i % 3, w)
+            # < Revision 18/11/2026
+            # self.setViewWidget(i // 3, i % 3, w)
+            r = i // 3
+            c = i % 3
+            self.setViewWidget(r, c, w)
+            w.setName('View {}'.format([r, c]))
+            # Revision 18/11/2026 >
+
         self.setVisibilityControlToAll()
 
     def _initActions(self) -> None:
@@ -2726,7 +2740,6 @@ class GridViewWidget(MultiViewWidget):
         """
         i: cython.int
         for i in range(9):
-            # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
             # noinspection PyUnresolvedReferences
             w.setName('view#{}'.format(i))
@@ -2803,6 +2816,9 @@ class GridViewWidget(MultiViewWidget):
                     w2 = self.getViewWidgetAt(j // 3, j % 3)
                     w1.ZoomChanged.connect(w2.synchroniseZoomChanged)
                     w1.CursorPositionChanged.connect(w2.synchroniseCursorPositionChanged)
+                    # < Revision 18/11/2026
+                    w1.FocusChanged.connect(w2.synchroniseFocusChanged)
+                    # Revision 18/11/2026 >
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
                     if isinstance(w1, SliceViewWidget) and isinstance(w2, SliceViewWidget):
                         w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
@@ -3098,7 +3114,6 @@ class GridViewWidget(MultiViewWidget):
         """
         i: cython.int
         for i in range(9):
-            # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
             # noinspection PyUnresolvedReferences
             w.getPopup().actions()[2].setVisible(True)
@@ -3109,7 +3124,6 @@ class GridViewWidget(MultiViewWidget):
         """
         i: cython.int
         for i in range(9):
-            # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
             # noinspection PyUnresolvedReferences
             w.getPopup().actions()[2].setVisible(False)
@@ -3178,7 +3192,6 @@ class MultiSliceGridViewWidget(GridViewWidget):
         super().__init__(rois, draw, parent)
         i: cython.int
         for i in range(9):
-            # noinspection PyNoneFunctionAssignment
             w = self.getViewWidgetAt(i // 3, i % 3)
             # noinspection PyUnresolvedReferences
             w.setOffset(i)  # nine consecutive slices of the same volume

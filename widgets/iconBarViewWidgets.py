@@ -1143,7 +1143,6 @@ class IconBarWidget(QWidget):
             """
             Common to all widgets 
             """
-            # noinspection PyUnresolvedReferences
             self._icons['expand'].clicked.connect(self._onExpand)
             self._connectExpandAction()
             self._icons['screen'].clicked.connect(lambda _: self._onFullScreen())
@@ -2291,17 +2290,11 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['right0'] = self._createButton('wright.png', 'right.png', checkable=False, autorepeat=True)
         self._buttons['rotc0'] = self._createButton('wrot1.png', 'rot1.png', checkable=False, autorepeat=True)
         self._buttons['rota0'] = self._createButton('wrot2.png', 'rot2.png', checkable=False, autorepeat=True)
-        # noinspection PyUnresolvedReferences
         self._buttons['up0'].clicked.connect(lambda: self._ytranslation(self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['down0'].clicked.connect(lambda: self._ytranslation(-self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['left0'].clicked.connect(lambda: self._xtranslation(self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['right0'].clicked.connect(lambda: self._xtranslation(-self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['rotc0'].clicked.connect(lambda: self._zrotation(self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['rota0'].clicked.connect(lambda: self._zrotation(-self._step))
         self._buttons['up0'].setToolTip('Forward translation')
         self._buttons['down0'].setToolTip('Backward translation')
@@ -2327,17 +2320,11 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['right1'] = self._createButton('wright.png', 'right.png', checkable=False, autorepeat=True)
         self._buttons['rotc1'] = self._createButton('wrot1.png', 'rot1.png', checkable=False, autorepeat=True)
         self._buttons['rota1'] = self._createButton('wrot2.png', 'rot2.png', checkable=False, autorepeat=True)
-        # noinspection PyUnresolvedReferences
         self._buttons['up1'].clicked.connect(lambda: self._ztranslation(self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['down1'].clicked.connect(lambda: self._ztranslation(-self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['left1'].clicked.connect(lambda: self._xtranslation(self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['right1'].clicked.connect(lambda: self._xtranslation(-self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['rotc1'].clicked.connect(lambda: self._yrotation(-self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['rota1'].clicked.connect(lambda: self._yrotation(self._step))
         self._buttons['up1'].setToolTip('Cranial translation')
         self._buttons['down1'].setToolTip('Caudal translation')
@@ -2363,17 +2350,11 @@ class IconBarOrthogonalRegistrationViewWidget2(IconBarOrthogonalRegistrationView
         self._buttons['right2'] = self._createButton('wright.png', 'right.png', checkable=False, autorepeat=True)
         self._buttons['rotc2'] = self._createButton('wrot1.png', 'rot1.png', checkable=False, autorepeat=True)
         self._buttons['rota2'] = self._createButton('wrot2.png', 'rot2.png', checkable=False, autorepeat=True)
-        # noinspection PyUnresolvedReferences
         self._buttons['up2'].clicked.connect(lambda: self._ztranslation(self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['down2'].clicked.connect(lambda: self._ztranslation(-self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['left2'].clicked.connect(lambda: self._ytranslation(self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['right2'].clicked.connect(lambda: self._ytranslation(-self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['rotc2'].clicked.connect(lambda: self._xrotation(self._step))
-        # noinspection PyUnresolvedReferences
         self._buttons['rota2'].clicked.connect(lambda: self._xrotation(-self._step))
         self._buttons['up2'].setToolTip('Cranial translation')
         self._buttons['down2'].setToolTip('Caudal translation')
@@ -3272,9 +3253,7 @@ class IconBarSliceViewWidget(IconBarWidget):
             self._icons['sliceminus'] = self._createButton('wminus.png', 'minus.png', checkable=False, autorepeat=True)
             self._icons['sliceplus'] = self._createButton('wplus.png', 'plus.png', checkable=False, autorepeat=True)
             self._icons['orient'].setMenu(widget.getPopupOrientation())
-            # noinspection PyUnresolvedReferences
             self._icons['sliceminus'].clicked.connect(widget.sliceMinus)
-            # noinspection PyUnresolvedReferences
             self._icons['sliceplus'].clicked.connect(widget.slicePlus)
             self._visibilityflags['orient'] = True
             self._visibilityflags['sliceminus'] = True
@@ -3289,15 +3268,10 @@ class IconBarSliceViewWidget(IconBarWidget):
             self._icons['show'].setMenu(widget.getPopupVisibility())
             self._icons['actions'].setMenu(widget.getPopupActions())
             self._icons['colorbar'].setMenu(widget.getPopupColorbarPosition())
-            # noinspection PyUnresolvedReferences
             self._icons['zoomin'].clicked.connect(widget.zoomIn)
-            # noinspection PyUnresolvedReferences
             self._icons['zoomout'].clicked.connect(widget.zoomOut)
-            # noinspection PyUnresolvedReferences
             self._icons['zoom1'].clicked.connect(widget.zoomDefault)
-            # noinspection PyUnresolvedReferences
             self._icons['capture'].clicked.connect(widget.saveCapture)
-            # noinspection PyUnresolvedReferences
             self._icons['clipboard'].clicked.connect(widget.copyToClipboard)
             widget.getAction()['axial'].triggered.connect(lambda: self._icons['orient'].setIcon(self._ax))
             widget.getAction()['coronal'].triggered.connect(lambda: self._icons['orient'].setIcon(self._cor))
@@ -3964,7 +3938,6 @@ class IconBarViewWidgetCollection(QObject):
         SisypheROICollection | None
             associated ROI collection instance, or None if not found.
         """
-        # noinspection PyInconsistentReturns
         if self.count() > 0:
             for widget in self:
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
@@ -4010,7 +3983,7 @@ class IconBarViewWidgetCollection(QObject):
                     else: return None
         return None
 
-    # noinspection calling-non-callable
+    # noinspection calling-non-callable,unresolved-references
     def getSelectedSliceIndex(self) -> int | None:
         """
         Get the slice index of the selected view from the first suitable widget.
@@ -4169,9 +4142,9 @@ class IconBarViewWidgetCollection(QObject):
             if self.count() > 0:
                 for widget in self:
                     if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
-                        # noinspection calling-non-callable
                         sliceview = widget().getFirstSliceViewWidget()
-                        if sliceview is not None: sliceview.setBrushRadius(radius, signal=True)
+                        if sliceview is not None:
+                            sliceview.setBrushRadius(radius, signal=True)
         else: raise TypeError('parameter type {} is not int.'.format(type(radius)))
 
     def setNoROIFlag(self) -> None:
@@ -4707,6 +4680,7 @@ class IconBarViewWidgetCollection(QObject):
         """
         if self.count() > 0:
             for widget in self:
+                # noinspection type-hints
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
@@ -5213,6 +5187,7 @@ class IconBarViewWidgetCollection(QObject):
         """
         if self.count() > 0:
             for widget in self:
+                # noinspection type-hints
                 if isinstance(widget, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
                     # noinspection calling-non-callable
                     sliceview = widget().getFirstSliceViewWidget()
@@ -5561,7 +5536,6 @@ class IconBarViewWidgetCollection(QObject):
             for widget in self:
                 if isinstance(widget, (IconBarOrthogonalSliceVolumeViewWidget,
                                        IconBarOrthogonalSliceTrajectoryViewWidget)):
-                    # noinspection calling-non-callable
                     view = widget().getFirstVolumeViewWidget()
                     if view is not None: return view.getTractCollection()
         return None

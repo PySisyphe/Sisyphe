@@ -104,7 +104,6 @@ if TYPE_CHECKING:
 # < Revision 03/10/2026
 # if platform == 'win32':
 if platform in ('win32', 'linux'):
-    # noinspection PyUnresolvedReferences
     from qdarktheme import load_palette
 # Revision 03/10/2026 >
 
@@ -231,7 +230,7 @@ class LutWidget(QWidget):
     QWidget -> LutWidget
 
     Creation: 01/11/2022
-    Last revision: 03/10/2026
+    Last revision: 13/11/2026
     """
 
     # Custom Qt Signal
@@ -267,6 +266,7 @@ class LutWidget(QWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  volume: SisypheVolume | None = None,
                  view: IconBarViewWidgetCollection | IconBarWidget | MultiViewWidget | AbstractViewWidget | None = None,
@@ -318,10 +318,8 @@ class LutWidget(QWidget):
             background = p.color(QPalette.Base)
         else:
             if parent is not None:
-                # noinspection PyTypeChecker
                 background = parent.palette().color(QPalette.Base)
             else:
-                # noinspection PyTypeChecker
                 background = self.palette().color(QPalette.Base)
         # Revision 03/10/2026 >
         # < Revision 11/03/2025
@@ -352,11 +350,8 @@ class LutWidget(QWidget):
 
         # Init matplotlib events
 
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('button_press_event', self._onMouseClickEvent)
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('motion_notify_event', self._onMouseMoveEvent)
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('button_release_event', self._onMouseReleaseEvent)
         self._on_move_span_flag = False
         self._on_move_left_span_flag = False
@@ -381,10 +376,8 @@ class LutWidget(QWidget):
         # < Revision 23/07/2024
         # replace QLineEdit by QDoubleSpinBox
         # self._editmin.editingFinished.connect(self._onRangeChangedEvent)
-        # noinspection PyUnresolvedReferences
         self._editmin.valueChanged.connect(self._onRangeChangedEvent)
         # self._editmax.editingFinished.connect(self._onRangeChangedEvent)
-        # noinspection PyUnresolvedReferences
         self._editmax.valueChanged.connect(self._onRangeChangedEvent)
         # Revision 23/07/2024 >
 
@@ -398,42 +391,51 @@ class LutWidget(QWidget):
             index = self._combo.findText(self._volume.display.getLUT().getName())
             # Revision 17/10/2024 >
             if index > -1: self._combo.setCurrentIndex(index)
-        # noinspection PyUnresolvedReferences
         self._combo.currentIndexChanged.connect(self._onLutChangedEvent)
 
         # Init QCheckbox
 
         # < Revision 25/10/2024
         self._reverse = QCheckBox('Reverse')
-        # noinspection PyUnresolvedReferences
         self._reverse.stateChanged.connect(self.reverseLut)
         # Revision 25/10/2024 >
+
+        # < Revision 13/11/2026
+        # Init Auto button
+        self._auto = QPushButton('Auto')
+        self._auto.clicked.connect(lambda _: self.autoWindow(cmin=0.0))
+        self._default = QPushButton('Default')
+        self._default.clicked.connect(self.defaultWindow)
+        # Revision 13/11/2026 >
 
         # Init QLayout
 
         hlyout = QHBoxLayout()
-        # noinspection PyUnresolvedReferences
         hlyout.addWidget(self._editmin, alignment=Qt.AlignLeft)
-        # noinspection PyUnresolvedReferences
         hlyout.addWidget(self._combo, alignment=Qt.AlignHCenter)
-        # noinspection PyUnresolvedReferences
         hlyout.addWidget(self._editmax, alignment=Qt.AlignRight)
         vlyout = QVBoxLayout(self)
         vlyout.addWidget(self._canvas)
         vlyout.addLayout(hlyout)
-        vlyout.addWidget(self._reverse)
+        # < Revision 13/11/2026
+        # vlyout.addWidget(self._reverse)
+        hlyout = QHBoxLayout()
+        hlyout.addStretch()
+        hlyout.addWidget(self._default)
+        hlyout.addWidget(self._auto)
+        hlyout.addWidget(self._reverse)
+        hlyout.addStretch()
+        vlyout.addLayout(hlyout)
+        # Revision 13/11/2026 >
         vlyout.setSpacing(0)
         vlyout.setContentsMargins(5, 5, 5, 5)
-        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._reverse, Qt.AlignHCenter)
-        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._canvas, Qt.AlignHCenter)
         self.setLayout(vlyout)
 
         self.setToolTip('Drag vertical dotted line with mouse to move it,\n'
                         'and modify image windowing settings.')
 
-        # noinspection PyUnresolvedReferences
         self._canvas.setFocusPolicy(Qt.ClickFocus)
         self._canvas.setFocus()
         self._cursor = QCursor()
@@ -450,6 +452,11 @@ class LutWidget(QWidget):
             self._editmin.setStyleSheet('font-size: 8pt')
             self._editmax.setStyleSheet('font-size: 8pt')
             self._combo.setStyleSheet('font-size: 8pt')
+            # < Revision 13/11/2026
+            self._auto.setStyleSheet('font-size: 8pt')
+            self._default.setStyleSheet('font-size: 8pt')
+            self._reverse.setStyleSheet('font-size: 8pt')
+            # Revision 13/11/2026 >
 
     """
     Private attributes
@@ -1179,11 +1186,24 @@ class LutWidget(QWidget):
             maximum window value.
         """
         self._volume.display.setWindow(wmin, wmax)
-        self._set_span_left(wmin)
-        self._set_span_right(wmax)
+        # < Revision 13/11/2026
+        # self._set_span_left(wmin)
+        # self._set_span_right(wmax)
+        xleft = self._set_span_left(wmin)
+        xright = self._set_span_right(wmax)
+        self._winftext.xyann = (xleft, self._histaxe.get_ylim()[1] / 2)
+        self._wsuptext.xyann = (xright, self._histaxe.get_ylim()[1] / 2)
+        if self._volume.getDatatype() in getIntStdDatatypes():
+            self._winftext.set_text(str(int(xleft)))
+            self._wsuptext.set_text(str(int(xright)))
+        else:
+            self._winftext.set_text(self._format.format(xleft))
+            self._wsuptext.set_text(self._format.format(xright))
+        # Revision 13/11/2026 >
         self._draw()
         self.lutWindowChanged.emit()
 
+    # noinspection unresolved-references
     def setWindowMin(self, wmin: float | int) -> None:
         """
         Set the minimum windowing value.
@@ -1193,9 +1213,14 @@ class LutWidget(QWidget):
         wmin : float | int
             minimum window value.
         """
-        # noinspection unresolved-references
         self._volume.display.setWindowMin(wmin)
-        self._set_span_left(wmin)
+        # < Revision 13/11/2026
+        # self._set_span_left(wmin)
+        xleft = self._set_span_left(wmin)
+        self._winftext.xyann = (xleft, self._histaxe.get_ylim()[1] / 2)
+        if self._volume.getDatatype() in getIntStdDatatypes(): self._winftext.set_text(str(int(xleft)))
+        else: self._winftext.set_text(self._format.format(xleft))
+        # Revision 13/11/2026 >
         self._draw()
         # noinspection PyUnresolvedReferences
         self.lutWindowChanged.emit()
@@ -1211,34 +1236,52 @@ class LutWidget(QWidget):
             maximum window value.
         """
         self._volume.display.setWindowMax(wmax)
-        self._set_span_right(wmax)
+        # < Revision 13/11/2026
+        # self._set_span_right(wmax)
+        xright = self._set_span_right(wmax)
+        self._wsuptext.xyann = (xright, self._histaxe.get_ylim()[1] / 2)
+        if self._volume.getDatatype() in getIntStdDatatypes(): self._wsuptext.set_text(str(int(xright)))
+        else: self._wsuptext.set_text(self._format.format(xright))
+        # Revision 13/11/2026 >
         self._draw()
         self.lutWindowChanged.emit()
 
     # < Revision 24/10/2024
     # add autoWindow method
     # noinspection unresolved-references
-    def autoWindow(self, cmin: int = 1, cmax: int = 99) -> None:
+    def autoWindow(self, cmin: float = 0.5, cmax: float = 99.9) -> None:
         """
         Automatically adjust the window based on intensity percentiles.
 
         Parameters
         ----------
-        cmin : int, optional
-            lower percentile (1-99).
-        cmax : int, optional
-            upper percentile (1-99).
+        cmin : int | None (optional)
+            lower percentile (default 0.5).
+        cmax : int (optional)
+            upper percentile (default 99.5).
         """
         self._volume.display.autoWindow(cmin, cmax)
         wmin, wmax = self._volume.display.getWindow()
-        self._set_span_left(wmin)
-        self._set_span_right(wmax)
+        # < Revision 13/11/2026
+        # self._set_span_left(wmin)
+        # self._set_span_right(wmax)
+        xleft = self._set_span_left(wmin)
+        xright = self._set_span_right(wmax)
+        self._winftext.xyann = (xleft, self._histaxe.get_ylim()[1] / 2)
+        self._wsuptext.xyann = (xright, self._histaxe.get_ylim()[1] / 2)
+        if self._volume.getDatatype() in getIntStdDatatypes():
+            self._winftext.set_text(str(int(xleft)))
+            self._wsuptext.set_text(str(int(xright)))
+        else:
+            self._winftext.set_text(self._format.format(xleft))
+            self._wsuptext.set_text(self._format.format(xright))
+        # Revision 13/11/2026 >
         self._draw()
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
 
     # < Revision 24/10/2024
-    # add autoWindow method
+    # add defaultWindow method
     # noinspection unresolved-references
     def defaultWindow(self) -> None:
         """
@@ -1246,8 +1289,20 @@ class LutWidget(QWidget):
         """
         self._volume.display.setDefaultWindow()
         wmin, wmax = self._volume.display.getWindow()
-        self._set_span_left(wmin)
-        self._set_span_right(wmax)
+        # < Revision 13/11/2026
+        # self._set_span_left(wmin)
+        # self._set_span_right(wmax)
+        xleft = self._set_span_left(wmin)
+        xright = self._set_span_right(wmax)
+        self._winftext.xyann = (xleft, self._histaxe.get_ylim()[1] / 2)
+        self._wsuptext.xyann = (xright, self._histaxe.get_ylim()[1] / 2)
+        if self._volume.getDatatype() in getIntStdDatatypes():
+            self._winftext.set_text(str(int(xleft)))
+            self._wsuptext.set_text(str(int(xright)))
+        else:
+            self._winftext.set_text(self._format.format(xleft))
+            self._wsuptext.set_text(self._format.format(xright))
+        # Revision 13/11/ >
         self._draw()
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
@@ -1261,8 +1316,20 @@ class LutWidget(QWidget):
         """
         self._volume.display.setCTBrainWindow()
         wmin, wmax = self._volume.display.getWindow()
-        self._set_span_left(wmin)
-        self._set_span_right(wmax)
+        # < Revision 13/11/2026
+        # self._set_span_left(wmin)
+        # self._set_span_right(wmax)
+        xleft = self._set_span_left(wmin)
+        xright = self._set_span_right(wmax)
+        self._winftext.xyann = (xleft, self._histaxe.get_ylim()[1] / 2)
+        self._wsuptext.xyann = (xright, self._histaxe.get_ylim()[1] / 2)
+        if self._volume.getDatatype() in getIntStdDatatypes():
+            self._winftext.set_text(str(int(xleft)))
+            self._wsuptext.set_text(str(int(xright)))
+        else:
+            self._winftext.set_text(self._format.format(xleft))
+            self._wsuptext.set_text(self._format.format(xright))
+        # Revision 13/11/2026 >
         self._draw()
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
@@ -1276,8 +1343,20 @@ class LutWidget(QWidget):
         """
         self._volume.display.setCTBoneWindow()
         wmin, wmax = self._volume.display.getWindow()
-        self._set_span_left(wmin)
-        self._set_span_right(wmax)
+        # < Revision 13/11/2026
+        # self._set_span_left(wmin)
+        # self._set_span_right(wmax)
+        xleft = self._set_span_left(wmin)
+        xright = self._set_span_right(wmax)
+        self._winftext.xyann = (xleft, self._histaxe.get_ylim()[1] / 2)
+        self._wsuptext.xyann = (xright, self._histaxe.get_ylim()[1] / 2)
+        if self._volume.getDatatype() in getIntStdDatatypes():
+            self._winftext.set_text(str(int(xleft)))
+            self._wsuptext.set_text(str(int(xright)))
+        else:
+            self._winftext.set_text(self._format.format(xleft))
+            self._wsuptext.set_text(self._format.format(xright))
+        # Revision 13/11/2026 >
         self._draw()
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
@@ -1291,8 +1370,20 @@ class LutWidget(QWidget):
         """
         self._volume.display.setCTMetallicWindow()
         wmin, wmax = self._volume.display.getWindow()
-        self._set_span_left(wmin)
-        self._set_span_right(wmax)
+        # < Revision 13/11/2026
+        # self._set_span_left(wmin)
+        # self._set_span_right(wmax)
+        xleft = self._set_span_left(wmin)
+        xright = self._set_span_right(wmax)
+        self._winftext.xyann = (xleft, self._histaxe.get_ylim()[1] / 2)
+        self._wsuptext.xyann = (xright, self._histaxe.get_ylim()[1] / 2)
+        if self._volume.getDatatype() in getIntStdDatatypes():
+            self._winftext.set_text(str(int(xleft)))
+            self._wsuptext.set_text(str(int(xright)))
+        else:
+            self._winftext.set_text(self._format.format(xleft))
+            self._wsuptext.set_text(self._format.format(xright))
+        # Revision 13/11/2026 >
         self._draw()
         self.lutWindowChanged.emit()
     # Revision 24/10/2024 >
@@ -1416,6 +1507,7 @@ class LutEditWidget(QWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  size: int = 512,
                  parent: QWidget | None = None) -> None:
@@ -1439,7 +1531,6 @@ class LutEditWidget(QWidget):
                                  background.green() / 255,
                                  background.blue() / 255))
         self._canvas = FigureCanvas(self._fig)
-        # noinspection PyTypeChecker
         self._axe = self._fig.add_axes([0, 0, 1, 1], frame_on=True, xmargin=0)
 
         # Init point and color lists
@@ -1452,23 +1543,16 @@ class LutEditWidget(QWidget):
 
         # Init event
 
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('pick_event', self._onPickEvent)
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('motion_notify_event', self._onMouseMoveEvent)
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('button_press_event', self._onMouseClickEvent)
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('button_release_event', self._onMouseReleaseEvent)
 
         # Init popup menu
 
         self._popup = QMenu(self)
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyTypeChecker,PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action_new = QAction('Add new point', self)
         self._action_remove = QAction('Remove point', self)
@@ -1477,19 +1561,12 @@ class LutEditWidget(QWidget):
         self._action_swap_previous = QAction('Swap color with previous point', self)
         self._action_clear = QAction('Clear all', self)
         self._action_save = QAction('Save...', self)
-        # noinspection PyUnresolvedReferences
         self._action_new.triggered.connect(self._onMenuNew)
-        # noinspection PyUnresolvedReferences
         self._action_color.triggered.connect(self._onMenuColor)
-        # noinspection PyUnresolvedReferences
         self._action_swap_next.triggered.connect(self._onMenuSwapNext)
-        # noinspection PyUnresolvedReferences
         self._action_swap_previous.triggered.connect(self._onMenuSwapPrevious)
-        # noinspection PyUnresolvedReferences
         self._action_remove.triggered.connect(self._onMenuRemove)
-        # noinspection PyUnresolvedReferences
         self._action_clear.triggered.connect(self._onMenuClear)
-        # noinspection PyUnresolvedReferences
         self._action_save.triggered.connect(self._onMenuSave)
         self._popup.addAction(self._action_new)
         self._popup.addAction(self._action_remove)
@@ -1634,6 +1711,7 @@ class LutEditWidget(QWidget):
 
     # Matplotlib events
 
+    # noinspection unresolved-references
     def _onMouseClickEvent(self, event: MouseEvent) -> None:
         """
         Handles mouse clicks for adding points, showing the context menu, and selecting points.
@@ -1649,7 +1727,6 @@ class LutEditWidget(QWidget):
                     f = self._fig.dpi / 100
                     p = self.mapToGlobal(QPoint(0, 0))
                     x = int(p.x() + event.x / f)
-                    # noinspection PyUnresolvedReferences
                     y = int(p.y() + self._canvas.get_width_height()[1] - event.y / f)
                     self._action_new.setVisible(True)
                     self._action_color.setVisible(False)
@@ -1681,7 +1758,6 @@ class LutEditWidget(QWidget):
                     f = self._fig.dpi / 100
                     p = self.mapToGlobal(QPoint(0, 0))
                     x = int(p.x() + event.x / f)
-                    # noinspection PyUnresolvedReferences
                     y = int(p.y() + self._canvas.get_width_height()[1] - event.y / f)
                     self._popup.popup(QPoint(x, y))
             elif event.button == MouseButton.LEFT:
@@ -1689,7 +1765,6 @@ class LutEditWidget(QWidget):
                     if self._selected == 0 or self._selected == len(self._xlist) - 1:
                         self._selected = None
                     else:
-                        # noinspection PyUnresolvedReferences
                         self._cursor.setShape(Qt.ClosedHandCursor)
                         self._canvas.setCursor(self._cursor)
         else:
@@ -1915,7 +1990,6 @@ class ColorTransferWidget(LutEditWidget):
         # Init popup menu
 
         self._action_load = QAction('Load...', self)
-        # noinspection PyUnresolvedReferences
         self._action_load.triggered.connect(self._onMenuLoad)
         self._popup.addAction(self._action_load)
 
@@ -2223,6 +2297,7 @@ class AlphaTransferWidget(QWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  volume: SisypheVolume | None = None,
                  view: VolumeViewWidget | None = None,
@@ -2276,17 +2351,14 @@ class AlphaTransferWidget(QWidget):
             background = p.color(QPalette.Base)
         else:
             if parent is not None:
-                # noinspection PyTypeChecker
                 background = parent.palette().color(QPalette.Button)
             else:
-                # noinspection PyTypeChecker
                 background = self.palette().color(QPalette.Button)
         # Revision 18/03/2025 >
         self._fig.set_facecolor((background.red() / 255,
                                  background.green() / 255,
                                  background.blue() / 255))
         self._canvas = FigureCanvas(self._fig)
-        # noinspection PyTypeChecker
         self._axe = self._fig.add_axes([0, 0, 1, 1], frame_on=False)
 
         # Init point and color lists
@@ -2307,38 +2379,26 @@ class AlphaTransferWidget(QWidget):
 
         # Init event
 
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('pick_event', self._onPickEvent)
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('motion_notify_event', self._onMouseMoveEvent)
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('button_press_event', self._onMouseClickEvent)
-        # noinspection PyTypeChecker
         self._canvas.mpl_connect('button_release_event', self._onMouseReleaseEvent)
 
         # Init popup menu
 
         self._popup = QMenu(self)
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._popup.setAttribute(Qt.WA_TranslucentBackground, True)
         self._action_new = QAction('Add new point', self)
         self._action_remove = QAction('Remove point', self)
         self._action_clear = QAction('Clear all', self)
         self._action_save = QAction('Save...', self)
         self._action_load = QAction('Load...', self)
-        # noinspection PyUnresolvedReferences
         self._action_new.triggered.connect(self._onMenuNew)
-        # noinspection PyUnresolvedReferences
         self._action_remove.triggered.connect(self._onMenuRemove)
-        # noinspection PyUnresolvedReferences
         self._action_clear.triggered.connect(self._onMenuClear)
-        # noinspection PyUnresolvedReferences
         self._action_save.triggered.connect(self._onMenuSave)
-        # noinspection PyUnresolvedReferences
         self._action_load.triggered.connect(self._onMenuLoad)
         self._popup.addAction(self._action_new)
         self._popup.addAction(self._action_remove)
@@ -2352,7 +2412,6 @@ class AlphaTransferWidget(QWidget):
         vlyout.addWidget(self._canvas)
         vlyout.setSpacing(0)
         vlyout.setContentsMargins(5, 5, 5, 5)
-        # noinspection PyUnresolvedReferences
         vlyout.setAlignment(self._canvas, Qt.AlignHCenter)
         self.setLayout(vlyout)
 
@@ -2365,7 +2424,6 @@ class AlphaTransferWidget(QWidget):
         if functype == 'alpha': txt = 'Scalar opacity transfer function\n\n' + txt
         else: txt = 'Gradient opacity transfer function\n\n' + txt
         self.setToolTip(txt)
-        # noinspection PyUnresolvedReferences
         self._canvas.setFocusPolicy(Qt.ClickFocus)
         self._canvas.setFocus()
         self._cursor = QCursor()
@@ -2702,6 +2760,7 @@ class AlphaTransferWidget(QWidget):
 
     # Matplotlib events
 
+    # noinspection unresolved-references
     def _onMouseClickEvent(self, event: MouseEvent) -> None:
         """
         Handles clicks for adding points and showing the context menu.
@@ -2719,7 +2778,6 @@ class AlphaTransferWidget(QWidget):
                     f = self._fig.dpi / 100
                     p = self.mapToGlobal(QPoint(0, 0))
                     x = int(p.x() + event.x / f)
-                    # noinspection PyUnresolvedReferences
                     y = int(p.y() + self._canvas.get_width_height()[1] - event.y / f)
                     self._action_new.setVisible(True)
                     self._action_remove.setVisible(False)
@@ -2737,12 +2795,10 @@ class AlphaTransferWidget(QWidget):
                     f = self._fig.dpi / 100
                     p = self.mapToGlobal(QPoint(0, 0))
                     x = int(p.x() + event.x / f)
-                    # noinspection PyUnresolvedReferences
                     y = int(p.y() + self._canvas.get_width_height()[1] - event.y / f)
                     self._popup.popup(QPoint(x, y))
             elif event.button == MouseButton.LEFT:
                 if self._selected is not None:
-                    # noinspection PyUnresolvedReferences
                     self._cursor.setShape(Qt.ClosedHandCursor)
                     self._canvas.setCursor(self._cursor)
 
@@ -2854,7 +2910,6 @@ class AlphaTransferWidget(QWidget):
             if 0 < self._selected < len(self._xlist) - 1:
                 del self._xlist[self._selected]
                 del self._ylist[self._selected]
-                # noinspection PyArgumentList
                 self._text[self._selected].remove()
                 del self._text[self._selected]
                 if self._type == 'alpha':

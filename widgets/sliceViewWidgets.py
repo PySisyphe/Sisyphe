@@ -38,7 +38,9 @@ from numpy import array
 from numpy import argmax
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QTimer
+# < Revision 18/11/2026
+# from PyQt5.QtCore import QTimer
+# Revision 18/11/2026 >
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QCursor
 from PyQt5.QtGui import QKeySequence
@@ -106,6 +108,7 @@ from Sisyphe.gui.dialogWait import DialogWait
 
 # to avoid ImportError due to circular imports
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from vtk import vtkObject
     from PyQt5.QtGui import QShowEvent
     from Sisyphe.processing.segmentation import SegmentAnything
@@ -148,7 +151,7 @@ class SliceViewWidget(AbstractViewWidget):
     QWidget -> AbstractViewWidget -> SliceViewWidget
 
     Creation: 30/03/2022
-    Last revision: 08/06/2026
+    Last revision: 18/11/2026
     """
 
     # Class constants
@@ -167,6 +170,7 @@ class SliceViewWidget(AbstractViewWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self, parent: QWidget | None = None) -> None:
         """
         SliceViewWidget instance constructor.
@@ -335,11 +339,8 @@ class SliceViewWidget(AbstractViewWidget):
         self._group_orient.addAction(self._action['sagittal'])
         self._action['axial'].setChecked(True)
         self._menuOrientation = QMenu('Orientation', self._popup)
-        # noinspection PyUnresolvedReferences
         self._menuOrientation.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menuOrientation.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._menuOrientation.setAttribute(Qt.WA_TranslucentBackground, True)
         self._menuOrientation.addAction(self._action['axial'])
         self._menuOrientation.addAction(self._action['coronal'])
@@ -366,7 +367,7 @@ class SliceViewWidget(AbstractViewWidget):
                            '\tLeft-click + CTRL key (CMD key MacOS) and drag to change zoom,\n' \
                            '\tLeft-click + ALT key and drag to pan,\n' \
                            '\tLeft-click + SHIFT key and drag to change window/level,\n' \
-                           '\tRight-click + CTRL key (CMD key MacOS).'
+                           '\tRight-click to show a popup menu.'
         if self._action['showtooltip'].isChecked(): self.setToolTip(self._tooltipstr)
         else: self.setToolTip('')
 
@@ -406,12 +407,9 @@ class SliceViewWidget(AbstractViewWidget):
         self._linev.SetPoint1(0, -500, 1)
         self._linev.SetPoint2(0, 500, 1)
         self._lines = vtkAppendPolyData()
-        # noinspection PyArgumentList
         self._lines.AddInputConnection(self._lineh.GetOutputPort())
-        # noinspection PyArgumentList
         self._lines.AddInputConnection(self._linev.GetOutputPort())
         mapper = vtkPolyDataMapper()
-        # noinspection PyArgumentList
         mapper.SetInputConnection(self._lines.GetOutputPort())
         self._cursor = vtkFollower()
         self._cursor.SetCamera(self._renderer.GetActiveCamera())
@@ -839,23 +837,24 @@ class SliceViewWidget(AbstractViewWidget):
         settings.
         """
         if self._volume is not None:
-            interactorstyle = self._window.GetInteractorStyle()
-            p = interactorstyle.GetLastPos()
-            p = list(self._getWorldFromDisplay(p[0], p[1]))
-            txt = ''
-            if self._action['showpos'].isChecked():
-                d = 2 - self._orient
-                p[d] = self._renderer.GetActiveCamera().GetFocalPoint()[d]
-                x, y, z = p[0], p[1], p[2]
-                xm, ym, zm = self._volume.getFieldOfView()
-                if (0 <= x <= xm) and (0 <= y <= ym) and (0 <= z <= zm):
-                    o = self._volume.getOrigin()
-                    x -= o[0]
-                    y -= o[1]
-                    z -= o[2]
-                    txt = '{:.1f} x {:.1f} x {:.1f} mm'.format(x, y, z)
-            txt = txt + self._getInfoValuesText(p)
-            self.getBottomRightInfo().SetInput(txt)
+            if self._action['showinfo'].isChecked():
+                interactorstyle = self._window.GetInteractorStyle()
+                p = interactorstyle.GetLastPos()
+                p = list(self._getWorldFromDisplay(p[0], p[1]))
+                txt = ''
+                if self._action['showpos'].isChecked():
+                    d = 2 - self._orient
+                    p[d] = self._renderer.GetActiveCamera().GetFocalPoint()[d]
+                    x, y, z = p[0], p[1], p[2]
+                    xm, ym, zm = self._volume.getFieldOfView()
+                    if (0 <= x <= xm) and (0 <= y <= ym) and (0 <= z <= zm):
+                        o = self._volume.getOrigin()
+                        x -= o[0]
+                        y -= o[1]
+                        z -= o[2]
+                        txt = '{:.1f} x {:.1f} x {:.1f} mm'.format(x, y, z)
+                txt = txt + self._getInfoValuesText(p)
+                self.getBottomRightInfo().SetInput(txt)
             self._renderwindow.Render()
 
     # Public synchronization event methods
@@ -1032,9 +1031,6 @@ class SliceViewWidget(AbstractViewWidget):
         # < Revision 31/07/2024
         # moving displayOff() from the end to the start
         super().displayOff()
-        # Revision 31/07/2024 >
-        self._info['bottomright'].SetVisibility(False)
-        # Orientation labels
         self._info['topcenter'].SetVisibility(False)
         self._info['leftcenter'].SetVisibility(False)
         self._info['rightcenter'].SetVisibility(False)
@@ -1504,7 +1500,6 @@ class SliceViewWidget(AbstractViewWidget):
         s = self._volume.getSpacing()[d]
         offset = self._offset * s
         p[d] = f[d] - offset
-        # noinspection PyArgumentList
         self._cursor.SetPosition(p)  # cursor depth = focal depth - offset
 
     def setCursorVisibility(self, v: bool, signal: bool = True) -> None:
@@ -2161,7 +2156,6 @@ class SliceViewWidget(AbstractViewWidget):
                         c = vtkWindowToImageFilter()
                         c.SetInput(self._renderwindow)
                         # Save current slice capture
-                        # noinspection PyArgumentList
                         w.SetInputConnection(c.GetOutputPort())
                         w.SetFileName(slicename)
                         w.Write()
@@ -2212,6 +2206,7 @@ class SliceViewWidget(AbstractViewWidget):
             if self._interactor.GetControlKey(): self.zoomIn()
             else: self.slicePlus()
 
+    # noinspection unresolved-references
     def _onLeftPressEvent(self,  obj: vtkObject, evt_name: str) -> None:
         """
         Handles the left mouse button press VTK event.
@@ -2230,10 +2225,10 @@ class SliceViewWidget(AbstractViewWidget):
             interactorstyle = self._window.GetInteractorStyle()
             self._mousepos0 = interactorstyle.GetLastPos()
             # Zoom, Control Key (Cmd key on macOS)
-            if self._interactor.GetControlKey() or self.getZoomFlag() is True:
+            if self._interactor.GetControlKey() or self.getZoomFlag():
                 self._scale0 = self._renderer.GetActiveCamera().GetParallelScale()
             # Pan, Alt Key
-            elif self._interactor.GetKeySym() == 'Alt_L' or self.getMoveFlag() is True:
+            elif self._interactor.GetKeySym() == 'Alt_L' or self.getMoveFlag():
                 self._camfocal0 = self._renderer.GetActiveCamera().GetFocalPoint()
                 self._campos0 = self._renderer.GetActiveCamera().GetPosition()
                 self.setCentralCrossVisibilityOn()
@@ -2241,7 +2236,7 @@ class SliceViewWidget(AbstractViewWidget):
                 self.setCursorVisibilityOff()
                 self._renderwindow.SetCurrentCursor(VTK_CURSOR_HAND)
             # Windowing, Shift Key
-            elif self._interactor.GetShiftKey() or self.getLevelFlag() is True:
+            elif self._interactor.GetShiftKey() or self.getLevelFlag():
                 self._cursor0 = self.getCursorVisibility()
                 self.setCursorVisibilityOff()
                 self._win0 = interactorstyle.GetLastPos()
@@ -2249,7 +2244,6 @@ class SliceViewWidget(AbstractViewWidget):
                 # Update cursor position
                 self.setCursorFromDisplayPosition(self._mousepos0[0], self._mousepos0[1])
                 p = self.getCursorWorldPosition()
-                # noinspection unresolved-references
                 self.CursorPositionChanged.emit(self, p[0], p[1], p[2])  # 3D position corrected by offset
             # Display information
             self._updateBottomRightInfo()
@@ -2287,19 +2281,15 @@ class SliceViewWidget(AbstractViewWidget):
             try:
                 interactorstyle = self._window.GetInteractorStyle()
                 last = interactorstyle.GetLastPos()
-                # k = interactorstyle.GetKeySym()
-                # Zoom, Control Key (Cmd key on Mac)
-                # if k == 'Control_L' or self.getZoomFlag() is True:
-                # noinspection PySimplifyBooleanCheck
-                if self._interactor.GetControlKey() or self.getZoomFlag() is True:
+                # Zoom, Control key
+                if self._interactor.GetControlKey() or self.getZoomFlag():
                     if interactorstyle.GetButton() == 1:
                         # Zoom
                         dx = (last[1] - self._mousepos0[1]) / 10
                         if dx < 0: self.zoomIn()
                         else: self.zoomOut()
                 # Pan, Alt Key
-                # elif k == 'Alt_L' or self.getMoveFlag() is True:
-                elif self._interactor.GetKeySym() == 'Alt_L' or self.getMoveFlag() is True:
+                elif self._interactor.GetKeySym() == 'Alt_L' or self.getMoveFlag():
                     if interactorstyle.GetButton() == 1:
                         # Camera and focal position
                         pfirst = self._getWorldFromDisplay(self._mousepos0[0],  self._mousepos0[1])
@@ -2309,8 +2299,7 @@ class SliceViewWidget(AbstractViewWidget):
                              self._campos0[2] + pfirst[2] - plast[2]]
                         self.setCameraPlanePosition(p)
                 # Windowing, Shift Key
-                # elif k == 'Shift_L' or self.getLevelFlag() is True:
-                elif self._interactor.GetShiftKey() or self.getLevelFlag() is True:
+                elif self._interactor.GetShiftKey() or self.getLevelFlag():
                     if interactorstyle.GetButton() == 1:
                         wmin, wmax = self._volume.display.getWindow()
                         rmin, rmax = self._volume.display.getRange()
@@ -2324,7 +2313,7 @@ class SliceViewWidget(AbstractViewWidget):
                         # noinspection PyUnresolvedReferences
                         self.RenderUpdated.emit(self)
                         self._win0 = last
-                elif self.getFollowFlag() is True:
+                elif self.getFollowFlag():
                     # Update cursor position information and display
                     self.setCursorFromDisplayPosition(last[0], last[1])
                     p = self.getCursorWorldPosition()
@@ -2489,7 +2478,6 @@ class SliceReorientViewWidget(SliceViewWidget):
 
         self._boxFov = vtkCubeSource()
         self._fovmapper = vtkPolyDataMapper()
-        # noinspection PyArgumentList
         self._fovmapper.SetInputConnection(self._boxFov.GetOutputPort())
         self._boxFovActor = vtkActor()
         self._boxFovActor.SetMapper(self._fovmapper)
@@ -2682,12 +2670,9 @@ class SliceReorientViewWidget(SliceViewWidget):
         vline.SetPoint1(0, -500, 1)
         vline.SetPoint2(0, 500, 1)
         lines = vtkAppendPolyData()
-        # noinspection PyArgumentList
         lines.AddInputConnection(hline.GetOutputPort())
-        # noinspection PyArgumentList
         lines.AddInputConnection(vline.GetOutputPort())
         mapper = vtkPolyDataMapper()
-        # noinspection PyArgumentList
         mapper.SetInputConnection(lines.GetOutputPort())
         # Reslice cursor
         self._resliceCursor = vtkFollower()
@@ -2728,7 +2713,6 @@ class SliceReorientViewWidget(SliceViewWidget):
         # SetOrigin() for boxFovActor, set coordinates of vtkActor barycenter
         self._resliceCursor.SetPosition(x, y, z)
         self._boxFov.SetCenter(x, y, z)
-        # noinspection PyArgumentList
         self._boxFov.Update()
         self._boxFovActor.SetOrigin(x, y, z)
         """
@@ -2811,7 +2795,6 @@ class SliceReorientViewWidget(SliceViewWidget):
         self._boxFov.SetYLength(fov[1])
         self._boxFov.SetZLength(fov[2])
         self._boxFov.SetCenter(c[0], c[1], c[2])
-        # noinspection PyArgumentList
         self._boxFov.Update()
         self._boxFovActor.SetOrigin(c[0], c[1], c[2])
         self._renderer.AddActor(self._boxFovActor)
@@ -2994,7 +2977,6 @@ class SliceReorientViewWidget(SliceViewWidget):
             self._boxFov.SetYLength(fov[1])
             self._boxFov.SetZLength(fov[2])
             self._boxFov.SetCenter(c[0], c[1], c[2])
-            # noinspection PyArgumentList
             self._boxFov.Update()
             self._boxFovActor.SetOrigin(c[0], c[1], c[2])
             self._renderwindow.Render()
@@ -3032,7 +3014,6 @@ class SliceReorientViewWidget(SliceViewWidget):
             self._boxFov.SetYLength(fov[1])
             self._boxFov.SetZLength(fov[2])
             self._boxFov.SetCenter(c[0], c[1], c[2])
-            # noinspection PyArgumentList
             self._boxFov.Update()
             self._boxFovActor.SetOrigin(c[0], c[1], c[2])
             self._renderwindow.Render()
@@ -3059,7 +3040,6 @@ class SliceReorientViewWidget(SliceViewWidget):
             self._boxFov.SetYLength(fov[1])
             self._boxFov.SetZLength(fov[2])
             self._boxFov.SetCenter(c[0], c[1], c[2])
-            # noinspection PyArgumentList
             self._boxFov.Update()
             self._boxFovActor.SetOrigin(c[0], c[1], c[2])
             self._renderwindow.Render()
@@ -3636,7 +3616,6 @@ class SliceOverlayViewWidget(SliceViewWidget):
         """
 
         self._menuOverlayVoxel = self._menuInformation.addMenu('Overlay voxel value at mouse position')
-        # noinspection PyUnresolvedReferences
         self._menuOverlayVoxel.triggered.connect(self._menuOverlayVoxelTriggered)
         self._group_menuOverlayVoxel = QActionGroup(self)
         self._group_menuOverlayVoxel.setExclusive(True)
@@ -3980,19 +3959,15 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     del self._isolabels
                 # isolines
                 plane = self._volumeslice.GetMapper().GetSlicePlane()
-                # noinspection PyArgumentList
                 self._cutplane.SetNormal(plane.GetNormal())
-                # noinspection PyArgumentList
                 self._cutplane.SetOrigin(plane.GetOrigin())
                 self._cutplane.Push(0.5)
                 self._isocutter.SetInputData(self._isocontour.GetOutput())
                 self._isocutter.SetPlane(self._cutplane)
-                # noinspection PyArgumentList
                 self._isocutter.Update()
                 mapper = vtkPolyDataMapper()
                 mapper.SetInputData(self._isocutter.GetOutput())
                 mapper.ScalarVisibilityOff()
-                # noinspection PyArgumentList
                 mapper.Update()
                 self._isolines = vtkActor()
                 self._isolines.SetMapper(mapper)
@@ -4013,7 +3988,6 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 mask.SetOnRatio(400)
                 mask.SetMaximumNumberOfPoints(10)
                 mask.RandomModeOff()
-                # noinspection PyArgumentList
                 mask.Update()
                 mapper = vtkLabeledDataMapper()
                 mapper.SetInputData(mask.GetOutput())
@@ -4047,13 +4021,10 @@ class SliceOverlayViewWidget(SliceViewWidget):
             if self._isoindex > -1:
                 if self._isolines.GetVisibility():
                     plane = self._volumeslice.GetMapper().GetSlicePlane()
-                    # noinspection PyArgumentList
                     self._cutplane.SetNormal(plane.GetNormal())
-                    # noinspection PyArgumentList
                     self._cutplane.SetOrigin(plane.GetOrigin())
                     self._cutplane.Push(0.5)
                     self._isocutter.SetPlane(self._cutplane)
-                    # noinspection PyArgumentList
                     self._isocutter.Update()
                     self._isolines.GetMapper().SetInputData(self._isocutter.GetOutput())
                     self._isolines.GetMapper().Update()
@@ -4062,7 +4033,6 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     mask.SetOnRatio(400)
                     mask.SetMaximumNumberOfPoints(10)
                     mask.RandomModeOff()
-                    # noinspection PyArgumentList
                     mask.Update()
                     self._isolabels.GetMapper().SetInputData(mask.GetOutput())
                     self._isolabels.GetMapper().Update()
@@ -4318,7 +4288,6 @@ class SliceOverlayViewWidget(SliceViewWidget):
                 self._ovlslices.append(ovlslice)
                 self._addToMenuVoxelOverlayValue(volume)
                 self._renderwindow.Render()
-                # noinspection PyUnresolvedReferences
                 # self.OverlayListChanged.emit()
         else: raise ValueError('reference volume must be set before overlay.')
 
@@ -4371,7 +4340,6 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     # Update display
                     self._renderwindow.Render()
                     # Signal
-                    # noinspection PyUnresolvedReferences
                     # self.OverlayListChanged.emit()
 
     def removeAllOverlays(self) -> None:
@@ -4396,7 +4364,6 @@ class SliceOverlayViewWidget(SliceViewWidget):
         # Update display
         self._renderwindow.Render()
         # Signal
-        # noinspection PyUnresolvedReferences
         # self.OverlayListChanged.emit()
         self._clearMenuVoxelOverlayValue()
 
@@ -5228,14 +5195,11 @@ class SliceOverlayViewWidget(SliceViewWidget):
             if mesh.getReferenceID() == self._volume.getID():
                 if mesh not in self._meshes:
                     plane = self._volumeslice.GetMapper().GetSlicePlane()
-                    # noinspection PyArgumentList
                     self._cutplane.SetNormal(plane.GetNormal())
-                    # noinspection PyArgumentList
                     self._cutplane.SetOrigin(plane.GetOrigin())
                     self._cutplane.Push(0.5)
                     self._meshcutter.SetPlane(self._cutplane)
                     self._meshcutter.SetInputData(mesh.getPolyData())
-                    # noinspection PyArgumentList
                     self._meshcutter.Update()
                     polydata = vtkPolyData()
                     polydata.DeepCopy(self._meshcutter.GetOutput())
@@ -5243,10 +5207,8 @@ class SliceOverlayViewWidget(SliceViewWidget):
                     mapper = vtkPolyDataMapper()
                     mapper.SetInputData(polydata)
                     mapper.ScalarVisibilityOff()
-                    # noinspection PyArgumentList
                     slcmesh.SetMapper(mapper)
                     slcmesh.SetVisibility(False)
-                    # noinspection PyArgumentList
                     mapper.Update()
                     prop = slcmesh.GetProperty()
                     prop.SetLineWidth(3)
@@ -5300,14 +5262,12 @@ class SliceOverlayViewWidget(SliceViewWidget):
             elif v == 0:
                 self._isoindex = 0
                 self._isocontour.SetInputData(self._volume.getVTKImage())
-                # noinspection PyArgumentList
                 self._isocontour.Update()
                 self._initIsoLines()
             elif self._ovl.count() >= v > 0:
                 self._isoindex = v
                 ovl = self._ovl[v-1]
                 self._isocontour.SetInputData(ovl.getVTKImage())
-                # noinspection PyArgumentList
                 self._isocontour.Update()
                 self._initIsoLines()
             if self._isoindex < 0:
@@ -6648,6 +6608,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
     # Special method
 
+    # noinspection unresolved-references
     def __init__(self,
                  overlays: SisypheVolumeCollection | None = None,
                  rois: SisypheROICollection | None = None,
@@ -6696,6 +6657,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         # < Revision 26/02/2026
         self._sam: SegmentAnything | None = None
         # Revision 26/02/2026 >
+        # < Revision 16/11/2026
+        self._lastp: list[int] | None = None
+        self._connectradius: Callable[[int], []] | None = None
+        # Revision 16/11/2026 >
 
         self._initBrushActor()
         # < Revision 25/02/2026
@@ -7054,11 +7019,8 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             lambda: self.setROIVisibility(self._action['showROI'].isChecked()))
 
         self._2d = QMenu('2D functions', self._popup)
-        # noinspection PyUnresolvedReferences
         self._2d.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._2d.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._2d.setAttribute(Qt.WA_TranslucentBackground, True)
         self._2d.addAction(self._action['2derode'])
         self._2d.addAction(self._action['2ddilate'])
@@ -7089,11 +7051,8 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._2d.addAction(self._action['2dclear'])
 
         self._3d = QMenu('3D functions', self._popup)
-        # noinspection PyUnresolvedReferences
         self._3d.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._3d.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._3d.setAttribute(Qt.WA_TranslucentBackground, True)
         self._3d.addAction(self._action['3derode'])
         self._3d.addAction(self._action['3ddilate'])
@@ -7128,20 +7087,14 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._3d.addAction(self._action['3dclear'])
 
         self._currentroi = QMenu('Set active ROI', self._popup)
-        # noinspection PyUnresolvedReferences
         self._currentroi.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._currentroi.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._currentroi.setAttribute(Qt.WA_TranslucentBackground, True)
         self._roigroup = None
 
         self._roitools = QMenu('ROI', self._popup)
-        # noinspection PyUnresolvedReferences
         self._roitools.setWindowFlag(Qt.NoDropShadowWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._roitools.setWindowFlag(Qt.FramelessWindowHint, True)
-        # noinspection PyUnresolvedReferences
         self._roitools.setAttribute(Qt.WA_TranslucentBackground, True)
         self._roitools.addAction(self._action['newroi'])
         self._roitools.addAction(self._action['addroi'])
@@ -7178,15 +7131,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
 
         self._tooltipstr += '\n\nBrush control:\n' \
                             '\tLeft-click to brush, Right-click to erase in draw mode,\n' \
-                            '\tMouseWheel + ALT key to change brush size.'
+                            '\tMouseWheel + SHIFT key to change brush size.'
         if self._action['showtooltip'].isChecked(): self.setToolTip(self._tooltipstr)
         else: self.setToolTip('')
 
+        # < Revision 18/11/2026
         # Timer
 
-        self._timer = QTimer()
-        # noinspection PyUnresolvedReferences
-        self._timer.timeout.connect(self._onTimer)
+        # self._timer = QTimer()
+        # self._timer.timeout.connect(self._onTimer)
+        # Revision 18/11/2026 >
 
     """
     Private attributes
@@ -7248,7 +7202,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         elif self._orient == 1: self._circle.SetNormal(0.0, 1.0, 0.0)
         elif self._orient == 2: self._circle.SetNormal(1.0, 0.0, 0.0)
         mapper = vtkPolyDataMapper()
-        # noinspection PyArgumentList
         mapper.SetInputConnection(self._circle.GetOutputPort())
         mapper.ScalarVisibilityOff()
         self._brush = vtkActor()
@@ -7325,7 +7278,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                         rgb.SetOutputFormatToRGBA()
                         rgb.SetInputData(roi.getVTKImage())
                         rgb.SetLookupTable(roi.getvtkLookupTable())
-                        # noinspection PyArgumentList
                         rgb.Update()
                         # blended image is used later, without vtkImageBlend processing, if only one roi.
                         blended = rgb.GetOutput()
@@ -7336,7 +7288,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # if only one roi (index = 1), blended image is already computed in the previous loop,
                 # no need for vtkImageBlend processing.
                 if index > 1:
-                    # noinspection PyArgumentList
                     blend.Update()
                     blended = blend.GetOutput()
                 # Revision 22/03/2025 >
@@ -7368,8 +7319,9 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             self._circle.Update()
             if self._activeroi is not None:
                 self._brush.GetProperty().SetColor(self._rois[self._activeroi].getColor())
-            # else: self._brush.SetVisibility(False)
+            # < Revision 18/11/2026
             self._brush.SetVisibility(False)
+            # Revision 18/11/2026 >
 
     def _updateExclusiveFlags(self, flag: str = '') -> None:
         """
@@ -7382,7 +7334,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         if isinstance(flag, str):
             # < Revision 26/02/2026
-            # add 'rectflag' & 'samflag' actions
+            # add 'rectflag', 'thresholdrectflag' & 'samflag' actions
             flags = ['brushflag', 'thresholdbrush', 'brushflag3', 'thresholdbrush3', '2dblobdilate',
                      '2dbloberode', '2dblobopen', '2dblobclose', '2dblobcopy', '2dblobcut', '2dblobpaste',
                      '2dblobremove', '2dblobkeep', '2dblobthreshold', '2dfill', '2drgrowing', '2dblobrgrowing',
@@ -7394,9 +7346,8 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             if flag in flags:
                 for f in flags:
                     self._action[f].setChecked(f == flag)
-                if self.getBrushFlag():
-                    # self._brush.SetVisibility(True)
-                    self._brush.SetVisibility(False)
+                if self.getBrushFlag() > 0:
+                    self._brush.SetVisibility(True)
                     self.setDefaultMouseCursor()
                 else:
                     self._brush.SetVisibility(False)
@@ -7404,7 +7355,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             else:
                 for f in flags:
                     self._action[f].setChecked(False)
-                    self._brush.SetVisibility(False)
+                self._brush.SetVisibility(False)
                 self.setDefaultMouseCursor()
         else: raise TypeError('parameter type {} is not str.'.format(type(flag)))
 
@@ -7422,7 +7373,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self._roigroup.addAction(r)
                 r.setCheckable(True)
                 r.setChecked(self._activeroi == roi.getName())
-                # noinspection PyUnresolvedReferences
                 r.triggered.connect(lambda: self.setActiveROI(self._roigroup.checkedAction().text(), signal=True))
                 self._currentroi.addAction(r)
         else: self.setROIMenuVisibilityOff()
@@ -7543,6 +7493,20 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             f = getattr(self, function)
             if param is None: f(signal=False)
             else: f(param, signal=False)
+
+    # < Revision 18/11/2026
+    # add synchroniseFocusChanged method
+    def synchroniseFocusChanged(self, obj: QWidget) -> None:
+        if obj != self:
+            self._focus = False
+            if self.hasROI() and self.getROIVisibility():
+                if self.getBrushFlag() > 0:
+                    self._brush.SetVisibility(False)
+                    self._renderwindow.Render()
+            elif self._action['showinfo'].isChecked:
+                self._info['bottomright'].SetVisibility(False)
+                self._renderwindow.Render()
+    # Revision 18/11/2026 >
 
     # Public methods
 
@@ -7875,6 +7839,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         if isinstance(draw, SisypheROIDraw): self._draw = draw
         else: raise TypeError('parameter type {} is not SisypheROIDraw'.format(type(draw)))
 
+    # noinspection unresolved-references
     def setBrushRadius(self, r: int, signal: bool = True) -> None:
         """
         Sets the radius of the drawing brush.
@@ -7890,8 +7855,8 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             self._draw.setBrushRadius(r)
             self._updateBrush()
             if signal:
-                # noinspection PyUnresolvedReferences
                 self.BrushRadiusChanged.emit(self, r)
+                self._brush.SetVisibility(True)
         else: raise TypeError('parameter type {} is not int.'.format(type(r)))
 
     def getBrushRadius(self) -> int:
@@ -9087,6 +9052,9 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             If True, emits the ROIFlagChanged signal (default True).
         """
         if self.hasROI() and self.getROIVisibility():
+            # < Revision 16/11/2026
+            self._lastp = None
+            # Revision 16/11/2026 >
             self._action['activecontour'].setChecked(True)
             self._updateExclusiveFlags('activecontour')
             if signal:
@@ -9917,6 +9885,7 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         return self._sam
 
+    # noinspection unbound-local-variable,unresolved-references
     def sliceSam(self) -> None:
         """
         Segment the current slice of the active ROI with the SegmentAnything pre-trained model in the mouse selection area.
@@ -9941,13 +9910,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                             pmin = pts[0]
                             pmax = pts[0]
                         else:
-                            # noinspection PyUnboundLocalVariable
                             if all(pts[-1] <= pmin): pmin = pts[-1]
-                            # noinspection PyUnboundLocalVariable
                             if all(pts[-1] >= pmax): pmax = pts[-1]
                     pmin = pmin.astype(int).tolist()
                     pmax = pmax.astype(int).tolist()
-                    # noinspection PyUnboundLocalVariable
                     if self._orient == 0: bbox = [pmin[0], pmin[1], pmax[0], pmax[1]]
                     elif self._orient == 1: bbox = [pmin[0], pmin[2], pmax[0], pmax[2]]
                     else: bbox = [pmin[1], pmin[2], pmax[1], pmax[2]]
@@ -9958,7 +9924,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     self._draw.appendSliceToLIFO(self.getSliceIndex(), self._orient)
                     self._roimapper.GetInput().Modified()
                     self._renderwindow.Render()
-                    # noinspection PyUnresolvedReferences
                     self.ROIModified.emit(self)
                 except:
                     wait.hide()
@@ -10069,6 +10034,9 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         self._roimapper.GetInput().Modified()
         super().updateRender()
 
+    def connectBrushRadius(self, func: Callable[[int], []] | None = None) -> None:
+        self._connectradius = func
+
     # Private event methods
 
     def _onWheelForwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
@@ -10083,15 +10051,94 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         evt_name : str
             name of the event.
         """
-        # interactorstyle = self._window.GetInteractorStyle()
-        # k = interactorstyle.GetKeySym()
-        # Brush radius Alt + Wheel
-        if self.hasROI() and self.getROIVisibility() and \
-                self.getBrushFlag() > 0 and self._interactor.GetKeySym() == 'Alt_L':
-            # change brush radius
-            r = self.getBrushRadius() - 1
-            self.setBrushRadius(r)
-        else: super()._onWheelForwardEvent(obj, evt_name)
+        # Brush radius Shift + Wheel
+        if self.hasROI() and self.getROIVisibility():
+
+            if (self.getBrushFlag() and
+                self._interactor.GetShiftKey()):
+
+                # < Revision 17/11/2026
+                # change brush radius
+                if self._connectradius is not None:
+                    self._connectradius(1)
+                    self._brush.SetVisibility(True)
+                return
+                # Revision 17/11/2026 >
+
+            # < Revision 19/11/2026
+            elif (self.getActiveContourFlag() and
+                  self._interactor.GetShiftKey()):
+
+                if self._lastp is not None:
+                    v = self._draw.getActiveContourNumberOfIterations() + 500
+                    if v < 10500:
+                        self._draw.setActiveContourNumberOfIterations(v)
+                        wait = DialogWait()
+                        wait.setInformationText('Active contour segmentation...')
+                        wait.addInformationText('{} iterations'.format(self._draw.getActiveContourNumberOfIterations()))
+                        wait.open()
+                        QApplication.processEvents()
+                        self._draw.popUndoLIFO()
+                        self._draw.activeContourSegmentation(self._lastp[0],
+                                                             self._lastp[1],
+                                                             self._lastp[2], wait)
+                        wait.close()
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                    return
+
+            elif ((self.get2DRegionConfidenceFlag() or self.get2DBlobRegionConfidenceFlag())
+                  and self._interactor.GetShiftKey()):
+
+                if self._lastp is not None:
+                    v = self._draw.getConfidenceConnectedSigma() + 0.5
+                    if v < 5.5:
+                        self._draw.setConfidenceConnectedSigma(v)
+                        self._draw.popUndoLIFO()
+                        index = self.getSliceIndex()
+                        if self.get2DRegionConfidenceFlag():
+                            self._draw.regionGrowingConfidenceSlice(index,
+                                                                    self._orient,
+                                                                    self._lastp[0],
+                                                                    self._lastp[1],
+                                                                    self._lastp[2])
+                        else:
+                            self._draw.regionGrowingConfidenceBlobSlice(index,
+                                                                        self._orient,
+                                                                        self._lastp[0],
+                                                                        self._lastp[1],
+                                                                        self._lastp[2])
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                    return
+
+            elif ((self.get3DRegionConfidenceFlag() or self.get3DBlobRegionConfidenceFlag())
+                  and self._interactor.GetShiftKey()):
+
+                if self._lastp is not None:
+                    v = self._draw.getConfidenceConnectedSigma() + 0.5
+                    if v < 5.5:
+                        self._draw.setConfidenceConnectedSigma(v)
+                        wait = DialogWait()
+                        wait.setInformationText('Region confidence connected segmentation...')
+                        wait.addInformationText('Sigma {}'.format(v))
+                        wait.open()
+                        QApplication.processEvents()
+                        self._draw.popUndoLIFO()
+                        if self.get3DRegionConfidenceFlag():
+                            self._draw.regionGrowingConfidence(self._lastp[0],
+                                                               self._lastp[1],
+                                                               self._lastp[2])
+                        else:
+                            self._draw.regionGrowingConfidenceBlob(self._lastp[0],
+                                                                   self._lastp[1],
+                                                                   self._lastp[2])
+                        wait.close()
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                    return
+            # Revision 19/11/2026 >
+        super()._onWheelForwardEvent(obj, evt_name)
         self._renderwindow.Render()
 
     def _onWheelBackwardEvent(self,  obj: vtkObject, evt_name: str) -> None:
@@ -10106,17 +10153,95 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         evt_name : str
             name of the event.
         """
-        # interactorstyle = self._window.GetInteractorStyle()
-        # k = interactorstyle.GetKeySym()
-        # Brush radius Alt + Wheel
-        if self.hasROI() and self.getROIVisibility() and \
-                self.getBrushFlag() > 0 and self._interactor.GetKeySym() == 'Alt_L':
-            # change brush radius
-            r = self.getBrushRadius() + 1
-            self.setBrushRadius(r)
-        else: super()._onWheelBackwardEvent(obj, evt_name)
+        # Brush radius Shift + Wheel
+        if self.hasROI() and self.getROIVisibility():
+
+            if self.getBrushFlag() > 0 and self._interactor.GetShiftKey():
+                # < Revision 17/11/2026
+                # change brush radius
+                if self._connectradius is not None:
+                    self._connectradius(-1)
+                    self._brush.SetVisibility(True)
+                return
+                # Revision 17/11/2026 >
+
+            # < Revision 19/11/2026
+            elif (self.getActiveContourFlag() and
+                  self._interactor.GetShiftKey()):
+
+                if self._lastp is not None:
+                    v = self._draw.getActiveContourNumberOfIterations() - 500
+                    if v > 0:
+                        self._draw.setActiveContourNumberOfIterations(v)
+                        wait = DialogWait()
+                        wait.setInformationText('Active contour segmentation...')
+                        wait.addInformationText('{} iterations'.format(self._draw.getActiveContourNumberOfIterations()))
+                        wait.open()
+                        QApplication.processEvents()
+                        self._draw.popUndoLIFO()
+                        self._draw.activeContourSegmentation(self._lastp[0],
+                                                             self._lastp[1],
+                                                             self._lastp[2], wait)
+                        wait.close()
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                    return
+
+            elif ((self.get2DRegionConfidenceFlag() or self.get2DBlobRegionConfidenceFlag())
+                  and self._interactor.GetShiftKey()):
+
+                if self._lastp is not None:
+                    v = self._draw.getConfidenceConnectedSigma() - 0.5
+                    if v > 0.0:
+                        self._draw.setConfidenceConnectedSigma(v)
+                        self._draw.popUndoLIFO()
+                        index = self.getSliceIndex()
+                        if self.get2DRegionConfidenceFlag():
+                            self._draw.regionGrowingConfidenceSlice(index,
+                                                                    self._orient,
+                                                                    self._lastp[0],
+                                                                    self._lastp[1],
+                                                                    self._lastp[2])
+                        else:
+                            self._draw.regionGrowingConfidenceBlobSlice(index,
+                                                                        self._orient,
+                                                                        self._lastp[0],
+                                                                        self._lastp[1],
+                                                                        self._lastp[2])
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                    return
+
+            elif ((self.get3DRegionConfidenceFlag() or self.get3DBlobRegionConfidenceFlag())
+                  and self._interactor.GetShiftKey()):
+
+                if self._lastp is not None:
+                    v = self._draw.getConfidenceConnectedSigma() - 0.5
+                    if v > 0.0:
+                        self._draw.setConfidenceConnectedSigma(v)
+                        wait = DialogWait()
+                        wait.setInformationText('Region confidence connected segmentation...')
+                        wait.addInformationText('Sigma {}'.format(v))
+                        wait.open()
+                        QApplication.processEvents()
+                        self._draw.popUndoLIFO()
+                        if self.get3DRegionConfidenceFlag():
+                            self._draw.regionGrowingConfidence(self._lastp[0],
+                                                               self._lastp[1],
+                                                               self._lastp[2])
+                        else:
+                            self._draw.regionGrowingConfidenceBlob(self._lastp[0],
+                                                                   self._lastp[1],
+                                                                   self._lastp[2])
+                        wait.close()
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                    return
+            # Revision 19/11/2026 >
+        super()._onWheelBackwardEvent(obj, evt_name)
         self._renderwindow.Render()
 
+    # noinspection unresolved-references
     def _onMouseMoveEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
         Handles mouse move VTK events for ROI drawing.
@@ -10133,17 +10258,26 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         """
         if self.hasROI() and self.getROIVisibility():
             interactorstyle = self._window.GetInteractorStyle()
-            # < Revision 10/07/2026
-            k = self._interactor.GetKeySym()
-            if k in ('Control_L', 'Shift_L', 'Alt_L') or self.getZoomFlag() \
-                    or self.getMoveFlag() or self.getLevelFlag():
+
+            if (self._interactor.GetControlKey() or
+                self._interactor.GetShiftKey() or
+                self._interactor.GetKeySym() == 'Alt_L' or
+                self.getZoomFlag() or
+                self.getMoveFlag() or
+                self.getLevelFlag()):
+
+                # < Revision 10/07/2026
                 if self._brushFlag0 is None:
                     self._brushFlag0 = self.getBrushFlag()
                     self._brush.SetVisibility(False)
                 super()._onMouseMoveEvent(obj, evt_name)
-            # Revision 10/07/2026 >
+                # Revision 10/07/2026 >
+
             # < Revision 26/02/2026
-            elif self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag() or self.getSamFlag():
+            elif (self.getDrawRectangleFlag() or
+                  self.getDrawThresholdRectangleFlag() or
+                  self.getSamFlag()):
+
                 # < Revision 05/03/2026
                 # if interactorstyle.GetButton() == 1:
                 if interactorstyle.GetButton() in (1, 3):
@@ -10161,22 +10295,16 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     self._bbox.Modified()
                     self._selectbox.SetVisibility(True)
                     self._renderwindow.Render()
-                # Revision 05/03/2026 >
                 return
+                # Revision 05/03/2026 >
             # Revision 26/02/2026 >
+
             elif self.getBrushFlag() > 0:
-                # < Revision 10/07/2026
-                # k = self._interactor.GetKeySym()
-                # if k in ('Control_L', 'Shift_L', 'Alt_L') or self.getZoomFlag() \
-                #         or self.getMoveFlag() or self.getLevelFlag():
-                #     if self._brushFlag0 is None:
-                #         self._brushFlag0 = self.getBrushFlag()
-                #         self._brush.SetVisibility(False)
-                #     super()._onMouseMoveEvent(obj, evt_name)
-                # else:
-                # Revision 10/07/2026 >
+
+                if not self._focus:
+                    self._focus = True
+                    self.FocusChanged.emit(self)
                 self._brush.SetVisibility(True)
-                if not self._timer.isActive(): self._timer.start()
                 last = interactorstyle.GetLastPos()
                 p = list(self._getWorldFromDisplay(last[0], last[1]))
                 f = self._renderer.GetActiveCamera().GetFocalPoint()
@@ -10196,12 +10324,13 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     # self.ROIModified.emit(self)
                     # no synchronization to speed up 2D brush control
                     if self.getBrushFlag() not in (1, 2):
-                        # noinspection PyUnresolvedReferences
                         self.ROIModified.emit(self)
                     # Revision 14/11/2025 >
                 self._renderwindow.Render()
+
         else: super()._onMouseMoveEvent(obj, evt_name)
 
+    # noinspection unresolved-references
     def _onLeftPressEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
         Handles left mouse press VTK events to trigger the active ROI tool.
@@ -10215,18 +10344,27 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             name of the event.
         """
         if self.hasROI() and self.getROIVisibility():
-            k = self._interactor.GetKeySym()
-            # < Revision 20/03/2025
+
             # add getCenteredCursorFlag in conditions
-            if k in ('Control_L', 'Shift_L', 'Alt_L') or self.getZoomFlag() \
-                    or self.getMoveFlag() or self.getLevelFlag() or self.getCenteredCursorFlag():
+            if (self._interactor.GetControlKey() or
+                self._interactor.GetShiftKey() or
+                self._interactor.GetKeySym() == 'Alt_L' or
+                self.getZoomFlag() or
+                self.getMoveFlag() or
+                self.getLevelFlag()):
+
+                # < Revision 20/03/2025
                 if self._brushFlag0 is None:
                     self._brushFlag0 = self.getBrushFlag()
                     self._brush.SetVisibility(False)
                 super()._onLeftPressEvent(obj, evt_name)
-            # Revision 20/03/2025 >
-            # < Revision 26/02/2026
-            elif self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag() or self.getSamFlag():
+                # Revision 20/03/2025 >
+
+            elif (self.getDrawRectangleFlag() or
+                  self.getDrawThresholdRectangleFlag() or
+                  self.getSamFlag()):
+
+                # < Revision 26/02/2026
                 last = self._window.GetInteractorStyle().GetLastPos()
                 pts = self._bbox.GetPoints()
                 pts.SetPoint(0, last[0], last[1], 0)
@@ -10241,12 +10379,24 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self._selectbox.SetVisibility(True)
                 self._renderwindow.Render()
                 return
-            # Revision 26/02/2026 >
+                # Revision 26/02/2026 >
+
             else:
                 if not self.isSelected(): self.select()
                 p = self._getClickedMatrixCoordinate()
+                # < Revision 16/11/2026
+                self._lastp = p
+                # Revision 16/11/2026 >
                 # Brush draw
                 if self.getBrushFlag() > 0:
+                    # < Revision 17/11/2026
+                    # add the current ROI to the "undo" LIFO stack before drawing
+                    # this statement is removed from the _onLeftReleaseEvent() method
+                    if self.get2DBrushFlag():
+                        index = self.getSliceIndex()
+                        self._draw.appendSliceToLIFO(index, self._orient)
+                    else: self._draw.appendVolumeToLIFO()
+                    # Revision 17/11/2026 >
                     self._draw.brush(p[0], p[1], p[2], self._orient)
                 # 2D Dilate selected blob
                 elif self._action['2dblobdilate'].isChecked():
@@ -10314,7 +10464,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.open()
                     wait.setInformationText('Morphology dilate of selected blob...')
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.morphoBlobDilate(p[0], p[1], p[2])
                     wait.close()
                 # 3D Erode selected blob
@@ -10323,7 +10472,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Morphology erode of selected blob...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.morphoBlobErode(p[0], p[1], p[2])
                     wait.close()
                 # 3D Close selected blob
@@ -10332,7 +10480,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Morphology closing of selected blob...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.morphoBlobClosing(p[0], p[1], p[2])
                     wait.close()
                 # 3D Open selected blob
@@ -10341,7 +10488,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Morphology opening of selected blob...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.morphoBlobOpening(p[0], p[1], p[2])
                     wait.close()
                 # 3D Copy selected blob
@@ -10365,7 +10511,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Euclidean expand of selected blob...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.euclideanBlobDilate(p[0], p[1], p[2])
                     wait.close()
                 # 3D shrink selected blob
@@ -10374,7 +10519,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Euclidean shrink of selected blob...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.euclideanBlobErode(p[0], p[1], p[2])
                     wait.close()
                 # 3D Thresholding in selected blob
@@ -10383,7 +10527,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Thresholding...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.thresholdingBlob(p[0], p[1], p[2])
                     wait.close()
                 # 3D fill from seed
@@ -10392,7 +10535,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Fill from seed voxel...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.seedFill(p[0], p[1], p[2])
                     wait.close()
                 # 3D Region growing
@@ -10401,7 +10543,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Region growing segmentation...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.regionGrowing(p[0], p[1], p[2])
                     wait.close()
                 # 3D Region growing in selected blob
@@ -10410,7 +10551,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Region growing segmentation in selected blob...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.regionGrowingBlob(p[0], p[1], p[2])
                     wait.close()
                 # 3D Region confidence
@@ -10419,7 +10559,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Region confidence connected segmentation...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.regionGrowingConfidence(p[0], p[1], p[2])
                     wait.close()
                 # 3D Region confidence in selected blob
@@ -10428,7 +10567,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     wait.setInformationText('Region confidence connected segmentation in selected blob...')
                     wait.open()
                     QApplication.processEvents()
-                    # wait.moveToScreenCenter()
                     self._draw.regionGrowingConfidenceBlob(p[0], p[1], p[2])
                     wait.close()
                 # Active contour
@@ -10439,7 +10577,10 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                     QApplication.processEvents()
                     # < Revision 25/03/2025
                     # self._draw.activeContour(p[0], p[1], p[2])
-                    self._draw.activeContourSegmentation(p[0], p[1], p[2])
+                    # < Revision 16/11/2026
+                    # self._draw.activeContourSegmentation(p[0], p[1], p[2])
+                    self._draw.activeContourSegmentation(p[0], p[1], p[2], wait)
+                    # Revision 16/11/2026 >
                     # Revision 25/03/2025 >
                     wait.close()
                 self._roimapper.GetInput().Modified()
@@ -10448,7 +10589,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 # self.ROIModified.emit(self)
                 # no synchronization to speed up 2D brush control
                 if self.getBrushFlag() not in (1, 2):
-                    # noinspection PyUnresolvedReferences
                     self.ROIModified.emit(self)
                 # Revision 14/11/2025 >
         else: super()._onLeftPressEvent(obj, evt_name)
@@ -10488,16 +10628,22 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 if self._action['fillholesflag'].isChecked():
                     index = self.getSliceIndex()
                     self._draw.fillHolesSlice(index, self._orient, False)
-                    if self.getUndo(): self._draw.appendSliceToLIFO(index, self._orient)
+                    # < Revision 17/11/2026
+                    # remove "undo" LIFO stack update after drawing
+                    # if self.getUndo(): self._draw.appendSliceToLIFO(index, self._orient)
+                    # Revision 17/11/2026 >
                     self._roimapper.GetInput().Modified()
                     self._renderwindow.Render()
                     # noinspection PyUnresolvedReferences
                     self.ROIModified.emit(self)
-                elif self.getUndo():
-                    if self.get2DBrushFlag():
-                        index = self.getSliceIndex()
-                        self._draw.appendSliceToLIFO(index, self._orient)
-                    else: self._draw.appendVolumeToLIFO()
+                # < Revision 17/11/2026
+                # remove "undo" LIFO stack update after drawing
+                # elif self.getUndo():
+                #     if self.get2DBrushFlag():
+                #         index = self.getSliceIndex()
+                #         self._draw.appendSliceToLIFO(index, self._orient)
+                #     else: self._draw.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
         super()._onLeftReleaseEvent(obj, evt_name)
 
     def _onMiddlePressEvent(self, obj: vtkObject, evt_name: str) -> None:
@@ -10512,10 +10658,12 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         evt_name : str
             name of the event.
         """
-        self._brush.SetVisibility(False)
-        self._renderwindow.Render()
+        if self.getBrushFlag() > 0:
+            self._brush.SetVisibility(False)
+            self._renderwindow.Render()
         super()._onMiddlePressEvent(obj, evt_name)
 
+    # noinspection unresolved-references
     def _onRightPressEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
         Handles right mouse press VTK events for erasing or showing the context menu.
@@ -10532,6 +10680,14 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
         if self.hasROI() and self.getROIVisibility():
             last = interactorstyle.GetLastPos()
             if self.getBrushFlag() > 0:
+                # < Revision 17/11/2026
+                # add the current ROI to the "undo" LIFO stack before drawing
+                # this statement is removed from the _onLeftReleaseEvent() method
+                if self.get2DBrushFlag():
+                    index = self.getSliceIndex()
+                    self._draw.appendSliceToLIFO(index, self._orient)
+                else: self._draw.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
                 p = list(self._getWorldFromDisplay(last[0], last[1]))
                 f = self._renderer.GetActiveCamera().GetFocalPoint()
                 d = 2 - self._orient
@@ -10540,7 +10696,6 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self._draw.erase(p[0], p[1], p[2], self._orient)
                 self._roimapper.GetInput().Modified()
                 self._renderwindow.Render()
-                # noinspection PyUnresolvedReferences
                 self.ROIModified.emit(self)
             # < Revision 06/03/2026
             elif self.getDrawRectangleFlag() or self.getDrawThresholdRectangleFlag() or self.getSamFlag():
@@ -10586,6 +10741,9 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
                 self._renderwindow.Render()
     # Revision 05/03/2026 >
 
+    def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+        pass
+
     def _onKeyPressEvent(self,  obj: vtkObject, evt_name: str) -> None:
         """
         Handles key press VTK events for undo/redo shortcuts.
@@ -10599,20 +10757,90 @@ class SliceROIViewWidget(SliceOverlayViewWidget):
             name of the event.
         """
         if self.hasROI():
-            interactorstyle = self._window.GetInteractorStyle()
-            k = interactorstyle.GetKeySym()
+            k = self._interactor.GetKeySym()
             if self._interactor.GetControlKey():
                 if k == 'z': self.undo()
                 elif k == 'y': self.redo()
+                return
+            # < Revision 16/11/2026
+            elif self.getActiveContourFlag():
+                if self._lastp is not None:
+                    if k == 'Home': v = 500
+                    elif k == 'End': v = 10000
+                    else: v = 0
+                    if v != 0:
+                        self._draw.setActiveContourNumberOfIterations(v)
+                        wait = DialogWait()
+                        wait.setInformationText('Active contour segmentation...')
+                        wait.addInformationText('{} iterations'.format(self._draw.getActiveContourNumberOfIterations()))
+                        wait.open()
+                        QApplication.processEvents()
+                        self._draw.popUndoLIFO()
+                        self._draw.activeContourSegmentation(self._lastp[0],
+                                                             self._lastp[1],
+                                                             self._lastp[2], wait)
+                        wait.close()
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                        return
+                    self._interactor.SetKeySym('')
+            elif self.get2DRegionConfidenceFlag() or self.get2DBlobRegionConfidenceFlag():
+                if self._lastp is not None:
+                    if k == 'Home': v = 0.5
+                    elif k == 'End': v = 5.0
+                    else: v = 0.0
+                    if v != 0.0:
+                        self._draw.setConfidenceConnectedSigma(v)
+                        self._draw.popUndoLIFO()
+                        index = self.getSliceIndex()
+                        if self.get2DRegionConfidenceFlag():
+                            self._draw.regionGrowingConfidenceSlice(index,
+                                                                    self._orient,
+                                                                    self._lastp[0],
+                                                                    self._lastp[1],
+                                                                    self._lastp[2])
+                        else:
+                            self._draw.regionGrowingConfidenceBlobSlice(index,
+                                                                        self._orient,
+                                                                        self._lastp[0],
+                                                                        self._lastp[1],
+                                                                        self._lastp[2])
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                        return
+                    self._interactor.SetKeySym('')
+            elif self.get3DRegionConfidenceFlag() or self.get3DBlobRegionConfidenceFlag():
+                if self._lastp is not None:
+                    if k == 'Home': v = 0.5
+                    elif k == 'End': v = 5.0
+                    else: v = 0.0
+                    if v != 0.0:
+                        self._draw.setConfidenceConnectedSigma(v)
+                        self._draw.popUndoLIFO()
+                        if self.get3DRegionConfidenceFlag():
+                            self._draw.regionGrowingConfidence(self._lastp[0],
+                                                               self._lastp[1],
+                                                               self._lastp[2])
+                        else:
+                            self._draw.regionGrowingConfidenceBlob(self._lastp[0],
+                                                                   self._lastp[1],
+                                                                   self._lastp[2])
+                        self._roimapper.GetInput().Modified()
+                        self._renderwindow.Render()
+                        return
+                    self._interactor.SetKeySym('')
+            # Revision 16/11/2026 >
         super()._onKeyPressEvent(obj, evt_name)
 
-    def _onTimer(self) -> None:
-        """
-        Timer callback to hide the brush cursor if the mouse leaves the widget area.
-        To fix a Qt bug, a leaveEvent is not always sent to the widget when the mouse cursor leaves the viewport.
-        """
-        p = self.mapFromGlobal(QCursor.pos())
-        if not self.rect().contains(p):
-            self._brush.SetVisibility(False)
-            self._renderwindow.Render()
-            self._timer.stop()
+    # < Revision 18/11/2026
+    # def _onTimer(self) -> None:
+    #    """
+    #    Timer callback to hide the brush cursor if the mouse leaves the widget area.
+    #    To fix a Qt bug, a leaveEvent is not always sent to the widget when the mouse cursor leaves the viewport.
+    #    """
+    #    p = self.mapFromGlobal(QCursor.pos())
+    #    if not self.rect().contains(p):
+    #        self._brush.SetVisibility(False)
+    #        self._renderwindow.Render()
+    #        self._timer.stop()
+    # Revision 18/11/2026 >

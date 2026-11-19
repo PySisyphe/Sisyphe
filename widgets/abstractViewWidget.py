@@ -138,7 +138,7 @@ class AbstractViewWidget(QFrame):
     QWidget -> AbstractViewWidget
 
     Creation: 20/03/2022
-    Last Revision: 10/07/2026
+    Last Revision: 18/11/2026
     """
 
     _DEFAULTZOOM: int = 128.0  # Default zoom (vtk parallel scale) = conventional FOV of head imaging / 2
@@ -155,6 +155,7 @@ class AbstractViewWidget(QFrame):
     ToolAdded: pyqtSignal = pyqtSignal(QWidget, NamedWidget)                        # NamedWidget
     ToolRenamed: pyqtSignal = pyqtSignal(QWidget, NamedWidget, str)                 # NamedWidget, str old and new name
     ViewMethodCalled: pyqtSignal = pyqtSignal(QWidget, str, object)                 # str method name, object parameter
+    FocusChanged: pyqtSignal = pyqtSignal(QWidget)
 
     # Special method
 
@@ -182,6 +183,7 @@ class AbstractViewWidget(QFrame):
         self._frame = True
         self._menuflag = True
         self._tooltipstr = ''
+        self._focus = False
         # < Revision 09/07/2026
         # if platform == 'win32':
         if platform == 'win32' or platform == 'linux':
@@ -1033,14 +1035,11 @@ class AbstractViewWidget(QFrame):
         linev.SetPoint1(0.5 - t1, 0.5, 0)
         linev.SetPoint2(0.5 + t1, 0.5, 0)
         lines = vtkAppendPolyData()
-        # noinspection PyArgumentList
         lines.AddInputConnection(lineh.GetOutputPort())
-        # noinspection PyArgumentList
         lines.AddInputConnection(linev.GetOutputPort())
         c = vtkCoordinate()
         c.SetCoordinateSystemToNormalizedViewport()
         mapper = vtkPolyDataMapper2D()
-        # noinspection PyArgumentList
         mapper.SetInputConnection(lines.GetOutputPort())
         mapper.SetTransformCoordinate(c)
         self._cross = vtkActor2D()
@@ -1138,7 +1137,6 @@ class AbstractViewWidget(QFrame):
             3D world coordinates (x, y, z).
         """
         self._renderer.SetDisplayPoint(x, y, 0.0)
-        # noinspection PyArgumentList
         self._renderer.DisplayToWorld()
         p = self._renderer.GetWorldPoint()
         # noinspection PyTypeChecker
@@ -1455,14 +1453,12 @@ class AbstractViewWidget(QFrame):
                 # if isinstance(tool, HandleWidget):
                 if tool.GetObjectName() == 'HandleWidget':
                     t = QAction(tool.getName(), self)
-                    # noinspection PyUnresolvedReferences
                     t.triggered.connect(lambda state, x=tool.getName(): self._moveToTool(x))
                     self._menuMoveTarget.addAction(t)
                     v = True
                 # elif isinstance(tool, LineWidget):
                 elif tool.GetObjectName() == 'LineWidget':
                     t = QAction(tool.getName(), self)
-                    # noinspection PyUnresolvedReferences
                     t.triggered.connect(lambda state, x=tool.getName(): self._moveToTool(x))
                     self._menuMoveTarget.addAction(t)
                     v = True
@@ -1685,6 +1681,17 @@ class AbstractViewWidget(QFrame):
                 f = getattr(self, function)
                 if param is None: f(signal=False)
                 else: f(param, signal=False)
+
+    # < Revision 18/11/2026
+    # add synchroniseFocusChanged method
+    def synchroniseFocusChanged(self, obj: QWidget) -> None:
+        if obj != self:
+            self._focus = False
+            print('{} focus {} showinfo {}'.format(self.getName(), self._focus, self._action['showinfo']))
+            if self._action['showinfo'].isChecked:
+                self._info['bottomright'].SetVisibility(False)
+                self._renderwindow.Render()
+    # Revision 18/11/2026 >
 
     # Public methods
 
@@ -3118,7 +3125,6 @@ class AbstractViewWidget(QFrame):
                     r.SetFileName(objname)
                     r.Update()
                     mapper = vtkPolyDataMapper()
-                    # noinspection PyArgumentList
                     mapper.SetInputConnection(r.GetOutputPort())
                     actor = vtkActor()
                     actor.SetMapper(mapper)
@@ -3804,7 +3810,9 @@ class AbstractViewWidget(QFrame):
                     # noinspection PyUnresolvedReferences
                     self.ViewMethodCalled.emit(self, 'setLineColor', c)
             else: self._lcolor = (1.0, 1.0, 1.0)
-        else: TypeError('parameter type {} is not tuple or list.'.format(type(c)))
+        else:
+            # noinspection unreachable-code
+            TypeError('parameter type {} is not tuple or list.'.format(type(c)))
 
     def setLineSelectedColor(self, c: list[float] | tuple[float, float, float], signal: bool = True) -> None:
         """
@@ -3828,7 +3836,9 @@ class AbstractViewWidget(QFrame):
                     # noinspection PyUnresolvedReferences
                     self.ViewMethodCalled.emit(self, 'setLineSelectedColor', c)
             else: self._lcolor = (1.0, 1.0, 1.0)
-        else: TypeError('parameter type {} is not tuple or list.'.format(type(c)))
+        else:
+            # noinspection unreachable-code
+            TypeError('parameter type {} is not tuple or list.'.format(type(c)))
 
     def getLineColor(self) -> tuple[float, float, float]:
         """
@@ -4203,7 +4213,6 @@ class AbstractViewWidget(QFrame):
             c = vtkWindowToImageFilter()
             c.SetInput(self._renderwindow)
             r = vtkImageExportToArray()
-            # noinspection PyArgumentList
             r.SetInputConnection(c.GetOutputPort())
             cap = r.GetArray()
             d, h, w, ch = cap.shape
@@ -4228,7 +4237,6 @@ class AbstractViewWidget(QFrame):
                      '.png': vtkPNGWriter(), '.tiff': vtkTIFFWriter()}
                 path, ext = splitext(name)
                 w = w[ext]
-                # noinspection PyArgumentList
                 w.SetInputConnection(c.GetOutputPort())
                 w.SetFileName(name)
                 try: w.Write()
@@ -4244,7 +4252,6 @@ class AbstractViewWidget(QFrame):
             c = vtkWindowToImageFilter()
             c.SetInput(self._renderwindow)
             w = vtkBMPWriter()
-            # noinspection PyArgumentList
             w.SetInputConnection(c.GetOutputPort())
             temp = join(gettempdir(), 'tmp.bmp')
             w.SetFileName(temp)
@@ -4556,7 +4563,6 @@ class AbstractViewWidget(QFrame):
             if isinstance(self, VolumeViewWidget): widget.setVolumeDisplay()
             else: widget.setSliceDisplay()
             widget.EnabledOn()
-            # noinspection PyArgumentList
             self._tooltip.AddBalloon(widget.GetHandleRepresentation(), 'Target\n{}'.format(widget.getName()))
             self._renderwindow.Render()
             self._updateToolMenu()
@@ -4620,7 +4626,6 @@ class AbstractViewWidget(QFrame):
             if isinstance(self, VolumeViewWidget): widget.setVolumeDisplay()
             else: widget.setSliceDisplay()
             widget.EnabledOn()
-            # noinspection PyArgumentList
             self._tooltip.AddBalloon(widget.GetLineRepresentation(), 'Trajectory\n{}'.format(widget.getName()))
             self._renderwindow.Render()
             self._updateToolMenu()
@@ -4786,7 +4791,9 @@ class AbstractViewWidget(QFrame):
             if key.getName() in self._tools:
                 # < Revision 04/12/2025
                 if tool is not None and isinstance(tool, (HandleWidget, LineWidget)): tool.copyAttributesFrom(key)
-                else: self._renderwindow.Render()
+                else:
+                    # noinspection unreachable-code
+                    self._renderwindow.Render()
                 # Revision 04/12/2025 >
                 if signal:
                     # noinspection PyUnresolvedReferences
@@ -5085,7 +5092,7 @@ class AbstractViewWidget(QFrame):
         """
         pass
 
-    # noinspection PyUnusedLocal,unused-parameter
+    # noinspection unused-parameter
     def _onTargetEndInteractionEvent(self, widget: vtk3DWidget, event: Any) -> None:
         """
         Callback for HandleWidget end interaction VTK events.
@@ -5280,6 +5287,7 @@ class AbstractViewWidget(QFrame):
         """
         pass
 
+    # noinspection unresolved-references
     def _onMouseMoveEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
         Abstract callback for mouse move VTK events. To be implemented by subclasses.
@@ -5291,7 +5299,13 @@ class AbstractViewWidget(QFrame):
         evt_name : str
             The name of the event (MouseMoveEvent).
         """
-        pass
+        # < Revision 18/11/2026
+        if not self._focus:
+            self._focus = True
+            if self._action['showinfo'].isChecked:
+                self._info['bottomright'].SetVisibility(True)
+                self.FocusChanged.emit(self)
+        # Revision 18/11/2026 >
 
     def _onKeyPressEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
@@ -5322,9 +5336,12 @@ class AbstractViewWidget(QFrame):
                 except: pass
         # Revision 09/10/2026 >
 
+    # < Revision 18/11/2026
+    # add _onKeyReleaseEvent method
     def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
         """
         Abstract callback for key release VTK events. To be implemented by subclasses.
+        Handles key release events to reset interaction states.
 
         Parameters
         ----------
@@ -5333,4 +5350,8 @@ class AbstractViewWidget(QFrame):
         evt_name : str
             The name of the event (KeyReleaseEvent).
         """
-        pass
+        # < Revision 18/11/2026
+        # reset the KeySym value after a key event
+        self._interactor.SetKeySym('')
+        # Revision 18/11/2026 >
+    # Revision 18/11/2026 >

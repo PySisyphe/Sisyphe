@@ -596,7 +596,6 @@ class RoundedButton(QPushButton):
         """
         return self._bradius
 
-    # noinspection PyUnusedLocal
     def getBorderWidth(self) -> int:
         """
         Get the border width of the button.
@@ -862,7 +861,6 @@ class ColorSelectPushButton(QLabel):
         Handle the mouse press event to trigger color selection.
         Intercept mouse press event from child widgets to handle them at the parent level.
         """
-        # noinspection PyUnresolvedReferences
         # self.clicked.emit()
         super().mousePressEvent(event)
         self._clicked()
@@ -1626,7 +1624,6 @@ class QDoubleSpinBox2(QDoubleSpinBox):
                 if v2 >= 10 ** -self.decimals():
                     try:
                         d = int('{:e}'.format(v2).split('-')[1])
-                        # noinspection PyUnusedLocal
                         f = '{:.' + str(d) + 'f}'
                     except:
                         f = '{:g}'
@@ -1847,8 +1844,8 @@ class LabeledSlider(QWidget):
         self._legend: QLabel = QLabel(self)
         self._legend.setText('0')
         self._legend.setVisible(caption)
-        # noinspection PyTypeChecker
-        self._legend.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self._legend.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        self._legend.setFixedWidth(50)
         self.setFontSize(fontsize)
 
         self._slider = QSlider(orientation=orient, parent=self)
@@ -1874,8 +1871,8 @@ class LabeledSlider(QWidget):
         lyout.setSpacing(5)
 
         lyout.addWidget(self._title)
-        lyout.addWidget(self._legend)
         lyout.addWidget(self._slider)
+        lyout.addWidget(self._legend)
 
         self.setLayout(lyout)
 
@@ -1909,7 +1906,7 @@ class LabeledSlider(QWidget):
         # self._legend.setText(v)
         # self._slider.setToolTip(v)
         self._legend.setText(v2)
-        self._slider.setToolTip(v2)
+        # self._slider.setToolTip(v2)
         # Revision 28/03/2025 >
         # noinspection PyUnresolvedReferences
         self.valueChanged.emit(v)

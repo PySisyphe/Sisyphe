@@ -144,7 +144,6 @@ class MultiComponentViewWidget(MultiViewWidget):
         # Init Figure
 
         self._fig = Figure()
-        # noinspection PyTypeHints
         self._axe: Axes | None = None
         self._canvas = FigureCanvas(self._fig)
         self._canvas.mpl_connect('pick_event', self._chartClicked)
@@ -298,6 +297,9 @@ class MultiComponentViewWidget(MultiViewWidget):
                     # w1.OpacityChanged.connect(w2.synchronisedOpacityChanged)
                     w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
+                    # < Revision 18/11/2026
+                    w1.FocusChanged.connect(w2.synchroniseFocusChanged)
+                    # Revision 18/11/2026 >
 
     # noinspection unresolved-references
     def _cursorPositionChanged(self) -> None:
@@ -364,7 +366,6 @@ class MultiComponentViewWidget(MultiViewWidget):
             new lookup table to apply.
         """
         lutm = lut.getName()
-        print(lutm)
         for k in self._views:
             if self._views[k].hasVolume():
                 # update colormap

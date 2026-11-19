@@ -82,7 +82,7 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
     QFame -> AbstractViewWidget -> SliceViewWidget -> SliceOverlayViewWidget -> ProjectionViewWidget
 
     Creation: 12/10/2024
-    Last Revision: 11/06/2026
+    Last Revision: 18/11/2026
     """
 
     # Private method
@@ -1076,19 +1076,21 @@ class ProjectionViewWidget(SliceOverlayViewWidget):
                 elif k == 'Down' or k == 'Right': self.zoomOut()
         super()._onKeyPressEvent(obj, evt_name)
 
-    def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
-        """
-        Handles key release event. Does nothing.
-        Currently, this method overrides the superclass's implementation.
+    # < Revision 18/11/2026
+    # def _onKeyReleaseEvent(self, obj: vtkObject, evt_name: str) -> None:
+    #    """
+    #    Handles key release event. Does nothing.
+    #    Currently, this method overrides the superclass's implementation.
 
-        Parameters
-        ----------
-        obj : vtkObject
-            VTK object that triggered the event.
-        evt_name : str
-            name of the event.
-        """
-        pass
+    #    Parameters
+    #    ----------
+    #    obj : vtkObject
+    #        VTK object that triggered the event.
+    #    evt_name : str
+    #        name of the event.
+    #    """
+    #    pass
+    # Revision 18/11/2026 >
 
     # Qt event methods
 
@@ -1187,6 +1189,9 @@ class MultiProjectionViewWidget(MultiViewWidget):
                     w1.OpacityChanged.connect(w2.synchronisedOpacityChanged)
                     w1.RenderUpdated.connect(w2.synchroniseRenderUpdated)
                     w1.ViewMethodCalled.connect(w2.synchroniseViewMethodCalled)
+                    # < Revision 18/11/2026
+                    w1.FocusChanged.connect(w2.synchroniseFocusChanged)
+                    # Revision 18/11/2026 >
 
     # Public methods
 

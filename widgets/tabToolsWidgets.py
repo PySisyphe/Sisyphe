@@ -38,11 +38,11 @@ from PyQt5.QtWidgets import QWidgetAction
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QScrollArea
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication
 
-# noinspection PyCompatibility
 from Sisyphe.core.sisypheTracts import SisypheStreamlines
 from Sisyphe.core.sisypheROI import SisypheROI
 from Sisyphe.core.sisypheROI import SisypheROICollection
@@ -157,7 +157,9 @@ class TabWidget(QWidget):
 
     def setViewCollection(self, views: IconBarViewWidgetCollection) -> None:
         if isinstance(views, IconBarViewWidgetCollection): self._views = views
-        else: self._views = None
+        else:
+            # noinspection unreachable-code
+            self._views = None
 
     def getViewCollection(self) -> IconBarViewWidgetCollection:
         return self._views
@@ -492,7 +494,7 @@ class TabROIToolsWidget(TabWidget):
 
     QWidget -> TabROIToolsWidget
 
-    Last revision: 10/07/2026
+    Last revision: 16/11/2026
     """
 
     # Special method
@@ -527,7 +529,7 @@ class TabROIToolsWidget(TabWidget):
     _lastaction         last ROI tool method that was called
     """
 
-    # noinspection unresolved-references
+    # noinspection unresolved-references,argument-list
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -609,7 +611,7 @@ class TabROIToolsWidget(TabWidget):
 
         self._settings = SettingsWidget('ROI')
         self._settings.setIOButtonsVisibility(False)
-        self._settings.setSettingsButtonText('Brush Settings')
+        self._settings.setSettingsButtonText('Drawing tool settings')
         self._settings.settingsVisibilityOff()
         self._settings.setParameterVisibility('MaxCount', False)
         self._fill = self._settings.getParameterWidget('FillHoles')
@@ -646,6 +648,9 @@ class TabROIToolsWidget(TabWidget):
         self._algo.currentIndexChanged.connect(self._algoChanged)
         self._confidence.valueChanged.connect(self._confidenceChanged)
         self._iters.valueChanged.connect(self._confidenceIterChanged)
+        # < Revision 13/11/2026
+        self._settings.VisibilityToggled.connect(self._toggleSettingsVisibility)
+        # Revision 13/11/2026 >
 
         # Brush groupbox
 
@@ -792,15 +797,33 @@ class TabROIToolsWidget(TabWidget):
 
         lyout = self.layout()
         lyout.addStretch()
-        lyout.addWidget(self._brushgroupbox)
-        lyout.addWidget(self._slicegroupbox)
-        lyout.addWidget(self._sliceblobgroupbox)
-        lyout.addWidget(self._volumegroupbox)
-        lyout.addWidget(self._volumeblobgroupbox)
-        lyout.addWidget(self._settings)
+        lyout.addWidget(self._brushgroupbox, 0)
+        lyout.addWidget(self._slicegroupbox, 0)
+        lyout.addWidget(self._sliceblobgroupbox, 0)
+        lyout.addWidget(self._volumegroupbox, 0)
+        lyout.addWidget(self._volumeblobgroupbox, 0)
+        # < Revision 13/11/2026
+        # lyout.addWidget(self._settings)
+        self._area = QScrollArea(self)
+        self._area.setWidget(self._settings)
+        self._area.setWidgetResizable(True)
+        self._area.setFrameShape(self._area.NoFrame)
+        self._area.setAlignment(Qt.AlignVCenter)
+        lyout.addWidget(self._area, 0)
+        self._settings.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        # Revision 13/11/2026 >
         lyout.addStretch()
 
     # Private methods
+
+    # < Revision 13/11/2026
+    # add _toggleSettings method
+    # noinspection unresolved-references
+    def _toggleSettingsVisibility(self):
+        lyout = self.layout()
+        if self._settings.getSettingsVisibility(): lyout.setStretchFactor(self._area, 1)
+        else: lyout.setStretchFactor(self._area, 0)
+    # Revision 13/11/2026 >
 
     def _initBrushGroupBox(self) -> None:
         self._btn['dummy'] = IconPushButton(size=TabWidget._VSIZE)
@@ -835,8 +858,12 @@ class TabROIToolsWidget(TabWidget):
         # Revision 26/02/2026 >
         self._btn['threshold'].setToolTip('Set voxel value threshold for all thresholding tools')
         self._btn['interpolate'].setToolTip('Interpolation between first\nand last displayed slice')
-        self._btn['undo'].setToolTip('Undo')
-        self._btn['redo'].setToolTip('Redo')
+        # < Revision 17/11/2026
+        # self._btn['undo'].setToolTip('Undo')
+        # self._btn['redo'].setToolTip('Redo')
+        self._btn['undo'].setToolTip('Undo (0)')
+        self._btn['redo'].setToolTip('Redo (0)')
+        # Revision 17/11/2026 >
 
         self._btn['brush'].clicked.connect(self.brush)
         # < Revision 26/02/2026
@@ -1415,10 +1442,9 @@ class TabROIToolsWidget(TabWidget):
                 self._menuThreshold.removeAction(self._athreshold)
             # Revision 29/08/2025 >
 
-    # noinspection unused-parameter
+    # noinspection unused-parameter,unresolved-references
     def _brushSizeChanged(self, v: int) -> None:
         if self._draw is not None and self.hasViewCollection():
-            # noinspection unresolved-references
             self._views.setBrushRadiusROI(self._brushsize.value())
 
     # noinspection unused-parameter
@@ -1612,10 +1638,10 @@ class TabROIToolsWidget(TabWidget):
             if v is None: v = 1.0
             self._draw.setActiveContourPropagationWeight(v)
             v = w.getParameterValue('Iter')
-            if v is None: v = 1000
+            if v is None: v = 2000
             self._draw.setActiveContourNumberOfIterations(v)
             v = w.getParameterValue('RMS')
-            if v is None: v = 0.01
+            if v is None: v = 0.001
             self._draw.setActiveContourConvergence(v)
             v = w.getParameterValue('Sigma')
             if v is None: v = 1.0
@@ -1663,6 +1689,22 @@ class TabROIToolsWidget(TabWidget):
             self._menuThreshold.addAction(self._athreshold)
     # Revision 29/08/2025 >
 
+    # < Revision 17/11/2026
+    # add _updateUndoRedoTooltips method
+    # noinspection protected-member
+    def _updateUndoRedoTooltips(self) -> None:
+        self._btn['undo'].setToolTip('Undo ({})'.format(len(self._draw._undolifo)))
+        self._btn['redo'].setToolTip('Redo ({})'.format(len(self._draw._redolifo)))
+    # Revision 17/11/2026 >
+
+    # < Revision 17/11/2026
+    # add _updateBrushRadius method
+    def _updateBrushRadius(self, v: int) -> None:
+        if v > 0: self._brushsize().triggerAction(QSlider.SliderAction.SliderSingleStepAdd)
+        else: self._brushsize().triggerAction(QSlider.SliderAction.SliderSingleStepSub)
+        pass
+    # Revision 17/11/2026 >
+
     # Public methods
 
     # < Revision 10/03/2025
@@ -1707,6 +1749,13 @@ class TabROIToolsWidget(TabWidget):
         super().setViewCollection(views)
         self._collection = self._views.getROICollection()
         self._draw = self._views.getROIDraw()
+        # < Revision 17/11/2026
+        self._draw.connectLIFO(self._updateUndoRedoTooltips)
+        for w in self._views:
+            if isinstance(w, (IconBarMultiSliceGridViewWidget, IconBarSynchronisedGridViewWidget)):
+                for view in w().getSliceViewWidgets():
+                    view.connectBrushRadius(self._updateBrushRadius)
+        # Revision 17/11/2026 >
 
     # < Revision 09/03/2025
     # add updateThresholdWidget method, called by setROIToolsEnabled mainWindow method
@@ -2175,6 +2224,18 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D blob off
+            self._rg2DBlobRegion.setChecked(False)
+            self._cc2DBlobRegion.setChecked(False)
+            # 3D off
+            self._rg3DRegion.setChecked(False)
+            self._cc3DRegion.setChecked(False)
+            self._ac3DRegion.setChecked(False)
+            # 3D blob off
+            self._rg3DBlobRegion.setChecked(False)
+            self._cc3DBlobRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     # noinspection unresolved-references
     def slcRegionConfidence(self) -> None:
@@ -2184,6 +2245,10 @@ class TabROIToolsWidget(TabWidget):
                 self._rg2DRegion.setChecked(False)
                 self._cc2DRegion.setChecked(True)
                 self._views.set2DRegionConfidenceROIFlag()
+                # < Revision 19/11/2026
+                if self._draw is not None:
+                    self._draw.setConfidenceConnectedSigma(self._confidence.value())
+                # Revision 19/11/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Slice region confidence tool selected')
             else:
                 self._btn['2Dregion'].setChecked(False)
@@ -2194,6 +2259,18 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D blob off
+            self._rg2DBlobRegion.setChecked(False)
+            self._cc2DBlobRegion.setChecked(False)
+            # 3D off
+            self._rg3DRegion.setChecked(False)
+            self._cc3DRegion.setChecked(False)
+            self._ac3DRegion.setChecked(False)
+            # 3D blob off
+            self._rg3DBlobRegion.setChecked(False)
+            self._cc3DBlobRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     # Slice blob actions
 
@@ -2403,6 +2480,18 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D off
+            self._rg2DRegion.setChecked(False)
+            self._cc2DRegion.setChecked(False)
+            # 3D off
+            self._rg3DRegion.setChecked(False)
+            self._cc3DRegion.setChecked(False)
+            self._ac3DRegion.setChecked(False)
+            # 3D blob off
+            self._rg3DBlobRegion.setChecked(False)
+            self._cc3DBlobRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     # noinspection unresolved-references
     def slcBlobRegionConfidence(self) -> None:
@@ -2412,6 +2501,10 @@ class TabROIToolsWidget(TabWidget):
                 self._rg2DBlobRegion.setChecked(False)
                 self._cc2DBlobRegion.setChecked(True)
                 self._views.set2DBlobRegionConfidenceROIFlag()
+                # < Revision 19/11/2026
+                if self._draw is not None:
+                    self._draw.setConfidenceConnectedSigma(self._confidence.value())
+                # Revision 19/11/2026 >
                 if self._logger is not None: self._logger.info('ROI tools - Slice blob region confidence tool selected')
             else:
                 self._btn['2Dblobregion'].setChecked(False)
@@ -2422,6 +2515,18 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D off
+            self._rg2DRegion.setChecked(False)
+            self._cc2DRegion.setChecked(False)
+            # 3D off
+            self._rg3DRegion.setChecked(False)
+            self._cc3DRegion.setChecked(False)
+            self._ac3DRegion.setChecked(False)
+            # 3D blob off
+            self._rg3DBlobRegion.setChecked(False)
+            self._cc3DBlobRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     # Volume ROI actions
 
@@ -2783,6 +2888,17 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D off
+            self._rg2DRegion.setChecked(False)
+            self._cc2DRegion.setChecked(False)
+            # 2D blob off
+            self._rg2DBlobRegion.setChecked(False)
+            self._cc2DBlobRegion.setChecked(False)
+            # 3D blob off
+            self._rg3DBlobRegion.setChecked(False)
+            self._cc3DBlobRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     # noinspection unresolved-references
     def voiRegionConfidence(self) -> None:
@@ -2793,6 +2909,10 @@ class TabROIToolsWidget(TabWidget):
                 self._cc3DRegion.setChecked(True)
                 self._ac3DRegion.setChecked(False)
                 self._views.set3DRegionConfidenceROIFlag()
+                # < Revision 19/11/2026
+                if self._draw is not None:
+                    self._draw.setConfidenceConnectedSigma(self._confidence.value())
+                # Revision 19/11/2026 >
                 self._logger.info('ROI tools - Region confidence tool selected')
             else:
                 self._btn['3Dregion'].setChecked(False)
@@ -2804,6 +2924,17 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D off
+            self._rg2DRegion.setChecked(False)
+            self._cc2DRegion.setChecked(False)
+            # 2D blob off
+            self._rg2DBlobRegion.setChecked(False)
+            self._cc2DBlobRegion.setChecked(False)
+            # 3D blob off
+            self._rg3DBlobRegion.setChecked(False)
+            self._cc3DBlobRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     # noinspection unresolved-references
     def voiActiveContour(self) -> None:
@@ -2815,6 +2946,12 @@ class TabROIToolsWidget(TabWidget):
                 self._ac3DRegion.setChecked(True)
                 self._views.setActiveContourROIFlag()
                 self._logger.info('ROI tools - Active contour tool selected')
+                # < Revision 16/11/2026
+                if self._draw is not None:
+                    v = self._contourdialog.getSettingsWidget().getParameterValue('Iter')
+                    if v is None: v = 2000
+                    self._draw.setActiveContourNumberOfIterations(v)
+                # Revision 16/11/2026 >
             else:
                 self._btn['3Dregion'].setChecked(False)
                 self._rg3DRegion.setChecked(False)
@@ -2825,6 +2962,17 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D off
+            self._rg2DRegion.setChecked(False)
+            self._cc2DRegion.setChecked(False)
+            # 2D blob off
+            self._rg2DBlobRegion.setChecked(False)
+            self._cc2DBlobRegion.setChecked(False)
+            # 3D blob off
+            self._rg3DBlobRegion.setChecked(False)
+            self._cc3DBlobRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     def statistics(self) -> None:
         if self.hasViewCollection() and self.hasCollection():
@@ -3107,6 +3255,18 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D off
+            self._rg2DRegion.setChecked(False)
+            self._cc2DRegion.setChecked(False)
+            # 2D blob off
+            self._rg2DBlobRegion.setChecked(False)
+            self._cc2DBlobRegion.setChecked(False)
+            # 3D off
+            self._rg3DRegion.setChecked(False)
+            self._cc3DRegion.setChecked(False)
+            self._ac3DRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     # noinspection unresolved-references
     def voiBlobRegionConfidence(self) -> None:
@@ -3116,6 +3276,10 @@ class TabROIToolsWidget(TabWidget):
                 self._rg3DBlobRegion.setChecked(False)
                 self._cc3DBlobRegion.setChecked(True)
                 self._views.set3DBlobRegionConfidenceROIFlag()
+                # < Revision 19/11/2026
+                if self._draw is not None:
+                    self._draw.setConfidenceConnectedSigma(self._confidence.value())
+                # Revision 19/11/2026 >
                 self._logger.info('ROI tools - Blob region confidence tool selected')
             else:
                 self._btn['3Dblobregion'].setChecked(False)
@@ -3126,6 +3290,18 @@ class TabROIToolsWidget(TabWidget):
             # < Revision 05/05/2026
             self._lastaction = None
             # Revision 05/05/2026 >
+            # < Revision 16/11/2026
+            # 2D off
+            self._rg2DRegion.setChecked(False)
+            self._cc2DRegion.setChecked(False)
+            # 2D blob off
+            self._rg2DBlobRegion.setChecked(False)
+            self._cc2DBlobRegion.setChecked(False)
+            # 3D off
+            self._rg3DRegion.setChecked(False)
+            self._cc3DRegion.setChecked(False)
+            self._ac3DRegion.setChecked(False)
+            # Revision 16/11/2026 >
 
     # Method aliases
 
@@ -3145,12 +3321,12 @@ class TabMeshListWidget(TabWidget):
 
     QWidget -> TabMeshListWidget
 
-    Last revision: 03/11/2026
+    Last revision: 13/11/2026
     """
 
     # Special method
 
-    # noinspection unresolved-references
+    # noinspection unresolved-references,argument-list
     def __init__(self,
                  views: IconBarViewWidgetCollection | None = None,
                  parent: QWidget | None = None) -> None:
@@ -3208,6 +3384,9 @@ class TabMeshListWidget(TabWidget):
         self._settings.setSettingsButtonText('Mesh Settings')
         self._settings.settingsVisibilityOff()
         self._settings.setParameterVisibility('MaxCount', False)
+        # < Revision 13/11/2026
+        self._settings.VisibilityToggled.connect(self._toggleSettingsVisibility)
+        # Revision 13/11/2026 >
 
         self._popupDilate = QMenu()
         self._popupDilate.setWindowFlag(Qt.NoDropShadowWindowHint, True)
@@ -3252,15 +3431,35 @@ class TabMeshListWidget(TabWidget):
         # Layout
 
         lyout = self.layout()
-        lyout.addWidget(self._list)
+        lyout.addWidget(self._list, 1)
         lyout.addWidget(groupbox)
-        lyout.addWidget(self._settings)
+        # < Revision 13/11/2026
+        # lyout.addWidget(self._settings)
+        self._area = QScrollArea(self)
+        self._area.setWidget(self._settings)
+        self._area.setWidgetResizable(True)
+        self._area.setFrameShape(self._area.NoFrame)
+        self._area.setAlignment(Qt.AlignVCenter)
+        lyout.addWidget(self._area, 0)
+        self._settings.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        # Revision 13/11/2026 >
 
         margins1 = self.contentsMargins()
         margins2 = lyout.contentsMargins()
         self.setMinimumWidth(self._list.minimumWidth() +
                              margins1.left() + margins1.right() +
                              margins2.left() + margins2.right())
+
+    # Private method
+
+    # < Revision 13/11/2026
+    # add _toggleSettings method
+    # noinspection unresolved-references
+    def _toggleSettingsVisibility(self):
+        lyout = self.layout()
+        if self._settings.getSettingsVisibility(): lyout.setStretchFactor(self._area, 1)
+        else: lyout.setStretchFactor(self._area, 0)
+    # Revision 13/11/2026 >
 
     # Public methods
 
@@ -3673,7 +3872,6 @@ class TabTrackingWidget(TabWidget):
                                     return
                                     # Revision 29/07/2026 >
                                 self._logger.info('Streamlines atlas selection - Tractogram {}'.format(slt.getFilename()))
-                                # noinspection PyUnboundLocalVariable
                                 self._list.addBundle(sl)
                             wait.incCurrentProgressValue()
                         wait.close()

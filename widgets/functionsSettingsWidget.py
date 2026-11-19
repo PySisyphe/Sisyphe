@@ -958,6 +958,19 @@ class SettingsWidget(QWidget):
             self.toggleSettingsVisibility(signal)
             # Revision 28/11/2025 >
 
+    # < Revision 13/11/2026
+    # add getSettingsVisibility method
+    def getSettingsVisibility(self) -> bool:
+        """
+        Check if the settings box is visible.
+
+        Returns
+        -------
+        bool
+        """
+        return self._settingsbox.isVisible()
+    # Revision 13/11/2026 >
+
     def getFunctionName(self) -> str:
         """
         Get the name of the function associated with this settings widget.
@@ -1142,6 +1155,7 @@ class SettingsWidget(QWidget):
                     widget[i].setValue(v[i])
     # Revision 13/02/2025 >
 
+    # noinspection unresolved-references
     def setParameterVisibility(self, parameter: str, v: bool) -> None:
         """
         Set the visibility of a specific parameter widget and its label.
@@ -1156,18 +1170,14 @@ class SettingsWidget(QWidget):
         ws = self._parameters[parameter]
         if isinstance(ws, list): ws = ws[0]
         lyout = self._settingsbox.layout()
-        # noinspection PyUnresolvedReferences
         i: cython.int
-        # noinspection PyUnresolvedReferences
         for i in range(lyout.rowCount()):
-            # noinspection PyUnresolvedReferences
             if lyout.itemAtPosition(i, 1).widget() == ws:
                 ws = self._parameters[parameter]
                 if isinstance(ws, list):
                     if len(ws) > 0:
                         for w in ws: w.setVisible(v)
                 else: ws.setVisible(v)
-                # noinspection PyUnresolvedReferences
                 lyout.itemAtPosition(i, 0).widget().setVisible(v)
                 break
 
