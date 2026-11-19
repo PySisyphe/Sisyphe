@@ -768,6 +768,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getBlendModeAsString"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.getBlendModeAsString()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getCropping"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.getCropping()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getGradientOpacity"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.getGradientOpacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getInteractiveMode"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.getInteractiveMode()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getMeshCollection"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.getMeshCollection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getMeshOnSliceVisibility"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.getMeshOnSliceVisibility()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getNumberOfMeshes"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.getNumberOfMeshes()</span></code></a></li>
@@ -818,6 +819,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setCursorVisibility"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.setCursorVisibility()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setCursorWorldPosition"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.setCursorWorldPosition()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setGradientOpacity"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.setGradientOpacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setInteractiveMode"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.setInteractiveMode()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setLineColor"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.setLineColor()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setLineOpacity"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.setLineOpacity()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setLineWidth"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.setLineWidth()</span></code></a></li>
@@ -837,6 +839,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.showAllSlices"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.showAllSlices()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.sliceMinus"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.sliceMinus()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.slicePlus"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.slicePlus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.synchroniseInteractiveModeChanged"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.synchroniseInteractiveModeChanged()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.uncropTexture"><code class="docutils literal notranslate"><span class="pre">VolumeViewWidget.uncropTexture()</span></code></a></li>
 </ul>
 </li>
@@ -905,7 +908,7 @@
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; AbstractViewWidget</p>
 <p>Creation: 20/03/2022
-Last Revision: 10/07/2026</p>
+Last Revision: 18/11/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.abstractViewWidget.AbstractViewWidget.addAngleTool">
 <span class="sig-name descname"><span class="pre">addAngleTool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.abstractViewWidget.AbstractViewWidget.addAngleTool" title="Link to this definition"></a></dt>
@@ -3780,7 +3783,7 @@ ROI editing.</p>
 <h2>Inheritance<a class="headerlink" href="#id187" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; AbstractViewWidget -&gt; SliceViewWidget</p>
 <p>Creation: 30/03/2022
-Last revision: 08/06/2026</p>
+Last revision: 18/11/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.sliceViewWidgets.SliceViewWidget.applyTransformToVolume">
 <span class="sig-name descname"><span class="pre">applyTransformToVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.sliceViewWidgets.SliceViewWidget.applyTransformToVolume" title="Link to this definition"></a></dt>
@@ -4158,13 +4161,15 @@ the same dimensions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.sliceViewWidgets.SliceViewWidget.saveSeriesCaptures">
-<span class="sig-name descname"><span class="pre">saveSeriesCaptures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.sliceViewWidgets.SliceViewWidget.saveSeriesCaptures" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">saveSeriesCaptures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.sliceViewWidgets.SliceViewWidget.saveSeriesCaptures" title="Link to this definition"></a></dt>
 <dd><p>Saves a series of slice captures from the current SisypheVolume along the current orientation.
 The captures are saved to a user-specified directory, with each slice saved as an image file.</p>
 <section id="id214">
 <h3>Parameters<a class="headerlink" href="#id214" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>step<span class="classifier">int (optional)</span></dt><dd><p>step size (in number of slices) between consecutive captures (default 2).</p>
+</dd>
+<dt>folder<span class="classifier">str (optional)</span></dt><dd><p>save directory</p>
 </dd>
 </dl>
 </section>
@@ -9109,7 +9114,7 @@ distributed across the brain’s cortex.</p>
 <h2>Inheritance<a class="headerlink" href="#id530" title="Link to this heading"></a></h2>
 <p>QFame -&gt; AbstractViewWidget -&gt; SliceViewWidget -&gt; SliceOverlayViewWidget -&gt; ProjectionViewWidget</p>
 <p>Creation: 12/10/2024
-Last Revision: 11/06/2026</p>
+Last Revision: 18/11/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.projectionViewWidget.ProjectionViewWidget.getCuttingSliceIndex">
 <span class="sig-name descname"><span class="pre">getCuttingSliceIndex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.projectionViewWidget.ProjectionViewWidget.getCuttingSliceIndex" title="Link to this definition"></a></dt>
@@ -9574,7 +9579,7 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <section id="id557">
 <h2>Inheritance<a class="headerlink" href="#id557" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; AbstractViewWidget -&gt; VolumeViewWidget</p>
-<p>Last revision: 08/06/2026</p>
+<p>Last revision: 14/10/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.addMesh">
 <span class="sig-name descname"><span class="pre">addMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.addMesh" title="Link to this definition"></a></dt>
@@ -9693,11 +9698,24 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getInteractiveMode">
+<span class="sig-name descname"><span class="pre">getInteractiveMode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getInteractiveMode" title="Link to this definition"></a></dt>
+<dd><p>Get the interactive mode for tool creation.</p>
+<section id="id567">
+<h3>Returns<a class="headerlink" href="#id567" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>int</dt><dd><p>interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getMeshCollection">
 <span class="sig-name descname"><span class="pre">getMeshCollection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMeshCollection" title="Sisyphe.core.sisypheMesh.SisypheMeshCollection"><span class="pre">SisypheMeshCollection</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getMeshCollection" title="Link to this definition"></a></dt>
 <dd><p>Get the SisypheMeshCollection (collections of meshes) displayed in the widget.</p>
-<section id="id567">
-<h3>Returns<a class="headerlink" href="#id567" title="Link to this heading"></a></h3>
+<section id="id568">
+<h3>Returns<a class="headerlink" href="#id568" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>SisypheMeshCollection</dt><dd><p>collection of meshes.</p>
 </dd>
@@ -9709,8 +9727,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getMeshOnSliceVisibility">
 <span class="sig-name descname"><span class="pre">getMeshOnSliceVisibility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getMeshOnSliceVisibility" title="Link to this definition"></a></dt>
 <dd><p>Get the visibility of the meshes.</p>
-<section id="id568">
-<h3>Returns<a class="headerlink" href="#id568" title="Link to this heading"></a></h3>
+<section id="id569">
+<h3>Returns<a class="headerlink" href="#id569" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if meshes are visible, False otherwise.</p>
 </dd>
@@ -9722,8 +9740,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getNumberOfMeshes">
 <span class="sig-name descname"><span class="pre">getNumberOfMeshes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getNumberOfMeshes" title="Link to this definition"></a></dt>
 <dd><p>Get the number of SisypheMesh instance in the collection.</p>
-<section id="id569">
-<h3>Returns<a class="headerlink" href="#id569" title="Link to this heading"></a></h3>
+<section id="id570">
+<h3>Returns<a class="headerlink" href="#id570" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>int</dt><dd><p>total number of SisypheMesh instances.</p>
 </dd>
@@ -9735,8 +9753,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getPopupCameraPosition">
 <span class="sig-name descname"><span class="pre">getPopupCameraPosition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QMenu</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getPopupCameraPosition" title="Link to this definition"></a></dt>
 <dd><p>Get the ‘Position’ submenu from the popup menu.</p>
-<section id="id570">
-<h3>Returns<a class="headerlink" href="#id570" title="Link to this heading"></a></h3>
+<section id="id571">
+<h3>Returns<a class="headerlink" href="#id571" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>QMenu</dt><dd><p>‘Position’ submenu.</p>
 </dd>
@@ -9748,8 +9766,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getPopupTextureActor">
 <span class="sig-name descname"><span class="pre">getPopupTextureActor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QMenu</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getPopupTextureActor" title="Link to this definition"></a></dt>
 <dd><p>Get the popup menu for texture (volume rendering) settings.</p>
-<section id="id571">
-<h3>Returns<a class="headerlink" href="#id571" title="Link to this heading"></a></h3>
+<section id="id572">
+<h3>Returns<a class="headerlink" href="#id572" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>QMenu</dt><dd><p>texture settings popup menu.</p>
 </dd>
@@ -9761,8 +9779,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSeriesPixmapCaptures">
 <span class="sig-name descname"><span class="pre">getSeriesPixmapCaptures</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">QPixmap</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSeriesPixmapCaptures" title="Link to this definition"></a></dt>
 <dd><p>Capture bitmap images from the six standard camera positions and returns them as a list of QPixmaps.</p>
-<section id="id572">
-<h3>Returns<a class="headerlink" href="#id572" title="Link to this heading"></a></h3>
+<section id="id573">
+<h3>Returns<a class="headerlink" href="#id573" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>list[QPixmap]</dt><dd><p>list of six QPixmap objects, one for each camera position.</p>
 </dd>
@@ -9774,8 +9792,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSlice0Visibility">
 <span class="sig-name descname"><span class="pre">getSlice0Visibility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSlice0Visibility" title="Link to this definition"></a></dt>
 <dd><p>Get the visibility of the axial vtkImageSlice actor (slice 0).</p>
-<section id="id573">
-<h3>Returns<a class="headerlink" href="#id573" title="Link to this heading"></a></h3>
+<section id="id574">
+<h3>Returns<a class="headerlink" href="#id574" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if the slice is visible, False otherwise.</p>
 </dd>
@@ -9787,8 +9805,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSlice1Visibility">
 <span class="sig-name descname"><span class="pre">getSlice1Visibility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSlice1Visibility" title="Link to this definition"></a></dt>
 <dd><p>Get the visibility of the coronal vtkImageSlice actor (slice 1).</p>
-<section id="id574">
-<h3>Returns<a class="headerlink" href="#id574" title="Link to this heading"></a></h3>
+<section id="id575">
+<h3>Returns<a class="headerlink" href="#id575" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if the slice is visible, False otherwise.</p>
 </dd>
@@ -9800,8 +9818,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSlice2Visibility">
 <span class="sig-name descname"><span class="pre">getSlice2Visibility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSlice2Visibility" title="Link to this definition"></a></dt>
 <dd><p>Gets the visibility of the sagittal vtkImageSlice actor (slice 2).</p>
-<section id="id575">
-<h3>Returns<a class="headerlink" href="#id575" title="Link to this heading"></a></h3>
+<section id="id576">
+<h3>Returns<a class="headerlink" href="#id576" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if the slice is visible, False otherwise.</p>
 </dd>
@@ -9813,8 +9831,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSphereCursorOpacity">
 <span class="sig-name descname"><span class="pre">getSphereCursorOpacity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSphereCursorOpacity" title="Link to this definition"></a></dt>
 <dd><p>Get the opacity of the spherical part of the cross-shaped cursor.</p>
-<section id="id576">
-<h3>Returns<a class="headerlink" href="#id576" title="Link to this heading"></a></h3>
+<section id="id577">
+<h3>Returns<a class="headerlink" href="#id577" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>int</dt><dd><p>opacity value (0-100).</p>
 </dd>
@@ -9826,8 +9844,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSphereCursorRadius">
 <span class="sig-name descname"><span class="pre">getSphereCursorRadius</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSphereCursorRadius" title="Link to this definition"></a></dt>
 <dd><p>Get the radius, in mm, of the spherical part of the cross-shaped cursor.</p>
-<section id="id577">
-<h3>Returns<a class="headerlink" href="#id577" title="Link to this heading"></a></h3>
+<section id="id578">
+<h3>Returns<a class="headerlink" href="#id578" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>int</dt><dd><p>radius in mm of the sphere.</p>
 </dd>
@@ -9839,8 +9857,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSurfaceVisibility">
 <span class="sig-name descname"><span class="pre">getSurfaceVisibility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getSurfaceVisibility" title="Link to this definition"></a></dt>
 <dd><p>Gets the visibility of the outer surface SisypheMesh instance.</p>
-<section id="id578">
-<h3>Returns<a class="headerlink" href="#id578" title="Link to this heading"></a></h3>
+<section id="id579">
+<h3>Returns<a class="headerlink" href="#id579" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if the outer surface SisypheMesh instance is visible, False otherwise.</p>
 </dd>
@@ -9852,8 +9870,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getTextureVisibility">
 <span class="sig-name descname"><span class="pre">getTextureVisibility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getTextureVisibility" title="Link to this definition"></a></dt>
 <dd><p>Get the visibility of the texture rendering of the vtkVolume actor.</p>
-<section id="id579">
-<h3>Returns<a class="headerlink" href="#id579" title="Link to this heading"></a></h3>
+<section id="id580">
+<h3>Returns<a class="headerlink" href="#id580" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if the texture rendering is visible, False otherwise.</p>
 </dd>
@@ -9865,8 +9883,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getTractCollection">
 <span class="sig-name descname"><span class="pre">getTractCollection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTractCollection" title="Sisyphe.core.sisypheTracts.SisypheTractCollection"><span class="pre">SisypheTractCollection</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getTractCollection" title="Link to this definition"></a></dt>
 <dd><p>Get the SisypheTractCollection (collections of streamlines) displayed in the widget.</p>
-<section id="id580">
-<h3>Returns<a class="headerlink" href="#id580" title="Link to this heading"></a></h3>
+<section id="id581">
+<h3>Returns<a class="headerlink" href="#id581" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>SisypheTractCollection</dt><dd><p>collection of streamlines.</p>
 </dd>
@@ -9878,8 +9896,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getTransfer">
 <span class="sig-name descname"><span class="pre">getTransfer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.getTransfer" title="Link to this definition"></a></dt>
 <dd><p>Get the current SisypheColorTransfer instance.</p>
-<section id="id581">
-<h3>Returns<a class="headerlink" href="#id581" title="Link to this heading"></a></h3>
+<section id="id582">
+<h3>Returns<a class="headerlink" href="#id582" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>SisypheColorTransfer</dt><dd><p>current color transfer function instance.</p>
 </dd>
@@ -9903,8 +9921,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.hasMesh">
 <span class="sig-name descname"><span class="pre">hasMesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.hasMesh" title="Link to this definition"></a></dt>
 <dd><p>Check if there are any SisypheMesh instance in the collection.</p>
-<section id="id582">
-<h3>Returns<a class="headerlink" href="#id582" title="Link to this heading"></a></h3>
+<section id="id583">
+<h3>Returns<a class="headerlink" href="#id583" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if meshes are present, False otherwise.</p>
 </dd>
@@ -9916,8 +9934,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.hasSurfaceMesh">
 <span class="sig-name descname"><span class="pre">hasSurfaceMesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.hasSurfaceMesh" title="Link to this definition"></a></dt>
 <dd><p>Check if an outer surface SisypheMesh instance has been generated and is available.</p>
-<section id="id583">
-<h3>Returns<a class="headerlink" href="#id583" title="Link to this heading"></a></h3>
+<section id="id584">
+<h3>Returns<a class="headerlink" href="#id584" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if the outer surface SisypheMesh instance exists, False otherwise.</p>
 </dd>
@@ -9929,8 +9947,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.hasTracts">
 <span class="sig-name descname"><span class="pre">hasTracts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.hasTracts" title="Link to this definition"></a></dt>
 <dd><p>Check if there are any streamlines (tracts) in the collection.</p>
-<section id="id584">
-<h3>Returns<a class="headerlink" href="#id584" title="Link to this heading"></a></h3>
+<section id="id585">
+<h3>Returns<a class="headerlink" href="#id585" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bool</dt><dd><p>True if streamlines (tracts) are present, False otherwise.</p>
 </dd>
@@ -9943,8 +9961,8 @@ designed for the interactive rendering of a SisypheVolume instance.</p>
 <span class="sig-name descname"><span class="pre">hideAll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.hideAll" title="Link to this definition"></a></dt>
 <dd><p>Hide all the 3D VTK objects (3 vtkImageSlice, vtkVolume).
 Currently, this method overrides superclass’s implementation.</p>
-<section id="id585">
-<h3>Parameters<a class="headerlink" href="#id585" title="Link to this heading"></a></h3>
+<section id="id586">
+<h3>Parameters<a class="headerlink" href="#id586" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>signal<span class="classifier">bool (optional)</span></dt><dd><p>If True, emits ViewMethodCalled signals for synchronization (default True).</p>
 </dd>
@@ -9974,8 +9992,8 @@ Currently, this method overrides superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.removeMesh">
 <span class="sig-name descname"><span class="pre">removeMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMesh" title="Sisyphe.core.sisypheMesh.SisypheMesh"><span class="pre">SisypheMesh</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.removeMesh" title="Link to this definition"></a></dt>
 <dd><p>Remove a SisypheMesh instance from the widget.</p>
-<section id="id586">
-<h3>Parameters<a class="headerlink" href="#id586" title="Link to this heading"></a></h3>
+<section id="id587">
+<h3>Parameters<a class="headerlink" href="#id587" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>mesh<span class="classifier">SisypheMesh</span></dt><dd><p>SisypheMesh instance to remove.</p>
 </dd>
@@ -9994,8 +10012,8 @@ Currently, this method calls the superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.replaceVolume">
 <span class="sig-name descname"><span class="pre">replaceVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.replaceVolume" title="Link to this definition"></a></dt>
 <dd><p>Replace the current displayed SisypheVolume with a new one.</p>
-<section id="id587">
-<h3>Parameters<a class="headerlink" href="#id587" title="Link to this heading"></a></h3>
+<section id="id588">
+<h3>Parameters<a class="headerlink" href="#id588" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>volume<span class="classifier">SisypheVolume</span></dt><dd><p>new SisypheVolume to display.</p>
 </dd>
@@ -10027,8 +10045,8 @@ JPG, PNG, TIFF) suffixed with ‘top’, ‘bottom’, ‘front’, ‘back’, 
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setBlendMode">
 <span class="sig-name descname"><span class="pre">setBlendMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setBlendMode" title="Link to this definition"></a></dt>
 <dd><p>Set the blend mode used for the rendering .</p>
-<section id="id588">
-<h3>Parameters<a class="headerlink" href="#id588" title="Link to this heading"></a></h3>
+<section id="id589">
+<h3>Parameters<a class="headerlink" href="#id589" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>k<span class="classifier">int | str</span></dt><dd><p>The blend mode to set, either as an integer code or a string.</p>
 </dd>
@@ -10076,8 +10094,8 @@ JPG, PNG, TIFF) suffixed with ‘top’, ‘bottom’, ‘front’, ‘back’, 
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setCameraPosition">
 <span class="sig-name descname"><span class="pre">setCameraPosition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setCameraPosition" title="Link to this definition"></a></dt>
 <dd><p>Set the camera to a predefined position.</p>
-<section id="id589">
-<h3>Parameters<a class="headerlink" href="#id589" title="Link to this heading"></a></h3>
+<section id="id590">
+<h3>Parameters<a class="headerlink" href="#id590" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>pos<span class="classifier">str</span></dt><dd><p>The desired position (‘top’, ‘bottom’, ‘front’, ‘back’, ‘left’, ‘right’).</p>
 </dd>
@@ -10125,8 +10143,8 @@ JPG, PNG, TIFF) suffixed with ‘top’, ‘bottom’, ‘front’, ‘back’, 
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setCropping">
 <span class="sig-name descname"><span class="pre">setCropping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setCropping" title="Link to this definition"></a></dt>
 <dd><p>Enable or disable cropping for the volume rendering.</p>
-<section id="id590">
-<h3>Parameters<a class="headerlink" href="#id590" title="Link to this heading"></a></h3>
+<section id="id591">
+<h3>Parameters<a class="headerlink" href="#id591" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to enable cropping, False to disable it.</p>
 </dd>
@@ -10151,8 +10169,8 @@ JPG, PNG, TIFF) suffixed with ‘top’, ‘bottom’, ‘front’, ‘back’, 
 <span class="sig-name descname"><span class="pre">setCursorVisibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setCursorVisibility" title="Link to this definition"></a></dt>
 <dd><p>Set the visibility of the cross-shaped cursor.
 Currently, this method calls superclass’s implementation.</p>
-<section id="id591">
-<h3>Parameters<a class="headerlink" href="#id591" title="Link to this heading"></a></h3>
+<section id="id592">
+<h3>Parameters<a class="headerlink" href="#id592" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to show the cursor, False to hide it.</p>
 </dd>
@@ -10167,8 +10185,8 @@ Currently, this method calls superclass’s implementation.</p>
 <span class="sig-name descname"><span class="pre">setCursorWorldPosition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setCursorWorldPosition" title="Link to this definition"></a></dt>
 <dd><p>Set the 3D world position of the cross-shaped cursor.
 Currently, this method overrides superclass’s implementation.</p>
-<section id="id592">
-<h3>Parameters<a class="headerlink" href="#id592" title="Link to this heading"></a></h3>
+<section id="id593">
+<h3>Parameters<a class="headerlink" href="#id593" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>x<span class="classifier">float</span></dt><dd><p>world x-coordinate.</p>
 </dd>
@@ -10187,10 +10205,25 @@ Currently, this method overrides superclass’s implementation.</p>
 <span class="sig-name descname"><span class="pre">setGradientOpacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setGradientOpacity" title="Link to this definition"></a></dt>
 <dd><p>Enable or disable the gradient opacity for volume rendering.
 Use a gradient transfer function in addition to the color transfer function for volume rendering.</p>
-<section id="id593">
-<h3>Parameters<a class="headerlink" href="#id593" title="Link to this heading"></a></h3>
+<section id="id594">
+<h3>Parameters<a class="headerlink" href="#id594" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to enable gradient opacity, False to disable it.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setInteractiveMode">
+<span class="sig-name descname"><span class="pre">setInteractiveMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setInteractiveMode" title="Link to this definition"></a></dt>
+<dd><p>Set the interactive mode for tool creation.</p>
+<section id="id595">
+<h3>Parameters<a class="headerlink" href="#id595" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">int</span></dt><dd><p>interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)</p>
+</dd>
+<dt>signal<span class="classifier">bool (optional)</span></dt><dd><p>If True, emits the <cite>InteractiveModeChanged</cite> signal for synchronization (default True).</p>
 </dd>
 </dl>
 </section>
@@ -10201,8 +10234,8 @@ Use a gradient transfer function in addition to the color transfer function for 
 <span class="sig-name descname"><span class="pre">setLineColor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setLineColor" title="Link to this definition"></a></dt>
 <dd><p>Set the color of the cross-shaped cursor.
 Currently, this method calls superclass’s implementation.</p>
-<section id="id594">
-<h3>Parameters<a class="headerlink" href="#id594" title="Link to this heading"></a></h3>
+<section id="id596">
+<h3>Parameters<a class="headerlink" href="#id596" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>c<span class="classifier">list[float] | tuple[float, float, float]</span></dt><dd><p>color as an (r, g, b) tuple with values from 0.0 to 1.0.</p>
 </dd>
@@ -10217,8 +10250,8 @@ Currently, this method calls superclass’s implementation.</p>
 <span class="sig-name descname"><span class="pre">setLineOpacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setLineOpacity" title="Link to this definition"></a></dt>
 <dd><p>Set the line opacity of the cross-shaped cursor.
 Currently, this method calls superclass’s implementation.</p>
-<section id="id595">
-<h3>Parameters<a class="headerlink" href="#id595" title="Link to this heading"></a></h3>
+<section id="id597">
+<h3>Parameters<a class="headerlink" href="#id597" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">float</span></dt><dd><p>Opacity value between 0.0 (transparent) and 1.0 (opaque).</p>
 </dd>
@@ -10233,8 +10266,8 @@ Currently, this method calls superclass’s implementation.</p>
 <span class="sig-name descname"><span class="pre">setLineWidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setLineWidth" title="Link to this definition"></a></dt>
 <dd><p>Set the line width of the cross-shaped cursor.
 Currently, this method calls superclass’s implementation.</p>
-<section id="id596">
-<h3>Parameters<a class="headerlink" href="#id596" title="Link to this heading"></a></h3>
+<section id="id598">
+<h3>Parameters<a class="headerlink" href="#id598" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">float</span></dt><dd><p>The line width in pixels.</p>
 </dd>
@@ -10248,8 +10281,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setMeshCollection">
 <span class="sig-name descname"><span class="pre">setMeshCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_mesh.html#Sisyphe.core.sisypheMesh.SisypheMeshCollection" title="Sisyphe.core.sisypheMesh.SisypheMeshCollection"><span class="pre">SisypheMeshCollection</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setMeshCollection" title="Link to this definition"></a></dt>
 <dd><p>Get the SisypheMeshCollection (collections of meshes) displayed in the widget.</p>
-<section id="id597">
-<h3>Returns<a class="headerlink" href="#id597" title="Link to this heading"></a></h3>
+<section id="id599">
+<h3>Returns<a class="headerlink" href="#id599" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>SisypheMeshCollection</dt><dd><p>collection of meshes.</p>
 </dd>
@@ -10261,8 +10294,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setMeshOnSliceVisibility">
 <span class="sig-name descname"><span class="pre">setMeshOnSliceVisibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setMeshOnSliceVisibility" title="Link to this definition"></a></dt>
 <dd><p>Set the visibility of the meshes.</p>
-<section id="id598">
-<h3>Parameters<a class="headerlink" href="#id598" title="Link to this heading"></a></h3>
+<section id="id600">
+<h3>Parameters<a class="headerlink" href="#id600" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to show meshes, False to hide it.</p>
 </dd>
@@ -10276,8 +10309,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSlice0Visibility">
 <span class="sig-name descname"><span class="pre">setSlice0Visibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSlice0Visibility" title="Link to this definition"></a></dt>
 <dd><p>Set the visibility of the axial vtkImageSlice actor (slice 0).</p>
-<section id="id599">
-<h3>Parameters<a class="headerlink" href="#id599" title="Link to this heading"></a></h3>
+<section id="id601">
+<h3>Parameters<a class="headerlink" href="#id601" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to show the slice, False to hide it.</p>
 </dd>
@@ -10289,8 +10322,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSlice1Visibility">
 <span class="sig-name descname"><span class="pre">setSlice1Visibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSlice1Visibility" title="Link to this definition"></a></dt>
 <dd><p>Set the visibility of the coronal vtkImageSlice actor (slice 1).</p>
-<section id="id600">
-<h3>Parameters<a class="headerlink" href="#id600" title="Link to this heading"></a></h3>
+<section id="id602">
+<h3>Parameters<a class="headerlink" href="#id602" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to show the slice, False to hide it.</p>
 </dd>
@@ -10302,8 +10335,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSlice2Visibility">
 <span class="sig-name descname"><span class="pre">setSlice2Visibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSlice2Visibility" title="Link to this definition"></a></dt>
 <dd><p>Set the visibility of the sagittal vtkImageSlice actor (slice 2).</p>
-<section id="id601">
-<h3>Parameters<a class="headerlink" href="#id601" title="Link to this heading"></a></h3>
+<section id="id603">
+<h3>Parameters<a class="headerlink" href="#id603" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to show the slice, False to hide it.</p>
 </dd>
@@ -10315,8 +10348,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSphereCursorOpacity">
 <span class="sig-name descname"><span class="pre">setSphereCursorOpacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSphereCursorOpacity" title="Link to this definition"></a></dt>
 <dd><p>Set the opacity of the spherical part of the cross-shaped cursor.</p>
-<section id="id602">
-<h3>Parameters<a class="headerlink" href="#id602" title="Link to this heading"></a></h3>
+<section id="id604">
+<h3>Parameters<a class="headerlink" href="#id604" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>r<span class="classifier">int (optional)</span></dt><dd><p>The new opacity value (0-100, default 0).</p>
 </dd>
@@ -10328,8 +10361,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSphereCursorRadius">
 <span class="sig-name descname"><span class="pre">setSphereCursorRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSphereCursorRadius" title="Link to this definition"></a></dt>
 <dd><p>Sets the radius of the spherical part of the cross-shaped cursor.</p>
-<section id="id603">
-<h3>Parameters<a class="headerlink" href="#id603" title="Link to this heading"></a></h3>
+<section id="id605">
+<h3>Parameters<a class="headerlink" href="#id605" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>r<span class="classifier">int (optional)</span></dt><dd><p>new radius in mm for the sphere (default 0).</p>
 </dd>
@@ -10341,8 +10374,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSurfaceVisibility">
 <span class="sig-name descname"><span class="pre">setSurfaceVisibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setSurfaceVisibility" title="Link to this definition"></a></dt>
 <dd><p>Set the visibility of the outer surface SisypheMesh instance. If the mesh doesn’t exist, it is created first.</p>
-<section id="id604">
-<h3>Parameters<a class="headerlink" href="#id604" title="Link to this heading"></a></h3>
+<section id="id606">
+<h3>Parameters<a class="headerlink" href="#id606" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to show the outer surface SisypheMesh instance, False to hide it.</p>
 </dd>
@@ -10354,8 +10387,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setTextureVisibility">
 <span class="sig-name descname"><span class="pre">setTextureVisibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setTextureVisibility" title="Link to this definition"></a></dt>
 <dd><p>Set the visibility of the texture rendering of the vtkVolume actor.</p>
-<section id="id605">
-<h3>Parameters<a class="headerlink" href="#id605" title="Link to this heading"></a></h3>
+<section id="id607">
+<h3>Parameters<a class="headerlink" href="#id607" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>v<span class="classifier">bool</span></dt><dd><p>True to show the texture rendering, False to hide it.</p>
 </dd>
@@ -10367,8 +10400,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setTractCollection">
 <span class="sig-name descname"><span class="pre">setTractCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_tracts.html#Sisyphe.core.sisypheTracts.SisypheTractCollection" title="Sisyphe.core.sisypheTracts.SisypheTractCollection"><span class="pre">SisypheTractCollection</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setTractCollection" title="Link to this definition"></a></dt>
 <dd><p>Set the SisypheTractCollection (collections of streamlines) to be displayed in the widget.</p>
-<section id="id606">
-<h3>Parameters<a class="headerlink" href="#id606" title="Link to this heading"></a></h3>
+<section id="id608">
+<h3>Parameters<a class="headerlink" href="#id608" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tracts<span class="classifier">SisypheTractCollection</span></dt><dd><p>collection of streamlines.</p>
 </dd>
@@ -10380,8 +10413,8 @@ Currently, this method calls superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setTransfer">
 <span class="sig-name descname"><span class="pre">setTransfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transfer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_lut.html#Sisyphe.core.sisypheLUT.SisypheColorTransfer" title="Sisyphe.core.sisypheLUT.SisypheColorTransfer"><span class="pre">SisypheColorTransfer</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setTransfer" title="Link to this definition"></a></dt>
 <dd><p>Set the SisypheColorTransfer instance for volume rendering.</p>
-<section id="id607">
-<h3>Parameters<a class="headerlink" href="#id607" title="Link to this heading"></a></h3>
+<section id="id609">
+<h3>Parameters<a class="headerlink" href="#id609" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>transfer<span class="classifier">SisypheColorTransfer</span></dt><dd><p>new transfer function instance to apply.</p>
 </dd>
@@ -10394,8 +10427,8 @@ Currently, this method calls superclass’s implementation.</p>
 <span class="sig-name descname"><span class="pre">setVolume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../API/api_volume.html#Sisyphe.core.sisypheVolume.SisypheVolume" title="Sisyphe.core.sisypheVolume.SisypheVolume"><span class="pre">SisypheVolume</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.setVolume" title="Link to this definition"></a></dt>
 <dd><p>Set the SisypheVolume to be displayed in the widget.
 Currently, this method calls the superclass’s implementation.</p>
-<section id="id608">
-<h3>Parameters<a class="headerlink" href="#id608" title="Link to this heading"></a></h3>
+<section id="id610">
+<h3>Parameters<a class="headerlink" href="#id610" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>volume<span class="classifier">SisypheVolume</span></dt><dd><p>Sisyphevolume to display.</p>
 </dd>
@@ -10408,8 +10441,8 @@ Currently, this method calls the superclass’s implementation.</p>
 <span class="sig-name descname"><span class="pre">showAll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.showAll" title="Link to this definition"></a></dt>
 <dd><p>Show all the 3D VTK objects (3 vtkImageSlice, vtkVolume).
 Currently, this method overrides superclass’s implementation.</p>
-<section id="id609">
-<h3>Parameters<a class="headerlink" href="#id609" title="Link to this heading"></a></h3>
+<section id="id611">
+<h3>Parameters<a class="headerlink" href="#id611" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>signal<span class="classifier">bool (optional)</span></dt><dd><p>If True, emits ViewMethodCalled signals for synchronization (default True).</p>
 </dd>
@@ -10433,6 +10466,22 @@ Currently, this method overrides superclass’s implementation.</p>
 <dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.slicePlus">
 <span class="sig-name descname"><span class="pre">slicePlus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.slicePlus" title="Link to this definition"></a></dt>
 <dd><p>Move to the next slice along the currently selected orientation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.synchroniseInteractiveModeChanged">
+<span class="sig-name descname"><span class="pre">synchroniseInteractiveModeChanged</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.volumeViewWidget.VolumeViewWidget.synchroniseInteractiveModeChanged" title="Link to this definition"></a></dt>
+<dd><p>Synchronizes interactive mode for tool creation between SliceTrajectoryViewWidget/VolumeViewWidget instances.
+This method is called by the InteractiveModeChanged PyQt signal.</p>
+<section id="id612">
+<h3>Parameters<a class="headerlink" href="#id612" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>obj<span class="classifier">QWidget</span></dt><dd><p>SliceTrajectoryViewWidget/VolumeViewWidget instance that emitted the InteractiveModeChanged signal.</p>
+</dd>
+<dt>mode<span class="classifier">int</span></dt><dd><p>interactive mode (0 off, 1 left-click creates a target, 2 left-click creates a trajectory)</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py method">

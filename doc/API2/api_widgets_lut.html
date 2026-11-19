@@ -251,17 +251,17 @@
 <h2>Inheritance<a class="headerlink" href="#inheritance" title="Link to this heading"></a></h2>
 <p>QWidget -&gt; LutWidget</p>
 <p>Creation: 01/11/2022
-Last revision: 03/10/2026</p>
+Last revision: 13/11/2026</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Sisyphe.widgets.LUTWidgets.LutWidget.autoWindow">
-<span class="sig-name descname"><span class="pre">autoWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">99</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.autoWindow" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">autoWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">99.9</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#Sisyphe.widgets.LUTWidgets.LutWidget.autoWindow" title="Link to this definition"></a></dt>
 <dd><p>Automatically adjust the window based on intensity percentiles.</p>
 <section id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
 <dl class="simple">
-<dt>cmin<span class="classifier">int, optional</span></dt><dd><p>lower percentile (1-99).</p>
+<dt>cmin<span class="classifier">int | None (optional)</span></dt><dd><p>lower percentile (default 0.5).</p>
 </dd>
-<dt>cmax<span class="classifier">int, optional</span></dt><dd><p>upper percentile (1-99).</p>
+<dt>cmax<span class="classifier">int (optional)</span></dt><dd><p>upper percentile (default 99.5).</p>
 </dd>
 </dl>
 </section>
