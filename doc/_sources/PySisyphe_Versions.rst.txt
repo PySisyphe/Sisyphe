@@ -28,6 +28,7 @@ Version history
 - :ref:`build05-10-2026`
 - :ref:`build20-10-2026`
 - :ref:`build20-11-2026`
+- :ref:`build20-12-2026`
 
 .. _version-increment-rules:
 
@@ -8301,7 +8302,7 @@ version 1.10.24, build 20/10/2026
 
 .. _build20-11-2026:
 
-version 1.12.07, build 20/11/2026
+version 1.12.08, build 20/11/2026
 ---------------------------------
 
 - **updated html documentation**
@@ -8330,6 +8331,7 @@ version 1.12.07, build 20/11/2026
 	- gui.dialogDicomImport
 	- gui.dialogDatatype
 	- gui.dialogImport
+	- gui.dialogResample
 	- gui.windowSisyphe
 	- processing.capturedStdoutProcessing
 	- widgets.consoleWidget
@@ -8454,6 +8456,12 @@ version 1.12.07, build 20/11/2026
 		- update __init__() method
 		- update convert()
 
+	- gui.dialogResample.DialogResample
+
+		- new setCompression() method
+		- update __init__() method
+		- update execute() method
+
 	- gui.windowSisyphe.WindowSisyphe
 
 		- new scalarToRGB() method
@@ -8467,6 +8475,7 @@ version 1.12.07, build 20/11/2026
 	- widgets.consoleWidget.RichJupyterWidget2
 
 		- update __init__() method
+		- update _packages() method
 		- new _context_menu_make() method
 		- new setCustomMenu() method
 
@@ -8587,6 +8596,10 @@ version 1.12.07, build 20/11/2026
 
 		- dialog for grayscale or luminance conversion
 
+	- gui.dialogResample.DialogResample.setCompression()
+
+		- xvol compressed format management
+
 	- widgets.consoleWidget.RichJupyterWidget2._context_menu_make()
 
 		- add ConsoleWidget popup menu actions to the RichJupyterWidget2 popup menu
@@ -8701,6 +8714,14 @@ version 1.12.07, build 20/11/2026
 
 		- set default LUT based on DICOM modality
 
+	- gui.dialogResample.DialogResample.__init__()
+
+		- add self._compress attribute, xvol compressed format management
+
+	- gui.dialogResample.DialogResample.execute()
+
+		- add f.setCompression(self._compress), xvol compressed format management
+
 	- gui.windowSisyphe.WindowSisyphe._initFileMenu()
 
 		- new attribute self._action['rgb'], "Conversion to RGB" menu
@@ -8714,6 +8735,10 @@ version 1.12.07, build 20/11/2026
 	- widgets.consoleWidget.RichJupyterWidget2.__init__()
 
 		- add self._custommenu attribute
+
+	- widgets.consoleWidget.RichJupyterWidget2._packages()
+
+		- bug fix for %packages command without parameter
 
 	- widgets.consoleWidget.ConsoleWidget.__init__()
 
@@ -8780,3 +8805,271 @@ version 1.12.07, build 20/11/2026
 
 		- add scrollto parameter (bool)
 		- scroll to selected item if scrollto is True
+
+.. _build20-12-2026:
+
+version 1.13.04, build 20/12/2026
+---------------------------------
+
+- **updated html documentation**
+	
+	- PySisyphe_Versions.rst
+	- PySisyphe_thumbnailbar.rst
+	- rebuild sphinx documentation
+
+- **updated files**
+
+	- /settings/functions.xml
+	- /settings/settings.xml
+
+- **updated modules**
+
+	- core.sisypheImageAttributes
+	- core.sisypheROI
+	- gui.dialogDiffusionModel
+	- widgets.LUTWidgets
+	- widgets.functionsSettingsWidget
+	- widgets.tabToolsWidgets
+	- widgets.sliceViewWidgets
+	- widgets.abstractViewWidget
+	- widgets.projectionViewWidget
+	- widgets.multiViewWidgets
+	- widgets.projectionViewWidget
+	- widgets.multiComponentViewWidget
+
+- **updated classes**
+
+	- core.sisypheImageAttributes.SisypheDisplay
+
+		- update autoWindow() method
+
+	- core.sisypheROI.SisypheROIDraw
+
+		- update activeContourSegmentation() method
+		- update activeContour() method
+		- update activeThresholdContour() method
+		- update appendXSliceToLIFO() method
+		- update drawSphere() method
+		- update popUndoLIFO() method
+		- update clearLIFO() method
+		
+		- update all slice processing methods
+		- update all volume processing methods
+		- update all drawing methods
+
+			- move the "undo" LIFO stack update before drawing
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel
+
+		- update __init__() method
+		- update _modelChanged() method()
+
+	- widgets.LUTWidgets.LutWidget
+
+		- update __init__() method
+		- update setWindow() method
+		- update setWindowMin() method
+		- update setWindowMax() method
+		- update autoWindow() method
+		- update defaultWindow() method
+		- update setCTBrainWindow() method
+		- update setCTBoneWindow() method
+		- update setCTMetallicWindow() method
+
+	- widgets.functionsSettingsWidget.SettingsWidget
+
+		- new getSettingsVisibility() method
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget
+
+		- new _toggleSettingsVisibility() method
+		- update __init__() method
+		- update slcRegionGrowing() method
+		- update slcRegionConfidence() method
+		- update slcBlobRegionGrowing() method
+		- update slcBlobRegionConfidence() method
+		- update voiRegionGrowing() method
+		- update voiRegionConfidence() method
+
+	- widgets.tabToolsWidgets.TabMeshListWidget
+
+		- new _toggleSettingsVisibility() method
+		- update __init__() method
+		
+	- widgets.sliceViewWidgets.SliceROIViewWidget
+
+		- new synchroniseFocusChanged() method
+		- update _init__() method
+		- update _onLeftPressEvent() method
+		- update _onRightPressEvent() method
+		- update _onLeftReleaseEvent() method
+		- update _onRightReleaseEvent() method
+		- update _updateBrush() method
+		- remove _onTimer() method
+	
+	- widgets.abstractViewWidget.AbstractViewWidget
+
+		- new custom Qt signal FocusChanged
+		- new synchroniseFocusChanged() method
+		- update _onKeyReleaseEvent() method
+		
+	- widgets.projectionViewWidget.ProjectionViewWidget
+
+		- remove _onKeyReleaseEvent() method
+
+	- widgets.multiViewWidgets.OrthogonalSliceViewWidget
+
+		- update _initSynchronisationSignalConnect() method
+
+	- widgets.multiViewWidgets.GridViewWidget
+
+		- new leaveEvent method
+		- update _initViews() method
+		- update _initSynchronisationSignalConnect() method
+
+	- widgets.projectionViewWidget.MultiProjectionViewWidget
+
+		- update _initSynchronisationSignalConnect() method
+
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget
+
+		- update _initSynchronisationSignalConnect() method
+
+- **new methods**
+
+	- widgets.functionsSettingsWidget.SettingsWidget.getSettingsVisibility()
+
+		- self._settingsbox widget visibility
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget._toggleSettingsVisibility()
+
+		- method for centering the display of widgets in the TabROIToolsWidget based on the visibility of the self._settings widget
+
+	- widgets.tabToolsWidgets.TabMeshListWidget._toggleSettingsVisibility()
+
+		- method for managing the display of widgets in the TabMeshListWidget based on the visibility of the self._settings widget
+
+	- widgets.sliceViewWidget.SliceROIViewWidget.synchroniseFocusChanged()
+
+		- method called by FocusChanged signal
+		- hide the brush cursor of views that do not have focus
+
+	- widgets.abstractViewWidget.AbstractViewWidget.synchroniseFocusChanged()
+
+		- method called by FocusChanged signal
+		- hide the information in the bottom-right of views that do not have focus
+
+	- widgets.multiViewWidgets.GridViewWidget.leaveEvent()
+
+		- hide the information in the bottom-right of all views
+
+- **updated methods**
+
+	- core.sisypheImageAttributes.SisypheDisplay.autoWindow()
+
+		- if cmin parameter is None, minimum windowing value is calculated using Huand algorithm (background threshold)
+
+	- core.sisypheROI.SisypheROIDraw.activeContourSegmentation()
+
+		- add wait parameter (progress dialog)
+	
+	- core.sisypheROI.SisypheROIDraw.activeContour()
+
+		- remove debug lines (save activecontour_seed.xvol & activecontour_speed.xvol)
+		- add wait parameter (progress dialog)
+		- progress dialog management
+
+	- core.sisypheROI.SisypheROIDraw.activeThresholdContour()
+
+		- add wait parameter (progress dialog)
+		- progress dialog management
+
+	- core.sisypheROI.SisypheROIDraw.appendXSliceToLIFO()
+
+		- bug fix, replace self._redolifo.append((self._DSY, i, buff)) with self._redolifo.append((self._DSX, i, buff))
+
+	- core.sisypheROI.SisypheROIDraw.drawSphere()
+
+		- bug fix, replace self._roi.drawParallelepiped(p, radius) with self._roi.drawSphere(p, radius)
+
+	- core.sisypheROI.SisypheROIDraw.popUndoLIFO()
+
+		- replace item = self._undolifo[len(self._undolifo) - 1] with item = self._undolifo.pop()
+
+	- core.sisypheROI.SisypheROIDraw.clearLIFO()
+
+		- remove self.appendVolumeToLIFO()
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel.__init__()
+
+		- move self._DTI widget in a QScrollArea (self._area attribute)
+
+	- gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()
+
+		- add self._area.setVisible(self._combo.currentText() == 'DTI')
+
+	- widgets.LUTWidgets.LutWidget.__init__()
+
+		- add self._auto QPushButton attribute, auto windowing management
+		- add self._default QPushButton attribute, default windowing management
+
+	- widgets.LUTWidgets.LutWidget.setWindowMin()
+	- widgets.LUTWidgets.LutWidget.setWindowMax()
+	- widgets.LUTWidgets.LutWidget.autoWindow()
+	- widgets.LUTWidgets.LutWidget.defaultWindow()
+	- widgets.LUTWidgets.LutWidget.setCTBrainWindow()
+	- widgets.LUTWidgets.LutWidget.setCTBoneWindow()
+	- widgets.LUTWidgets.LutWidget.setCTMetallicWindow()
+
+		- bug fix, update position of text along window inf. and sup. lines
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.__init__()
+
+		- move self._settings widget in a QScrollArea
+
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcRegionGrowing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcRegionConfidence()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRegionGrowing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRegionConfidence()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiRegionGrowing()
+	- widgets.tabToolsWidgets.TabROIToolsWidget.voiRegionConfidence()
+
+		- unckeck menu items of unselected buttons
+
+	- widgets.tabToolsWidgets.TabMeshListWidget.__init__()
+
+		- move self._settings widget in a QScrollArea
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onLeftPressEvent()
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onRightPressEvent()
+
+		- replace self._draw.activeContourSegmentation(p[0], p[1], p[2]) with self._draw.activeContourSegmentation(p[0], p[1], p[2], wait)
+		- add the current ROI to the "undo" LIFO stack before drawing
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onLeftReleaseEvent()
+	- widgets.sliceViewWidgets.SliceROIViewWidget._onRightReleaseEvent()
+
+		- remove "undo" LIFO stack update after drawing
+
+	- widgets.sliceViewWidgets.SliceROIViewWidget._updateBrush()
+
+		- remove self._brush.SetVisibility(False)
+
+	- widgets.abstractViewWidget.SliceROIViewWidget.__init__()
+
+		- remove self._timer attribute
+
+	- widgets.abstractViewWidget.AbstractViewWidget._onKeyReleaseEvent()
+
+		- replace pass with self._interactor.SetKeySym('') to reset the KeySym value after a key event
+
+	- widgets.multiViewWidgets.GridViewWidget._initViews()
+
+		- add w.setName('View {}'.format([r, c]))
+
+	- widgets.multiViewWidgets.OrthogonalSliceViewWidget._initSynchronisationSignalConnect()
+	- widgets.multiViewWidgets.GridViewWidget._initSynchronisationSignalConnect()
+	- widgets.projectionViewWidget.MultiProjectionViewWidget._initSynchronisationSignalConnect()
+	- widgets.multiComponentViewWidget.MultiComponentViewWidget._initSynchronisationSignalConnect()
+
+		- add w1.FocusChanged.connect(w2.synchroniseFocusChanged)

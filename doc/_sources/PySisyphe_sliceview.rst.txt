@@ -35,12 +35,12 @@ Controls
 - Left-click + **CTRL** key (CMD key MacOs platform) and drag to change zoom,
 - Left-click + **ALT** key and drag to move the viewpoint,
 - Left-click + **SHIFT** key and drag to change window/level,
-- Right-click + **CTRL** Key (CMD key MacOs platform) to show a popup menu.
+- Right-click to show a popup menu.
 
 Brush controls (if a ROI is displayed):
 
 - Left-click to brush, right-click to erase in draw mode (:ref:`ROI Tools <page-dockroitools>`),
-- MouseWheel + **ALT** Key to change brush size.
+- MouseWheel + **SHIFT** Key to change brush size.
 
 .. _slice-section-iconbar:
 

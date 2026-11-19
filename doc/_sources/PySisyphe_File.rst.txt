@@ -239,6 +239,7 @@ Contents:
 - **Templates**, various template volumes
 
 	- AheadBrain, https://brain.labsolver.org/histology.html
+	- AIVO, https://aivo.utu.fi/templates/
 	- Allen, https://community.brain-map.org/t/allen-human-reference-atlas-3d-2020-new/405
 	- Arterial, https://www.nitrc.org/projects/arterialatlas/
 	- Atropos, https://mindboggle.info/data.html
@@ -258,6 +259,7 @@ Contents:
 	- GOBS, https://brainder.org/download/flair/
 	- HoliAtlas, https://arxiv.org/html/2501.16879v1
 	- HR, https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009
+	- I123FPCIT-F18DOPA, https://www.nitrc.org/projects/spmtemplates & https://www.nitrc.org/projects/ki-5htt/
 	- ICBM152 Subcortical 
 	- ICBM452, https://www.loni.usc.edu/research/atlas_downloads
 	- LPBA40, https://www.loni.usc.edu/research/atlas_downloads

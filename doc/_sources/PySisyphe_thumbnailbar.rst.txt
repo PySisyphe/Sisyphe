@@ -100,7 +100,7 @@ A Look-Up-Table (LUT) colormap widget is displayed last in the popup menu.
 
 The upper part of the widget shows the extent of the windowing as a yellow frame (1) overlaid on the volume histogram. The left edge of the frame represents the lower threshold, the right edge the upper threshold. Threshold values are written vertically in the center of each edge. The frame can be moved by pressing the left mouse button and dragging. Press the left mouse button and drag to move the left or right border (2, click inner part inside the frame).
 
-At the bottom of the widget, there are two boxes to the left and right (4, 5). They display and modify the range of volume values, from minimum (left box) to maximum (right box). The combobox in the middle (3) allows you to change the LUT colormap. The order of colors in the colormap can be reversed with the "Reverse" check box.
+At the bottom of the widget, there are two boxes to the left and right (4, 5). They display and modify the range of volume values, from minimum (left box) to maximum (right box). The combobox in the middle (3) allows you to change the LUT colormap. Left-click the "Default" button to reset the windowing of the Look-Up-Table colormap. Left-click the "Auto" button to perform an automatic windowing of the Look-Up-Table colormap (window inf. = first percentile & window sup. = the 99th percentile of the image's grayscale distribution). The order of colors in the colormap can be reversed with the "Reverse" check box.
 
 .. _thumb-section-overlay:
 
