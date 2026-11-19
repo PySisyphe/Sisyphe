@@ -1994,7 +1994,9 @@ class SisypheVolume(SisypheImage):
         float
             slope value
         """
-        if self._slope is None or not isinstance(self._slope, float): self._slope = 1.0
+        if self._slope is None or not isinstance(self._slope, float):
+            # noinspection unreachable-code
+            self._slope = 1.0
         return self._slope
 
     def getIntercept(self) -> float:
@@ -2007,7 +2009,9 @@ class SisypheVolume(SisypheImage):
         float
             intercept value
         """
-        if self._intercept is None or not isinstance(self._intercept, float): self._intercept = 0.0
+        if self._intercept is None or not isinstance(self._intercept, float):
+            # noinspection unreachable-code
+            self._intercept = 0.0
         return self._intercept
 
     # noinspection method-overriding
@@ -3331,7 +3335,6 @@ class SisypheVolume(SisypheImage):
         r = SisypheVolumeCollection()
         n = self.getNumberOfComponentsPerPixel()
         if n > 1:
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(n):
                 v = self.copyComponent(i)
@@ -3436,7 +3439,6 @@ class SisypheVolume(SisypheImage):
                        interpolation='bilinear')
             s = canvas.get_width_height()
             canvas.draw()
-            # noinspection PyUnresolvedReferences
             r = QImage(canvas.buffer_rgba(), s[0], s[1], QImage.Format_ARGB32)
             r = r.rgbSwapped()
         # Revision 29/08/2024 >
@@ -3521,7 +3523,6 @@ class SisypheVolume(SisypheImage):
                        interpolation='bilinear')
             s = canvas.get_width_height()
             canvas.draw()
-            # noinspection PyUnresolvedReferences
             r = QImage(canvas.buffer_rgba(), s[0], s[1], QImage.Format_ARGB32)
             r = r.rgbSwapped()
         # Revision 29/08/2024 >
@@ -4524,7 +4525,6 @@ class SisypheVolume(SisypheImage):
                    interpolation='bilinear')
         s = canvas.get_width_height()
         canvas.draw()
-        # noinspection PyUnresolvedReferences
         qimg = QImage(canvas.buffer_rgba(), s[0], s[1], QImage.Format_ARGB32)
         return qimg.rgbSwapped()
     # Revision 29/08/2024 >
@@ -5491,14 +5491,12 @@ class SisypheVolumeCollection(object):
             else: raise IndexError('key parameter is out of range.')
         elif isinstance(key, slice):
             vols = SisypheVolumeCollection()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(key.start, key.stop, key.step):
                 vols.append(self._volumes[i])
             return vols
         elif isinstance(key, list):
             vols = SisypheVolumeCollection()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(len(self._volumes)):
                 if self._volumes[i].getID() in key:
@@ -5666,27 +5664,22 @@ class SisypheVolumeCollection(object):
                         n = len(p)
                         if n == self.count():
                             if name in SisypheIdentity.__dict__:
-                                # noinspection PyUnresolvedReferences
                                 i: cython.int
                                 # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].identity.__getattribute__(name)(p[i])
                             elif name in SisypheAcquisition.__dict__:
-                                # noinspection PyUnresolvedReferences
                                 i: cython.int
                                 # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].acquisition.__getattribute__(name)(p[i])
                             elif name in SisypheDisplay.__dict__:
-                                # noinspection PyUnresolvedReferences
                                 i: cython.int
                                 # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].display.__getattribute__(name)(p[i])
                             elif name in SisypheACPC.__dict__:
-                                # noinspection PyUnresolvedReferences
                                 i: cython.int
                                 # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].acpc.__getattribute__(name)(p[i])
                             elif flag:
-                                # noinspection PyUnresolvedReferences
                                 i: cython.int
                                 # noinspection PyInconsistentReturns
                                 for i in range(n): self[i].__getattribute__(name)(p[i])
@@ -6399,7 +6392,6 @@ class SisypheVolumeCollection(object):
                         raise ValueError('Not all volumes have a range between 0.0 and 1.0.')
                 r = self[0].getSITKImage() > threshold
                 if self.count() > 1:
-                    # noinspection PyUnresolvedReferences
                     i: cython.int
                     for i in range(1, self.count()):
                         v = (self[i].getSITKImage() > threshold) * i
@@ -6413,7 +6405,6 @@ class SisypheVolumeCollection(object):
                 rvol.copyAttributesFrom(self[0], acquisition=False, display=False, slope=False)
                 rvol.acquisition.setModalityToLB()
                 rvol.setID(self[0].getID())
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(self.count()):
                     name = self[i].getName()
@@ -6444,7 +6435,6 @@ class SisypheVolumeCollection(object):
         if not self.isEmpty():
             if self.isHomogeneous():
                 l = list()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(len(self._volumes)):
                     if self._volumes[i].acquisition.isLB(): l.append(self._volumes[i].getSITKImage())
@@ -6484,7 +6474,6 @@ class SisypheVolumeCollection(object):
         if not self.isEmpty():
             if self.isHomogeneous():
                 l = list()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(len(self._volumes)):
                     if self._volumes[i].acquisition.isLB(): l.append(self._volumes[i].getSITKImage())
@@ -6524,7 +6513,6 @@ class SisypheVolumeCollection(object):
                 m = mask.getNumpy() > 0.0
                 for v in self:
                     img = v.getNumpy()
-                    # noinspection PyUnresolvedReferences
                     img = img[m]
                     r.append(img)
                 return r

@@ -210,7 +210,6 @@ def isCompiled() -> bool:
     bool
         True if current instance is cython compiled, False otherwise.
     """
-    # noinspection PyUnresolvedReferences
     return cython.compiled
 
 
@@ -369,7 +368,6 @@ class SisypheROI(SisypheBinaryImage):
         self._filename: str = ''
         self._compression: bool = False
         self._color: list[float] = [1.0, 0.0, 0.0]   # default = red
-        # noinspection PyUnresolvedReferences
         self._alpha: cython.double = 1.0  # default = opaque
         self._visibility: bool = True
         self._lut: SisypheLut = SisypheLut()
@@ -1020,7 +1018,6 @@ class SisypheROI(SisypheBinaryImage):
         """
         if rgb is None:
             rgb = [r, g, b]
-        # noinspection PyUnresolvedReferences
         i: cython.int
         for i in range(0, 3):
             if isinstance(rgb[i], float):
@@ -1666,7 +1663,6 @@ class SisypheROI(SisypheBinaryImage):
         if not self.isEmpty():
             if not self.isEmptyArray():
                 img = sitkConnectedComponent(self.getSITKImage())
-                # noinspection PyArgumentList
                 return sitkGetArrayViewFromImage(img).max()
             else: raise AttributeError('Image array is empty.')
         else: raise AttributeError('Image is not defined.')
@@ -2131,17 +2127,11 @@ class SisypheROI(SisypheBinaryImage):
         x, y, z = p
         xmax, ymax, zmax = self.getSize()
         if 0 <= x < xmax and 0 <= y < ymax and 0 <= z < zmax:
-            # noinspection PyUnresolvedReferences
             idx1: cython.int = radius - 1 - x
-            # noinspection PyUnresolvedReferences
             idy1: cython.int = radius - 1 - y
-            # noinspection PyUnresolvedReferences
             idz1: cython.int = radius - 1 - z
-            # noinspection PyUnresolvedReferences
             idx2: cython.int = xmax - x - radius
-            # noinspection PyUnresolvedReferences
             idy2: cython.int = ymax - y - radius
-            # noinspection PyUnresolvedReferences
             idz2: cython.int = zmax - z - radius
             if idx1 < 0: x, idx1 = -idx1, 0
             else: x = 0
@@ -2149,7 +2139,6 @@ class SisypheROI(SisypheBinaryImage):
             else: y = 0
             if idz1 < 0: z, idz1 = -idz1, 0
             else: z = 0
-            # noinspection PyUnresolvedReferences
             m: cython.int = 2 * radius - 1
             if idx2 > -1: idx2 = m
             if idy2 > -1: idy2 = m
@@ -2210,14 +2199,12 @@ class SisypheROI(SisypheBinaryImage):
         filtr = vtkImageCast()
         filtr.SetInputData(self.getVTKImage())
         filtr.SetOutputScalarTypeToFloat()
-        # noinspection PyArgumentList
         filtr.Update()
         mask = filtr.GetOutput()
         filtr = vtkContourFilter()
         filtr.SetInputData(mask)
         filtr.ComputeNormalsOn()
         filtr.SetValue(0, 0.5)
-        # noinspection PyArgumentList
         filtr.Update()
         return filtr.GetOutput()
 
@@ -2233,14 +2220,12 @@ class SisypheROI(SisypheBinaryImage):
         filtr = vtkImageCast()
         filtr.SetInputData(self.getVTKImage())
         filtr.SetOutputScalarTypeToFloat()
-        # noinspection PyArgumentList
         filtr.Update()
         mask = filtr.GetOutput()
         filtr = vtkMarchingCubes()
         filtr.SetInputData(mask)
         filtr.ComputeNormalsOn()
         filtr.SetValue(0, 0.5)
-        # noinspection PyArgumentList
         filtr.Update()
         return filtr.GetOutput()
 
@@ -2758,7 +2743,7 @@ class SisypheROICollection(object):
     object -> SisypheROICollection
 
     Creation: 08/09/2022
-    Last revision: 14/04/2026
+    Last revision: 17/11/2026
     """
 
     __slots__ = ['_rois', '_index', '_referenceID']
@@ -2796,7 +2781,6 @@ class SisypheROICollection(object):
         """
         super().__init__()
         self._rois: list[SisypheROI] = list()
-        # noinspection PyUnresolvedReferences
         self._index: cython.int = 0
         self._referenceID: str = ''
 
@@ -2809,7 +2793,6 @@ class SisypheROICollection(object):
         str
             conversion of SisypheROICollection instance to str
         """
-        # noinspection PyUnresolvedReferences
         index: cython.int = 0
         buff: str = 'SisypheROI count #{}\n'.format(len(self._rois))
         for roi in self._rois:
@@ -3326,7 +3309,6 @@ class SisypheROICollection(object):
             self.sort()
             roi = self[0].getSITKImage()
             if self.count() > 1:
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, self.count()):
                     # < Revision 14/04/2026
@@ -3342,7 +3324,6 @@ class SisypheROICollection(object):
             rvol.setSITKImage(roi)
             rvol.acquisition.setModalityToLB()
             rvol.setID(self[0].getReferenceID())
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(self.count()):
                 name = self[i].getName()
@@ -3366,7 +3347,6 @@ class SisypheROICollection(object):
             if v.acquisition.isLB():
                 self.clear()
                 img = v.getSITKImage()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 # < Revsion 12/03/2026
                 # for i in range(1, 256):
@@ -3398,11 +3378,9 @@ class SisypheROICollection(object):
             processed roi
         """
         if not self.isEmpty():
-            # noinspection PyUnresolvedReferences
             n: cython.int = self.count()
             roi = self[0]
             if n > 1:
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, n):
                     roi = roi | self[i]
@@ -3419,11 +3397,9 @@ class SisypheROICollection(object):
             processed roi
         """
         if not self.isEmpty():
-            # noinspection PyUnresolvedReferences
             n: cython.int = self.count()
             roi = self[0]
             if n > 1:
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, n):
                     roi = roi & self[i]
@@ -3440,11 +3416,9 @@ class SisypheROICollection(object):
             processed roi
         """
         if not self.isEmpty():
-            # noinspection PyUnresolvedReferences
             n: cython.int = self.count()
             roi = self[0]
             if n > 1:
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, n):
                     roi = roi - self[i]
@@ -3461,11 +3435,9 @@ class SisypheROICollection(object):
             processed roi
         """
         if not self.isEmpty():
-            # noinspection PyUnresolvedReferences
             n: cython.int = self.count()
             roi = self[0]
             if n > 1:
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, n):
                     roi = roi ^ self[i]
@@ -3891,7 +3863,6 @@ class SisypheROICollection(object):
         """
         if not self.isEmpty():
             lroi = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(len(self._rois)):
                 lroi.append(self._rois[i].getSITKImage())
@@ -3928,7 +3899,6 @@ class SisypheROICollection(object):
         """
         if not self.isEmpty():
             lroi = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(len(self._rois)):
                 lroi.append(self._rois[i].getSITKImage())
@@ -3993,7 +3963,6 @@ class SisypheROICollection(object):
                         ext = ext.lower()
                         if ext == getSisypheROIExt()[0]:
                             imgs, hdr = readFromSisypheROI(filename)
-                            # noinspection PyUnresolvedReferences
                             i: cython.int
                             for i in range(len(imgs)):
                                 img = flipImageToVTKDirectionConvention(imgs[i])
@@ -4048,7 +4017,6 @@ class SisypheROICollection(object):
                         if ext == getBrainVoyagerVOIExt()[0]:
                             voi = read_voi(filename)
                             n = voi[0]['NrOfVOIs']
-                            # noinspection PyUnresolvedReferences
                             i: cython.int
                             for i in range(n):
                                 voi = voi[1][i]
@@ -4079,6 +4047,8 @@ class SisypheROICollection(object):
             for roi in self:
                 if roi.hasFilename(): roi.save()
 
+
+# noinspection unresolved-references
 @cython.cclass
 class SisypheROIDraw(object):
     """
@@ -4111,13 +4081,13 @@ class SisypheROIDraw(object):
     object -> SisypheROIDraw
 
     Creation: 08/09/2022
-    Last revision: 25/06/2026
+    Last revision: 17/11/2026
     """
 
     __slots__ = {'_volume', '_mask', '_brush', '_ibrush', '_vbrush', '_ivbrush', '_roi', '_undo', '_undolifo', '_redolifo',
                  '_radius', '_morphradius', '_thickness', '_brushtype', '_dtrmajorblob', '_dtrfillholes', '_struct',
                  '_thresholdmin', '_thresholdmax', '_ccsigma', '_cciter', '_acradius', '_acrms', '_acsigma', '_accurv',
-                 '_acadvec', '_acpropag', '_aciter', '_acalgo', '_acthresholds', '_acfactor', '_clipboard'}
+                 '_acadvec', '_acpropag', '_aciter', '_acalgo', '_acthresholds', '_acfactor', '_clipboard', '_lifoconnect'}
 
     # Class constants
 
@@ -4168,6 +4138,7 @@ class SisypheROIDraw(object):
     _dtrfillholes: bool
     _acthresholds: tuple[float, float] | None
     _clipboard: sitkImage | None
+    _lifoconnect: cython.object | None
 
     # Special methods
 
@@ -4209,6 +4180,9 @@ class SisypheROIDraw(object):
         # Revision 17/03/2026 >
         self._acthresholds: tuple[float, float] | None = None
         self._clipboard: sitkImage | None = None
+        # < Revision 17/11/2026
+        self._lifoconnect: Callable[[], None] | None = None
+        # Revision 17/11/2026 >
         self._calcBrush()
 
     """
@@ -4307,7 +4281,6 @@ class SisypheROIDraw(object):
     def _calcBrush(self) -> None:
         if self._radius > 1:
             # 2D brush
-            # noinspection PyUnresolvedReferences
             s: cython.int = self._radius * 2 - 1
             shape = (s, s)
             self._brush = zeros(shape, dtype='uint8')
@@ -4409,6 +4382,8 @@ class SisypheROIDraw(object):
             else: raise IndexError('slice index is out of range.')
 
     # Public methods
+
+    # getter/setter methods
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -5394,7 +5369,7 @@ class SisypheROIDraw(object):
             # Revision 25/06/2026 >
             self._clipboard = None
 
-    # Undo/redo
+    # undo/redo methods
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -5445,7 +5420,6 @@ class SisypheROIDraw(object):
         """
         return self._undo
 
-    # noinspection unresolved-references
     @cython.cfunc
     @cython.returns(cython.void)
     def appendZSliceToLIFO(self,
@@ -5464,11 +5438,11 @@ class SisypheROIDraw(object):
         """
         if 0 <= i < self._roi.getSize()[2]:
             buff = sparse.csr_matrix(self._roi.getNumpy()[i, :, :].copy().flatten())
-            if pile == self._UNDO: self._undolifo.append((self._DSZ, i, buff))
+            if pile == self._UNDO:
+                self._undolifo.append((self._DSZ, i, buff))
             else: self._redolifo.append((self._DSZ, i, buff))
         else: raise IndexError('parameter index {} is out of range.'.format(i))
 
-    # noinspection unresolved-references
     @cython.cfunc
     @cython.returns(cython.void)
     def appendYSliceToLIFO(self,
@@ -5487,11 +5461,11 @@ class SisypheROIDraw(object):
         """
         if 0 <= i < self._roi.getSize()[1]:
             buff = sparse.csr_matrix(self._roi.getNumpy()[:, i, :].copy().flatten())
-            if pile == self._UNDO: self._undolifo.append((self._DSY, i, buff))
+            if pile == self._UNDO:
+                self._undolifo.append((self._DSY, i, buff))
             else: self._redolifo.append((self._DSY, i, buff))
         else: raise IndexError('parameter index {} is out of range.'.format(i))
 
-    # noinspection unresolved-references
     @cython.cfunc
     @cython.returns(cython.void)
     def appendXSliceToLIFO(self,
@@ -5510,8 +5484,13 @@ class SisypheROIDraw(object):
         """
         if 0 <= i < self._roi.getSize()[0]:
             buff = sparse.csr_matrix(self._roi.getNumpy()[:, :, i].copy().flatten())
-            if pile == self._UNDO: self._undolifo.append((self._DSX, i, buff))
-            else: self._redolifo.append((self._DSY, i, buff))
+            if pile == self._UNDO:
+                self._undolifo.append((self._DSX, i, buff))
+            else:
+                # < Revision 16/11/2026
+                # self._redolifo.append((self._DSY, i, buff))
+                self._redolifo.append((self._DSX, i, buff))
+                # Revision 16/11/2026 >
         else: raise IndexError('parameter index {} is out of range.'.format(i))
 
     @cython.ccall
@@ -5537,6 +5516,13 @@ class SisypheROIDraw(object):
             if dim == 0: self.appendZSliceToLIFO(i, pile)
             elif dim == 1: self.appendYSliceToLIFO(i, pile)
             else: self.appendXSliceToLIFO(i, pile)
+            # < Revision 17/11/2026
+            if self._lifoconnect is not None:
+                try:
+                    # noinspection calling-non-callable
+                    self._lifoconnect()
+                except: pass
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -5553,8 +5539,16 @@ class SisypheROIDraw(object):
         """
         if self._undo and self.hasROI():
             buff = sparse.csr_matrix(self._roi.getNumpy().copy().flatten())
-            if pile == self._UNDO: self._undolifo.append((self._DV, None, buff))
+            if pile == self._UNDO:
+                self._undolifo.append((self._DV, None, buff))
             else: self._redolifo.append((self._DV, None, buff))
+            # < Revision 17/11/2026
+            if self._lifoconnect is not None:
+                try:
+                    # noinspection calling-non-callable
+                    self._lifoconnect()
+                except: pass
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -5565,25 +5559,34 @@ class SisypheROIDraw(object):
         processing of the SisypheROI attribute.
         """
         if len(self._undolifo) > 0:
-            if len(self._undolifo) > 1: self._undolifo.pop()
-            item = self._undolifo[len(self._undolifo) - 1]
-            sx, sy, sz = self._roi.getSize()
-            if item[0] == self._DV:
-                self.appendVolumeToLIFO(pile=self._REDO)
-                buff = item[2].toarray().reshape(sz, sy, sx)
-                self._roi.getNumpy()[:, :, :] = buff
-            elif item[0] == self._DSZ:
-                self.appendZSliceToLIFO(item[1], pile=self._REDO)
-                buff = item[2].toarray().reshape(sy, sx)
-                self._roi.getNumpy()[item[1], :, :] = buff
-            elif item[0] == self._DSY:
-                self.appendYSliceToLIFO(item[1], pile=self._REDO)
-                buff = item[2].toarray().reshape(sz, sx)
-                self._roi.getNumpy()[:, item[1], :] = buff
-            elif item[0] == self._DSX:
-                self.appendXSliceToLIFO(item[1], pile=self._REDO)
-                buff = item[2].toarray().reshape(sz, sy)
-                self._roi.getNumpy()[:, :, item[1]] = buff
+            # < Revision 17/11/2026
+            # if len(self._undolifo) > 1: self._undolifo.pop()
+            # item = self._undolifo[len(self._undolifo) - 1]
+            if len(self._undolifo) > 0:
+                item = self._undolifo.pop()
+                sx, sy, sz = self._roi.getSize()
+                if item[0] == self._DV:
+                    self.appendVolumeToLIFO(pile=self._REDO)
+                    buff = item[2].toarray().reshape(sz, sy, sx)
+                    self._roi.getNumpy()[:, :, :] = buff
+                elif item[0] == self._DSZ:
+                    self.appendZSliceToLIFO(item[1], pile=self._REDO)
+                    buff = item[2].toarray().reshape(sy, sx)
+                    self._roi.getNumpy()[item[1], :, :] = buff
+                elif item[0] == self._DSY:
+                    self.appendYSliceToLIFO(item[1], pile=self._REDO)
+                    buff = item[2].toarray().reshape(sz, sx)
+                    self._roi.getNumpy()[:, item[1], :] = buff
+                elif item[0] == self._DSX:
+                    self.appendXSliceToLIFO(item[1], pile=self._REDO)
+                    buff = item[2].toarray().reshape(sz, sy)
+                    self._roi.getNumpy()[:, :, item[1]] = buff
+            if self._lifoconnect is not None:
+                try:
+                    # noinspection calling-non-callable
+                    self._lifoconnect()
+                except: pass
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -5615,6 +5618,13 @@ class SisypheROIDraw(object):
                 # self._roi.getNumpy[:, :, item[1]] = buff
                 self._roi.getNumpy()[:, :, item[1]] = buff
                 # Revision 15/06/2026 >
+            # < Revision 17/11/2026
+            if self._lifoconnect is not None:
+                try:
+                    # noinspection calling-non-callable
+                    self._lifoconnect()
+                except: pass
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -5622,11 +5632,23 @@ class SisypheROIDraw(object):
         """
         Clear the LIFO undo/redo stacks.
         """
+        # < Revision 17/11/2026
         self._undolifo.clear()
-        self.appendVolumeToLIFO()
+        # self.appendVolumeToLIFO()
         self._redolifo.clear()
+        if self._lifoconnect is not None:
+            try:
+                # noinspection calling-non-callable
+                self._lifoconnect()
+            except: pass
+        # Revision 17/11/2026 >
 
-    # Brush
+    @cython.ccall
+    @cython.returns(cython.void)
+    def connectLIFO(self, func: Callable[[], None] | cython.object | None = None) -> None:
+        self._lifoconnect = func
+
+    # Brush methods
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6042,7 +6064,7 @@ class SisypheROIDraw(object):
                     bitwise_or(back, brush, roi[z:z2, y:y2, x:x2])
                     # Revision 25/06/2026 >
 
-    # Slice processing
+    # slice processing methods
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6065,10 +6087,13 @@ class SisypheROIDraw(object):
             flip y-slice-axis if True
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             img = self._extractSITKSlice(sindex, dim)
             img = sitkFlip(img, [flipx, flipy])
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6091,10 +6116,13 @@ class SisypheROIDraw(object):
             shift in y-slice-axis (in voxels)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             img = self._extractSITKSlice(sindex, dim)
             img = sitkShift(img, [movex, movey])
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6130,9 +6158,13 @@ class SisypheROIDraw(object):
                 - 1 y-axis slice (coronal),
                 - 2 x-axis slice (sagittal)
         """
-        self._clipboard = self._extractSITKSlice(sindex, dim)
-        self.clearSlice(sindex, dim)
-        if self._undo: self.appendSliceToLIFO(sindex, dim)
+        if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            self._clipboard = self._extractSITKSlice(sindex, dim)
+            self.clearSlice(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6150,9 +6182,13 @@ class SisypheROIDraw(object):
                 - 1 y-axis slice (coronal),
                 - 2 x-axis slice (sagittal)
         """
-        if self._clipboard is not None and self._clipboard.GetDimension() == 2:
-            self._updateSliceFromSITKImage(self._clipboard, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+        if self.hasROI():
+            if self._clipboard is not None and self._clipboard.GetDimension() == 2:
+                # < Revision 17/11/2026
+                if self._undo: self.appendSliceToLIFO(sindex, dim)
+                self._updateSliceFromSITKImage(self._clipboard, sindex, dim)
+                # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6185,12 +6221,15 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             if radius is None: radius = self._morphradius
             if struct is None: struct = self._struct
             img = self._extractSITKSlice(sindex, dim)
             img = sitkBinaryDilate(img, [radius, radius], struct)
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6223,12 +6262,15 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             if radius is None: radius = self._morphradius
             if struct is None: struct = self._struct
             img = self._extractSITKSlice(sindex, dim)
             img = sitkBinaryErode(img, [radius, radius], struct)
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6261,12 +6303,15 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             if radius is None: radius = self._morphradius
             if struct is None: struct = self._struct
             img = self._extractSITKSlice(sindex, dim)
             img = sitkBinaryOpening(img, [radius, radius], struct)
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6299,12 +6344,15 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             if radius is None: radius = self._morphradius
             if struct is None: struct = self._struct
             img = self._extractSITKSlice(sindex, dim)
             img = sitkBinaryClosing(img, [radius, radius], struct)
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6345,7 +6393,6 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
                 if radius is None: radius = self._morphradius
                 if struct is None: struct = self._struct
@@ -6355,11 +6402,14 @@ class SisypheROIDraw(object):
                 elif dim == 1: c = cc[x, z]
                 else: c = cc[y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendSliceToLIFO(sindex, dim)
                     img1 = (cc == c)
                     img2 = img1 ^ img
                     img = sitkBinaryDilate(img1, [radius, radius], struct) | img2
                     self._updateSliceFromSITKImage(img, sindex, dim)
-                    if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6400,7 +6450,6 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
                 if radius is None: radius = self._morphradius
                 if struct is None: struct = self._struct
@@ -6410,11 +6459,14 @@ class SisypheROIDraw(object):
                 elif dim == 1: c = cc[x, z]
                 else: c = cc[y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendSliceToLIFO(sindex, dim)
                     img1 = (cc == c)
                     img2 = img1 ^ img
                     img = sitkBinaryErode(img1, [radius, radius], struct) | img2
                     self._updateSliceFromSITKImage(img, sindex, dim)
-                    if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6455,7 +6507,6 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
                 if radius is None: radius = self._morphradius
                 if struct is None: struct = self._struct
@@ -6465,11 +6516,14 @@ class SisypheROIDraw(object):
                 elif dim == 1: c = cc[x, z]
                 else: c = cc[y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendSliceToLIFO(sindex, dim)
                     img1 = (cc == c)
                     img2 = img1 ^ img
                     img = sitkBinaryOpening(img1, [radius, radius], struct) | img2
                     self._updateSliceFromSITKImage(img, sindex, dim)
-                    if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6510,7 +6564,6 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
                 if radius is None: radius = self._morphradius
                 if struct is None: struct = self._struct
@@ -6520,11 +6573,14 @@ class SisypheROIDraw(object):
                 elif dim == 1: c = cc[x, z]
                 else: c = cc[y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendSliceToLIFO(sindex, dim)
                     img1 = (cc == c)
                     img2 = img1 ^ img
                     img = sitkBinaryClosing(img1, [radius, radius], struct) | img2
                     self._updateSliceFromSITKImage(img, sindex, dim)
-                    if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6546,11 +6602,14 @@ class SisypheROIDraw(object):
             - if None, takes state of the undo attribute of the current SisypheROIDraw instance (see setUndo() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
             if undo is None: undo = self._undo
+            if undo: self.appendSliceToLIFO(sindex, dim)
             img = self._extractSITKSlice(sindex, dim)
             img = sitkBinaryFillHole(img)
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if undo: self.appendSliceToLIFO(sindex, dim)
+            # if undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6568,16 +6627,17 @@ class SisypheROIDraw(object):
                 - 2 x-axis slice (sagittal)
         """
         if self.hasROI():
-            # noinspection unresolved-references
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             dz, dy, dx = self._roi.getNumpy().shape
             if dim == 0: d = dz
             elif dim == 1: d = dy
             else: d = dx
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(0, d):
                 self.fillHolesSlice(i, dim, False)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -6605,6 +6665,8 @@ class SisypheROIDraw(object):
         """
         if self.hasROI():
             if self._roi.getSITKImage()[x, y, z] == 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendSliceToLIFO(sindex, dim)
                 if dim == 0: xs, ys = x, y
                 elif dim == 1: xs, ys = x, z
                 else:  xs, ys = y, z
@@ -6620,7 +6682,8 @@ class SisypheROIDraw(object):
                 # Revision 24/07/2025 >
                 img = img | fill
                 self._updateSliceFromSITKImage(img, sindex, dim)
-                if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -6641,6 +6704,8 @@ class SisypheROIDraw(object):
         """
         if self.hasROI():
             if self._roi.getSITKImage()[x, y, z] == 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 np = self._roi.getNumpy()
                 np = flood(np, (z, y, x)).astype('uint8')
                 fill = sitkGetImageFromArray(np)
@@ -6652,7 +6717,8 @@ class SisypheROIDraw(object):
                 # Revision 24/07/2025 >
                 img = self._roi.getSITKImage() | fill
                 self._updateRoiFromSITKImage(img)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6670,10 +6736,13 @@ class SisypheROIDraw(object):
                 - 1 y-axis slice (coronal),
                 - 2 x-axis slice (sagittal)
         """
+        # < Revision 17/11/2026
+        if self._undo: self.appendSliceToLIFO(sindex, dim)
         img = self._extractSITKSlice(sindex, dim)
         img = sitkImage(img.GetSize(), sitkUInt8)
         self._updateSliceFromSITKImage(img, sindex, dim)
-        if self._undo: self.appendSliceToLIFO(sindex, dim)
+        # if self._undo: self.appendSliceToLIFO(sindex, dim)
+        # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6692,9 +6761,12 @@ class SisypheROIDraw(object):
                 - 2 x-axis slice (sagittal)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             img = sitkBinaryNot(self._extractSITKSlice(sindex, dim))
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6717,6 +6789,8 @@ class SisypheROIDraw(object):
             'maximumentropy', 'kittler', 'isodata', 'moments' (default 'huang')
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             img = self._extractSITKSlice(sindex, dim, roi=False)
             if algo == 'otsu': img = sitkOtsu(img)
             elif algo == 'huang': img = sitkHuang(img)
@@ -6736,7 +6810,8 @@ class SisypheROIDraw(object):
             else: raise ValueError('unknown algorithm parameter.')
             img = sitkBinaryNot(img)
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6760,6 +6835,8 @@ class SisypheROIDraw(object):
         """
 
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             img = self._extractSITKSlice(sindex, dim, roi=False)
             if algo == 'otsu': img = sitkOtsu(img)
             elif algo == 'huang': img = sitkHuang(img)
@@ -6778,7 +6855,8 @@ class SisypheROIDraw(object):
                 img = (img <= v)
             else: raise ValueError('unknown algorithm parameter.')
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6800,12 +6878,15 @@ class SisypheROIDraw(object):
             number of voxels threshold
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             img = self._extractSITKSlice(sindex, dim)
             img = sitkConnectedComponent(img)
             img = sitkRelabelComponent(img, minimumObjectSize=n)
             img = (img > 0)
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6824,13 +6905,15 @@ class SisypheROIDraw(object):
                 - 2 x-axis slice (sagittal)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             img = self._extractSITKSlice(sindex, dim)
             img = sitkConnectedComponent(img)
             img = sitkRelabelComponent(img, sortByObjectSize=True)
-            # noinspection PyTypeChecker
             img: sitkImage = (img == 1)
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     # < Revision 20/10/2024
     # add clearBorderBlobSlice method
@@ -6851,10 +6934,13 @@ class SisypheROIDraw(object):
                 - 2 x-axis slice (sagittal)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             img = self._extractSITKSlice(sindex, dim)
             img = clear_border(sitkGetArrayViewFromImage(img))
             self._updateSliceFromSITKImage(img, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
     # Revision 20/10/2024 >
 
     @cython.ccall
@@ -6881,7 +6967,6 @@ class SisypheROIDraw(object):
             z-axis blob selection coordinate
         """
         if self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
                 img = self._extractSITKSlice(sindex, dim)
                 cimg = sitkConnectedComponent(img)
@@ -6889,10 +6974,12 @@ class SisypheROIDraw(object):
                 elif dim == 1: c = cimg[x, z]
                 else: c = cimg[y, z]
                 if c > 0:
-                    img = (cimg == c)
-                    # noinspection PyTypeChecker
-                    self._updateSliceFromSITKImage(img, sindex, dim)
+                    # < Revision 17/11/2026
                     if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    img = (cimg == c)
+                    self._updateSliceFromSITKImage(img, sindex, dim)
+                    # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6917,7 +7004,6 @@ class SisypheROIDraw(object):
             z-axis blob selection coordinate
         """
         if self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
                 img = self._extractSITKSlice(sindex, dim)
                 cimg = sitkConnectedComponent(img)
@@ -6925,9 +7011,12 @@ class SisypheROIDraw(object):
                 elif dim == 1: c = cimg[x, z]
                 else: c = cimg[y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendSliceToLIFO(sindex, dim)
                     img = (cimg != c) & img
                     self._updateSliceFromSITKImage(img, sindex, dim)
-                    if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -6953,7 +7042,6 @@ class SisypheROIDraw(object):
             z-axis blob selection coordinate
         """
         if self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
                 img = self._extractSITKSlice(sindex, dim)
                 cimg = sitkConnectedComponent(img)
@@ -6992,7 +7080,6 @@ class SisypheROIDraw(object):
             z-axis blob selection coordinate
         """
         if self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
                 img = self._extractSITKSlice(sindex, dim)
                 cimg = sitkConnectedComponent(img)
@@ -7004,11 +7091,14 @@ class SisypheROIDraw(object):
                     filtr = sitkLabelShapeStatisticsImageFilter()
                     filtr.Execute(img)
                     if filtr.GetNumberOfLabels() > 0:
+                        # < Revision 17/11/2026
+                        if self._undo: self.appendSliceToLIFO(sindex, dim)
                         x0, y0, dx, dy = filtr.GetBoundingBox(1)
                         self._clipboard = img[x0:x0+dx, y0:y0+dy]
                         img = self._extractSITKSlice(sindex, dim) - img
                         self._updateSliceFromSITKImage(img, sindex, dim)
-                        if self._undo: self.appendSliceToLIFO(sindex, dim)
+                        # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                        # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7036,6 +7126,8 @@ class SisypheROIDraw(object):
         if self._clipboard is not None:
             if self.hasROI():
                 if self._clipboard is not None and self._clipboard.GetDimension() == 2:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendSliceToLIFO(sindex, dim)
                     img = self._extractSITKSlice(sindex, dim)
                     if dim == 0:
                         img = Paste(img,
@@ -7053,7 +7145,8 @@ class SisypheROIDraw(object):
                                     self._clipboard.GetSize(),
                                     (0, 0), (y, z))
                     self._updateSliceFromSITKImage(img, sindex, dim)
-                    if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                    # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -7105,7 +7198,7 @@ class SisypheROIDraw(object):
 
     @cython.ccall
     @cython.returns(cython.void)
-    def interpolateBetweenSlices(self, sindex1: int, sindex2: int, dim: int, replace=False) -> None:
+    def interpolateBetweenSlices(self, sindex1: int, sindex2: int, dim: int, replace: bool= False) -> None:
         """
         Cavalieri's interpolation method is used to fill in the slices of the SisypheROI attribute between two slices
         sent as parameters (sindex1 and sindex2).
@@ -7129,8 +7222,9 @@ class SisypheROIDraw(object):
             if sindex1 > sindex2: sindex1, sindex2 = sindex2, sindex1
             n = sindex2 - sindex1
             if n > 1:
-                # noinspection unresolved-references
                 if not self._roi.sliceIsEmpty((sindex1, sindex2), dim):
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendVolumeToLIFO()
                     # Extract slices
                     img1 = self._extractSITKSlice(sindex1, dim)
                     img2 = self._extractSITKSlice(sindex2, dim)
@@ -7139,13 +7233,13 @@ class SisypheROIDraw(object):
                     img2 = sitkDistanceMap(img2)
                     # Linear interpolation between img1 and img2
                     step = (img2 - img1) / n
-                    # noinspection PyUnresolvedReferences
                     i: cython.int
                     for i in range(1, n):
                         img1 = img1 + sitkCast(step * i, sitkFloat32)
                         img = img1 <= 0
                         self._updateSliceFromSITKImage(img, sindex1 + i, dim, replace=replace)
-                    if self._undo: self.appendVolumeToLIFO()
+                    # if self._undo: self.appendVolumeToLIFO()
+                    # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7177,13 +7271,16 @@ class SisypheROIDraw(object):
             - if False (default), | (or) logic between mask and previous voxels of the slice
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             roi1 = self._extractSITKSlice(sindex, dim, roi=True)
             img = self._extractSITKSlice(sindex, dim, roi=False)
             roi = img == value
             if mask: roi = roi & self._extractSITKSlice(sindex, dim)
             if not replace: roi = roi | roi1
             self._updateSliceFromSITKImage(roi, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7211,8 +7308,9 @@ class SisypheROIDraw(object):
             z-axis blob selection coordinate
         """
         if self.hasVolume() and self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendSliceToLIFO(sindex, dim)
                 roi1 = self._extractSITKSlice(sindex, dim, roi=True)
                 img = self._extractSITKSlice(sindex, dim, roi=False)
                 cc = sitkConnectedComponent(roi1)
@@ -7223,7 +7321,8 @@ class SisypheROIDraw(object):
                 roi = img == value
                 roi = (roi & mask) | roi1
                 self._updateSliceFromSITKImage(roi, sindex, dim)
-                if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7248,6 +7347,8 @@ class SisypheROIDraw(object):
             - if False, | (or) logic between mask and previous voxels of the slice
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             roi1 = self._extractSITKSlice(sindex, dim, roi=True)
             img = self._extractSITKSlice(sindex, dim, roi=False)
             roi = sitkThreshold(img,
@@ -7256,7 +7357,8 @@ class SisypheROIDraw(object):
             if mask: roi = roi & self._extractSITKSlice(sindex, dim)
             if not replace: roi = roi | roi1
             self._updateSliceFromSITKImage(roi, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7282,8 +7384,9 @@ class SisypheROIDraw(object):
             z-axis blob selection coordinate
         """
         if self.hasVolume() and self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendSliceToLIFO(sindex, dim)
                 roi1 = self._extractSITKSlice(sindex, dim, roi=True)
                 img = self._extractSITKSlice(sindex, dim, roi=False)
                 cc = sitkConnectedComponent(roi1)
@@ -7296,7 +7399,8 @@ class SisypheROIDraw(object):
                                     upperThreshold=float(self._thresholdmax))
                 roi = (roi & mask) | roi1
                 self._updateSliceFromSITKImage(roi, sindex, dim)
-                if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7331,6 +7435,8 @@ class SisypheROIDraw(object):
             - if False (default), or logic between mask and previous voxels of the slice
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             roi1 = self._extractSITKSlice(sindex, dim, roi=True)
             img = self._extractSITKSlice(sindex, dim, roi=False)
             if dim == 0:
@@ -7348,7 +7454,8 @@ class SisypheROIDraw(object):
             if mask: roi = roi & self._extractSITKSlice(sindex, dim)
             if not replace: roi = roi | roi1
             self._updateSliceFromSITKImage(roi, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7373,8 +7480,9 @@ class SisypheROIDraw(object):
             z-axis seed voxel coordinate
         """
         if self.hasVolume() and self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendSliceToLIFO(sindex, dim)
                 roi1 = self._extractSITKSlice(sindex, dim, roi=True)
                 img = self._extractSITKSlice(sindex, dim, roi=False)
                 cc = sitkConnectedComponent(roi1)
@@ -7396,7 +7504,8 @@ class SisypheROIDraw(object):
                 roi1 = roi1 ^ mask
                 roi = (roi & mask) | roi1
                 self._updateSliceFromSITKImage(roi, sindex, dim)
-                if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7460,6 +7569,8 @@ class SisypheROIDraw(object):
             - if False (default), or logic between mask and previous voxels of the slice
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendSliceToLIFO(sindex, dim)
             if niter is None: niter = self._cciter
             if multi is None: multi = self._ccsigma
             if radius is None: radius = self._morphradius
@@ -7480,7 +7591,8 @@ class SisypheROIDraw(object):
             if mask: roi = roi & self._extractSITKSlice(sindex, dim)
             if not replace: roi = roi | roi1
             self._updateSliceFromSITKImage(roi, sindex, dim)
-            if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # if self._undo: self.appendSliceToLIFO(sindex, dim)
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7538,8 +7650,9 @@ class SisypheROIDraw(object):
             if radius is None, multi = morphology radius attribute of the current instance
         """
         if self.hasVolume() and self.hasROI():
-            # noinspection unresolved-references
             if self._roi.getSITKImage()[x, y, z] > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendSliceToLIFO(sindex, dim)
                 if niter is None: niter = self._cciter
                 if multi is None: multi = self._ccsigma
                 if radius is None: radius = self._morphradius
@@ -7564,7 +7677,8 @@ class SisypheROIDraw(object):
                 roi1 = roi1 ^ mask
                 roi = (roi & mask) | roi1
                 self._updateSliceFromSITKImage(roi, sindex, dim)
-                if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # if self._undo: self.appendSliceToLIFO(sindex, dim)
+                # Revision 17/11/2026 >
 
     # Volume processing
 
@@ -7584,10 +7698,12 @@ class SisypheROIDraw(object):
             flip z-slice-axis if True
         """
         if self.hasROI():
-            # noinspection unresolved-references
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = sitkFlip(self._roi.getSITKImage(), [flipx, flipy, flipz])
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7605,10 +7721,12 @@ class SisypheROIDraw(object):
             shift in z-slice-axis (in voxels)
         """
         if self.hasROI():
-            # noinspection unresolved-references
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = sitkShift(self._roi.getSITKImage(), [movex, movey, movez])
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7624,12 +7742,14 @@ class SisypheROIDraw(object):
         if self.hasROI():
             if mm == 0.0: mm = self._thickness
             if mm > 0.0:
-                # noinspection unresolved-references
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 dmap = sitkSignedMaurerDistanceMap(self._roi.getSITKImage(), False, False, True)
                 img = (dmap <= mm)
                 img = sitkCast(img, sitkUInt8)
                 self._updateRoiFromSITKImage(img)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7645,12 +7765,14 @@ class SisypheROIDraw(object):
         if self.hasROI():
             if mm == 0.0: mm = self._thickness
             if mm > 0.0:
-                # noinspection unresolved-references
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 dmap = sitkSignedMaurerDistanceMap(self._roi.getSITKImage(), False, False, True)
                 img = (dmap <= -mm)
                 img = sitkCast(img, sitkUInt8)
                 self._updateRoiFromSITKImage(img)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7672,12 +7794,14 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             if radius is None: radius = self._morphradius
             if struct is None: struct = self._struct
-            # noinspection unresolved-references
             img = sitkBinaryDilate(self._roi.getSITKImage(), [radius, radius, radius], struct)
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7699,12 +7823,14 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             if radius is None: radius = self._morphradius
             if struct is None: struct = self._struct
-            # noinspection unresolved-references
             img = sitkBinaryErode(self._roi.getSITKImage(), [radius, radius, radius], struct)
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7726,12 +7852,14 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             if radius is None: radius = self._morphradius
             if struct is None: struct = self._struct
-            # noinspection unresolved-references
             img = sitkBinaryOpening(self._roi.getSITKImage(), [radius, radius, radius], struct)
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -7753,12 +7881,14 @@ class SisypheROIDraw(object):
                 - if None, get structuring element shape from the structuring element attribute of the current SisypheROIDraw instance (see setStructElement() method)
         """
         if self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             if radius is None: radius = self._morphradius
             if struct is None: struct = self._struct
-            # noinspection unresolved-references
             img = sitkBinaryClosing(self._roi.getSITKImage(), [radius, radius, radius], struct)
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -7785,6 +7915,8 @@ class SisypheROIDraw(object):
                     cc = sitkConnectedComponent(self._roi.getSITKImage())
                     c = cc[x, y, z]
                     if c > 0:
+                        # < Revision 17/11/2026
+                        if self._undo: self.appendVolumeToLIFO()
                         dmap = sitkSignedMaurerDistanceMap(self._roi.getSITKImage(), False, False, True)
                         img = (dmap <= mm)
                         img = sitkCast(img, sitkUInt8)
@@ -7792,7 +7924,8 @@ class SisypheROIDraw(object):
                         img2 = img1 ^ self._roi.getSITKImage()
                         img = img | img2
                         self._updateRoiFromSITKImage(img)
-                        if self._undo: self.appendVolumeToLIFO()
+                        # if self._undo: self.appendVolumeToLIFO()
+                        # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -7819,6 +7952,8 @@ class SisypheROIDraw(object):
                     cc = sitkConnectedComponent(self._roi.getSITKImage())
                     c = cc[x, y, z]
                     if c > 0:
+                        # < Revision 17/11/2026
+                        if self._undo: self.appendVolumeToLIFO()
                         dmap = sitkSignedMaurerDistanceMap(self._roi.getSITKImage(), False, False, True)
                         img = (dmap <= -mm)
                         img = sitkCast(img, sitkUInt8)
@@ -7826,7 +7961,8 @@ class SisypheROIDraw(object):
                         img2 = img1 ^ self._roi.getSITKImage()
                         img = img | img2
                         self._updateRoiFromSITKImage(img)
-                        if self._undo: self.appendVolumeToLIFO()
+                        # if self._undo: self.appendVolumeToLIFO()
+                        # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -7865,11 +8001,14 @@ class SisypheROIDraw(object):
                 cc = sitkConnectedComponent(self._roi.getSITKImage())
                 c = cc[x, y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendVolumeToLIFO()
                     img1 = (cc == c)
                     img2 = img1 ^ self._roi.getSITKImage()
                     img = sitkBinaryDilate(img1, [radius, radius, radius], struct) | img2
                     self._updateRoiFromSITKImage(img)
-                    if self._undo: self.appendVolumeToLIFO()
+                    # if self._undo: self.appendVolumeToLIFO()
+                    # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -7908,11 +8047,14 @@ class SisypheROIDraw(object):
                 cc = sitkConnectedComponent(self._roi.getSITKImage())
                 c = cc[x, y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendVolumeToLIFO()
                     img1 = (cc == c)
                     img2 = img1 ^ self._roi.getSITKImage()
                     img = sitkBinaryErode(img1, [radius, radius, radius], struct) | img2
                     self._updateRoiFromSITKImage(img)
-                    if self._undo: self.appendVolumeToLIFO()
+                    # if self._undo: self.appendVolumeToLIFO()
+                    # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -7951,11 +8093,14 @@ class SisypheROIDraw(object):
                 cc = sitkConnectedComponent(self._roi.getSITKImage())
                 c = cc[x, y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendVolumeToLIFO()
                     img1 = (cc == c)
                     img2 = img1 ^ self._roi.getSITKImage()
                     img = sitkBinaryOpening(img1, [radius, radius, radius], struct) | img2
                     self._updateRoiFromSITKImage(img)
-                    if self._undo: self.appendVolumeToLIFO()
+                    # if self._undo: self.appendVolumeToLIFO()
+                    # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -7994,11 +8139,14 @@ class SisypheROIDraw(object):
                 cc = sitkConnectedComponent(self._roi.getSITKImage())
                 c = cc[x, y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendVolumeToLIFO()
                     img1 = (cc == c)
                     img2 = img1 ^ self._roi.getSITKImage()
                     img = sitkBinaryClosing(img1, [radius, radius, radius], struct) | img2
                     self._updateRoiFromSITKImage(img)
-                    if self._undo: self.appendVolumeToLIFO()
+                    # if self._undo: self.appendVolumeToLIFO()
+                    # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -8015,13 +8163,15 @@ class SisypheROIDraw(object):
         if self.hasROI():
             n = len(rois)
             if n > 1:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 temp = rois[0].getNumpy()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, n):
                     temp = temp & rois[i].getNumpy()
                 self._updateRoiFromNumpy(temp)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
             else: raise ValueError('list parameter has less than two items.')
 
     @cython.ccall
@@ -8039,13 +8189,15 @@ class SisypheROIDraw(object):
         if self.hasROI():
             n = len(rois)
             if n > 1:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 temp = rois[0].getNumpy()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, n):
                     temp = temp | rois[i].getNumpy()
                 self._updateRoiFromNumpy(temp)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
             else: raise ValueError('list parameter has less than two items.')
 
     @cython.ccall
@@ -8063,13 +8215,15 @@ class SisypheROIDraw(object):
         if self.hasROI():
             n = len(rois)
             if n > 1:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 temp = rois[0].getNumpy()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(1, n):
                     temp = temp ^ rois[i].getNumpy()
                 self._updateRoiFromNumpy(temp)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
             else: raise ValueError('list parameter has less than two items.')
 
     @cython.ccall
@@ -8087,9 +8241,10 @@ class SisypheROIDraw(object):
         if self.hasROI():
             n = len(rois)
             if n > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 temp1 = rois[0].getNumpy()
                 temp2 = rois[1].getNumpy()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 # < Revision 21/03/2025
                 # for i in range(2, n): temp2 = temp2 & rois[i].getNumpy()
@@ -8097,7 +8252,8 @@ class SisypheROIDraw(object):
                 # Revision 21/03/2025 >
                 temp1 = temp1 & logical_not(temp2).astype(uint8)
                 self._updateRoiFromNumpy(temp1)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
             else: raise ValueError('list parameter is empty.')
 
     @cython.ccall
@@ -8107,10 +8263,12 @@ class SisypheROIDraw(object):
         Binary "not" of the SisypheROI image attribute.
         """
         if self.hasROI():
-            # noinspection unresolved-references
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = sitkBinaryNot(self._roi.getSITKImage())
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -8119,10 +8277,12 @@ class SisypheROIDraw(object):
         Fill holes in the SisypheROI image attribute.
         """
         if self.hasROI():
-            # noinspection unresolved-references
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = sitkBinaryFillHole(self._roi.getSITKImage())
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -8130,10 +8290,12 @@ class SisypheROIDraw(object):
         """
         Clear the SisypheROI image attribute (i.e. all voxels to 0).
         """
-        # noinspection unresolved-references
+        # < Revision 17/11/2026
+        if self._undo: self.appendVolumeToLIFO()
         img = sitkImage(self._roi.getSITKImage().GetSize(), sitkUInt8)
         self._updateRoiFromSITKImage(img)
-        if self._undo: self.appendVolumeToLIFO()
+        # if self._undo: self.appendVolumeToLIFO()
+        # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8150,6 +8312,8 @@ class SisypheROIDraw(object):
             'maximumentropy', 'kittler', 'isodata', 'moments'
         """
         if self.hasVolume():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             if algo == 'otsu': img = sitkOtsu(self._volume.getSITKImage())
             elif algo == 'huang': img = sitkHuang(self._volume.getSITKImage())
             elif algo == 'renyi': img = sitkRenyi(self._volume.getSITKImage())
@@ -8168,7 +8332,8 @@ class SisypheROIDraw(object):
             else: raise ValueError('{} unknown algorithm parameter.'.format(algo))
             img = sitkBinaryNot(img)
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8185,6 +8350,8 @@ class SisypheROIDraw(object):
             'maximumentropy', 'kittler', 'isodata', 'moments'
         """
         if self.hasVolume():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             if algo == 'otsu': img = sitkOtsu(self._volume.getSITKImage())
             elif algo == 'huang': img = sitkHuang(self._volume.getSITKImage())
             elif algo == 'renyi': img = sitkRenyi(self._volume.getSITKImage())
@@ -8202,7 +8369,8 @@ class SisypheROIDraw(object):
                 img = (self._volume.getSITKImage() <= v)
             else: raise ValueError('{} unknown algorithm parameter.'.format(algo))
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8234,6 +8402,8 @@ class SisypheROIDraw(object):
             - '', no filling
         """
         if self.hasVolume():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             # Segment background
             algo = algo.lower()
             if algo == 'mean':
@@ -8259,17 +8429,14 @@ class SisypheROIDraw(object):
             if isinstance(kernel, int):
                 if kernel > 0 and morpho in ('dilate', 'erode', 'open', 'close'):
                     morpho = morpho.lower()
-                    # noinspection PyUnresolvedReferences
                     i: cython.int
                     for i in range(niter):
                         if morpho == 'dilate': img = sitkBinaryDilate(img, [kernel, kernel, kernel])
                         elif morpho == 'erode': img = sitkBinaryErode(img, [kernel, kernel, kernel])
                         elif morpho == 'open':
-                            # noinspection PyUnusedLocal
                             img = sitkBinaryOpening(img, [kernel, kernel, kernel])
                             break
                         elif morpho == 'close':
-                            # noinspection PyUnusedLocal
                             img = sitkBinaryClosing(img, [kernel, kernel, kernel])
                             break
                         if QApplication.instance() is not None: QApplication.processEvents()
@@ -8277,7 +8444,6 @@ class SisypheROIDraw(object):
             # Filling
             if fill == '2d':
                 f = BinaryFillholeImageFilter()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(img.GetSize()[2]):
                     slc = img[:, :, i]
@@ -8288,7 +8454,8 @@ class SisypheROIDraw(object):
                 img = sitkBinaryFillHole(img)
                 if QApplication.instance() is not None: QApplication.processEvents()
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8312,6 +8479,8 @@ class SisypheROIDraw(object):
             structuring element size, 0 automatic value (kernel=2 if spacing < 1.5 mm, kernel=1 otherwise)
         """
         if self.hasVolume():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             # Segment background
             algo = algo.lower()
             if algo == 'mean':
@@ -8338,7 +8507,6 @@ class SisypheROIDraw(object):
                     else: kernel = 1
                 # Erode
                 if morphoiter > 0:
-                    # noinspection PyUnresolvedReferences
                     i: cython.int
                     for i in range(morphoiter):
                         img = sitkBinaryErode(img, [kernel, kernel, kernel])
@@ -8351,7 +8519,6 @@ class SisypheROIDraw(object):
                 img = blobs == 1
                 # Dilate
                 if morphoiter > 0:
-                    # noinspection PyUnresolvedReferences
                     i: cython.int
                     for i in range(morphoiter):
                         img = sitkBinaryDilate(img, [kernel, kernel, kernel])
@@ -8363,7 +8530,6 @@ class SisypheROIDraw(object):
             if isinstance(kernel, int):
                 # Erode
                 if morphoiter > 0:
-                    # noinspection PyUnresolvedReferences
                     i: cython.int
                     for i in range(morphoiter):
                         img = sitkBinaryErode(img, [kernel, kernel, kernel])
@@ -8376,15 +8542,14 @@ class SisypheROIDraw(object):
                 img = blobs == 1
                 # Dilate
                 if morphoiter > 0:
-                    # noinspection PyUnresolvedReferences
                     i: cython.int
                     for i in range(morphoiter):
                         img = sitkBinaryDilate(img, [kernel, kernel, kernel])
                         if QApplication.instance() is not None: QApplication.processEvents()
             else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
-            # noinspection PyTypeChecker
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -8422,12 +8587,14 @@ class SisypheROIDraw(object):
             number of voxels threshold
         """
         if self.hasROI():
-            # noinspection unresolved-references
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = sitkConnectedComponent(self._roi.getSITKImage())
             img = sitkRelabelComponent(img, minimumObjectSize=n)
             img = (img > 0)
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -8436,13 +8603,14 @@ class SisypheROIDraw(object):
         Remove all blobs (connected components) except the largest one, from the SisypheROI image attribute.
         """
         if self.hasROI():
-            # noinspection unresolved-references
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = sitkConnectedComponent(self._roi.getSITKImage())
             img = sitkRelabelComponent(img, sortByObjectSize=True)
-            # noinspection PyTypeChecker
             img: sitkImage = (img == 1)
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # < Revision 20/10/2024
     # add clearBorderBlob method
@@ -8453,10 +8621,12 @@ class SisypheROIDraw(object):
         Remove all blobs (connected components) linked to image border.
         """
         if self.hasROI():
-            # noinspection unresolved-references
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = clear_border(self._roi.getNumpy())
             self._updateRoiFromNumpy(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
     # Revision 20/10/2024 >
 
     # noinspection unresolved-references
@@ -8481,10 +8651,12 @@ class SisypheROIDraw(object):
                 cimg = sitkConnectedComponent(self._roi.getSITKImage())
                 c = cimg[x, y, z]
                 if c > 0:
-                    img = (cimg == c)
-                    # noinspection PyTypeChecker
-                    self._updateRoiFromSITKImage(img)
+                    # < Revision 17/11/2026
                     if self._undo: self.appendVolumeToLIFO()
+                    img = (cimg == c)
+                    self._updateRoiFromSITKImage(img)
+                    # if self._undo: self.appendVolumeToLIFO()
+                    # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8508,9 +8680,12 @@ class SisypheROIDraw(object):
                 cimg = sitkConnectedComponent(img)
                 c = cimg[x, y, z]
                 if c > 0:
+                    # < Revision 17/11/2026
+                    if self._undo: self.appendVolumeToLIFO()
                     img = (cimg != c) & img
                     self._updateRoiFromSITKImage(img)
-                    if self._undo: self.appendVolumeToLIFO()
+                    # if self._undo: self.appendVolumeToLIFO()
+                    # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8567,11 +8742,14 @@ class SisypheROIDraw(object):
                     filtr = sitkLabelShapeStatisticsImageFilter()
                     filtr.Execute(img)
                     if filtr.GetNumberOfLabels() > 0:
+                        # < Revision 17/11/2026
+                        if self._undo: self.appendVolumeToLIFO()
                         x0, y0, z0, dx, dy, dz = filtr.GetBoundingBox(1)
                         self._clipboard = img[x0:x0+dx, y0:y0+dy, z0:z0+dz]
                         img = self._roi.getSITKImage() - img
                         self._updateRoiFromSITKImage(img)
-                        if self._undo: self.appendVolumeToLIFO()
+                        # if self._undo: self.appendVolumeToLIFO()
+                        # Revision 17/11/2026 >
 
     @cython.ccall
     @cython.returns(cython.void)
@@ -8591,13 +8769,15 @@ class SisypheROIDraw(object):
         """
         if self.hasROI():
             if self._clipboard is not None:
-                # noinspection unresolved-references
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 img = Paste(self._roi.getSITKImage(),
                             self._clipboard,
                             self._clipboard.GetSize(),
                             (0, 0, 0), (x, y, z))
                 self._updateRoiFromSITKImage(img)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8618,11 +8798,14 @@ class SisypheROIDraw(object):
             - if False (default), | (or) logic between mask and previous voxels
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = self._volume.getSITKImage() == value
             if mask: img = img & self._roi.getSITKImage()
             if not replace: img = img | self._roi.getSITKImage()
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8646,6 +8829,8 @@ class SisypheROIDraw(object):
         """
         if self.hasVolume() and self.hasROI():
             if self._roi.getSITKImage()[x, y, z] > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 roi1 = self._roi.getSITKImage()
                 cc = sitkConnectedComponent(roi1)
                 mask = (cc == cc[x, y, z])
@@ -8653,7 +8838,8 @@ class SisypheROIDraw(object):
                 roi1 = roi1 ^ mask
                 img = (img & mask) | roi1
                 self._updateRoiFromSITKImage(img)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8672,13 +8858,16 @@ class SisypheROIDraw(object):
             - if False (default), | (or) logic between mask and previous voxels
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = sitkThreshold(self._volume.getSITKImage(),
                                 lowerThreshold=float(self._thresholdmin),
                                 upperThreshold=float(self._thresholdmax))
             if mask: img = img & self._roi.getSITKImage()
             if not replace: img = img | self._roi.getSITKImage()
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8699,6 +8888,8 @@ class SisypheROIDraw(object):
         """
         if self.hasVolume() and self.hasROI():
             if self._roi.getSITKImage()[x, y, z] > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 roi1 = self._roi.getSITKImage()
                 cc = sitkConnectedComponent(roi1)
                 mask = (cc == cc[x, y, z])
@@ -8708,7 +8899,8 @@ class SisypheROIDraw(object):
                 roi1 = roi1 ^ mask
                 img = (img & mask) | roi1
                 self._updateRoiFromSITKImage(img)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8732,12 +8924,15 @@ class SisypheROIDraw(object):
             - if False (default), | (or) logic between mask and previous voxels
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             img = sitkConnectedThreshold(self._volume.getSITKImage(), [(x, y, z)],
                                          lower=self._thresholdmin, upper=self._thresholdmax)
             if mask: img = img & self._roi.getSITKImage()
             if not replace: img = img | self._roi.getSITKImage()
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8757,6 +8952,8 @@ class SisypheROIDraw(object):
         """
         if self.hasVolume() and self.hasROI():
             if self._roi.getSITKImage()[x, y, z] > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 roi1 = self._roi.getSITKImage()
                 cc = sitkConnectedComponent(roi1)
                 mask = (cc == cc[x, y, z])
@@ -8765,7 +8962,8 @@ class SisypheROIDraw(object):
                 roi1 = roi1 ^ mask
                 img = (img & mask) | roi1
                 self._updateRoiFromSITKImage(img)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8821,6 +9019,8 @@ class SisypheROIDraw(object):
             - if False, | (or) logic between mask and previous voxels
         """
         if self.hasVolume() and self.hasROI():
+            # < Revision 17/11/2026
+            if self._undo: self.appendVolumeToLIFO()
             if niter is None: niter = self._cciter
             if multi is None: multi = self._ccsigma
             if radius is None: radius = self._morphradius
@@ -8830,7 +9030,8 @@ class SisypheROIDraw(object):
             if mask: img = img & self._roi.getSITKImage()
             if not replace: img = img | self._roi.getSITKImage()
             self._updateRoiFromSITKImage(img)
-            if self._undo: self.appendVolumeToLIFO()
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -8880,6 +9081,8 @@ class SisypheROIDraw(object):
         """
         if self.hasVolume() and self.hasROI():
             if self._roi.getSITKImage()[x, y, z] > 0:
+                # < Revision 17/11/2026
+                if self._undo: self.appendVolumeToLIFO()
                 if niter is None: niter = self._cciter
                 if multi is None: multi = self._ccsigma
                 if radius is None: radius = self._morphradius
@@ -8892,12 +9095,17 @@ class SisypheROIDraw(object):
                 roi1 = roi1 ^ mask
                 img = (img & mask) | roi1
                 self._updateRoiFromSITKImage(img)
-                if self._undo: self.appendVolumeToLIFO()
+                # if self._undo: self.appendVolumeToLIFO()
+                # Revision 17/11/2026 >
 
     # < Revision 25/03/2025
     @cython.ccall
     @cython.returns(cython.void)
-    def activeContourSegmentation(self, x: int, y: int, z: int) -> None:
+    def activeContourSegmentation(self,
+                                  x: int,
+                                  y: int,
+                                  z: int,
+                                  wait: DialogWait | None = None) -> None:
         """
         Active contour, level set method of segmentation, in the SisypheROI image attribute. Iterative algorithm
         starting from a seed sphere. This method used active contour attributes of the current SisypheDraw instance as
@@ -8912,6 +9120,8 @@ class SisypheROIDraw(object):
             y-axis seed sphere coordinate
         z : int
             z-axis seed sphere coordinate
+        wait : DialogWait | None (optional)
+            progress dialog (default None)
         """
         if self._acalgo in ('geodesic', 'shape'):
             self.activeContour(x, y, z,
@@ -8922,7 +9132,8 @@ class SisypheROIDraw(object):
                                self._accurv,
                                self._acpropag,
                                self._aciter,
-                               self._acalgo)
+                               self._acalgo,
+                               wait=wait)
         elif self._acalgo == 'threshold':
             self.activeThresholdContour(x, y, z,
                                         self._acradius,
@@ -8931,7 +9142,8 @@ class SisypheROIDraw(object):
                                         self._accurv,
                                         self._acpropag,
                                         self._acthresholds,
-                                        self._aciter)
+                                        self._aciter,
+                                        wait=wait)
         else: raise ValueError('{} invalid active contour algorithm.'.format(self._acalgo))
     # Revision 25/03/2025 >
 
@@ -8948,7 +9160,8 @@ class SisypheROIDraw(object):
                       propag: float = 1.0,
                       niter: int = 1000,
                       algo: str = 'default',
-                      replace: bool = False) -> None:
+                      replace: bool = False,
+                      wait: DialogWait | None = None) -> None:
         """
         Active contour, level set method of segmentation, in the SisypheROI image attribute. Iterative algorithm
         starting from a seed sphere.
@@ -8997,7 +9210,11 @@ class SisypheROIDraw(object):
         replace : bool
             - if True, segmented mask replaces previous voxels
             - if False (default), | (or) logic between mask and previous voxels
+        wait : DialogWait | None (optional)
+            progress dialog (default None)
         """
+        # < Revision 17/11/2026
+        if self._undo: self.appendVolumeToLIFO()
         seedradius = seedradius * 2 + 1
         img = sitkCast(self._volume.getSITKImage(), sitkFloat32)
         speed = sitkBoundedReciprocal(sitkGradientMagnitude(img, sigma))
@@ -9016,12 +9233,12 @@ class SisypheROIDraw(object):
             seed = (cimg == c)
         seed = sitkCast(sitkThreshold(seed, -1000, seedradius), speed.GetPixelID()) * -1 + 0.5
         # < debug
-        vol = SisypheVolume()
-        vol.copyFromSITKImage(seed)
-        vol.saveAs('activecontour_seed.xvol')
-        vol2 = SisypheVolume()
-        vol2.copyFromSITKImage(speed)
-        vol2.saveAs('activecontour_speed.xvol')
+        # vol = SisypheVolume()
+        # vol.copyFromSITKImage(seed)
+        # vol.saveAs('activecontour_seed.xvol')
+        # vol2 = SisypheVolume()
+        # vol2.copyFromSITKImage(speed)
+        # vol2.saveAs('activecontour_speed.xvol')
         # debug >
         if algo == 'shape': flt = sitkShapeDetectionLevelSetImageFilter()
         else:
@@ -9031,11 +9248,21 @@ class SisypheROIDraw(object):
         flt.SetNumberOfIterations(niter)
         flt.SetCurvatureScaling(curv)
         flt.SetPropagationScaling(propag)
+        # < Revision 16/11/2026
+        if wait is not None:
+            wait.setSimpleITKFilter(flt)
+            wait.addSimpleITKFilterProcessCommand()
+            wait.progressVisibilityOn()
+        # Revision 16/11/2026 >
         roi = self._roi.copyToSITKImage()
         img = sitkThreshold(flt.Execute(seed, speed), -1000, 0)
+        # < Revision 16/11/2026
+        if wait is not None: wait.progressVisibilityOff()
+        # Revision 16/11/2026 >
         if not replace: img = img | roi
         self._updateRoiFromSITKImage(img)
-        if self._undo: self.appendVolumeToLIFO()
+        # if self._undo: self.appendVolumeToLIFO()
+        # Revision 17/11/2026 >
 
     # noinspection unresolved-references
     @cython.ccall
@@ -9049,7 +9276,8 @@ class SisypheROIDraw(object):
                                propag: float = 1.0,
                                thresholds: tuple[float, float] | None = None,
                                niter: int = 1000,
-                               replace: bool = False) -> None:
+                               replace: bool = False,
+                               wait : DialogWait | None = None) -> None:
         """
         Active contour, level set method of segmentation, in the SisypheROI image attribute. Iterative algorithm
         starting from a seed sphere.
@@ -9074,7 +9302,7 @@ class SisypheROIDraw(object):
         rms : float
             convergence threshold (0.0 < rms < 1.0, default 0.01). rms is used to determine when the solution has
             converged. A lower value will result in a tighter-fitting solution, but will require more computations. Too
-            low a value could put the solver into an infinite loop unless a reasonabl number of iterations parameter is
+            low a value could put the solver into an infinite loop unless a reasonable number of iterations parameter is
             set.
         curv : float
             curvature, larger -> smoother resulting contour (default 1.0). Controls the magnitude of the curvature
@@ -9093,7 +9321,11 @@ class SisypheROIDraw(object):
         replace : bool
             - if True, segmented mask replaces previous voxels
             - if False (default), | (or) logic between mask and previous voxels
+        wait : DialogWait | None (optional)
+            progress dialog (default None)
         """
+        # < Revision 17/11/2026
+        if self._undo: self.appendVolumeToLIFO()
         seedradius = seedradius * 2 + 1
         img = sitkCast(self._volume.getSITKImage(), sitkFloat32)
         if self._roi[x, y, z] == 0:
@@ -9126,16 +9358,26 @@ class SisypheROIDraw(object):
         flt.SetNumberOfIterations(niter)
         flt.SetCurvatureScaling(curv)
         flt.SetPropagationScaling(propag)
+        # < Revision 16/11/2026
+        if wait is not None:
+            wait.setSimpleITKFilter(flt)
+            wait.addSimpleITKFilterProcessCommand()
+            wait.progressVisibilityOn()
+        # Revision 16/11/2026 >
         roi = self._roi.copyToSITKImage()
         img = sitkThreshold(flt.Execute(seed, img), -1000, 0)
+        # < Revision 16/11/2026
+        if wait is not None: wait.progressVisibilityOff()
+        # Revision 16/11/2026 >
         if not replace: img = img | roi
         self._updateRoiFromSITKImage(img)
-        if self._undo: self.appendVolumeToLIFO()
+        # if self._undo: self.appendVolumeToLIFO()
+        # Revision 17/11/2026 >
 
     binaryUNION = binaryOR
     binaryINTERSECTION = binaryAND
 
-    # Draw methods
+    # drawing methods
 
     # < Revision 20/10/2024
     # add drawLine method, not yet tested
@@ -9164,13 +9406,18 @@ class SisypheROIDraw(object):
             scalar value to draw (default 1)
         """
         if self.hasROI():
-            # self._roi.drawLine(p0, p1, orient)
-            # noinspection unresolved-references
-            self._roi.drawLine(p0, p1, orient, v)
+            # < Revision 17/11/2026
             if orient == 0: sindex = p0[2]
             elif orient == 1: sindex = p0[1]
             else: sindex = p0[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # self._roi.drawLine(p0, p1, orient)
+            self._roi.drawLine(p0, p1, orient, v)
+            # if orient == 0: sindex = p0[2]
+            # elif orient == 1: sindex = p0[1]
+            # else: sindex = p0[0]
+            # if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # Revision 17/11/2026 >
     # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
@@ -9200,13 +9447,18 @@ class SisypheROIDraw(object):
             scalar value to draw (default 1)
         """
         if self.hasROI():
-            # self._roi.drawDisk(p, radius, orient)
-            # noinspection unresolved-references
-            self._roi.drawDisk(p, radius, orient, v)
+            # < Revision 17/11/2026
             if orient == 0: sindex = p[2]
             elif orient == 1: sindex = p[1]
             else: sindex = p[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # self._roi.drawDisk(p, radius, orient)
+            self._roi.drawDisk(p, radius, orient, v)
+            # if orient == 0: sindex = p[2]
+            # elif orient == 1: sindex = p[1]
+            # else: sindex = p[0]
+            # if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # Revision 17/11/2026 >
     # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
@@ -9239,13 +9491,18 @@ class SisypheROIDraw(object):
             scalar value to draw (default 1)
         """
         if self.hasROI():
-            # self._roi.drawEllipse(p, radius, rot, orient)
-            # noinspection unresolved-references
-            self._roi.drawEllipse(p, radius, rot, orient, v)
+            # < Revision 17/11/2026
             if orient == 0: sindex = p[2]
             elif orient == 1: sindex = p[1]
             else: sindex = p[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # self._roi.drawEllipse(p, radius, rot, orient)
+            self._roi.drawEllipse(p, radius, rot, orient, v)
+            # if orient == 0: sindex = p[2]
+            # elif orient == 1: sindex = p[1]
+            # else: sindex = p[0]
+            # if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # Revision 17/11/2026 >
     # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
@@ -9275,13 +9532,18 @@ class SisypheROIDraw(object):
             scalar value to draw (default 1)
         """
         if self.hasROI():
-            # self._roi.drawSquare(p, extent, orient)
-            # noinspection unresolved-references
-            self._roi.drawSquare(p, extent, orient, v)
+            # < Revision 17/11/2026
             if orient == 0: sindex = p[2]
             elif orient == 1: sindex = p[1]
             else: sindex = p[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # self._roi.drawSquare(p, extent, orient)
+            self._roi.drawSquare(p, extent, orient, v)
+            # if orient == 0: sindex = p[2]
+            # elif orient == 1: sindex = p[1]
+            # else: sindex = p[0]
+            # if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # Revision 17/11/2026 >
     # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
@@ -9311,13 +9573,18 @@ class SisypheROIDraw(object):
             scalar value to draw (default 1)
         """
         if self.hasROI():
-            # self._roi.drawRectangle(p, extent, orient)
-            # noinspection unresolved-references
-            self._roi.drawRectangle(p, extent, orient, v)
+            # < Revision 17/11/2026
             if orient == 0: sindex = p[2]
             elif orient == 1: sindex = p[1]
             else: sindex = p[0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # self._roi.drawRectangle(p, extent, orient)
+            self._roi.drawRectangle(p, extent, orient, v)
+            # if orient == 0: sindex = p[2]
+            # elif orient == 1: sindex = p[1]
+            # else: sindex = p[0]
+            # if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # Revision 17/11/2026 >
     # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
@@ -9350,12 +9617,14 @@ class SisypheROIDraw(object):
             fill holes of the threshold mask if True. If None (default), the self._dtrfillholes attribute is used.
         """
         if self.hasROI() and self.hasVolume():
+            # < Revision 17/11/2026
             extent = extent[::-1]
             if majorblob is None: majorblob = self._dtrmajorblob
             if fillholes is None: fillholes = self._dtrfillholes
             #  axial
             if orient == 0:
                 sindex = p[2]
+                if self._undo: self.appendSliceToLIFO(sindex, orient)
                 roi = self._roi.getNumpy()[sindex, :, :]
                 img = self._volume.getNumpy()[sindex, :, :]
                 mask = where((img >= float(self._thresholdmin)) &
@@ -9377,6 +9646,7 @@ class SisypheROIDraw(object):
             # coronal
             elif orient == 1:
                 sindex = p[1]
+                if self._undo: self.appendSliceToLIFO(sindex, orient)
                 roi = self._roi.getNumpy()[:, sindex, :]
                 img = self._volume.getNumpy()[:, sindex, :]
                 mask = where((img >= float(self._thresholdmin)) &
@@ -9398,6 +9668,7 @@ class SisypheROIDraw(object):
             # sagittal
             else:
                 sindex = p[0]
+                if self._undo: self.appendSliceToLIFO(sindex, orient)
                 roi = self._roi.getNumpy()[:, :, sindex]
                 img = self._volume.getNumpy()[:, :, sindex]
                 mask = where((img >= float(self._thresholdmin)) &
@@ -9416,7 +9687,8 @@ class SisypheROIDraw(object):
                     mask = sitkGetArrayFromImage(img)
                 roi[r, c] = mask[r, c] | roi[r, c]
                 self._roi.getNumpy()[:, :, sindex] = roi
-            if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # Revision 17/11/2026 >
     # Revision 08/03/2026 >
 
     # < Revision 20/10/2024
@@ -9446,13 +9718,18 @@ class SisypheROIDraw(object):
             scalar value to draw (default 1)
         """
         if self.hasROI():
-            # self._roi.drawPolygon(p, orient)
-            # noinspection unresolved-references
-            self._roi.drawPolygon(p, orient, v)
+            # < Revision 17/11/2026
             if orient == 0: sindex = p[0][2]
             elif orient == 1: sindex = p[0][1]
             else: sindex = p[0][0]
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # self._roi.drawPolygon(p, orient)
+            self._roi.drawPolygon(p, orient, v)
+            # if orient == 0: sindex = p[0][2]
+            # elif orient == 1: sindex = p[0][1]
+            # else: sindex = p[0][0]
+            # if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # Revision 17/11/2026 >
     # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
@@ -9479,10 +9756,12 @@ class SisypheROIDraw(object):
             scalar value to draw (default 1)
         """
         if self.hasROI():
-            # self._roi.drawCube(p, extent)
-            # noinspection unresolved-references
-            self._roi.drawCube(p, extent, v)
+            # < Revision 17/11/2026
             if self._undo: self.appendVolumeToLIFO()
+            # self._roi.drawCube(p, extent)
+            self._roi.drawCube(p, extent, v)
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
     # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
@@ -9509,10 +9788,12 @@ class SisypheROIDraw(object):
             scalar value to draw (default 1)
         """
         if self.hasROI():
-            # self._roi.drawParallelepiped(p, extent)
-            # noinspection unresolved-references
-            self._roi.drawParallelepiped(p, extent, v)
+            # < Revision 17/11/2026
             if self._undo: self.appendVolumeToLIFO()
+            # self._roi.drawParallelepiped(p, extent)
+            self._roi.drawParallelepiped(p, extent, v)
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
     # Revision 06/03/2026 >
     # Revision 20/10/2024 >
 
@@ -9532,9 +9813,12 @@ class SisypheROIDraw(object):
             sphere radius (in voxels)
         """
         if self.hasROI():
-            # noinspection unresolved-references
-            self._roi.drawParallelepiped(p, radius)
+            # < Revision 17/11/2026
             if self._undo: self.appendVolumeToLIFO()
+            # self._roi.drawParallelepiped(p, radius)
+            self._roi.drawSphere(p, radius)
+            # if self._undo: self.appendVolumeToLIFO()
+            # Revision 17/11/2026 >
     # Revision 20/10/2024 >
 
     # < Revision 04/01/2026
@@ -9561,13 +9845,15 @@ class SisypheROIDraw(object):
             slice index
         """
         if self.hasROI():
+            # < Revision 17/11/2026
             if len(p[0]) > 2: sindex = p[0][2 - orient]
-            # noinspection unresolved-references
-            self._roi.drawFilledPolygon(p, sindex, orient)
             if self._undo: self.appendSliceToLIFO(sindex, orient)
+            self._roi.drawFilledPolygon(p, sindex, orient)
+            # if self._undo: self.appendSliceToLIFO(sindex, orient)
+            # Revision 17/11/2026 >
     # Revision 04/01/2026 >
 
-    # Statistics
+    # Statistical methods
 
     # noinspection unresolved-references
     @cython.ccall
@@ -9599,26 +9885,17 @@ class SisypheROIDraw(object):
             mask = self._roi.getNumpy().flatten() > 0
             img = self._volume.getNumpy().flatten()[mask]
             r = describe(img)
-            # noinspection PyUnresolvedReferences
             stats['count'] = r.nobs
-            # noinspection PyUnresolvedReferences
             stats['mean'] = r.mean
             stats['median'] = median(img)
-            # noinspection PyUnresolvedReferences
             stats['min'] = r.minmax[0]
-            # noinspection PyUnresolvedReferences
             stats['max'] = r.minmax[1]
-            # noinspection PyUnresolvedReferences
             stats['range'] = r.minmax[1] - r.minmax[0]
             stats['perc25'] = percentile(img, 25)
             stats['perc75'] = percentile(img, 75)
-            # noinspection PyUnresolvedReferences
             stats['var'] = r.variance
-            # noinspection PyUnresolvedReferences
             stats['std'] = sqrt(r.variance)
-            # noinspection PyUnresolvedReferences
             stats['skewness'] = r.skewness
-            # noinspection PyUnresolvedReferences
             stats['kurtosis'] = r.kurtosis
         return stats
 
@@ -9664,26 +9941,17 @@ class SisypheROIDraw(object):
             mask = sitkGetArrayViewFromImage(roi).flatten() > 0
             img = sitkGetArrayViewFromImage(slc).flatten()[mask]
             r = describe(img)
-            # noinspection PyUnresolvedReferences
             stats['count'] = r.nobs
-            # noinspection PyUnresolvedReferences
             stats['mean'] = r.mean
             stats['median'] = median(img)
-            # noinspection PyUnresolvedReferences
             stats['min'] = r.minmax[0]
-            # noinspection PyUnresolvedReferences
             stats['max'] = r.minmax[1]
-            # noinspection PyUnresolvedReferences
             stats['range'] = r.minmax[1] - r.minmax[0]
             stats['perc25'] = percentile(img, 25)
             stats['perc75'] = percentile(img, 75)
-            # noinspection PyUnresolvedReferences
             stats['var'] = r.variance
-            # noinspection PyUnresolvedReferences
             stats['std'] = sqrt(r.variance)
-            # noinspection PyUnresolvedReferences
             stats['skewness'] = r.skewness
-            # noinspection PyUnresolvedReferences
             stats['kurtosis'] = r.kurtosis
         return stats
 
@@ -9720,7 +9988,6 @@ class SisypheROIDraw(object):
             img = sitkConnectedComponent(self._roi.getSITKImage())
             filtr.Execute(img)
             if filtr.GetNumberOfLabels() > 0:
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(0, filtr.GetNumberOfLabels()-1):
                     statslabel = dict()
@@ -10200,7 +10467,7 @@ class SisypheROIFeatures(object):
         self._ngtdmTag = True
         self._gldmTag = True
 
-    # noinspection PyArgumentList,unresolved-references
+    # noinspection unresolved-references
     def execute(self, progress: DialogWait | None = None) -> None:
         """
         Execute features calculation.
@@ -10224,14 +10491,12 @@ class SisypheROIFeatures(object):
         if self.hasVolume() and self.hasROICollection():
             from Sisyphe.gui.dialogWait import DialogWait
             if not isinstance(progress, DialogWait): progress = None
-            # noinspection PyUnresolvedReferences
             n: cython.int = len(self._rois)
             if n > 0:
                 img = self._volume.getSITKImage()
                 rows = self._rois.keys()
                 cols = list()
                 df = list()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(n):
                     item = list()
@@ -10387,7 +10652,6 @@ class SisypheROIHistogram(object):
         if rois is not None: self.setROICollection(rois)
         else: self._rois: SisypheROICollection | None = None
 
-        # noinspection PyUnresolvedReferences
         self._bins: cython.int = 100
         self._df: DataFrame | None = None
 
@@ -10591,7 +10855,6 @@ class SisypheROIHistogram(object):
                 # Histogram
                 h, c = histogram(img, bins=self._bins)
                 c2 = list()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(len(c) - 1):
                     c2.append((c[i] + c[i + 1]) / 2)
@@ -10622,14 +10885,12 @@ class SisypheROIHistogram(object):
         if self.hasVolume() and self.hasROICollection():
             from Sisyphe.gui.dialogWait import DialogWait
             if not isinstance(progress, DialogWait): progress = None
-            # noinspection PyUnresolvedReferences
             n: cython.int = len(self._rois)
             if n > 0:
                 df = list()
                 rows = self._rois.keys()
                 img = self._volume.getNumpy().flatten()
                 c2 = list()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(n):
                     name = self._rois[i].getName()

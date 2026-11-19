@@ -1496,11 +1496,11 @@ class SisypheLut(object):
                     # noinspection PyTypeChecker
                     self._vtklut.SetTableValue(i, rv[i] / 255.0, gv[i] / 255.0, bv[i] / 255.0, 1.0)
             else: raise IOError('{} is not a LUT file.'.format(filename))
-            # noinspection PyUnreachableCode
             self._typeLUT = self._LUTTOCODE['file']
             self._name = filename
         except IOError: raise IOError('read error.')
         finally: f.close()
+
 
 @cython.cclass
 class SisypheColorTransfer(object):
@@ -2445,7 +2445,6 @@ class SisypheColorTransfer(object):
             for i in range(0, self._gradienttransfer.GetSize()):
                 clist.append(self.getGradientTransferElement(i))
         else: raise ValueError('{} invalid parameter value.'.format(code))
-        # noinspection PyUnreachableCode
         return clist
 
     @cython.ccall
@@ -2544,7 +2543,9 @@ class SisypheColorTransfer(object):
                 if vrgb1 != vrgb2:
                     return False
             return True
-        else: return False
+        else:
+            # noinspection unreachable-code
+            return False
 
     @cython.ccall
     @cython.returns(cython.bint)
@@ -2571,7 +2572,9 @@ class SisypheColorTransfer(object):
                 if va1 != va2:
                     return False
             return True
-        else: return False
+        else:
+            # noinspection unreachable-code
+            return False
 
     @cython.ccall
     @cython.returns(cython.bint)
@@ -2598,7 +2601,9 @@ class SisypheColorTransfer(object):
                 if va1 != va2:
                     return False
             return True
-        else: return False
+        else:
+            # noinspection unreachable-code
+            return False
 
     @cython.ccall
     @cython.returns(cython.int)
@@ -2949,7 +2954,9 @@ class SisypheColorTransfer(object):
             return self.isSameColorTransfer(buff) and \
                    self.isSameAlphaTransfer(buff) and \
                    self.isSameGradientTransfer(buff)
-        else: return False
+        else:
+            # noinspection unreachable-code
+            return False
 
     @cython.ccall
     @cython.returns(tuple[cython.double, cython.double])

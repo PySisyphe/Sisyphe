@@ -21,6 +21,7 @@ from math import atan2
 from math import degrees
 
 from numpy import ndarray
+from numpy import percentile
 
 from datetime import date
 from datetime import datetime
@@ -4725,7 +4726,7 @@ class SisypheDisplay(object):
     object -> SisypheIdentity
 
     Creation: 18/03/2021
-    Last revision: 13/12/2024
+    Last revision: 13/11/2026
     """
     __slots__ = ['_rangemin', '_rangemax', '_windowmin', '_windowmax', '_lut', '_parent']
 
@@ -5211,7 +5212,7 @@ class SisypheDisplay(object):
 
     @cython.ccall
     @cython.returns(cython.void)
-    def autoWindow(self, cmin: int = 1, cmax: int = 99) -> None:
+    def autoWindow(self, cmin: float= 0.5, cmax: float = 99.9) -> None:
         """
         Set windowing lut attributes of the current SisypheDisplay instance.
 
@@ -5220,15 +5221,22 @@ class SisypheDisplay(object):
 
         Parameters
         ----------
-        cmin : float
-            centile used for minimum windowing value
-        cmax : float
-            centile used for maximum windowing value
+        cmin : float (optional)
+            centile, between 0.0 and 100.0, used for minimum windowing value (default 1)
+            if 0.0, minimum windowing value is calculated using Huand algorithm (background threshold)
+        cmax : float (optional)
+            centile, between 0.0 and 100.0, used for maximum windowing value (default 99)
         """
         if self.hasParent():
             parent = self.getParent()
-            vmin = parent.getPercentile(cmin)
-            vmax = parent.getPercentile(cmax)
+            if cmin == 0.0:
+                vmin = float(parent.getBackgroundThreshold('huang')) / 2
+                img = parent.getNumpy().flatten()
+                img = img[img >= vmin]
+                vmax = float(percentile(img, cmax))
+            else:
+                vmin = parent.getPercentile(cmin)
+                vmax = parent.getPercentile(cmax)
             self.setWindow(vmin, vmax)
 
     @cython.ccall

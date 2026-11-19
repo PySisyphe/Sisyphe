@@ -11,7 +11,7 @@ External packages/modules
     - Pillow,  image processing, https://pillow.readthedocs.io/
     - PyQt5, Qt GUI, https://www.riverbankcomputing.com/software/pyqt/
     - scikit-image, image processing, https://scikit-image.org/
-    - Scipy, scientific computing, https://docs.scipy.org
+    - SciPy, scientific computing, https://docs.scipy.org
     - SimpleITK, medical image processing, https://simpleitk.org/
     - vtk, visualization engine/3D rendering, https://vtk.org/
 """
@@ -32,7 +32,6 @@ from math import degrees
 from numpy import iinfo
 from numpy import can_cast
 from numpy import array
-# noinspection PyFinal
 from numpy import nan as npnan
 from numpy import min as npmin
 from numpy import max as npmax
@@ -221,7 +220,6 @@ def numpyToVtkImageData(np: ndarray) -> vtkImageData:
     buff.shape = buff.size
     data = numpy_to_vtk(buff)
     img = vtkImageData()
-    # noinspection PyArgumentList
     img.SetDimensions(d[::-1])
     img.AllocateScalars(getLibraryDataType(str(np.dtype), 'vtk'), 1)
     img.GetPointData().SetScalars(data)
@@ -246,7 +244,6 @@ def simpleITKToVTK(img: sitkImage) -> vtkImageData:
     if isinstance(img, sitkImage):
         np = sitkGetArrayViewFromImage(img)
         vtkimg = numpyToVtkImageData(np)
-        # noinspection PyArgumentList
         vtkimg.SetSpacing(img.GetSpacing())
         # Revision 15/04/2023
         # vtkimg.SetOrigin(img.GetOrigin())
@@ -3025,21 +3022,18 @@ class SisypheImage(object):
         if isinstance(index, int): index = [index]
         # Axial
         if orient == 0:
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in index:
                 if self.getNumpy()[i, :, :].sum() != 0: return False
             return True
         # Coronal
         elif orient == 1:
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in index:
                 if self.getNumpy()[:, i, :].sum() != 0: return False
             return True
         # Sagittal
         else:
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in index:
                 if self.getNumpy()[:, :, i].sum() != 0: return False
@@ -3161,7 +3155,6 @@ class SisypheImage(object):
                 # Revision 25/12/2025 >
                 if morpho in ('dilate', 'erode', 'open', 'close'):
                     if morpho in ('dilate', 'erode'):
-                        # noinspection PyUnresolvedReferences
                         i: cython.int
                         for i in range(niter):
                             if morpho == 'dilate': img = BinaryDilate(img, [kernel, kernel, kernel])
@@ -3181,9 +3174,7 @@ class SisypheImage(object):
         # if fill == '2d':
         if fill in ('2d', '2D'):
             f = BinaryFillholeImageFilter()
-            # noinspection PyUnresolvedReferences
             i: cython.int
-            # noinspection PyUnresolvedReferences
             for i in range(img.GetSize()[2]):
                 slc = img[:, :, i]
                 slc = f.Execute(slc)
@@ -3437,7 +3428,6 @@ class SisypheImage(object):
             # Revision 18/12/2025 >
             # Erode
             if morphoiter > 0:
-                # noinspection PyUnresolvedReferences
                 # < Revision 18/12/2025
                 # i: cython.int
                 # for i in range(morphoiter):
@@ -3451,7 +3441,6 @@ class SisypheImage(object):
             # Dilate
             if morphoiter > 0:
                 # < Revision 18/12/2025
-                # noinspection PyUnresolvedReferences
                 # i: cython.int
                 # for i in range(morphoiter):
                 #    img = BinaryDilate(img, [kernel, kernel, kernel])
@@ -3466,7 +3455,6 @@ class SisypheImage(object):
                 # Erode
                 if morphoiter > 0:
                     # < Revision 18/12/2025
-                    # noinspection PyUnresolvedReferences
                     # i: cython.int
                     # for i in range(morphoiter):
                     #     img = BinaryErode(img, [kernel, kernel, kernel])
@@ -3479,7 +3467,6 @@ class SisypheImage(object):
                 # Dilate
                 if morphoiter > 0:
                     # < Revision 18/12/2025
-                    # noinspection PyUnresolvedReferences
                     # i: cython.int
                     # for i in range(morphoiter):
                     #     img = BinaryDilate(img, [kernel, kernel, kernel])
@@ -3596,17 +3583,14 @@ class SisypheImage(object):
         if isinstance(kernel, int):
             if kernel > 0 and morpho in ('dilate', 'erode', 'open', 'close'):
                 morpho = morpho.lower()
-                # noinspection PyUnresolvedReferences
                 i: cython.int
                 for i in range(niter):
                     if morpho == 'dilate': img = BinaryDilate(img, [kernel, kernel, kernel])
                     elif morpho == 'erode': img = BinaryErode(img, [kernel, kernel, kernel])
                     elif morpho == 'open':
-                        # noinspection PyUnusedLocal
                         img = BinaryMorphologicalOpening(img, [kernel, kernel, kernel])
                         break
                     elif morpho == 'close':
-                        # noinspection PyUnusedLocal
                         img = BinaryMorphologicalClosing(img, [kernel, kernel, kernel])
                         break
         else: raise TypeError('kernel parameter type {} is not int.'.format(type(kernel)))
@@ -3614,7 +3598,6 @@ class SisypheImage(object):
         # < Revision 25/12/2025
         if fill in ('2d', '2D'):
             f = BinaryFillholeImageFilter()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(img.GetSize()[2]):
                 slc = img[:, :, i]
@@ -3737,7 +3720,6 @@ class SisypheImage(object):
             # Erode
             if morphoiter > 0:
                 # < Revision 18/12/2025
-                # noinspection PyUnresolvedReferences
                 # i: cython.int
                 # for i in range(morphoiter):
                 #     img = BinaryErode(img, [kernel, kernel, kernel])
@@ -3750,7 +3732,6 @@ class SisypheImage(object):
             # Dilate
             if morphoiter > 0:
                 # < Revision 18/12/2025
-                # noinspection PyUnresolvedReferences
                 # i: cython.int
                 # for i in range(morphoiter):
                 #    img = BinaryDilate(img, [kernel, kernel, kernel])
@@ -3765,7 +3746,6 @@ class SisypheImage(object):
                 # Erode
                 if morphoiter > 0:
                     # < Revision 18/12/2025
-                    # noinspection PyUnresolvedReferences
                     # i: cython.int
                     # for i in range(morphoiter):
                     #     img = BinaryErode(img, [kernel, kernel, kernel])
@@ -3778,7 +3758,6 @@ class SisypheImage(object):
                 # Dilate
                 if morphoiter > 0:
                     # < Revision 18/12/2025
-                    # noinspection PyUnresolvedReferences
                     # i: cython.int
                     # for i in range(morphoiter):
                     #     img = BinaryDilate(img, [kernel, kernel, kernel])
@@ -4056,7 +4035,6 @@ class SisypheImage(object):
             np = sitkGetArrayFromImage(img).T
             n = np.flatten().max()
             bb = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(1, n+1):
                 # < Revision 25/10/2024
@@ -4076,7 +4054,6 @@ class SisypheImage(object):
                 if xmin < 0: xmin = 0
                 if ymin < 0: ymin = 0
                 if zmin < 0: zmin = 0
-                # noinspection PyUnresolvedReferences
                 s = np.shape
                 if xmax > s[0]: xmax = s[0]
                 if ymax > s[1]: ymax = s[1]
@@ -4170,7 +4147,6 @@ class SisypheImage(object):
                 else:
                     # Mask, automatic thresholding with Huang algorithm
                     try:
-                        # noinspection PyUnusedLocal
                         mask = sitkGetArrayFromImage(sitkHuang(self.getSITKImage(), 0, 1)).T
                     # < Revision 06/12/2024
                     except:
@@ -4339,7 +4315,6 @@ class SisypheImage(object):
                 else:
                     # Mask, automatic thresholding with Huang algorithm
                     try:
-                        # noinspection PyUnusedLocal
                         mask = sitkGetArrayFromImage(sitkHuang(self.getSITKImage(), 0, 1)).T
                     # < Revision 06/12/2024
                     except:
@@ -4671,7 +4646,6 @@ class SisypheImage(object):
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -4734,7 +4708,6 @@ class SisypheImage(object):
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -4797,7 +4770,6 @@ class SisypheImage(object):
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -4847,7 +4819,6 @@ class SisypheImage(object):
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -4908,13 +4879,11 @@ class SisypheImage(object):
         if n == 1:
             img = self.getNumpy().flatten()
             if m is not None: img = img[m > 0]
-            # noinspection PyArgumentList
             return float(img.max())
         else:
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -5039,13 +5008,11 @@ class SisypheImage(object):
         if n == 1:
             img = self.getNumpy().flatten()
             if m is not None: img = img[m > 0]
-            # noinspection PyArgumentList
             return float(img.min()), float(img.max())
         else:
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -5110,7 +5077,6 @@ class SisypheImage(object):
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -5173,7 +5139,6 @@ class SisypheImage(object):
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -5237,7 +5202,6 @@ class SisypheImage(object):
             if c is None: first, last = 0, n
             else: first, last = c, c + 1
             r = list()
-            # noinspection PyUnresolvedReferences
             i: cython.int
             for i in range(first, last):
                 img = self.getNumpy()[i, :, :, :].flatten()
@@ -5355,12 +5319,10 @@ class SisypheImage(object):
         r = dict()
         r['mean'] = mean(img)
         r['std'] = std(img)
-        # noinspection PyArgumentList
         r['min'] = img.min()
         r['p25'] = percentile(img, 25)
         r['median'] = median(img)
         r['p75'] = percentile(img, 75)
-        # noinspection PyArgumentList
         r['max'] = img.max()
         r['kurtosis'] = kurtosis(img)
         r['skewness'] = skew(img)
@@ -5501,7 +5463,6 @@ class SisypheImage(object):
             elif isinstance(c, slice): img = self.getNumpy()[c.start:c.stop:c.step, :, :, :]
             else: raise TypeError('invalid parameter type {}, must be list[int], slice or None.')
             # Revision 19/12/2024 >
-            # noinspection PyArgumentList
             r = img.min(axis=0)
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
@@ -5540,7 +5501,6 @@ class SisypheImage(object):
             elif isinstance(c, slice): img = self.getNumpy()[c.start:c.stop:c.step, :, :, :]
             else: raise TypeError('invalid parameter type {}, must be list[int], slice or None.')
             # Revision 19/12/2024 >
-            # noinspection PyArgumentList
             r = img.max(axis=0)
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('single component image.')
@@ -5581,9 +5541,7 @@ class SisypheImage(object):
             elif isinstance(c, slice): img = self.getNumpy()[c.start:c.stop:c.step, :, :, :]
             else: raise TypeError('invalid parameter type {}, must be list[int], slice or None.')
             # Revision 19/12/2024 >
-            # noinspection PyArgumentList
             rmin = img.min(axis=0)
-            # noinspection PyArgumentList
             rmax = img.max(axis=0)
             r = rmax - rmin
             return SisypheImage(r, spacing=self.getSpacing())
@@ -5785,7 +5743,6 @@ class SisypheImage(object):
                 img = img.astype('double')
                 img[img == 0.0] = npnan
                 try:
-                    # noinspection PyUnusedLocal
                     r = nanargmin(img, axis=0)
                 except: r = 0.0
             else: r = img.argmin(axis=0)
@@ -5867,7 +5824,6 @@ class SisypheImage(object):
             else:
                 raise TypeError('invalid parameter type {}, must be list[int], slice or None.')
             # Revision 19/12/2024 >
-            # noinspection PyUnresolvedReferences
             r = (img.sum(axis=0) == 0.0).astype('uint8')
             return SisypheImage(r, spacing=self.getSpacing())
         else: raise AttributeError('Non-multicomponent image.')
@@ -6765,7 +6721,6 @@ class SisypheImage(object):
         d = len(s)
         if d == 3: imgs.append(img)
         elif d == 4 and s[3] > 1:
-            # noinspection PyUnresolvedReferences
             i: cython.int
             # < Revision 10/04/2026
             # SimpleITK filters & cast does not support sitkVectorFloat32 type
@@ -6794,7 +6749,6 @@ class SisypheImage(object):
                     # Revision 10/04/2026 >
             # Revision 10/04/2026 >
         # Reorientation of each sitk single component image
-        # noinspection PyUnresolvedReferences
         i: cython.int
         for i in range(len(imgs)):
             if reorient:
@@ -7008,13 +6962,11 @@ class SisypheBinaryImage(SisypheImage):
             elif isinstance(image, vtkImageData):
                 # Revision 22/06/2024
                 if copy:
-                    # noinspection PyArgumentList
                     if image.GetScalarType() != VTK_CHAR:
                         f = vtkImageCast()
                         f.SetOutputScalarTypeToChar()
                         f.ClampOverflowOn()
                         f.SetInputData(image)
-                        # noinspection PyArgumentList
                         f.Update()
                         image = f.GetOutput()
                 else:
@@ -7027,7 +6979,6 @@ class SisypheBinaryImage(SisypheImage):
                 # Revision 22/06/2024
                 if copy:
                     if image.pixeltype != 'unsigned char':
-                        # noinspection PyUnresolvedReferences
                         image = (image > 0).astype('uint8')
                 else:
                     kargs['size'] = image.shape
@@ -7117,7 +7068,6 @@ class SisypheBinaryImage(SisypheImage):
             image to copy
         """
         if isinstance(img, vtkImageData):
-            # noinspection PyArgumentList
             if img.GetScalarType() == VTK_UNSIGNED_CHAR:
                 super().copyFromVTKImage(img)
             else: raise TypeError('VTK image parameter datatype is not uint8.')

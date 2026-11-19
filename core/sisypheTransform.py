@@ -3662,7 +3662,6 @@ class SisypheApplyTransform(object):
             if tuple(spacing) != self._moving.getSpacing():
                 size = ceil(array(self._moving.getSize()) * (array(self._moving.getSpacing()) / array(spacing)))
                 size = size.astype(int)
-                print(size)
                 return self.resampleToFOV(size.tolist(), spacing, save=save, prefix=prefix, suffix=suffix, wait=wait)
             else: return self._moving
         else: raise AttributeError('No moving SisypheVolume.')
@@ -4758,6 +4757,7 @@ class SisypheTransforms(SisypheTransformCollection):
             self._referenceID = ID.getID()
             self.setFilenameFromVolume(ID)
         else:
+            # noinspection unreachable-code
             self._referenceID = None
 
     def hasReferenceID(self) -> bool:
