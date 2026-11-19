@@ -105,7 +105,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-1-03-09-build-20-09-2026">version 1.03.09, build 20/09/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-05-24-build-05-10-2026">version 1.05.24, build 05/10/2026</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-10-24-build-20-10-2026">version 1.10.24, build 20/10/2026</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-12-07-build-20-11-2026">version 1.12.07, build 20/11/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-12-08-build-20-11-2026">version 1.12.08, build 20/11/2026</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-13-04-build-20-12-2026">version 1.13.04, build 20/12/2026</a></li>
 </ul>
 </li>
 </ul>
@@ -161,7 +162,8 @@
 <li><p><a class="reference internal" href="#build20-09-2026"><span class="std std-ref">version 1.03.09, build 20/09/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build05-10-2026"><span class="std std-ref">version 1.05.24, build 05/10/2026</span></a></p></li>
 <li><p><a class="reference internal" href="#build20-10-2026"><span class="std std-ref">version 1.10.24, build 20/10/2026</span></a></p></li>
-<li><p><a class="reference internal" href="#build20-11-2026"><span class="std std-ref">version 1.12.07, build 20/11/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-11-2026"><span class="std std-ref">version 1.12.08, build 20/11/2026</span></a></p></li>
+<li><p><a class="reference internal" href="#build20-12-2026"><span class="std std-ref">version 1.13.04, build 20/12/2026</span></a></p></li>
 </ul>
 <section id="version-increment-rules">
 <span id="id1"></span><h2>Version increment rules<a class="headerlink" href="#version-increment-rules" title="Link to this heading"></a></h2>
@@ -13064,8 +13066,8 @@
 </li>
 </ul>
 </section>
-<section id="version-1-12-07-build-20-11-2026">
-<span id="build20-11-2026"></span><h2>version 1.12.07, build 20/11/2026<a class="headerlink" href="#version-1-12-07-build-20-11-2026" title="Link to this heading"></a></h2>
+<section id="version-1-12-08-build-20-11-2026">
+<span id="build20-11-2026"></span><h2>version 1.12.08, build 20/11/2026<a class="headerlink" href="#version-1-12-08-build-20-11-2026" title="Link to this heading"></a></h2>
 <ul>
 <li><p><strong>updated html documentation</strong></p>
 <blockquote>
@@ -13100,6 +13102,7 @@
 <li><p>gui.dialogDicomImport</p></li>
 <li><p>gui.dialogDatatype</p></li>
 <li><p>gui.dialogImport</p></li>
+<li><p>gui.dialogResample</p></li>
 <li><p>gui.windowSisyphe</p></li>
 <li><p>processing.capturedStdoutProcessing</p></li>
 <li><p>widgets.consoleWidget</p></li>
@@ -13276,6 +13279,15 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogResample.DialogResample</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new setCompression() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update execute() method</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe</p>
 <blockquote>
 <div><ul class="simple">
@@ -13296,6 +13308,7 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>update __init__() method</p></li>
+<li><p>update _packages() method</p></li>
 <li><p>new _context_menu_make() method</p></li>
 <li><p>new setCustomMenu() method</p></li>
 </ul>
@@ -13494,6 +13507,13 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogResample.DialogResample.setCompression()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>xvol compressed format management</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>widgets.consoleWidget.RichJupyterWidget2._context_menu_make()</p>
 <blockquote>
 <div><ul class="simple">
@@ -13675,6 +13695,20 @@
 </ul>
 </div></blockquote>
 </li>
+<li><p>gui.dialogResample.DialogResample.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._compress attribute, xvol compressed format management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogResample.DialogResample.execute()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add f.setCompression(self._compress), xvol compressed format management</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>gui.windowSisyphe.WindowSisyphe._initFileMenu()</p>
 <blockquote>
 <div><ul class="simple">
@@ -13695,6 +13729,13 @@
 <blockquote>
 <div><ul class="simple">
 <li><p>add self._custommenu attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.consoleWidget.RichJupyterWidget2._packages()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix for %packages command without parameter</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -13800,6 +13841,424 @@
 <div><ul class="simple">
 <li><p>add scrollto parameter (bool)</p></li>
 <li><p>scroll to selected item if scrollto is True</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="version-1-13-04-build-20-12-2026">
+<span id="build20-12-2026"></span><h2>version 1.13.04, build 20/12/2026<a class="headerlink" href="#version-1-13-04-build-20-12-2026" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>updated html documentation</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PySisyphe_Versions.rst</p></li>
+<li><p>PySisyphe_thumbnailbar.rst</p></li>
+<li><p>rebuild sphinx documentation</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated files</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>/settings/functions.xml</p></li>
+<li><p>/settings/settings.xml</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated modules</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>core.sisypheImageAttributes</p></li>
+<li><p>core.sisypheROI</p></li>
+<li><p>gui.dialogDiffusionModel</p></li>
+<li><p>widgets.LUTWidgets</p></li>
+<li><p>widgets.functionsSettingsWidget</p></li>
+<li><p>widgets.tabToolsWidgets</p></li>
+<li><p>widgets.sliceViewWidgets</p></li>
+<li><p>widgets.abstractViewWidget</p></li>
+<li><p>widgets.projectionViewWidget</p></li>
+<li><p>widgets.multiViewWidgets</p></li>
+<li><p>widgets.projectionViewWidget</p></li>
+<li><p>widgets.multiComponentViewWidget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated classes</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImageAttributes.SisypheDisplay</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update autoWindow() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw</p>
+<blockquote>
+<div><ul>
+<li><p>update activeContourSegmentation() method</p></li>
+<li><p>update activeContour() method</p></li>
+<li><p>update activeThresholdContour() method</p></li>
+<li><p>update appendXSliceToLIFO() method</p></li>
+<li><p>update drawSphere() method</p></li>
+<li><p>update popUndoLIFO() method</p></li>
+<li><p>update clearLIFO() method</p></li>
+<li><p>update all slice processing methods</p></li>
+<li><p>update all volume processing methods</p></li>
+<li><p>update all drawing methods</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>move the “undo” LIFO stack update before drawing</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update _modelChanged() method()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update __init__() method</p></li>
+<li><p>update setWindow() method</p></li>
+<li><p>update setWindowMin() method</p></li>
+<li><p>update setWindowMax() method</p></li>
+<li><p>update autoWindow() method</p></li>
+<li><p>update defaultWindow() method</p></li>
+<li><p>update setCTBrainWindow() method</p></li>
+<li><p>update setCTBoneWindow() method</p></li>
+<li><p>update setCTMetallicWindow() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new getSettingsVisibility() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new _toggleSettingsVisibility() method</p></li>
+<li><p>update __init__() method</p></li>
+<li><p>update slcRegionGrowing() method</p></li>
+<li><p>update slcRegionConfidence() method</p></li>
+<li><p>update slcBlobRegionGrowing() method</p></li>
+<li><p>update slcBlobRegionConfidence() method</p></li>
+<li><p>update voiRegionGrowing() method</p></li>
+<li><p>update voiRegionConfidence() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabMeshListWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new _toggleSettingsVisibility() method</p></li>
+<li><p>update __init__() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new synchroniseFocusChanged() method</p></li>
+<li><p>update _init__() method</p></li>
+<li><p>update _onLeftPressEvent() method</p></li>
+<li><p>update _onRightPressEvent() method</p></li>
+<li><p>update _onLeftReleaseEvent() method</p></li>
+<li><p>update _onRightReleaseEvent() method</p></li>
+<li><p>update _updateBrush() method</p></li>
+<li><p>remove _onTimer() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new custom Qt signal FocusChanged</p></li>
+<li><p>new synchroniseFocusChanged() method</p></li>
+<li><p>update _onKeyReleaseEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.ProjectionViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove _onKeyReleaseEvent() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.OrthogonalSliceViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSynchronisationSignalConnect() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.GridViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>new leaveEvent method</p></li>
+<li><p>update _initViews() method</p></li>
+<li><p>update _initSynchronisationSignalConnect() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.projectionViewWidget.MultiProjectionViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSynchronisationSignalConnect() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>update _initSynchronisationSignalConnect() method</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>new methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>widgets.functionsSettingsWidget.SettingsWidget.getSettingsVisibility()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>self._settingsbox widget visibility</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget._toggleSettingsVisibility()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>method for centering the display of widgets in the TabROIToolsWidget based on the visibility of the self._settings widget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabMeshListWidget._toggleSettingsVisibility()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>method for managing the display of widgets in the TabMeshListWidget based on the visibility of the self._settings widget</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidget.SliceROIViewWidget.synchroniseFocusChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>method called by FocusChanged signal</p></li>
+<li><p>hide the brush cursor of views that do not have focus</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget.synchroniseFocusChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>method called by FocusChanged signal</p></li>
+<li><p>hide the information in the bottom-right of views that do not have focus</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.GridViewWidget.leaveEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>hide the information in the bottom-right of all views</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>updated methods</strong></p>
+<blockquote>
+<div><ul>
+<li><p>core.sisypheImageAttributes.SisypheDisplay.autoWindow()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>if cmin parameter is None, minimum windowing value is calculated using Huand algorithm (background threshold)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.activeContourSegmentation()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait parameter (progress dialog)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.activeContour()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove debug lines (save activecontour_seed.xvol &amp; activecontour_speed.xvol)</p></li>
+<li><p>add wait parameter (progress dialog)</p></li>
+<li><p>progress dialog management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.activeThresholdContour()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add wait parameter (progress dialog)</p></li>
+<li><p>progress dialog management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.appendXSliceToLIFO()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self._redolifo.append((self._DSY, i, buff)) with self._redolifo.append((self._DSX, i, buff))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.drawSphere()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, replace self._roi.drawParallelepiped(p, radius) with self._roi.drawSphere(p, radius)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.popUndoLIFO()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace item = self._undolifo[len(self._undolifo) - 1] with item = self._undolifo.pop()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>core.sisypheROI.SisypheROIDraw.clearLIFO()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove self.appendVolumeToLIFO()</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>move self._DTI widget in a QScrollArea (self._area attribute)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>gui.dialogDiffusionModel.DialogDiffusionModel._modelChanged()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._area.setVisible(self._combo.currentText() == ‘DTI’)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add self._auto QPushButton attribute, auto windowing management</p></li>
+<li><p>add self._default QPushButton attribute, default windowing management</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.LUTWidgets.LutWidget.setWindowMin()</p></li>
+<li><p>widgets.LUTWidgets.LutWidget.setWindowMax()</p></li>
+<li><p>widgets.LUTWidgets.LutWidget.autoWindow()</p></li>
+<li><p>widgets.LUTWidgets.LutWidget.defaultWindow()</p></li>
+<li><p>widgets.LUTWidgets.LutWidget.setCTBrainWindow()</p></li>
+<li><p>widgets.LUTWidgets.LutWidget.setCTBoneWindow()</p></li>
+<li><p>widgets.LUTWidgets.LutWidget.setCTMetallicWindow()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bug fix, update position of text along window inf. and sup. lines</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>move self._settings widget in a QScrollArea</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcRegionGrowing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcRegionConfidence()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRegionGrowing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.slcBlobRegionConfidence()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiRegionGrowing()</p></li>
+<li><p>widgets.tabToolsWidgets.TabROIToolsWidget.voiRegionConfidence()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>unckeck menu items of unselected buttons</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.tabToolsWidgets.TabMeshListWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>move self._settings widget in a QScrollArea</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget._onLeftPressEvent()</p></li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget._onRightPressEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace self._draw.activeContourSegmentation(p[0], p[1], p[2]) with self._draw.activeContourSegmentation(p[0], p[1], p[2], wait)</p></li>
+<li><p>add the current ROI to the “undo” LIFO stack before drawing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget._onLeftReleaseEvent()</p></li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget._onRightReleaseEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove “undo” LIFO stack update after drawing</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.sliceViewWidgets.SliceROIViewWidget._updateBrush()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove self._brush.SetVisibility(False)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.SliceROIViewWidget.__init__()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>remove self._timer attribute</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.abstractViewWidget.AbstractViewWidget._onKeyReleaseEvent()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>replace pass with self._interactor.SetKeySym(‘’) to reset the KeySym value after a key event</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.GridViewWidget._initViews()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add w.setName(‘View {}’.format([r, c]))</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>widgets.multiViewWidgets.OrthogonalSliceViewWidget._initSynchronisationSignalConnect()</p></li>
+<li><p>widgets.multiViewWidgets.GridViewWidget._initSynchronisationSignalConnect()</p></li>
+<li><p>widgets.projectionViewWidget.MultiProjectionViewWidget._initSynchronisationSignalConnect()</p></li>
+<li><p>widgets.multiComponentViewWidget.MultiComponentViewWidget._initSynchronisationSignalConnect()</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>add w1.FocusChanged.connect(w2.synchroniseFocusChanged)</p></li>
 </ul>
 </div></blockquote>
 </li>
