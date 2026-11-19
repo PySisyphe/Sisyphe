@@ -25,7 +25,9 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QScrollArea
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QApplication
 
 from skimage.morphology import isotropic_dilation
@@ -174,6 +176,29 @@ class DialogDiffusionModel(QDialog):
         # < Revision 01/09/2026
         self._IVIM.hideIOButtons()
         # Revision 01/09/2026 >
+
+        # < Revision 24/03/2026
+        self._layout.addWidget(self._bvals)
+        self._layout.addWidget(self._bvecs)
+        self._layout.addWidget(self._model)
+        # < Revision 13/11/2026
+        # self._layout.addWidget(self._DTI)
+        self._area = QScrollArea(self)
+        self._area.setWidget(self._DTI)
+        self._area.setWidgetResizable(True)
+        self._area.setFrameShape(self._area.NoFrame)
+        self._area.setAlignment(Qt.AlignVCenter)
+        self._layout.addWidget(self._area)
+        self._DTI.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        # Revision 13/11/2026 >
+        self._layout.addWidget(self._FWDTI)
+        self._layout.addWidget(self._DKI)
+        self._layout.addWidget(self._IVIM)
+        self._layout.addWidget(self._RUMBA)
+        self._layout.addWidget(self._SHCSA)
+        self._layout.addWidget(self._SHCSD)
+        # Revision 24/03/2026 >
+
         self._modelChanged()
         self._DTI.VisibilityToggled.connect(self._center)
         self._DKI.VisibilityToggled.connect(self._center)
@@ -188,19 +213,6 @@ class DialogDiffusionModel(QDialog):
         # < Revision 01/09/2026
         self._IVIM.VisibilityToggled.connect(self._center)
         # Revision 01/09/2026 >
-
-        # < Revision 24/03/2026
-        self._layout.addWidget(self._bvals)
-        self._layout.addWidget(self._bvecs)
-        self._layout.addWidget(self._model)
-        self._layout.addWidget(self._DTI)
-        self._layout.addWidget(self._FWDTI)
-        self._layout.addWidget(self._DKI)
-        self._layout.addWidget(self._IVIM)
-        self._layout.addWidget(self._RUMBA)
-        self._layout.addWidget(self._SHCSA)
-        self._layout.addWidget(self._SHCSD)
-        # Revision 24/03/2026 >
 
         # Init default dialog buttons
 
@@ -363,6 +375,9 @@ class DialogDiffusionModel(QDialog):
             else: raise IOError('No such file {}.'.format(filename))
 
     def _modelChanged(self):
+        # < Revision 13/11/2026
+        self._area.setVisible(self._combo.currentText() == 'DTI')
+        # Revision 13/11/2026 >
         self._DTI.setVisible(self._combo.currentText() == 'DTI')
         self._DKI.setVisible(self._combo.currentText() == 'DKI')
         self._SHCSA.setVisible(self._combo.currentText() == 'SHCSA')
@@ -537,7 +552,6 @@ class DialogDiffusionModel(QDialog):
                     # noinspection PyTypeChecker
                     wait.messageFromDictProxyManager(mng)
                     if not queue.empty():
-                        # noinspection PyUnusedLocal
                         r = queue.get()
                         if process.is_alive(): process.terminate()
                     if wait.getStopped(): process.terminate()
@@ -566,7 +580,6 @@ class DialogDiffusionModel(QDialog):
                     self._bvecs.clear(signal=False)
                     self._save.setEnabled(False)
                 else:
-                    # noinspection PyInconsistentReturns
                     self.accept()
             else:
                 # Show process exception dialog
