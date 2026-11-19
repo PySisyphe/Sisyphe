@@ -69,14 +69,14 @@
 			set equation.
 		</Advection>
 		<RMS>
-			Convergence threshold (0.0 to 1.0, default 0.01) used to determine 
+			Convergence threshold (1e-6 to 1.0, default 0.001) used to determine 
 			when the solution has converged. A lower value will result in a 
 			tighter-fitting solution, but will require more computations. Too 
 			low a value could put the solver into an infinite loop unless a 
 			reasonable number of iterations parameter is set.
 		</RMS>
 		<Iter>
-			Maximum number of iterations (default 1000) can be used to halt the 
+			Maximum number of iterations (default 2000) can be used to halt the 
 			solution after a specified number of iterations, overriding the rms 
 			halting criteria.
 		</Iter>

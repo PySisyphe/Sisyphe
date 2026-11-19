@@ -3,11 +3,12 @@
 	<ActiveContour>
 		<Algorithm label="Level set algorihtm" vartype="lstr">Geodesic active contour|Shape detection|Threshold segmentation</Algorithm>
 		<Radius label="Seed radius (mm)" varmax="20.0" varmin="1.0" vartype="float">2.0</Radius>
-		<Curvature label="Curvature weight" varmax="10.0" varmin="0.1" vartype="float">1.0</Curvature>
-		<Propagation label="Propagation weight" varmax="10.0" varmin="0.1" vartype="float">1.0</Propagation>
-		<Advection label="Advection weight" varmax="10.0" varmin="0.1" vartype="float">1.0</Advection>
-		<RMS label="RMS convergence threshold" varmax="1.0" varmin="1e-6" vartype="float">0.01</RMS>
-		<Iter label="Number of iterations" varmax="5000" varmin="100" vartype="int">1000</Iter>
+		<Curvature label="Curvature weight" varmax="10.0" varmin="0.1" decimals="1" vartype="float">1.0</Curvature>
+		<Propagation label="Propagation weight" varmax="10.0" varmin="0.1" decimals="1" vartype="float">1.0</Propagation>
+		<Advection label="Advection weight" varmax="10.0" varmin="0.1" decimals="1" vartype="float">1.0</Advection>
+		<RMS label="RMS convergence threshold" varmax="0.1" varmin="0.000001" decimals="6" vartype="float">0.001</RMS>
+		<Iter label="Number of iterations" varmax="10000" varmin="100" vartype="int">2000</Iter>
+		<Iter2 label="Interactive adjustment of the number of iterations" varmax="10000" varmin="100" vartype="int">1000</Iter2>
 		<Sigma label="Gaussian kernel sigma" varmax="10.0" varmin="0.1" vartype="float">1.0</Sigma>
 		<Factor label="Threshold factor" varmax="6.0" varmin="1.0" vartype="float">2.0</Factor>
 	</ActiveContour>
