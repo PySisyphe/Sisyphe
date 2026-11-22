@@ -74,10 +74,15 @@ Download PySisyphe
 
 [Download folder](https://mega.nz/folder/Kt8hzbSa#AUkLH1WH0zoawYolT8Ep0w)
 
-Direct link to binary archives:
-- Windows x64 binary, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/f0kwUKpR#GWBrPCEWqUtI83D6Gg4kUc3-UYHLo236FPdy2ed8r7Q)
-- MacOS 11+ x64 binary, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/zskWUZzC#oXNlMYKDf17NdRzWOUTx6VC8vFWhdFLLYuuiMdP6Avo)
-- Linux Ubuntu 26.04 LTS x64 binary, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/ehlAybiL#ttxZIv1tD2lxS438yq1aKoRed7Tj11XBGB6F0LaqDmY)
+There are two types of versions available on the Windows platform: the [PyInstaller](https://pyinstaller.org/en/stable/) frozen version and the standalone version. The standalone version features a complete Python installation isolated from the host system, to which the user can add packages using pip from the iPython console integrated into the PySisyphe interface. In contrast, in the frozen version, it is not possible to install new packages, and the pip command is disabled.
+
+Direct link to frozen versions:
+- Windows x64, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/f0kwUKpR#GWBrPCEWqUtI83D6Gg4kUc3-UYHLo236FPdy2ed8r7Q)
+- MacOS 11+ x64, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/zskWUZzC#oXNlMYKDf17NdRzWOUTx6VC8vFWhdFLLYuuiMdP6Avo)
+- Linux Ubuntu 26.04 LTS x64, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/ehlAybiL#ttxZIv1tD2lxS438yq1aKoRed7Tj11XBGB6F0LaqDmY)
+
+Direct link to standalone version:
+- Windows x64, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/jp0yCRbS#j9_AkFq8muq1mCWel4dJSwuqtH4coTisuSWw7chihi0)
 
 Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. **We recommend copying it to the user directory**. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
 
