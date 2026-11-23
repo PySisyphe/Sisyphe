@@ -82,7 +82,7 @@ Direct link to frozen versions:
 - Linux Ubuntu 26.04 LTS x64, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/ehlAybiL#ttxZIv1tD2lxS438yq1aKoRed7Tj11XBGB6F0LaqDmY)
 
 Direct link to Windows standalone version:
-- Windows x64, python 3.12 [PySisyphe 1.13.04 python 3.12 build 20-11-2026](https://mega.nz/file/jp0yCRbS#j9_AkFq8muq1mCWel4dJSwuqtH4coTisuSWw7chihi0)
+- Windows x64, python 3.12 [PySisyphe 1.13.08 python 3.12 build 20-11-2026](https://mega.nz/file/qoEQWDzJ#QcRVzCaIydMFzs05vWkNT2uJ4vqzwKjvT_-RfcoTuvc)
 
 Unzip the downloaded archive into the directory of your choice. The PySisyphe folder can be placed anywhere; it does not have to be in the Program Files directory on Windows or the Applications directory on MacOS. **We recommend copying it to the user directory**. To launch the software, double-click on PySisyphe.exe on Windows or PySisyphe.app on MacOS. PySisyphe may take more than a minute to start up when running for the first time. Subsequent starts take less than 30 seconds.
 
