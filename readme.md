@@ -79,7 +79,7 @@ Two portable versions are available on the Windows platform: the [PyInstaller](h
 Direct link to frozen versions:
 - Windows x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026](https://mega.nz/file/O0lEzZKQ#wmbr3PYq7E1NRS2AY8Y1dwl6arxIEipwirZnHPCp8JU)
 - MacOS 11+ x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026]()
-- Linux Ubuntu 26.04 LTS x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026]()
+- Linux Ubuntu 26.04 LTS x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026](https://mega.nz/file/a0kTRSRa#3Z51avs0BNhByDqvxY9Yfz0zowEM-3pvwZ4fwTf6jxI)
 
 Direct link to Windows standalone version:
 - Windows x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026](https://mega.nz/file/v8NxxJKR#ITinTWx6FZE-YlE-IGta2tKve40qJXIBjcPhVBE1h-U)
