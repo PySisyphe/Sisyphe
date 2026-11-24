@@ -77,7 +77,7 @@ Download PySisyphe
 Two portable versions are available on the Windows platform: the [PyInstaller](https://pyinstaller.org/en/stable/) frozen version and the standalone version. The standalone version features a complete Python installation isolated from the host system, to which the users can add packages using pip from the iPython console integrated into the PySisyphe interface. In contrast, the "frozen" version cannot be customized by the user. It is not possible to install new packages on it, and the pip command is disabled. The builds for macOS and Linux are currently available only as frozen versions.
 
 Direct link to frozen versions:
-- Windows x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026](https://mega.nz/file/f0kwUKpR#GWBrPCEWqUtI83D6Gg4kUc3-UYHLo236FPdy2ed8r7Q)
+- Windows x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026]()
 - MacOS 11+ x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026]()
 - Linux Ubuntu 26.04 LTS x64, python 3.12 [PySisyphe 1.13.12 python 3.12 build 01-12-2026]()
 
